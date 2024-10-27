@@ -1,0 +1,94 @@
+services:
+  # Python Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: spaeii_python
+    ports:
+      - "8081:8081"     # Map container port to host (adjust based on your app's needs)
+    depends_on:
+      - db
+      - minio
+    networks:
+      - db-network
+
+  # MySQL Database
+  db:
+    image: mysql:8.0
+    container_name: spaeii_mysql_db
+    networks:
+      - db-network
+    volumes:
+      - db-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/root_password  # Root password for MySQL
+      MYSQL_DATABASE: 'SPAEIIDatabase'     # Name of the default database
+      MYSQL_USER: 'admin'             # Username
+      MYSQL_PASSWORD_FILE: /run/secrets/db_password       # Password
+    ports:
+      - "3306:3306"    # Map MySQL port
+    secrets:
+      - root_password
+      - db_password
+
+  # PhpMyAdmin for Database Management
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: spaeii_phpmyadmin
+    networks:
+      - db-network
+    links:
+      - db:db
+    environment:
+      PMA_HOST: db        # Container name of the MySQL service
+      PMA_PORT: 3306       # MySQL port
+      PMA_USER: 'admin'       # Username to access MySQL
+      PMA_PASSWORD_FILE: /run/secrets/db_password  # Password to access MySQL
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/root_password  # Root password for MySQL
+      #PMA_ARBITRARY: 1
+    ports:
+      - "8080:80"          # Access PhpMyAdmin on localhost:8080
+    depends_on:
+      - db
+    secrets:
+      - db_password
+      - root_password
+
+  # MinIO for S3-Compatible Object Storage
+  minio:
+    image: minio/minio
+    container_name: spaeii_minio
+    networks:
+      - db-network
+    environment:
+      MINIO_ROOT_USER: 'admin'         # MinIO access key
+      MINIO_ROOT_PASSWORD_FILE: /run/secrets/minio_password     # MinIO secret key
+    command: server /data
+    ports:
+      - "9000:9000"     # MinIO port for S3 API access
+      - "9001:9001"     # MinIO console port
+    volumes:
+      - minio-data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    secrets:
+      - minio_password
+
+networks:
+    db-network:
+
+volumes:
+  minio-data:
+  db-data:
+
+secrets:
+  db_password:
+    file: secrets/db_password.txt
+  minio_password:
+    file: secrets/minio_password.txt
+  root_password:
+    file: secrets/root_password.txt
