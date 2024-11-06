@@ -37,12 +37,15 @@ def config(app):
 
 
 def reset():
+    from src.core.models.usuario import Usuario
+    from src.core.models.carrera import Carrera
     """
     Resetea la base de datos
     """
-    print("Eliminando base de datos en casacada")
+    print("Eliminando base de datos en cascada")
     db.drop_all()
     print("Creando base nuevamente")
     db.create_all()
     print("Done!")
+    db.session.commit()
     

@@ -4,6 +4,8 @@ from flask import Flask, render_template
 from src.core import database
 from src.core.config import config
 
+db = database.db #TODAS LAS REFERENCIAS A LA BASE DE DATOS DEBEN LLAMAR A ÉSTE
+
 #session = Session()
 def create_app(env="development", static_folder="../../static", template_folders=""):
     """
@@ -17,13 +19,15 @@ def create_app(env="development", static_folder="../../static", template_folders
     """
     app = Flask(__name__, static_folder=static_folder)
     app.config.from_object(config[env])
-    database.init_app(app)
+    db.init_app(app)
     
     #app.config['SECRET_KEY'] = 'tu_clave_secreta_aqui'
     #csrf = CSRFProtect(app)
     #session.init_app(app)
     #bcrypt.init_app(app)
     #storage.init_app(app)
+    print(config["development"].SQLALCHEMY_DATABASE_URI)
+
     @app.route("/")
     def home():
         """

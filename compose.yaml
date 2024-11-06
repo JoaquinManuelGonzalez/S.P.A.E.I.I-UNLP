@@ -6,7 +6,12 @@ services:
       dockerfile: Dockerfile
     container_name: spaeii_python
     environment:
-      - FLASK_ENV=development
+      - FLASK_ENV=$ENVIRONMENT
+      - DB_PASSWORD=$DB_PASSWORD
+      - MINIO_PASSWORD=$MINIO_PASSWORD
+      - MINIO_SECRET_KEY=$MINIO_SECRET_KEY
+      - MINIO_ACCESS_KEY=$MINIO_ACCESS_KEY
+
     ports:
       - "5000:5000"     # Map container port to host (adjust based on your app's needs)
     depends_on:
@@ -14,9 +19,7 @@ services:
       - minio
     networks:
       - db-network
-    secrets:
-      - db_password
-      - minio_password
+    
 
   # MySQL Database
   db:
@@ -27,15 +30,13 @@ services:
     volumes:
       - db-data:/var/lib/mysql
     environment:
-      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/root_password  # Root password for MySQL
+      MYSQL_ROOT_PASSWORD: $ROOT_PASSWORD  # Root password for MySQL
       MYSQL_DATABASE: 'spaeii'     # Name of the default database
       MYSQL_USER: 'admin'             # Username
-      MYSQL_PASSWORD_FILE: /run/secrets/db_password       # Password
+      MYSQL_PASSWORD: $DB_PASSWORD       # Password
     ports:
       - "3306:3306"    # Map MySQL port
-    secrets:
-      - root_password
-      - db_password
+    
 
   # PhpMyAdmin for Database Management
   phpmyadmin:
@@ -49,16 +50,14 @@ services:
       PMA_HOST: db        # Container name of the MySQL service
       PMA_PORT: 3306       # MySQL port
       PMA_USER: 'admin'       # Username to access MySQL
-      PMA_PASSWORD_FILE: /run/secrets/db_password  # Password to access MySQL
-      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/root_password  # Root password for MySQL
+      PMA_PASSWORD: $DB_PASSWORD  # Password to access MySQL
+      MYSQL_ROOT_PASSWORD: $ROOT_PASSWORD  # Root password for MySQL
       #PMA_ARBITRARY: 1
     ports:
       - "8080:80"          # Access PhpMyAdmin on localhost:8080
     depends_on:
       - db
-    secrets:
-      - db_password
-      - root_password
+    
 
   # MinIO for S3-Compatible Object Storage
   minio:
@@ -68,7 +67,7 @@ services:
       - db-network
     environment:
       MINIO_ROOT_USER: 'admin'         # MinIO access key
-      MINIO_ROOT_PASSWORD_FILE: /run/secrets/minio_password     # MinIO secret key
+      MINIO_ROOT_PASSWORD: $MINIO_PASSWORD     # MinIO secret key
     command: server /data
     ports:
       - "9000:9000"     # MinIO port for S3 API access
@@ -80,8 +79,7 @@ services:
       interval: 30s
       timeout: 20s
       retries: 3
-    secrets:
-      - minio_password
+    
 
 networks:
     db-network:
@@ -89,11 +87,3 @@ networks:
 volumes:
   minio-data:
   db-data:
-
-secrets:
-  db_password:
-    file: secrets/db_password.txt
-  minio_password:
-    file: secrets/minio_password.txt
-  root_password:
-    file: secrets/root_password.txt

@@ -1,4 +1,4 @@
-from os import environ
+from os import environ, getenv
 
 class Config(object):
     """
@@ -39,16 +39,16 @@ class DevelopmentConfig(Config):
         Config (class): Clase de configuración base.
     """
     MINIO_SERVER = "localhost:9000"
-    MINIO_ACCESS_KEY = "nVXLhZDmsc3geR4RhWN8"
-    MINIO_SECRET_KEY = "F1DLtTyznvp4h9QUm0QNK1rWM0074uQah1dv2I6x"
+    MINIO_ACCESS_KEY = environ.get("MINIO_ACCESS_KEY")
+    MINIO_SECRET_KEY = environ.get("MINIO_SECRET_KEY")
     MINIO_SECURE = False
     DB_USER = "admin"
-    DB_PASSWORD = "admin"
-    DB_HOST = "localhost"
+    DB_PASSWORD = environ.get("DB_PASSWORD")
+    DB_HOST = "db"
     DB_PORT = "3306"
-    DB_NAME = "spaeii"
+    DB_NAME = "SPAEIIDatabase"
     SQLALCHEMY_DATABASE_URI = (
-        f"mysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+        f"mysql+mysqldb://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
     )
 
 
