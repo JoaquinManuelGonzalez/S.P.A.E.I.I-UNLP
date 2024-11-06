@@ -48,4 +48,4 @@ COPY . .
 EXPOSE 8081
 
 # Run the application.
-CMD python3 app.py
+CMD [ "flask", "run" ,"--host=0.0.0.0","--debug"]

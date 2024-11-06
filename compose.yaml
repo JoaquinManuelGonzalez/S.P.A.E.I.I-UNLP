@@ -5,13 +5,18 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: spaeii_python
+    environment:
+      - FLASK_ENV=development
     ports:
-      - "8081:8081"     # Map container port to host (adjust based on your app's needs)
+      - "5000:5000"     # Map container port to host (adjust based on your app's needs)
     depends_on:
       - db
       - minio
     networks:
       - db-network
+    secrets:
+      - db_password
+      - minio_password
 
   # MySQL Database
   db:
@@ -23,7 +28,7 @@ services:
       - db-data:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD_FILE: /run/secrets/root_password  # Root password for MySQL
-      MYSQL_DATABASE: 'SPAEIIDatabase'     # Name of the default database
+      MYSQL_DATABASE: 'spaeii'     # Name of the default database
       MYSQL_USER: 'admin'             # Username
       MYSQL_PASSWORD_FILE: /run/secrets/db_password       # Password
     ports:
