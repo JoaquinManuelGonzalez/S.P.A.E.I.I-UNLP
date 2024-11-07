@@ -31,7 +31,7 @@ services:
       - db-data:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: $ROOT_PASSWORD  # Root password for MySQL
-      MYSQL_DATABASE: 'spaeii'     # Name of the default database
+      MYSQL_DATABASE: 'SPAEIIDatabase'     # Name of the default database
       MYSQL_USER: 'admin'             # Username
       MYSQL_PASSWORD: $DB_PASSWORD       # Password
     ports:
@@ -51,6 +51,8 @@ services:
       PMA_PORT: 3306       # MySQL port
       PMA_USER: 'admin'       # Username to access MySQL
       PMA_PASSWORD: $DB_PASSWORD  # Password to access MySQL
+      #PMA_USER: 'root'       # Username to access MySQL
+      #PMA_PASSWORD: $ROOT_PASSWORD  # Password to access MySQL
       MYSQL_ROOT_PASSWORD: $ROOT_PASSWORD  # Root password for MySQL
       #PMA_ARBITRARY: 1
     ports:
