@@ -11,7 +11,11 @@ services:
       - MINIO_PASSWORD=$MINIO_PASSWORD
       - MINIO_SECRET_KEY=$MINIO_SECRET_KEY
       - MINIO_ACCESS_KEY=$MINIO_ACCESS_KEY
-
+    develop:
+      watch:
+        - action: sync
+          path: ./src
+          target: /app/src
     ports:
       - "5000:5000"     # Map container port to host (adjust based on your app's needs)
     depends_on:
@@ -19,7 +23,24 @@ services:
       - minio
     networks:
       - db-network
-    
+
+  # Vue Frontend
+  frontend:
+    build:
+      context: ./frontend  # Path to Vue app
+      dockerfile: Dockerfile  # Separate Dockerfile for Vue
+    container_name: spaeii_vue
+    develop:
+      watch:
+        - action: sync
+          path: ./frontend
+          target: /vue
+    ports:
+      - "5173:5173"  # Vue dev server port
+    environment:
+      - NODE_ENV=$ENVIRONMENT  # Adjust as needed
+    networks:
+      - db-network
 
   # MySQL Database
   db:
@@ -70,7 +91,7 @@ services:
     environment:
       MINIO_ROOT_USER: 'admin'         # MinIO access key
       MINIO_ROOT_PASSWORD: $MINIO_PASSWORD     # MinIO secret key
-    command: server /data
+    command: server --console-address ":9001" /data
     ports:
       - "9000:9000"     # MinIO port for S3 API access
       - "9001:9001"     # MinIO console port
