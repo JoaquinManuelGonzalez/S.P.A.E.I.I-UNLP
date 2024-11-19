@@ -1,6 +1,6 @@
 import requests
 from datetime import datetime
-from src.web import db
+from src.core.database import db
 from src.core.models.alumno.pais import Pais
 
 
