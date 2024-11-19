@@ -11,13 +11,12 @@ services:
       - MINIO_PASSWORD=$MINIO_PASSWORD
       - MINIO_SECRET_KEY=$MINIO_SECRET_KEY
       - MINIO_ACCESS_KEY=$MINIO_ACCESS_KEY
+      - MINIO_BUCKET=$MINIO_BUCKET
     develop:
       watch:
         - action: sync
           path: ./src
           target: /app/src
-      - MINIO_BUCKET=$MINIO_BUCKET
-
     ports:
       - "5000:5000"     # Map container port to host (adjust based on your app's needs)
     depends_on:
