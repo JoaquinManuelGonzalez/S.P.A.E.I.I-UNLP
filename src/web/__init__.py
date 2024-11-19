@@ -3,6 +3,7 @@ from flask import Flask, render_template
 # from src.web.handlers import error
 from src.core import database
 from src.core.config import config
+from src.web.seeds.seed_paises import seed_countries
 
 db = database.db #TODAS LAS REFERENCIAS A LA BASE DE DATOS DEBEN LLAMAR A ÉSTE
 
@@ -52,5 +53,6 @@ def create_app(env="development", static_folder="../../static", template_folders
         """
         Comando para crear los seeds de la base de datos
         """
-        print("aca crearia los seeds")
+        seed_countries()
+
     return app
