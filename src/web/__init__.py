@@ -4,8 +4,10 @@ from flask import Flask, render_template
 from src.core import database
 from src.core.config import config
 from src.web.seeds.seed_paises import seed_countries
+from src.web.seeds.seed_generos import seed_generos
+from src.web.seeds.seed_estados_civiles import seed_estados_civiles
+from src.web.controllers.routes import registrar_rutas
 
-db = database.db #TODAS LAS REFERENCIAS A LA BASE DE DATOS DEBEN LLAMAR A ÉSTE
 
 #session = Session()
 def create_app(env="development", static_folder="../../static", template_folders=""):
@@ -20,7 +22,8 @@ def create_app(env="development", static_folder="../../static", template_folders
     """
     app = Flask(__name__, static_folder=static_folder)
     app.config.from_object(config[env])
-    db.init_app(app)
+    database.init_app(app)
+    app = registrar_rutas(app)
     
     #app.config['SECRET_KEY'] = 'tu_clave_secreta_aqui'
     #csrf = CSRFProtect(app)
@@ -54,5 +57,7 @@ def create_app(env="development", static_folder="../../static", template_folders
         Comando para crear los seeds de la base de datos
         """
         seed_countries()
+        seed_generos()
+        seed_estados_civiles()
 
     return app

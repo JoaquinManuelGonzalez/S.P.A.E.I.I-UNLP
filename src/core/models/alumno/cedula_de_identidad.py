@@ -1,5 +1,5 @@
 from datetime import datetime
-from src.web import db
+from src.core.database import db
 
 
 class CedulaDeIdentidad(db.Model):

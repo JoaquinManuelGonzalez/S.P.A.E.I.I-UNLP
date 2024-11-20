@@ -1,4 +1,4 @@
-from src.web import db
+from src.core.database import db
 from datetime import datetime
 
 class Carrera(db.Model):
