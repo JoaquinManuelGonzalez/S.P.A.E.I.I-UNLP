@@ -1,0 +1,104 @@
+{
+    "navBar": {
+        "itemInicio": "Início",
+        "itemIdiomas": {
+            "idiomas": "Idiomas",
+            "opcionEspañol": "Espanhol",
+            "opcionIngles": "Inglês",
+            "opcionPortugues": "Português"
+        },
+        "itemPostularme": "Quero Me Inscrever",
+        "itemIniciarSesion": "Entrar"
+    },
+    "contenidoLandingPage": {
+        "relacionesInternacionales": {
+            "titulo": "Relações Internacionais",
+            "parrafoUno": "A Universidade Nacional de La Plata é um dos centros mais prestigiados do sistema nacional de pesquisa e ensino, tornando-se um ponto de referência fundamental para o desenvolvimento cultural e acadêmico do nosso país.",
+            "inicioParrafoDos": "A",
+            "pri": "Pró-reitoria de Relações Internacionais",
+            "parrafoDos": ", busca desenvolver estratégias de fortalecimento e integração, junto com a articulação entre instituições e recursos, garantindo uma cooperação internacional compartilhada e permanente."
+        },
+        "nuestrasFacultades": "Nossas Faculdades",
+        "cards": {
+            "direccion": "Endereço:",
+            "telContacto": "Telefone de Contato:",
+            "emailContacto": "Email de Contato:",
+            "verMas": "Leia Mais",
+            "fau": {
+                "title": "Faculdade de Arquitetura e Urbanismo",
+                "descripcion": "Rua 47 e 117 nº 162 – La Plata (CEP 1900)"
+            },
+            "artes": {
+                "title": "Faculdade de Artes",
+                "descripcion": "Diagonal 78 nº 680 – La Plata (CEP 1900)"
+            },
+            "cienciasAgrarias": {
+                "title": "Faculdade de Ciências Agrárias e Florestais",
+                "descripcion": "Av. 60 e 119 -S/Nº - La Plata (CEP 1900)"
+            },
+            "cienciasAstronomicas": {
+                "title": "Faculdade de Ciências Astronômicas e Geofísicas",
+                "descripcion": "Paseo del Bosque s/n - La Plata (CEP 1900)"
+            },
+            "cienciasEconomicas": {
+                "title": "Faculdade de Ciências Econômicas",
+                "descripcion": "Rua 6 entre 47 e 48 - La Plata (CEP 1900)"
+            },
+            "cienciasExactas": {
+                "title": "Faculdade de Ciências Exatas",
+                "descripcion": "Rua 47 e 115 - La Plata (CEP 1900)"
+            },
+            "cienciasJuridicas": {
+                "title": "Faculdade de Ciências Jurídicas e Sociais",
+                "descripcion": "Rua 48 entre 6 e 7 - La Plata (CEP 1900)"
+            },
+            "cienciasMedicas": {
+                "title": "Faculdade de Ciências Médicas",
+                "descripcion": "Rua 60 e 120 - La Plata (CEP 1900)"
+            },
+            "cienciasNaturales": {
+                "title": "Faculdade de Ciências Naturais e Museu",
+                "descripcion": "Rua 60 e 122 - La Plata (CEP 1900)"
+            },
+            "cienciasVeterinarias": {
+                "title": "Faculdade de Ciências Veterinárias",
+                "descripcion": "Rua 60 e 118 - La Plata (CEP 1900)"
+            },
+            "humanidades": {
+                "title": "Faculdade de Humanidades e Ciências da Educação",
+                "descripcion": "Rua 51 entre 124 e 125 - La Plata (CEP 1900)"
+            },
+            "informatica": {
+                "title": "Faculdade de Informática",
+                "descripcion": "Rua 50 e 120 - La Plata (CEP 1900)"
+            },
+            "ingenieria": {
+                "title": "Faculdade de Engenharia",
+                "descripcion": "Rua 1 e 47 - La Plata (CEP 1900)"
+            },
+            "odontologia": {
+                "title": "Faculdade de Odontologia",
+                "descripcion": "Rua 1 e 50 - La Plata (CEP 1900)"
+            },
+            "periodismo": {
+                "title": "Faculdade de Jornalismo e Comunicação Social",
+                "descripcion": "Diagonal 113 e 63 - Rua 44 nº 676 entre 8 e 9",
+                "telefonos": "(0221) 4250133 (Campus Diagonal) - (0221) 423-6778/83/84 (Campus Rua 44)"
+            },
+            "psicologia": {
+                "title": "Faculdade de Psicologia",
+                "descripcion": "Rua 51 entre 122 e 123 - La Plata (CEP 1900)"
+            },
+            "trabajoSocial": {
+                "title": "Faculdade de Serviço Social",
+                "descripcion": "Rua 9 esquina com 63 - La Plata (CEP 1900)"
+            }
+        }
+    },
+    "footer": {
+        "priUnlp": "Pró-reitoria de Relações Internacionais - Universidade Nacional de La Plata",
+        "sobreNosotros": "Sobre Nós",
+        "direccionPri": "Universidade Nacional de La Plata Av. 7 N° 776, La Plata (CEP 1900), Buenos Aires, Argentina.",
+        "leyenda": "Os materiais do Portal da Universidade Nacional de La Plata, salvo indicação explícita em contrário, estão sob uma Licença Creative Commons Atribuição 2.5."
+    }
+}

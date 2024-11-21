@@ -5,7 +5,7 @@
                 <div class="flex flex-1 items-center justify-start">
                     <div class="flex flex-shrink-0 items-center">
                         <RouterLink to="/">
-                            <img class="h-12 w-auto" src="../assets/logo-unlp.png" alt="Your Company" />
+                            <img class="h-12 w-auto" src="../assets/logo-unlp.png" alt="Logo Universidad Nacional de La Plata" />
                         </RouterLink>
                     </div>
                 </div>
@@ -21,20 +21,20 @@
                 </div>
                 <div class="hidden sm:ml-6 sm:block">
                     <div class="flex space-x-4">
-                        <RouterLink to="/" class="text-gray-600 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Inicio</RouterLink>
+                        <RouterLink to="/" class="text-gray-600 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">{{ $t("navBar.itemInicio") }}</RouterLink>
                         <div class="relative" @click="toggleDropdown">
                             <button class="bg-gray-200 text-gray-600 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium flex items-center">
-                                Idiomas
+                                {{ $t("navBar.itemIdiomas.idiomas") }}
                                 <DropDownArrow />
                             </button>
                             <div v-if="dropdownOpen" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1">
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Español</a>
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Inglés</a>
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Portugués</a>
+                                <a @click="$i18n.locale = 'es'" href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">{{ $t("navBar.itemIdiomas.opcionEspañol") }}</a>
+                                <a @click="$i18n.locale = 'en'" href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">{{ $t("navBar.itemIdiomas.opcionIngles") }}</a>
+                                <a @click="$i18n.locale = 'pt'" href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">{{ $t("navBar.itemIdiomas.opcionPortugues") }}</a>
                             </div>
                         </div>
-                        <RouterLink to="/postularme" class="text-gray-600 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Quiero Postularme</RouterLink>
-                        <RouterLink to="/iniciar-sesion" class="text-gray-600 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Iniciar Sesión</RouterLink>
+                        <RouterLink to="/postularme" class="text-gray-600 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">{{ $t("navBar.itemPostularme") }}</RouterLink>
+                        <RouterLink to="/iniciar-sesion" class="text-gray-600 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">{{ $t("navBar.itemIniciarSesion") }}</RouterLink>
                     </div>
                 </div>
             </div>
@@ -42,19 +42,19 @@
 
         <DisclosurePanel class="sm:hidden">
             <div class="space-y-1 px-2 pb-3 pt-2">
-                <RouterLink to="/" class="block text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-base font-medium">Inicio</RouterLink>
+                <RouterLink to="/" class="block text-gray-600 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-base font-medium">{{ $t("navBar.itemInicio") }}</RouterLink>
                 <div class="relative">
                     <DisclosureButton as="button" class="block w-full text-left bg-gray-200 text-gray-600 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-base font-medium">
-                        Idiomas
+                        {{ $t("navBar.itemIdiomas.idiomas") }}
                     </DisclosureButton>
                     <div class="mt-2 space-y-1">
-                        <DisclosureButton as="a" href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Español</DisclosureButton>
-                        <DisclosureButton as="a" href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Inglés</DisclosureButton>
-                        <DisclosureButton as="a" href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Portugués</DisclosureButton>
+                        <DisclosureButton @click="$i18n.locale = 'es'" as="a" href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">{{ $t("navBar.itemIdiomas.opcionEspañol") }}</DisclosureButton>
+                        <DisclosureButton @click="$i18n.locale = 'en'" as="a" href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">{{ $t("navBar.itemIdiomas.opcionIngles") }}</DisclosureButton>
+                        <DisclosureButton @click="$i18n.locale = 'pt'" as="a" href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">{{ $t("navBar.itemIdiomas.opcionPortugues") }}</DisclosureButton>
                     </div>
                 </div>
-                <DisclosureButton as="a" href="/postularme" class="block text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-base font-medium">Quiero Postularme</DisclosureButton>
-                <DisclosureButton as="a" href="/iniciar-sesion" class="block text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-base font-medium">Iniciar Sesión</DisclosureButton>
+                <DisclosureButton as="a" href="/postularme" class="block text-gray-600 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-base font-medium">{{ $t("navBar.itemPostularme") }}</DisclosureButton>
+                <DisclosureButton as="a" href="/iniciar-sesion" class="block text-gray-600 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-base font-medium">{{ $t("navBar.itemIniciarSesion") }}</DisclosureButton>
             </div>
         </DisclosurePanel>
     </Disclosure>

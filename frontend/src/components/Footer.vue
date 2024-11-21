@@ -9,14 +9,14 @@
                 >
                     <img src="../assets/logo-unlp.png" class="h-10" alt="Universidad de La Plata Logo" />
                     <span class="self-center text-xl sm:text-2xl font-semibold text-white">
-                        Prosecretaría de Relaciones Internacionales - Universidad Nacional de La Plata
+                        {{ $t("footer.priUnlp") }}
                     </span>
                 </a>
                 <!-- Lista de enlaces -->
                 <ul class="flex flex-wrap justify-center sm:justify-end items-center space-x-6 text-sm font-medium text-gray-500 dark:text-gray-400">
                     <li>
                         <a href="https://unlp.edu.ar/institucional/secretaria_relaciones_institucionales/relaciones-internacionales/prosecretaria_de_relaciones_internacionales_universitarias-14-5014/"
-                            class="hover:underline">Sobre nosotros</a>
+                            class="hover:underline">{{ $t("footer.sobreNosotros") }}</a>
                     </li>
                     <li>
                         <a href="https://www.instagram.com/internacionalesunlp/"
@@ -42,8 +42,8 @@
             <hr class="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
             <!-- Texto del footer -->
             <span class="block text-sm text-gray-500 text-center dark:text-gray-400">
-                Universidad Nacional de La Plata Av. 7 N° 776, La Plata (CP 1900), Buenos Aires, Argentina. <br>
-                Los materiales del Portal Universidad Nacional de La Plata, salvo expresa aclaración, se comparten bajo una Licencia Creative Commons Atribución 2.5.
+                {{ $t("footer.direccionPri") }}<br>
+                {{ $t("footer.leyenda") }}
             </span>
         </div>
     </footer>
