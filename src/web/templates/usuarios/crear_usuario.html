@@ -1,0 +1,60 @@
+<div class="container mt-5">
+    
+    <form method="POST" class="container-fluid full-height d-flex justify-content-center align-items-center" style="max-width: 500px; max-height: 750px; overflow: hidden;">
+        {{ formulario.csrf_token }}
+        <div class="container my-5">
+            
+            <div class="mb-3">
+                {{ formulario.nombre.label }}{{ formulario.nombre(class="form-control") }}
+                {% if formulario.errors %}
+                    {% for error in formulario.nombre.errors %}
+                        <div class="text-danger">{{ formulario.errors[0] }}
+                            <span style="color: red;">{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                {{ formulario.apellido.label }}{{ formulario.apellido(class="form-control") }}
+                {% if formulario.errors %}
+                    {% for error in formulario.apellido.errors %}
+                        <div class="text-danger">{{ formulario.errors[0] }}
+                            <span style="color: red;">{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            
+            <div class="mb-3">
+                {{ formulario.email.label }}{{ formulario.email(class="form-control") }}
+                {% if formulario.errors %}
+                    {% for error in formulario.email.errors %}
+                        <div class="text-danger">{{ formulario.errors[0] }}
+                            <span style="color: red;">{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                {{ formulario.contraseña.label }}{{ formulario.contraseña(class="form-control") }}
+                {% if formulario.errors %}
+                    <div class="text-danger">{{ formulario.errors[0] }}</div>
+                {% endif %}
+                {% for error in formulario.contraseña.errors %}
+                    <span style="color: red;">{{ error }}</span>
+                {% endfor %}
+            </div>
+
+            <div class="mb-3">
+                {{ formulario.id_rol.label }}{{ formulario.id_rol(class="form-select") }}
+                {% if formulario.id_rol.errors %}
+                    <div class="text-danger">{{ formulario.id_rol.errors[0] }}</div>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="btn btn-primary my-3">Crear</button>
+        </div>
+    </form>
+</div>
