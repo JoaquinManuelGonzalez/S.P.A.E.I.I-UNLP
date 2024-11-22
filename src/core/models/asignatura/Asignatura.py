@@ -7,7 +7,7 @@ asignaturas_carreras = db.Table('asignaturas_carreras',
 )
 
 class Asignatura(db.Model):
-    tablename = "asignaturas"
+    __tablename__ = "asignaturas"
     id = db.Column(db.Integer, primary_key=True)
 
     nombre = db.Column(db.String(100), nullable=False)

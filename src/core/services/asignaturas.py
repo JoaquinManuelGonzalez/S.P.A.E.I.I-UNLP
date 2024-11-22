@@ -5,11 +5,12 @@ from src.core.models.carrera import Carrera
 from src.core.services import carreras as carreras_service
 
 
-def create_asignatura(nombre, id_carreras):
+def create_asignatura(nombre: str, facultad_id: int, id_carreras) -> Asignatura:
     """Crea una nueva asignatura en la base de datos.
 
     Args:
         nombre (str): El nombre de la asignatura.
+        facultad_id (int): El id de la facultad en la que se dicta la asignatura.
         id_carreras (list): Una lista de IDs de carreras a asociar.
 
     Returns:
@@ -19,12 +20,16 @@ def create_asignatura(nombre, id_carreras):
         Exception: Si ocurre un error al crear la asignatura.
     """
 
-    new_asignatura = Asignatura(nombre=nombre)
+    new_asignatura = Asignatura(nombre=nombre, facultad_id=facultad_id)
     new_asignatura.carreras = carreras_service.list_carreras(id_carreras)
 
-    db.session.add(new_asignatura)
-    db.session.commit()
-    return new_asignatura
+    try:
+        db.session.add(new_asignatura)
+        db.session.commit()
+        return new_asignatura
+    except Exception as e:
+        db.session.rollback()
+        raise Exception(f"Error creating Asignatura: {e}")
 
 def get_asignatura_by_id(asignatura_id):
     """Obtiene una asignatura por su ID.

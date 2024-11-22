@@ -1,8 +1,9 @@
 from src.core.database import db
 from datetime import datetime
+from src.core.models.facultad import Facultad
 
 class Carrera(db.Model):
-    tablename = "carreras"
+    __tablename__ = "carreras"
     id = db.Column(db.Integer, primary_key=True)
 
     nombre = db.Column(db.String(100), nullable=False)

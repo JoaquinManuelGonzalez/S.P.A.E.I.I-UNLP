@@ -99,15 +99,10 @@ def delete_facultad(facultad_id):
         Exception: If an error occurs while deleting the Facultad record.
     """
 
-    try:
-        facultad_to_delete = Facultad.query.get(facultad_id)
-        if facultad_to_delete:
-            facultad_to_delete.deleted_at = datetime.now()
-            db.session.commit()
-            return True
-        else:
-            return False
-    except Exception as e:
-        db.session.rollback()
-        raise Exception(f"Error deleting   
- Facultad: {e}")
+    facultad_to_delete = Facultad.query.get(facultad_id)
+    if facultad_to_delete:
+        facultad_to_delete.deleted_at = datetime.now()
+        db.session.commit()
+        return True
+    else:
+        return False

@@ -2,7 +2,7 @@ from src.web import db
 from datetime import datetime
 
 class TipoCarrera(db.Model):
-    tablename = "tipos_carrera"
+    __tablename__ = "tipos_carrera"
     id = db.Column(db.Integer, primary_key=True)
 
     nombre = db.Column(db.String(100), nullable=False)
