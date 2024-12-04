@@ -11,6 +11,11 @@ const router = createRouter({
       component: HomeView,
     },
     {
+      path: '/primer-formulario',
+      name: 'primer-formulario',
+      component: () => import('../components/PrimerFormulario.vue'),
+    },
+    {
       path: '/portal-de-alumnos',
       name: 'portal-de-alumnos',
       component: StudentPortalView,
