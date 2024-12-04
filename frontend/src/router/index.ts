@@ -1,12 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import StudentPortalView from '@/views/StudentPortalView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      name: 'home',
+      name: 'inicio',
       component: HomeView,
     },
     {
@@ -15,9 +16,9 @@ const router = createRouter({
       component: () => import('../components/PrimerFormulario.vue'),
     },
     {
-      path: '/segundo-formulario',
-      name: 'segundo-formulario',
-      component: () => import('../components/PrimerFormularioDos.vue'),
+      path: '/portal-de-alumnos',
+      name: 'portal-de-alumnos',
+      component: StudentPortalView,
     }
   ],
 })
