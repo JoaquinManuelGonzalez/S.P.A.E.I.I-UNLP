@@ -8,6 +8,16 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView,
+    },
+    {
+      path: '/primer-formulario',
+      name: 'primer-formulario',
+      component: () => import('../components/PrimerFormulario.vue'),
+    },
+    {
+      path: '/segundo-formulario',
+      name: 'segundo-formulario',
+      component: () => import('../components/PrimerFormularioDos.vue'),
     }
   ],
 })
