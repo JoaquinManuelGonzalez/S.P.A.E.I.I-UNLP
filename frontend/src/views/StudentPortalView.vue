@@ -31,7 +31,7 @@
 
 <script>
 import Sidebar from "../components/Sidebar.vue";
-import alumnosInternacionalesImage from "@/assets/estudiantes.webp";
+import alumnosInternacionalesImage from "@/assets/unlp-2.jpg";
 
 export default {
   name: "Dashboard",
