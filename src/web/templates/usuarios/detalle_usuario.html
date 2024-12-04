@@ -1,3 +1,9 @@
+{% extends "layout.html" %}
+{% block title %}Crear Usuario{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}
 <div class="container mt-5">
     <form method="POST" action={{ url_for('usuarios.editar_usuario', id_usuario=usuario.id) }} class="container-fluid full-height d-flex justify-content-center align-items-center" style="max-width: 500px; max-height: 750px; overflow: hidden;">
         {{ formulario.csrf_token }}
@@ -24,3 +30,4 @@
         </div>
     </form>
 </div>
+{% endblock %}

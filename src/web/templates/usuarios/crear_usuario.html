@@ -1,3 +1,9 @@
+{% extends "layout.html" %}
+{% block title %}Crear Usuario{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}
 <div class="container mt-5">
     
     <form method="POST" class="container-fluid full-height d-flex justify-content-center align-items-center" style="max-width: 500px; max-height: 750px; overflow: hidden;">
@@ -58,3 +64,4 @@
         </div>
     </form>
 </div>
+{% endblock %}

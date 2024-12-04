@@ -1,8 +1,13 @@
-
+{% extends "layout.html" %}
+{% block title %}Crear Usuario{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}
 <div class="container mt-3">
     <a href={{ url_for('usuarios.crear_usuario') }} class="btn btn-success mt-3 shadow">+ Nuevo Usuario</a>
     <div class="row my-5">
-        <form action="{{ url_for('usuarios.listado') }}" method="GET" class="col-9">
+        <form action="{{ url_for('usuarios.listar') }}" method="GET" class="col-9">
             <div class="row">
                 
                 <div class="col-3">
@@ -30,8 +35,8 @@
                 <div class="col-1"></div>
             </div>
         </form>
-        <form action="{{ url_for('usuarios.listado') }}" method="GET" class="row col-3">
-            <a href={{ url_for('usuarios.listado') }} class="btn btn-secondary col-4 shadow">Borrar Filtros</a>
+        <form action="{{ url_for('usuarios.listar') }}" method="GET" class="row col-3">
+            <a href={{ url_for('usuarios.listar') }} class="btn btn-secondary col-4 shadow">Borrar Filtros</a>
         </form>
     </div>
 
@@ -43,14 +48,14 @@
                 <th>Apellido</th>
                 <th>
                     Email
-                    <a class="btn p-0" href="{{ url_for('usuarios.listado', sort='email', order='asc', email=actuales.email, nombre=actuales.nombre, rol=actuales.rol) }}">&#9650;</a>
-                    <a class="btn p-0" href="{{ url_for('usuarios.listado', sort='email', order='desc', email=actuales.email, nombre=actuales.nombre, rol=actuales.rol) }}">&#9660;</a>
+                    <a class="btn p-0" href="{{ url_for('usuarios.listar', sort='email', order='asc', email=actuales.email, nombre=actuales.nombre, rol=actuales.rol) }}">&#9650;</a>
+                    <a class="btn p-0" href="{{ url_for('usuarios.listar', sort='email', order='desc', email=actuales.email, nombre=actuales.nombre, rol=actuales.rol) }}">&#9660;</a>
                 </th>
                 <th>Rol</th>
                 <th>
                     Fecha de Creacion
-                    <a class="btn p-0" href="{{ url_for('usuarios.listado', sort='creacion', order='asc', email=actuales.email, nombre=actuales.nombre, rol=actuales.rol) }}">&#9650;</a>
-                    <a class="btn p-0" href="{{ url_for('usuarios.listado', sort='creacion', order='desc', email=actuales.email, nombre=actuales.nombre, rol=actuales.rol) }}">&#9660;</a>
+                    <a class="btn p-0" href="{{ url_for('usuarios.listar', sort='creacion', order='asc', email=actuales.email, nombre=actuales.nombre, rol=actuales.rol) }}">&#9650;</a>
+                    <a class="btn p-0" href="{{ url_for('usuarios.listar', sort='creacion', order='desc', email=actuales.email, nombre=actuales.nombre, rol=actuales.rol) }}">&#9660;</a>
                 </th>
                 </th>
                 <th>Acciones</th>
@@ -84,7 +89,7 @@
         <ul class="pagination justify-content-center">
             {% if usuarios.has_prev %}
                 <li class="page-item">
-                    <a type="submit" href="{{ url_for('usuarios.listado', pagina=usuarios.prev_num, sort=actuales.sort, order=actuales.order, email=actuales.email, nombre=actuales.nombre, rol=actuales.rol) }}" class="page-link"><span aria-hidden="true">&laquo; Anterior</span></a>
+                    <a type="submit" href="{{ url_for('usuarios.listar', pagina=usuarios.prev_num, sort=actuales.sort, order=actuales.order, email=actuales.email, nombre=actuales.nombre, rol=actuales.rol) }}" class="page-link"><span aria-hidden="true">&laquo; Anterior</span></a>
                 </li>
             {% else %}
                 <li class="page-item disabled">
@@ -99,14 +104,14 @@
                     </li>
                 {% else %}
                     <li class="page-item">
-                        <a class="page-link" href="{{ url_for('usuarios.listado', pagina=page_num, sort=actuales.sort, order=actuales.order, email=actuales.email, nombre=actuales.nombre, rol=actuales.rol) }}">{{ page_num }}</a>
+                        <a class="page-link" href="{{ url_for('usuarios.listar', pagina=page_num, sort=actuales.sort, order=actuales.order, email=actuales.email, nombre=actuales.nombre, rol=actuales.rol) }}">{{ page_num }}</a>
                     </li>
                 {% endif %} 
             {% endfor %}
     
             {% if usuarios.has_next %}
                 <li class="page-item">
-                    <a type="submit" href="{{ url_for('usuarios.listado', pagina=usuarios.next_num, sort=actuales.sort, order=actuales.order, email=actuales.email, nombre=actuales.nombre, rol=actuales.rol) }}" class="page-link"><span aria-hidden="true">Siguiente &laquo;</span></a>
+                    <a type="submit" href="{{ url_for('usuarios.listar', pagina=usuarios.next_num, sort=actuales.sort, order=actuales.order, email=actuales.email, nombre=actuales.nombre, rol=actuales.rol) }}" class="page-link"><span aria-hidden="true">Siguiente &laquo;</span></a>
                 </li>
             {% else %}
                 <li class="page-item disabled">
@@ -123,3 +128,4 @@
         return confirm("¿Estás seguro de que deseas eliminar este usuario?");
     }
 </script>
+{% endblock %}

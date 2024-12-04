@@ -42,7 +42,7 @@ def create_app(env="development", static_folder="../../static", template_folders
         token = create_access_token(identity="usuario")
         print("Hola, esto es un JWT")
         print(type(token))
-        return render_template("layout.html")
+        return render_template("home.html")
 
     @app.cli.command(name="reset-db")
     def reset_db():

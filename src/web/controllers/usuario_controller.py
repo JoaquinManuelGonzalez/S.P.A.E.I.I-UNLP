@@ -9,9 +9,10 @@ usuario_bp = Blueprint("usuarios", __name__, url_prefix="/usuarios")
 
 @usuario_bp.get("/")
 #@check("usuarios_listar")
-def listado():
+def listar():
     pagina = request.args.get('pagina', 1, type=int)
     roles = usuario_service.listar_roles()
+    roles = [rol for rol in roles if rol.nombre != "presidencia_jefe"]
     usuarios = usuario_service.listar_usuarios(pagina)
     valores_actuales = {
         'nombre': request.args.get('nombre'),
@@ -33,7 +34,7 @@ def crear_usuario():
     '''
     formulario = Usuario_Form()
     roles = usuario_service.listar_roles()
-    formulario.id_rol.choices = [("", "Seleccione un rol")] + [(rol.id, rol.nombre) for rol in roles]
+    formulario.id_rol.choices = [("", "Seleccione un rol")] + [(rol.id, rol.nombre) for rol in roles if rol.nombre != "alumno" and rol.nombre != "presidencia_jefe"]
     if formulario.validate_on_submit():
         usuario_service.crear_usuario(formulario)
         return redirect("/usuarios")
@@ -44,8 +45,6 @@ def crear_usuario():
 def ver_detalle_usuario(id_usuario:int):
     usuario = usuario_service.buscar_usuario(id_usuario)
     formulario = Usuario_Form(obj=usuario)
-    roles = usuario_service.listar_roles()
-    formulario.id_rol.choices = [(rol.id, rol.nombre) for rol in roles]
     return render_template("usuarios/detalle_usuario.html", formulario=formulario, usuario=usuario)
 
 
@@ -54,17 +53,13 @@ def ver_detalle_usuario(id_usuario:int):
 def editar_usuario(id_usuario:int):
     usuario = usuario_service.buscar_usuario(id_usuario)
     formulario = Usuario_Form(obj=usuario, id_usuario_editado=id_usuario)
-    roles = usuario_service.listar_roles()
-    formulario.id_rol.choices = [(rol.id, rol.nombre) for rol in roles]
-    return render_template("usuarios/editar_usuario.html", formulario=formulario, usuario=usuario, roles=roles)
+    return render_template("usuarios/editar_usuario.html", formulario=formulario, usuario=usuario)
 
 @usuario_bp.route("/actualizar/<int:id_usuario>", methods=['POST'])
 #@check("perfil_editar")
 def actualizar_usuario(id_usuario:int):
     usuario = usuario_service.buscar_usuario(id_usuario)
     formulario = Usuario_Form(obj=usuario, id_usuario_editado=id_usuario)
-    roles = usuario_service.listar_roles()
-    formulario.id_rol.choices = [(rol.id, rol.nombre) for rol in roles]
     if formulario.validate_on_submit():
         formulario.populate_obj(usuario)
         usuario_service.editar_usuario(usuario)

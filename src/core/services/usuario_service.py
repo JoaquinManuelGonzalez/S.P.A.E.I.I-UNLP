@@ -11,14 +11,35 @@ def listar_usuarios(pagina:int):
     return usuarios
 
 def filtrar_usuarios(pagina:int):
-    query = Usuario.query.order_by(Usuario.id)
-    return query.paginate(page=pagina, per_page=10, error_out=False)
+    filtro_nombre = request.args.get('nombre')
+    filtro_email = request.args.get('email')
+    filtro_rol = request.args.get('rol')
+    filtro_orden = request.args.get('sort')
+    filtro_orden_tipo = request.args.get('order')
+    query = Usuario.query.filter(Usuario.id!=1)
+    if filtro_email:
+        query = query.filter(Usuario.email.ilike(f'%{filtro_email}%'))
+    if filtro_nombre:
+        query = query.filter(Usuario.nombre.ilike(f'%{filtro_nombre}%'))
+    if filtro_rol:
+        query = query.filter_by(id_rol=filtro_rol)
+    if filtro_orden:
+        columna = getattr(Usuario, filtro_orden, None)
+        if columna:
+            if filtro_orden_tipo == 'asc':
+                query = query.order_by(columna.asc())
+            else:
+                query = query.order_by(columna.desc())
+    else:
+        query = query.order_by(Usuario.id.asc())
+    
+    return query.paginate(page=pagina, per_page=5, error_out=False)
 
 def crear_usuario(formulario:Usuario_Form) -> None:
     hash = bcrypt.generate_password_hash(formulario.contraseña.data.encode('utf-8'))
     formulario.contraseña.data = hash.decode('utf-8')
     usuario = Usuario(
-        nombre=formulario.alias.data,
+        nombre=formulario.nombre.data,
         apellido=formulario.apellido.data,
         email=formulario.email.data,
         contraseña=formulario.contraseña.data,
