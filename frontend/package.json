@@ -11,15 +11,23 @@
     "type-check": "vue-tsc --build --force"
   },
   "dependencies": {
+    "@headlessui/vue": "^1.7.23",
+    "@heroicons/vue": "^2.2.0",
+    "@intlify/unplugin-vue-i18n": "^6.0.0",
+    "flowbite": "^2.5.2",
     "vue": "^3.5.12",
+    "vue-i18n": "^10.0.4",
     "vue-router": "^4.4.5"
   },
   "devDependencies": {
     "@tsconfig/node22": "^22.0.0",
-    "@types/node": "^22.9.0",
-    "@vitejs/plugin-vue": "^5.1.4",
+    "@types/node": "^22.9.1",
+    "@vitejs/plugin-vue": "^5.2.0",
     "@vue/tsconfig": "^0.5.1",
+    "autoprefixer": "^10.4.20",
     "npm-run-all2": "^7.0.1",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.15",
     "typescript": "~5.6.3",
     "vite": "^5.4.10",
     "vite-plugin-vue-devtools": "^7.5.4",

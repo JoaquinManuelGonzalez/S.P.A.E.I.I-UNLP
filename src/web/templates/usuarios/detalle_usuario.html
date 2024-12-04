@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+{% block title %}Crear Usuario{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <form method="POST" action={{ url_for('usuarios.editar_usuario', id_usuario=usuario.id) }} class="container-fluid full-height d-flex justify-content-center align-items-center" style="max-width: 500px; max-height: 750px; overflow: hidden;">
+        {{ formulario.csrf_token }}
+        <div class="container my-5">
+
+            <div class="mb-3">
+                {{ formulario.nombre.label }}{{ formulario.nombre(class="form-control", readonly=True) }}
+            </div>
+
+            <div class="mb-3">
+                {{ formulario.apellido.label }}{{ formulario.apellido(class="form-control", readonly=True) }}
+            </div>
+
+            <div class="mb-3">
+                {{ formulario.email.label }}{{ formulario.email(class="form-control", readonly=True) }}
+            </div>
+
+            <div class="mb-3">
+                {{ formulario.id_rol.label }}{{ formulario.id_rol(class="form-select", disabled=True) }}
+            </div>
+
+            <button type="submit" class="btn btn-primary">Editar</button>   
+                     
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,104 @@
+{
+    "navBar": {
+        "itemInicio": "Home",
+        "itemIdiomas": {
+            "idiomas": "Languages",
+            "opcionEspañol": "Spanish",
+            "opcionIngles": "English",
+            "opcionPortugues": "Portuguese"
+        },
+        "itemPostularme": "Apply Now",
+        "itemIniciarSesion": "Log In"
+    },
+    "contenidoLandingPage": {
+        "relacionesInternacionales": {
+            "titulo": "International Relations",
+            "parrafoUno": "The National University of La Plata is one of the most prestigious centers of the national research and teaching system, making it a key reference point in the cultural and academic development of our country.",
+            "inicioParrafoDos": "The",
+            "pri": "Office of International Relations",
+            "parrafoDos": ", aims to develop strategies for strengthening and integration along with coordination between institutions and resources, ensuring shared and permanent international cooperation."
+        },
+        "nuestrasFacultades": "Our Faculties",
+        "cards": {
+            "direccion": "Address:",
+            "telContacto": "Contact Phone:",
+            "emailContacto": "Contact Email:",
+            "verMas": "Read More",
+            "fau": {
+                "title": "Faculty of Architecture and Urbanism",
+                "descripcion": "47th Street and 117 nº 162 – La Plata (Zip Code 1900)"
+            },
+            "artes": {
+                "title": "Faculty of Arts",
+                "descripcion": "Diag. 78 nro.680 – La Plata (Zip Code 1900)"
+            },
+            "cienciasAgrarias": {
+                "title": "Faculty of Agricultural and Forestry Sciences",
+                "descripcion": "60th Avenue and 119 -S/Nº - La Plata (Zip Code 1900)"
+            },
+            "cienciasAstronomicas": {
+                "title": "Faculty of Astronomical and Geophysical Sciences",
+                "descripcion": "Paseo del Bosque s/n - La Plata (Zip Code 1900)"
+            },
+            "cienciasEconomicas": {
+                "title": "Faculty of Economic Sciences",
+                "descripcion": "6th Street between 47 and 48 - La Plata (Zip Code 1900)"
+            },
+            "cienciasExactas": {
+                "title": "Faculty of Exact Sciences",
+                "descripcion": "47th Street and 115 - La Plata (Zip Code 1900)"
+            },
+            "cienciasJuridicas": {
+                "title": "Faculty of Legal and Social Sciences",
+                "descripcion": "48th Street between 6 and 7 - La Plata (Zip Code 1900)"
+            },
+            "cienciasMedicas": {
+                "title": "Faculty of Medical Sciences",
+                "descripcion": "60th Street and 120 - La Plata (Zip Code 1900)"
+            },
+            "cienciasNaturales": {
+                "title": "Faculty of Natural Sciences and Museum",
+                "descripcion": "60th Street and 122 - La Plata (Zip Code 1900)"
+            },
+            "cienciasVeterinarias": {
+                "title": "Faculty of Veterinary Sciences",
+                "descripcion": "60th Street and 118 - La Plata (Zip Code 1900)"
+            },
+            "humanidades": {
+                "title": "Faculty of Humanities and Educational Sciences",
+                "descripcion": "51st Street between 124 and 125 - La Plata (Zip Code 1900)"
+            },
+            "informatica": {
+                "title": "Faculty of Informatics",
+                "descripcion": "50th Street and 120 - La Plata (Zip Code 1900)"
+            },
+            "ingenieria": {
+                "title": "Faculty of Engineering",
+                "descripcion": "1st Street and 47 - La Plata (Zip Code 1900)"
+            },
+            "odontologia": {
+                "title": "Faculty of Dentistry",
+                "descripcion": "1st Street and 50 - La Plata (Zip Code 1900)"
+            },
+            "periodismo": {
+                "title": "Faculty of Journalism and Social Communication",
+                "descripcion": "Diagonal 113 and 63 - 44th Street nº 676 between 8 and 9",
+                "telefonos": "(0221) 4250133 (Diagonal Campus) - (0221) 423-6778/83/84 (44th Street Campus)"
+            },
+            "psicologia": {
+                "title": "Faculty of Psychology",
+                "descripcion": "51st Street between 122 and 123 - La Plata (Zip Code 1900)"
+            },
+            "trabajoSocial": {
+                "title": "Faculty of Social Work",
+                "descripcion": "9th Street corner 63 - La Plata (Zip Code 1900)"
+            }
+        }
+    },
+    "footer": {
+        "priUnlp": "Office of International Relations - National University of La Plata",
+        "sobreNosotros": "About Us",
+        "direccionPri": "National University of La Plata Av. 7 N° 776, La Plata (Zip Code 1900), Buenos Aires, Argentina.",
+        "leyenda": "The materials of the National University of La Plata Portal, unless explicitly stated, are shared under a Creative Commons Attribution 2.5 License."
+    }
+}
