@@ -1,6 +1,5 @@
 from src.core.database import db
 from datetime import datetime
-from src.core.models.facultad import Facultad
 
 class Carrera(db.Model):
     __tablename__ = "carreras"
