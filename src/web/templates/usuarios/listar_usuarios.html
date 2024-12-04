@@ -1,0 +1,131 @@
+{% extends "layout.html" %}
+{% block title %}Crear Usuario{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}
+<div class="container mt-3">
+    <a href={{ url_for('usuarios.crear_usuario') }} class="btn btn-success mt-3 shadow">+ Nuevo Usuario</a>
+    <div class="row my-5">
+        <form action="{{ url_for('usuarios.listar') }}" method="GET" class="col-9">
+            <div class="row">
+                
+                <div class="col-3">
+                    <label for="nombre" class="form-label">nombre</label>
+                    <input type="text" id="nombre" name="nombre" class="form-control shadow" placeholder="Ingresa el nombre para filtrar" {%if actuales.nombre%}value="{{ actuales.nombre }}"{%endif%}>
+                </div>
+                
+                <div class="col-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="text" id="email" name="email" class="form-control shadow" placeholder="Ingresa el email para filtrar" {%if actuales.email%}value="{{ actuales.email }}"{%endif%}>
+                </div>
+            
+                <div class="col-3">
+                    <label for="rol" class="form-label">Rol</label>
+                    <select id="rol" name="rol" class="form-select shadow">
+                        <option value="">Selecciona un rol</option>
+                        {% for rol in roles %}
+                            <option value="{{ rol.id }}" {% if actuales.rol == rol.id|string %}selected{% endif %}>{{ rol.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            
+                <div class="col-1"></div>
+                <button type="submit" class="btn btn-primary col-1 ms-center shadow">Filtrar</button>
+                <div class="col-1"></div>
+            </div>
+        </form>
+        <form action="{{ url_for('usuarios.listar') }}" method="GET" class="row col-3">
+            <a href={{ url_for('usuarios.listar') }} class="btn btn-secondary col-4 shadow">Borrar Filtros</a>
+        </form>
+    </div>
+
+    <table class="table table-striped table-responsive">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>
+                    Email
+                    <a class="btn p-0" href="{{ url_for('usuarios.listar', sort='email', order='asc', email=actuales.email, nombre=actuales.nombre, rol=actuales.rol) }}">&#9650;</a>
+                    <a class="btn p-0" href="{{ url_for('usuarios.listar', sort='email', order='desc', email=actuales.email, nombre=actuales.nombre, rol=actuales.rol) }}">&#9660;</a>
+                </th>
+                <th>Rol</th>
+                <th>
+                    Fecha de Creacion
+                    <a class="btn p-0" href="{{ url_for('usuarios.listar', sort='creacion', order='asc', email=actuales.email, nombre=actuales.nombre, rol=actuales.rol) }}">&#9650;</a>
+                    <a class="btn p-0" href="{{ url_for('usuarios.listar', sort='creacion', order='desc', email=actuales.email, nombre=actuales.nombre, rol=actuales.rol) }}">&#9660;</a>
+                </th>
+                </th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            {% for usuario in usuarios %}
+                <tr>
+                    <td>{{ usuario.id }}</td>
+                    <td>{{ usuario.nombre }}</td>
+                    <td>{{ usuario.apellido }}</td>
+                    <td>{{ usuario.email }}</td>
+                    <td>{{ usuario.rol.nombre }}</td>
+                    <td>{{ usuario.creacion.strftime("%Y-%m-%d") }}</td>
+                    <td>
+                        <a href={{ url_for('usuarios.ver_detalle_usuario', id_usuario=usuario.id) }} class="btn btn-primary">Detalle</a>
+                        
+                        <form action="{{ url_for('usuarios.eliminar_usuario', id_usuario=usuario.id) }}" method="POST" style="display:inline;" onsubmit="return confirmarEliminacion();">
+                            <button type="submit" class="btn btn-danger">Eliminar</button>
+                            <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}" />
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <br>
+    <nav aria-label="Page navigation example shadow">
+        <ul class="pagination justify-content-center">
+            {% if usuarios.has_prev %}
+                <li class="page-item">
+                    <a type="submit" href="{{ url_for('usuarios.listar', pagina=usuarios.prev_num, sort=actuales.sort, order=actuales.order, email=actuales.email, nombre=actuales.nombre, rol=actuales.rol) }}" class="page-link"><span aria-hidden="true">&laquo; Anterior</span></a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">&laquo; Anterior</span>
+                </li>
+            {% endif %}
+    
+            {% for page_num in range(1, usuarios.pages + 1) %}
+                {% if page_num == usuarios.page %}
+                    <li class="page-item active" aria-current="page">
+                        <span class="page-link">{{ page_num }}</span>
+                    </li>
+                {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('usuarios.listar', pagina=page_num, sort=actuales.sort, order=actuales.order, email=actuales.email, nombre=actuales.nombre, rol=actuales.rol) }}">{{ page_num }}</a>
+                    </li>
+                {% endif %} 
+            {% endfor %}
+    
+            {% if usuarios.has_next %}
+                <li class="page-item">
+                    <a type="submit" href="{{ url_for('usuarios.listar', pagina=usuarios.next_num, sort=actuales.sort, order=actuales.order, email=actuales.email, nombre=actuales.nombre, rol=actuales.rol) }}" class="page-link"><span aria-hidden="true">Siguiente &laquo;</span></a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">Siguiente &raquo;</span>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    
+
+</div>
+<script>
+    function confirmarEliminacion() {
+        return confirm("¿Estás seguro de que deseas eliminar este usuario?");
+    }
+</script>
+{% endblock %}

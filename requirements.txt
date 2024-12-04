@@ -1,4 +1,5 @@
 flask
+faker==9.0.1
 psycopg2-binary==2.9.9
 sqlalchemy==2.0.35
 flask-session==0.8.0
@@ -12,3 +13,4 @@ minio==7.2.9
 bcrypt==4.2.0
 requests>=2.31.0
 marshmallow==3.23.1
+flask-jwt-extended
