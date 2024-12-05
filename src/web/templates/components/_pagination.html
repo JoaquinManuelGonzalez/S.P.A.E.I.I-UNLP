@@ -1,0 +1,65 @@
+{% macro render_pagination(pagination, endpoint) %}
+    {% if pagination.items %}
+        <div class="row align-items-center pt-2">
+            <div class="col-4 text-start">
+                {{ pagination.first }} - {{ pagination.last }} de {{ pagination.total }}
+            </div>
+            <div class="col-4 text-center">
+                Pág. {{ pagination.page }} de {{ pagination.pages }}
+            </div>
+            <div class="col-4 text-end">
+                <label for="pagination-size" class="form-label mb-0">Mostrar:</label>
+                <select class="form-select d-inline w-auto" id="pagination-size" name="pagination-size">
+                    {% for size in (5, 10, 25, 50, 100) %}
+                        <option {{ pagination.per_page == size and "selected" or "" }}
+                                value="{{ url_for(endpoint, page=1, size=size, **kwargs) }}">{{ size }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-12 pt-2">
+                <nav aria-label="Páginas" class="overflow-auto">
+                    <ul class="pagination justify-content-sm-center mb-0">
+                        <li class="page-item {{ not pagination.has_prev and 'disabled' or '' }}">
+                            <a class="page-link"
+                               href="{{ url_for(endpoint, page=pagination.prev_num, size=pagination.per_page, **kwargs) }}"
+                               aria-label="Anterior">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        {% for pagina in pagination.iter_pages() %}
+                            {% if pagina %}
+                                {% if pagina != pagination.page %}
+                                    <li class="page-item">
+                                        <a class="page-link"
+                                           href="{{ url_for(endpoint, page=pagina, size=pagination.per_page, **kwargs) }}">{{ pagina }}</a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item active" aria-current="page">
+                                        <a class="page-link">{{ pagina }}</a>
+                                    </li>
+                                {% endif %}
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <a class="page-link">...</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                        <li class="page-item {{ not pagination.has_next and 'disabled' or '' }}">
+                            <a class="page-link"
+                               href="{{ url_for(endpoint, page=pagination.next_num, size=pagination.per_page, **kwargs) }}"
+                               aria-label="Siguiente">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+        <script>
+            document.getElementById("pagination-size").addEventListener("change", (e) => {
+                window.location.href = e.target.value;
+            });
+        </script>
+    {% endif %}
+{% endmacro %}
