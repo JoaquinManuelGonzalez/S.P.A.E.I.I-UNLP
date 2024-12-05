@@ -11,7 +11,7 @@ class PostulacionSchema(Schema):
     creacion = fields.DateTime(dump_only=True)
     actualizacion = fields.DateTime(dump_only=True)
 
-    @post_load
+    
     def crear_postulacion(self, data, **kwargs):
         return Postulacion(**data)
 

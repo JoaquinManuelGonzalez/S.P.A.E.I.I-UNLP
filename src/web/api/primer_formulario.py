@@ -1,8 +1,10 @@
 from flask import Blueprint, jsonify, request
-#from src.web.controllers.api import base
-#import requests
-#from src.web.forms.postulacion_form import PostulacionForm, PostulacionFormValues
-#from src.web.schemas.postulacion_schema import postulacion_schema
+
+
+from src.core.services import paises_service, genero_service, estado_civil_service
+from src.web.schemas import estado_civil_schema, genero_schema, pais_schema, postulacion_schema
+
+
 
 bp = Blueprint("postulacion", __name__, url_prefix="/api/postulacion")
 
@@ -24,9 +26,25 @@ def primer_formulario():
     return jsonify(body), 201
     """
 
-@bp.get("/segundo-formulario")
-def segundo_formulario():
+@bp.get("/primer-formulario-data")
+def primer_formulario_get():
     """
-    Segundo formulario de postulación.
+    
     """
-    return jsonify({"message": "Segundo formulario de postulación"}), 200
+    paises = paises_service.listar_paises()
+    generos = genero_service.listar_generos()
+    estados_civiles = estado_civil_service.listar_estados_civiles()
+    #programa = get_programa()
+    data_paises = pais_schema.paises_schema.dump(paises)
+    data_generos = genero_schema.generos_schema.dump(generos)
+    data_estados_civiles = estado_civil_schema.estados_civiles_schema.dump(estados_civiles)
+
+
+    data_response = {
+        "paises": data_paises,
+        "generos": data_generos,
+        "estados_civiles": data_estados_civiles,
+        #"programa": programa
+    }
+
+    return jsonify(data_response), 200

@@ -29,12 +29,12 @@
               </select>
             </div>
             <div class="mb-4">
-              <label for="fechaNacimiento" class="block text-sm font-medium text-gray-700">Fecha de Nacimiento</label>
-              <input v-model="formData.alumno.fechaNacimiento" id="fechaNacimiento" type="date" class="mt-1 p-2 border border-gray-300 rounded-md w-full" required placeholder="Ingrese su fecha de nacimiento">
+              <label for="fecha_de_nacimiento" class="block text-sm font-medium text-gray-700">Fecha de Nacimiento</label>
+              <input v-model="formData.alumno.fecha_de_nacimiento" id="fecha_de_nacimiento" type="date" class="mt-1 p-2 border border-gray-300 rounded-md w-full" required placeholder="Ingrese su fecha de nacimiento">
             </div>
             <div class="mb-4">
-              <label for="paisNacimiento" class="block text-sm font-medium text-gray-700">País de nacimiento</label>
-              <select v-model="formData.alumno.paisNacimiento" id="paisNacimiento" class="mt-1 p-2 border border-gray-300 rounded-md w-full">
+              <label for="pais_de_nacimiento" class="block text-sm font-medium text-gray-700">País de nacimiento</label>
+              <select v-model="formData.alumno.pais_de_nacimiento" id="pais_de_nacimiento" class="mt-1 p-2 border border-gray-300 rounded-md w-full">
                 <option value="">Seleccione su país de nacimiento</option>
                 <option value="Argentina">Argentina</option>
                 <option value="Chile">Chile</option>
@@ -55,8 +55,8 @@
               </select>
             </div>
             <div class="mb-4">
-              <label for="domicilio" class="block text-sm font-medium text-gray-700">Domicilio del país de residencia</label>
-              <input v-model="formData.alumno.domicilio" id="domicilio" type="text" class="mt-1 p-2 border border-gray-300 rounded-md w-full" required placeholder="Ingrese su domicilio del país de residencia">
+              <label for="domicilio_pais_de_residencia" class="block text-sm font-medium text-gray-700">Domicilio del país de residencia</label>
+              <input v-model="formData.alumno.domicilio_pais_de_residencia" id="domicilio_pais_de_residencia" type="text" class="mt-1 p-2 border border-gray-300 rounded-md w-full" required placeholder="Ingrese su domicilio del país de residencia">
             </div>
             <div class="mb-4">
               <label for="nacionalidad" class="block text-sm font-medium text-gray-700">Nacionalidad</label>
@@ -86,11 +86,11 @@
             <div>
               <div class="mb-4">
                 <label for="cedulaIdentidad" class="block text-sm font-medium text-gray-700">Cédula de identidad</label>
-                <input v-model="formData.alumno.cedulaIdentidad" id="cedulaIdentidad" type="text" class="mt-1 p-2 border border-gray-300 rounded-md w-full" placeholder="Ingrese su número de cédula de identidad">
+                <input v-model="formData.cedula_de_identidad.numero" id="cedulaIdentidad" type="text" class="mt-1 p-2 border border-gray-300 rounded-md w-full" placeholder="Ingrese su número de cédula de identidad">
               </div>
               <div class="mb-4">
                 <label for="paisEmisionCedulaIdentidad" class="block text-sm font-medium text-gray-700"> País de emisión de cédula de identidad</label>
-                <select v-model="formData.alumno.paisEmisionCedulaIdentidad" id="paisEmisionCedulaIdentidad" class="mt-1 p-2 border border-gray-300 rounded-md w-full">
+                <select v-model="formData.cedula_de_identidad.pais" id="paisEmisionCedulaIdentidad" class="mt-1 p-2 border border-gray-300 rounded-md w-full">
                   <option value="">Seleccione su país de emisión de cédula de identidad</option>
                   <option value="Argentina">Argentina</option>
                   <option value="Chile">Chile</option>
@@ -124,8 +124,8 @@
           <div>
             <h3 class="font-semibold text-lg mb-2">Datos Académicos</h3>
             <div class="mb-4">
-              <label for="universidad" class="block text-sm font-medium text-gray-700">Universidad de Origen</label>
-              <input v-model="formData.institucion.universidad" id="universidad" type="text" class="mt-1 p-2 border border-gray-300 rounded-md w-full" required placeholder="Ingrese su universidad de origen">
+              <label for="universidad_origen" class="block text-sm font-medium text-gray-700">Universidad de Origen</label>
+              <input v-model="formData.postulacion.universidad_origen" id="universidad_origen" type="text" class="mt-1 p-2 border border-gray-300 rounded-md w-full" required placeholder="Ingrese su universidad de origen">
             </div>
             <div class="mb-4">
               <p class="block text-sm font-medium text-gray-700">Nivel de estudio</p>
@@ -139,24 +139,25 @@
               <input v-on:change="onFileChange($event, 'planTrabajo')" id="planTrabajo" type="file" class="mt-1 p-2 border border-gray-300 rounded-md w-full">
             </div>
             <div class="mb-4">
-              <label for="consuladoVisacion" class="block text-sm font-medium text-gray-700">Consulado de visación</label>
-              <input v-model="formData.institucion.consuladoVisacion" id="consuladoVisacion" type="text" class="mt-1 p-2 border border-gray-300 rounded-md w-full" required placeholder="Ingrese su consulado de visación">
+              <label for="consulado_visacion" class="block text-sm font-medium text-gray-700">Consulado de visación</label>
+              <input v-model="formData.postulacion.consulado_visacion" id="consulado_visacion" type="text" class="mt-1 p-2 border border-gray-300 rounded-md w-full" required placeholder="Ingrese su consulado de visación">
             </div>
             <div class="mb-4">
               <p class="block text-sm font-medium text-gray-700">Desea postularse por</p>
-              <input v-model="formData.institucion.convenioPrograma" id="convenio" name="convenioPrograma" type="radio" class="" required value="convenio">
-              <label for="convenio" class="ml-1 text-sm font-normal text-gray-700">Convenio universitario</label>
+              <input v-model="formData.institucion.convenioPrograma" id="convenioUniversitario" name="convenioPrograma" type="radio" class="" required value="convenio">
+              <label for="convenioUniversitario" class="ml-1 text-sm font-normal text-gray-700">Convenio universitario</label>
               <input v-model="formData.institucion.convenioPrograma" id="programa" name="convenioPrograma" type="radio" class="" required value="programa">
               <label for="programa" class="ml-1 text-sm font-normal text-gray-700">Programa estudiantil</label>
               <p class="mt-1 text-xs font-normal text-gray-700">Puede ver los Convenios que posee la Universidda Nacional de La Plata visitando el siguiente enlace: <a href=""></a></p>
             </div>
             <div class="mb-4">
-              <label for="convenioUniversitario" class="block text-sm font-medium text-gray-700">Convenio Universitario</label>
-              <input v-model="formData.institucion.convenioUniversitario" id="convenioUniversitario" type="text" class="mt-1 p-2 border border-gray-300 rounded-md w-full" placeholder="Ingrese su convenio universitario">
+              <label for="convenio" class="block text-sm font-medium text-gray-700">Convenio Universitario</label>
+              <input v-model="formData.postulacion.convenio" id="convenio" type="text" class="mt-1 p-2 border border-gray-300 rounded-md w-full" placeholder="Ingrese su convenio universitario">
             </div>
             <div class="mb-4">
-              <label for="programaEstudiantil" class="block text-sm font-medium text-gray-700">Programa estudiantil</label>
-              <select v-model="formData.institucion.programaEstudiantil" id="programaEstudiantil" class="mt-1 p-2 border border-gray-300 rounded-md w-full">
+              <label for="nombre_programa" class="block text-sm font-medium text-gray-700">Programa estudiantil</label>
+              <select v-model="formData.programa.nombre" id="nombre_programa" class="mt-1 p-2 border border-gray-300 rounded-md w-full">
+                <option value="">Seleccione su programa</option>
                 <option value="programa1">Programa 1</option>
                 <option value="programa2">Programa 2</option>
               </select>
@@ -169,27 +170,27 @@
             <h3 class="font-semibold text-lg mb-2">Datos de Tutores</h3>
             <div class="mb-4">
               <label for="apellidoTutorInstitucional" class="block text-sm font-medium text-gray-700">Apellido de tutor institucional</label>
-              <input v-model="formData.tutorInstitucional.apellidoTutorInstitucional" id="apellidoTutorInstitucional" type="text" class="mt-1 p-2 border border-gray-300 rounded-md w-full" required placeholder="Ingrese el apellido del tutor institucional">
+              <input v-model="formData.tutorInstitucional.apellido" id="apellidoTutorInstitucional" type="text" class="mt-1 p-2 border border-gray-300 rounded-md w-full" required placeholder="Ingrese el apellido del tutor institucional">
             </div>
             <div class="mb-4">
               <label for="nombreTutorInstitucional" class="block text-sm font-medium text-gray-700">Nombre de tutor institucional</label>
-              <input v-model="formData.tutorInstitucional.nombreTutorInstitucional" id="nombreTutorInstitucional" type="text" class="mt-1 p-2 border border-gray-300 rounded-md w-full" required placeholder="Ingrese el nombre del tutor institucional">
+              <input v-model="formData.tutorInstitucional.nombre" id="nombreTutorInstitucional" type="text" class="mt-1 p-2 border border-gray-300 rounded-md w-full" required placeholder="Ingrese el nombre del tutor institucional">
             </div>
             <div class="mb-4">
               <label for="emailTutorInstitucional" class="block text-sm font-medium text-gray-700">Email de tutor institucional</label>
-              <input v-model="formData.tutorInstitucional.emailTutorInstitucional" id="emailTutoInstitucional" type="email" class="mt-1 p-2 border border-gray-300 rounded-md w-full" required placeholder="Ingrese el email del tutor institucional">
+              <input v-model="formData.tutorInstitucional.email" id="emailTutoInstitucional" type="email" class="mt-1 p-2 border border-gray-300 rounded-md w-full" required placeholder="Ingrese el email del tutor institucional">
             </div>
             <div class="mb-4">
               <label for="apellidoTutorAcademico" class="block text-sm font-medium text-gray-700">Apellido de tutor académico</label>
-              <input v-model="formData.tutorAcademico.apellidoTutorAcademico" id="apellidoTutorAcademico" type="text" class="mt-1 p-2 border border-gray-300 rounded-md w-full" required placeholder="Ingrese el apellido del tutor académico">
+              <input v-model="formData.tutorAcademico.apellido" id="apellidoTutorAcademico" type="text" class="mt-1 p-2 border border-gray-300 rounded-md w-full" required placeholder="Ingrese el apellido del tutor académico">
             </div>
             <div>
               <label for="nombreTutorAcademico" class="block text-sm font-medium text-gray-700">Nombre de tutor académico</label>
-              <input v-model="formData.tutorAcademico.nombreTutorAcademico" id="nombreTutorAcademico" type="text" class="mt-1 p-2 border border-gray-300 rounded-md w-full" required placeholder="Ingrese el apellido del tutor académico">
+              <input v-model="formData.tutorAcademico.nombre" id="nombreTutorAcademico" type="text" class="mt-1 p-2 border border-gray-300 rounded-md w-full" required placeholder="Ingrese el apellido del tutor académico">
             </div>
             <div class="mb-4">
               <label for="emailTutorAcademico" class="block text-sm font-medium text-gray-700">Email de tutor académico</label>
-              <input v-model="formData.tutorAcademico.emailTutorAcademico" id="emailTutorAcademico" type="email" class="mt-1 p-2 border border-gray-300 rounded-md w-full" required placeholder="Ingrese el email del tutor académico">
+              <input v-model="formData.tutorAcademico.email" id="emailTutorAcademico" type="email" class="mt-1 p-2 border border-gray-300 rounded-md w-full" required placeholder="Ingrese el email del tutor académico">
             </div>
           </div>
         </div>
@@ -210,41 +211,56 @@
             apellido: "",
             nombre: "",
             email: "",
+            domicilio_domicilio_pais_residencia: "",
+            fecha_de_nacimiento: "",
+            
+            pais_de_nacimiento: "",
             genero: "",
-            fechaNacimiento: "",
-            paisNacimiento: "",
             pasaporte: "",
             paisEmisionPasaporte: "",
             fotoPasaporte: "",
-            cedulaIdentidad: null,
-            paisEmisionCedulaIdentidad: "",
-            fotoCedulaIdentidad: null,
             paisResidencia: "",
-            domicilio: "",
             nacionalidad: "",
             estadoCivil: "",
             certificadoB1: null,
           },
+          postulacion: {
+            de_posgrado: false,
+            universidad_origen: "",
+            consulado_visacion: "",
+            convenio: "",
+          },
+          programa: {
+            nombre: "",
+          },
           institucion: {
-            universidad: "",
             nivelEstudio: "",
             planTrabajo: null,
-            consuladoVisacion: "",
             convenioPrograma: "",
-            convenioUniversitario: "",
-            programaEstudiantil: "",
             cartaRecomendacion: "",
           },
           tutorInstitucional: {
-            apellidoTutorInstitucional: "",
-            nombreTutorInstitucional: "",
-            emailTutorInstitucional: "",
+            nombre: "",
+            apellido: "",
+            email: "",
+            es_institucional: true,
           },
           tutorAcademico: {
-            apellidoTutorAcademico: "",
-            nombreTutorAcademico: "",
-            emailTutorAcademico: "",
+            nombre: "",
+            apellido: "",
+            email: "",
+            es_institucional: false,
           },
+          cedula_de_identidad: {
+            numero: "",
+            pais_emision: "",
+            foto: null,
+          },
+          pasaporte: {
+            numero: "",
+            pais_emision: "",
+            foto: null,
+          }
         },
       };
     },
@@ -256,10 +272,10 @@
         const file = event.target.files[0];
         switch(key){
           case 'fotoPasaporte':
-            this.formData.alumno.fotoPasaporte = file;
+            this.formData.pasaporte.fotoPasaporte = file;
             break;
           case 'fotoCedulaIdentidad':
-            this.formData.alumno.fotoCedulaIdentidad = file;
+            this.formData.cedula_de_identidad.foto = file;
             break;
           case 'certificadoB1':
             this.formData.alumno.certificadoB1 = file;
