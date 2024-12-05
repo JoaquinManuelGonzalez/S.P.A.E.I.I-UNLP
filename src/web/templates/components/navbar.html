@@ -1,0 +1,35 @@
+<nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{{ url_for('home') }}">
+            <img src="/static/images/logo_cedica.jpg" alt="Logo de CEDICA" class="img-fluid" width="100">
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarNavDropdown"
+                aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav text-center mx-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/facultades">Facultades</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav text-center">
+                    <li class="nav-item dropdown py-2 py-lg-0">
+                        <ul class="dropdown-menu text-center text-lg-start mt-2 mt-lg-0">
+                            <li><a class="dropdown-item" href="#">Perfil</a></li>
+                            <li><a class="dropdown-item" href="#">Cerrar sesión</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-outline-secondary my-2 my-lg-0 me-lg-3"
+                           href="#">Iniciar sesión</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-outline-secondary my-2 my-lg-0" href="#">Registrarse</a>
+                    </li>
+            </ul>
+        </div>
+    </div>
+</nav>

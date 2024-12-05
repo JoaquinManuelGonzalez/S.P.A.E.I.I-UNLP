@@ -1,0 +1,65 @@
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {%- set icono = {'info': "bi-info-circle-fill",
+            'success': "bi-check-circle-fill",
+            'warning': "bi-exclamation-triangle-fill",
+            "error": "bi-exclamation-triangle-fill"} -%}
+        {%- set variante = {'info': "alert-primary",
+            'success': "alert-success",
+            'warning': "alert-warning",
+            "error": "alert-danger"} -%}
+        {% for category, message in messages %}
+            <div class="alert {{ variante[category] }} d-flex align-items-center alert-dismissible fade show"
+                 role="alert">
+                <i class="bi {{ icono[category] }}"></i>
+                <span class="ms-2">{{ message }}</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+            </div>
+        {% endfor %}
+        <script>
+            const alertList = document.querySelectorAll('.alert');
+            const alerts = [...alertList].map(element => new bootstrap.Alert(element));
+            setTimeout(() => {
+                alerts.forEach(a => {
+                    a.close();
+                });
+            }, 5 * 1_000);
+        </script>
+    {% endif %}
+
+    <script>
+        function crearAlertaFlash(tipo, icono, mensaje) {
+            const flash_container = document.getElementById("flash-messages");
+            const alert_wrapper = document.createElement('div');
+            alert_wrapper.classList.add("alert", `alert-${tipo}`, "d-flex", "align-items-center", "alert-dismissible", "fade", "show");
+            alert_wrapper.role = "alert";
+            alert_wrapper.innerHTML = [
+                `   <i class="bi ${icono}"></i>`,
+                `   <span class="ms-2">${mensaje}</span>`,
+                `   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>`,
+            ].join('');
+            flash_container.append(alert_wrapper);
+            const alert = new bootstrap.Alert(alert_wrapper);
+            setTimeout(() => {
+                alert.close();
+            }, 5 * 1_000);
+            return alert_wrapper;
+        }
+
+        function crearAlertaExito(mensaje) {
+            return crearAlertaFlash("success", "bi-check-circle-fill", mensaje);
+        }
+
+        function crearAlertaInfo(mensaje) {
+            return crearAlertaFlash("primary", "bi-info-circle-fill", mensaje);
+        }
+
+        function crearAlertaWarning(mensaje) {
+            return crearAlertaFlash("warning", "bi-exclamation-triangle-fill", mensaje);
+        }
+
+        function crearAlertaError(mensaje) {
+            return crearAlertaFlash("danger", "bi-exclamation-triangle-fill", mensaje);
+        }
+    </script>
+{% endwith %}

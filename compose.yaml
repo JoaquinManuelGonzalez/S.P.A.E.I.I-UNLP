@@ -58,7 +58,7 @@ services:
       MYSQL_USER: 'admin'             # Username
       MYSQL_PASSWORD: $DB_PASSWORD       # Password
     ports:
-      - "3306:3306"    # Map MySQL port
+      - "2306:3306"    # Map MySQL port
     
 
   # PhpMyAdmin for Database Management
