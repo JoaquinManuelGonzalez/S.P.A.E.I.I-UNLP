@@ -1,0 +1,96 @@
+<div id="app-modal" class="modal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="app-modal-title">Modal title</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="app-modal-body"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="app-modal-cancel-btn"></button>
+                <button type="button" class="btn btn-primary" id="app-modal-accept-btn"></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const modal_el = document.getElementById("app-modal");
+    const modal_title = document.getElementById("app-modal-title");
+    const modal_body = document.getElementById("app-modal-body");
+    const modal_cancel_btn = document.getElementById("app-modal-cancel-btn");
+    const modal_accept_btn = document.getElementById("app-modal-accept-btn");
+
+    function openModal(options) {
+        if (!options) {
+            throw new Error("Se requiere opciones para el modal.");
+        }
+
+        if (!options.titulo) {
+            throw new Error("Se requiere un título para el modal.");
+        }
+        modal_title.innerHTML = options.titulo;
+
+        if (!options.mensaje) {
+            throw new Error("Se requiere un mensaje para el modal.");
+        }
+        modal_body.innerHTML = options.mensaje;
+
+        if (!options.cancel_label) {
+            options.cancel_label = "Cancelar";
+        }
+        modal_cancel_btn.innerText = options.cancel_label;
+
+        if (!options.accept_label) {
+            options.accept_label = "Aceptar";
+        }
+        modal_accept_btn.innerText = options.accept_label;
+
+        if (!options.modal_options) {
+            options.modal_options = {
+                backdrop: true,
+                focus: true,
+                keyboard: true
+            };
+        }
+        const modal = new bootstrap.Modal('#app-modal', options.modal_options);
+
+        const modal_cancel = () => {
+            modal.hide();
+            if (!!options.on_cancel) {
+                options.on_cancel();
+            }
+        };
+        modal_cancel_btn.addEventListener("click", modal_cancel);
+
+        const modal_accept = () => {
+            result = true;
+            modal.hide();
+            if (!!options.on_accept) {
+                options.on_accept();
+            }
+        };
+        modal_accept_btn.addEventListener("click", modal_accept);
+
+        const modal_shown = () => {
+            modal_el.removeEventListener('shown.bs.modal', modal_shown);
+            if (!!options.on_shown) {
+                options.on_shown();
+            }
+        };
+        modal_el.addEventListener('shown.bs.modal', modal_shown);
+
+        let result = false;
+        const modal_hidden = () => {
+            modal_el.removeEventListener('hidden.bs.modal', modal_hidden);
+            modal_cancel_btn.removeEventListener("click", modal_cancel);
+            modal_accept_btn.removeEventListener("click", modal_accept);
+            if (!!options.on_hidden) {
+                options.on_hidden(result);
+            }
+        };
+        modal_el.addEventListener('hidden.bs.modal', modal_hidden);
+
+        modal.show();
+    }
+</script>
