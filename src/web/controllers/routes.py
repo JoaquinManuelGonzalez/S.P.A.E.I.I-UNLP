@@ -1,5 +1,6 @@
 from .alumnos_controller import alumnos_bp
-from src.web.api.primer_formulario import bp as primer_formulario_bpfrom .usuario_controller import usuario_bp
+from src.web.api.primer_formulario import bp as primer_formulario_bp
+from .usuario_controller import usuario_bp
 
 
 def registrar_rutas(app):

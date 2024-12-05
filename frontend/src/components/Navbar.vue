@@ -33,7 +33,7 @@
                                 <a @click="$i18n.locale = 'pt'" href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">{{ $t("navBar.itemIdiomas.opcionPortugues") }}</a>
                             </div>
                         </div>
-                        <RouterLink to="/postularme" class="text-gray-600 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">{{ $t("navBar.itemPostularme") }}</RouterLink>
+                        <RouterLink to="/primer-formulario" class="text-gray-600 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">{{ $t("navBar.itemPostularme") }}</RouterLink>
                         <RouterLink to="/iniciar-sesion" class="text-gray-600 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">{{ $t("navBar.itemIniciarSesion") }}</RouterLink>
                     </div>
                 </div>
@@ -53,7 +53,7 @@
                         <DisclosureButton @click="$i18n.locale = 'pt'" as="a" href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">{{ $t("navBar.itemIdiomas.opcionPortugues") }}</DisclosureButton>
                     </div>
                 </div>
-                <DisclosureButton as="a" href="/postularme" class="block text-gray-600 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-base font-medium">{{ $t("navBar.itemPostularme") }}</DisclosureButton>
+                <DisclosureButton as="a" href="/primer-formulario" class="block text-gray-600 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-base font-medium">{{ $t("navBar.itemPostularme") }}</DisclosureButton>
                 <DisclosureButton as="a" href="/iniciar-sesion" class="block text-gray-600 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-base font-medium">{{ $t("navBar.itemIniciarSesion") }}</DisclosureButton>
             </div>
         </DisclosurePanel>
