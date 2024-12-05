@@ -19,9 +19,7 @@ class InformacionAlumnoEntrante(db.Model):
     id_pais_nacionalidad = db.Column(db.Integer, db.ForeignKey('pais.id'), nullable=False)
     id_pasaporte = db.Column(db.Integer, db.ForeignKey('pasaporte.id'), nullable=True)
     id_cedula_de_identidad = db.Column(db.Integer, db.ForeignKey('cedula_de_identidad.id'), nullable=True)
-    #id_archivos
-    #id_postulaciones
-    #id_usuario
+    id_usuario = db.Column(db.Integer, db.ForeignKey('usuario.id'), nullable=False)
 
     creacion = db.Column(db.DateTime, default=datetime.now)
     actualizacion = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
@@ -33,6 +31,9 @@ class InformacionAlumnoEntrante(db.Model):
     pais_nacionalidad = db.relationship('Pais', foreign_keys=[id_pais_nacionalidad], back_populates='nacionalidades')
     pasaporte = db.relationship('Pasaporte', back_populates='informacion_alumno_entrante')
     cedula_de_identidad = db.relationship('CedulaDeIdentidad', back_populates='informacion_alumno_entrante')
+    usuario = db.relationship('Usuario', back_populates='informacion_alumno_entrante')
+    archivos = db.relationship('Archivo', secondary='informacion_alumno_entrante')
+    postulaciones = db.relationship('Postulacion', back_populates='informacion_alumno_entrante')
 
     def __repr__(self):
         return f'<InformacionAlumnoEntrante id-{self.id}, nombre-{self.nombre}, apellido-{self.apellido}>'
