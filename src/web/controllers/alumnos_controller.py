@@ -22,7 +22,7 @@ def listar_alumnos():
     orden = request.args.get("orden", "asc")
     por_pagina = 5
 
-    alumnos = alumno_service.filtar_alumnos(
+    alumnos = alumno_service.filtrar_alumnos(
         nombre,
         apellido,
         email,
