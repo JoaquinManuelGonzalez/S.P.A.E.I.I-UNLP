@@ -1,5 +1,5 @@
 from src.core.models.usuario import Usuario
-from core.bcrypt import bcrypt
+from src.core.bcrypt import bcrypt
 
 def find_user_by_email(email):
     """

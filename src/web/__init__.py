@@ -5,6 +5,7 @@ from src.core.bcrypt import bcrypt
 from src.core.config import config
 from flask_wtf.csrf import CSRFProtect
 from flask_session import Session
+from datetime import timedelta
 from src.web.seeds import seed_countries, seed_generos, seed_estados_civiles, seeds_usuarios
 from src.web.controllers.routes import registrar_rutas
 from src.web.handlers.auth import is_authenticated, get_id_sesion, get_rol_sesion
@@ -23,6 +24,10 @@ def create_app(env="development", static_folder="../../static", template_folders
     """
     app = Flask(__name__, static_folder=static_folder)
     app.config.from_object(config[env])
+    app.config['SESSION_COOKIE_SECURE'] = True
+    app.config['SESSION_COOKIE_HTTPONLY'] = True
+    app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+    app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)
     database.init_app(app)
     csrf = CSRFProtect(app)
     session.init_app(app)

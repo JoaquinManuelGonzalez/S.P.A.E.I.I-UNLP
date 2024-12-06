@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, session
 from src.web.forms.auth_form import Auth_Form
-from src.core import auth
+from src.core.models import auth
 import os, binascii, jwt
 
 
@@ -20,7 +20,7 @@ def login():
 @bp.post("/authenticate")
 def authenticate():
     """
-    Autentica al usuario verificando sus credenciales y estado de bloqueo.
+    Autentica al usuario verificando sus credenciales
 
     Retorna:
         redirect/render_template: 
@@ -28,17 +28,14 @@ def authenticate():
             - Renderiza el layout principal si la autenticación es exitosa.
     """
     params = request.form
-    user = auth.check_user(params["email"], params["password"])
+    user = auth.check_user(params["email"], params["contraseña"])
     if not user:
         flash("Usuario o contraseña incorrecta", "danger")
         return redirect(url_for("auth.login"))
-    user = auth.check_block(user)
-    if not user:
-        flash("Tu usuario se encuentra bloqueado", "danger")
-        return redirect(url_for("auth.login"))
     session["user"] = user.email
+    session["id"] = user.id
     flash("¡Se inició sesión correctamente!", "success")
-    return render_template("layout.html")
+    return redirect(url_for("home"))
 
 @bp.get("/logout")
 def logout():
@@ -50,6 +47,7 @@ def logout():
     """
     if session.get("user"):
         del session["user"]
+        del session["id"]
         session.clear()
         flash("La sesión se cerró correctamente", "info")
     else:
