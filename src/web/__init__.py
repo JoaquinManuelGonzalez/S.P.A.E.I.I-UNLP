@@ -31,20 +31,7 @@ def create_app(env="development", static_folder="../../static", template_folders
     mail = Mail(app)
     
     #session.init_app(app)
-
-    @app.route("/send_email")
-    def send_email():
-        try:
-            # Crear el mensaje
-            msg = Message("Prueba de correo desde Flask", recipients=["joaquinmgonzalez16@outlook.com"])
-            msg.body = "Este es un correo de prueba desde Flask utilizando Gmail."
-
-            # Enviar el correo
-            mail.send(msg)
-            return "Correo enviado con éxito"
-        except Exception as e:
-            return f"Hubo un error al enviar el correo: {str(e)}"
-
+    
     @app.route("/")
     def home():
         """
