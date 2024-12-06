@@ -34,7 +34,7 @@
                             </div>
                         </div>
                         <RouterLink to="/primer-formulario" class="text-gray-600 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">{{ $t("navBar.itemPostularme") }}</RouterLink>
-                        <a href="http://localhost:5000/auth" class="text-gray-600 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">{{ $t("navBar.itemIniciarSesion") }}</a>
+                        <a :href="authUrl" class="text-gray-600 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">{{ $t("navBar.itemIniciarSesion") }}</a>
                     </div>
                 </div>
             </div>
@@ -54,21 +54,29 @@
                     </div>
                 </div>
                 <DisclosureButton as="a" href="/primer-formulario" class="block text-gray-600 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-base font-medium">{{ $t("navBar.itemPostularme") }}</DisclosureButton>
-                <DisclosureButton as="a" href="http://localhost:5000/auth" class="block text-gray-600 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-base font-medium">{{ $t("navBar.itemIniciarSesion") }}</DisclosureButton>
+                <DisclosureButton as="a" :href="authUrl" class="block text-gray-600 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-base font-medium">{{ $t("navBar.itemIniciarSesion") }}</DisclosureButton>
             </div>
         </DisclosurePanel>
     </Disclosure>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue'
-import { Bars3Icon, XMarkIcon } from '@heroicons/vue/24/outline'
+import { ref } from 'vue';
+import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
+import { Bars3Icon, XMarkIcon } from '@heroicons/vue/24/outline';
 import DropDownArrow from './icons/DropDownArrow.vue';
 
-const dropdownOpen = ref(false)
+// Variable reactiva para manejar el estado del dropdown
+const dropdownOpen = ref(false);
 
 function toggleDropdown() {
-    dropdownOpen.value = !dropdownOpen.value
+  dropdownOpen.value = !dropdownOpen.value;
 }
+
+// Acceder a la variable de entorno para la URL base
+const apiBaseUrl = import.meta.env.VITE_APP_BASE_URL; // Valor por defecto para desarrollo
+
+// Construir el enlace dinámico
+const authUrl = `${apiBaseUrl}/auth`;
 </script>
+
