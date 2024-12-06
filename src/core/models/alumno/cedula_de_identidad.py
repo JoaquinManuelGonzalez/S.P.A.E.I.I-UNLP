@@ -15,7 +15,7 @@ class CedulaDeIdentidad(db.Model):
 
     pais = db.relationship('Pais', back_populates='cedulas_de_identidad')
     informacion_alumno_entrante = db.relationship('InformacionAlumnoEntrante', back_populates='cedula_de_identidad')
-    archivo = db.relationship('Archivo', back_populates='cedula_identidad')
+    archivo = db.relationship('Archivo', back_populates='cedula_identidad', foreign_keys='Archivo.id_cedula_de_identidad')
 
     def __repr__(self):
         return f'<CedulaDeIdentidad id-{self.id}, numero-{self.numero}, pais-{self.pais}'

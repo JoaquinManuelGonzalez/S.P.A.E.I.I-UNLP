@@ -31,7 +31,7 @@ class InformacionAlumnoEntrante(db.Model):
     pasaporte = db.relationship('Pasaporte', back_populates='informacion_alumno_entrante')
     cedula_de_identidad = db.relationship('CedulaDeIdentidad', back_populates='informacion_alumno_entrante')
     usuario = db.relationship('Usuario', back_populates='informacion_alumno_entrante')
-    archivos = db.relationship('Archivo', back_populates='informacion_alumno_entrante')
+    archivos = db.relationship('Archivo', back_populates='informacion_alumno_entrante', foreign_keys='Archivo.id_informacion_alumno_entrante')
     postulaciones = db.relationship('Postulacion', back_populates='informacion_alumno_entrante')
 
     def __repr__(self):

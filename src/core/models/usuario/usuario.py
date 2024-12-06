@@ -14,7 +14,7 @@ class Usuario(db.Model):
     creacion = db.Column(db.DateTime, default=datetime.now)
     actualizacion = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
     id_alumno = db.Column(db.Integer, db.ForeignKey('informacion_alumno_entrante.id'), nullable=True)
-    informacion_alumno_entrante = db.relationship('InformacionAlumnoEntrante', back_populates='usuario', cascade='all, delete-orphan')
+    informacion_alumno_entrante = db.relationship('InformacionAlumnoEntrante', back_populates='usuario')
 
     def __repr__(self):
         return f"<Usuario {self.id} {self.nombre} {self.apellido} {self.email} {self.rol.nombre}>"

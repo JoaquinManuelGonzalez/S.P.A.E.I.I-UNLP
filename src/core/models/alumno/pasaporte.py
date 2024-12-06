@@ -15,7 +15,7 @@ class Pasaporte(db.Model):
 
     pais = db.relationship('Pais', back_populates='pasaportes')
     informacion_alumno_entrante = db.relationship('InformacionAlumnoEntrante', back_populates='pasaporte')
-    archivo = db.relationship('Archivo', back_populates='pasaporte')
+    archivo = db.relationship('Archivo', back_populates='pasaporte', foreign_keys='Archivo.id_pasaporte')
 
     def __repr__(self):
         return f'<Pasaporte id-{self.id}, numero-{self.numero}, pais-{self.pais}'

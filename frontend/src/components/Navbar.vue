@@ -34,7 +34,7 @@
                             </div>
                         </div>
                         <RouterLink to="/primer-formulario" class="text-gray-600 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">{{ $t("navBar.itemPostularme") }}</RouterLink>
-                        <RouterLink to="/iniciar-sesion" class="text-gray-600 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">{{ $t("navBar.itemIniciarSesion") }}</RouterLink>
+                        <a href="http://localhost:5000/auth" class="text-gray-600 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">{{ $t("navBar.itemIniciarSesion") }}</a>
                     </div>
                 </div>
             </div>
@@ -54,7 +54,7 @@
                     </div>
                 </div>
                 <DisclosureButton as="a" href="/primer-formulario" class="block text-gray-600 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-base font-medium">{{ $t("navBar.itemPostularme") }}</DisclosureButton>
-                <DisclosureButton as="a" href="/iniciar-sesion" class="block text-gray-600 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-base font-medium">{{ $t("navBar.itemIniciarSesion") }}</DisclosureButton>
+                <DisclosureButton as="a" href="http://localhost:5000/auth" class="block text-gray-600 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-base font-medium">{{ $t("navBar.itemIniciarSesion") }}</DisclosureButton>
             </div>
         </DisclosurePanel>
     </Disclosure>
