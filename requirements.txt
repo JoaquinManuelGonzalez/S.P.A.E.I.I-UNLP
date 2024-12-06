@@ -14,3 +14,4 @@ bcrypt==4.2.0
 requests>=2.31.0
 marshmallow==3.23.1
 flask-jwt-extended
+Flask-Mail

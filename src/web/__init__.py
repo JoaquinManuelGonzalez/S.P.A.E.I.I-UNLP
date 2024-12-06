@@ -7,6 +7,7 @@ from flask_wtf.csrf import CSRFProtect
 from src.web.seeds import seed_countries, seed_generos, seed_estados_civiles, seeds_usuarios
 from src.web.controllers.routes import registrar_rutas
 from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, jwt_required
+from flask_mail import Mail, Message
 
 
 #session = Session()
@@ -27,11 +28,10 @@ def create_app(env="development", static_folder="../../static", template_folders
     csrf = CSRFProtect(app)
     app = registrar_rutas(app)
     jwt = JWTManager(app)
+    mail = Mail(app)
     
     #session.init_app(app)
-
-
-
+    
     @app.route("/")
     def home():
         """
