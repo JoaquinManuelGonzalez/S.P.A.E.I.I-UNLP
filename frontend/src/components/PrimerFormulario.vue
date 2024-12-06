@@ -65,11 +65,11 @@
             <div>
               <div class="mb-4">
                 <label for="pasaporte" class="block text-sm font-medium text-gray-700">Pasaporte</label>
-                <input v-model="formData.alumno.pasaporte" id="pasaporte" type="text" class="mt-1 p-2 border border-gray-300 rounded-md w-full" placeholder="Ingrese su número de pasaporte">
+                <input v-model="formData.pasaporte.numero" id="pasaporte" type="text" class="mt-1 p-2 border border-gray-300 rounded-md w-full" placeholder="Ingrese su número de pasaporte">
               </div>
               <div class="mb-4">
                 <label for="paisEmisionPasaporte" class="block text-sm font-medium text-gray-700"> País de emisión de pasaporte</label>
-                <select v-model="formData.alumno.paisEmisionPasaporte" id="paisEmisionPasaporte" class="mt-1 p-2 border border-gray-300 rounded-md w-full">
+                <select v-model="formData.pasaporte.pais_emision" id="paisEmisionPasaporte" class="mt-1 p-2 border border-gray-300 rounded-md w-full">
                   <option value="">Seleccione su país de emisión de pasaporte</option>
                   <option value="Argentina">Argentina</option>
                   <option value="Chile">Chile</option>
@@ -90,7 +90,7 @@
               </div>
               <div class="mb-4">
                 <label for="paisEmisionCedulaIdentidad" class="block text-sm font-medium text-gray-700"> País de emisión de cédula de identidad</label>
-                <select v-model="formData.cedula_de_identidad.pais" id="paisEmisionCedulaIdentidad" class="mt-1 p-2 border border-gray-300 rounded-md w-full">
+                <select v-model="formData.cedula_de_identidad.pais_emision" id="paisEmisionCedulaIdentidad" class="mt-1 p-2 border border-gray-300 rounded-md w-full">
                   <option value="">Seleccione su país de emisión de cédula de identidad</option>
                   <option value="Argentina">Argentina</option>
                   <option value="Chile">Chile</option>
@@ -214,11 +214,17 @@
             domicilio_domicilio_pais_residencia: "",
             fecha_de_nacimiento: "",
             
+
+
+            id_genero: "",
+            id_estado_civil: "",
+            id_pais_de_nacimiento: "",
+            id_pais_de_residencia: "",
+            id_pais_nacionalidad: "",
+
+
             pais_de_nacimiento: "",
             genero: "",
-            pasaporte: "",
-            paisEmisionPasaporte: "",
-            fotoPasaporte: "",
             paisResidencia: "",
             nacionalidad: "",
             estadoCivil: "",
@@ -272,7 +278,7 @@
         const file = event.target.files[0];
         switch(key){
           case 'fotoPasaporte':
-            this.formData.pasaporte.fotoPasaporte = file;
+            this.formData.pasaporte.foto = file;
             break;
           case 'fotoCedulaIdentidad':
             this.formData.cedula_de_identidad.foto = file;
