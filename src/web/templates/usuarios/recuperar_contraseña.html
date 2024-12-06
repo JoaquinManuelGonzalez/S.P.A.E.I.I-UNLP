@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+{% block title %}Recuperar Contraseña{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-center align-items-center" style="height: 600px;">
+    <div class="card shadow p-4" style="width: 30rem;">
+        <div class="card-body">
+            <h5 class="card-title text-center mb-4">Recuperar Contraseña</h5>
+            <form action="{{ url_for('usuarios.procesar_recuperacion') }}" method="POST">
+                {{ formulario.csrf_token }}
+                <div class="mb-3">
+                    {{ formulario.email.label }}{{ formulario.email(class="form-control") }}
+                    {% if formulario.errors %}
+                        <div class="text-danger">{{ formulario.errors[0] }}</div>
+                    {% endif %}
+                </div>
+                <button type="submit" class="btn btn-primary">Recuperar Contraseña</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

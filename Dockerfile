@@ -45,6 +45,11 @@ RUN --mount=type=cache,target=/root/.cache/pip \
     --mount=type=bind,source=requirements.txt,target=requirements.txt \
     python -m pip install -r requirements.txt
 
+    # Crear carpeta de sesiones y asignar permisos.
+RUN mkdir -p /app/flask_session \
+&& chown -R appuser:appuser /app/flask_session \
+&& chmod -R 777 /app/flask_session
+
 # Switch to the non-privileged user to run the application.
 USER appuser
 

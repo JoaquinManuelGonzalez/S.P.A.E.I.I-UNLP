@@ -8,7 +8,7 @@ def fetch_countries():
 
     url = "https://restcountries.com/v3.1/all"
 
-    response = requests.get(url)
+    response = requests.get(url, stream=False, timeout=60)
 
     if response.status_code == 200:
         return response.json()
