@@ -6,7 +6,7 @@ from src.web.schemas import estado_civil_schema, genero_schema, pais_schema, pos
 
 
 
-bp = Blueprint("postulacion", __name__, url_prefix="/api/postulacion")
+bp = Blueprint("solicitud_postulacion", __name__, url_prefix="/api/postulacion")
 
 
 #@base.validation(schema=PostulacionForm, method="POST")

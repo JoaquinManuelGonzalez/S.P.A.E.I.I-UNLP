@@ -41,6 +41,8 @@ def reset():
     from src.core.models.facultad import Facultad
     from src.core.models.carrera import Carrera
     from src.core.models.asignatura import Asignatura
+    from src.core.models.postulacion import Postulacion
+    from src.core.models.alumno import InformacionAlumnoEntrante
     """
     Resetea la base de datos
     """
