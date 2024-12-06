@@ -1,4 +1,22 @@
 from src.core.models.usuario import Usuario
+from flask import abort, session, flash
+from functools import wraps
+
+def check_auth():
+    """
+    Decorador que verifica si un usuario está autenticado antes de ejecutar una función.
+    
+    Returns:
+        function: La función decorada con la verificación de autenticación.
+    """
+    def decorator(f):
+        @wraps(f)
+        def wrapper(*args, **kwargs):
+            if is_authenticated(session):
+                return abort(403)
+            return f(*args, **kwargs)
+        return wrapper
+    return decorator
 
 def is_authenticated(session):
     """
@@ -10,7 +28,7 @@ def is_authenticated(session):
     Returns:
         bool: True si el usuario está autenticado, False en caso contrario.
     """
-    return session.get("user_email") is not None
+    return session.get("user_id") is not None
 
 
 def get_rol_sesion(session):

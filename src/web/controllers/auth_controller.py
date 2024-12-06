@@ -1,12 +1,14 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, session
 from src.web.forms.auth_form import Auth_Form
 from src.core.models import auth
+from src.web.handlers.auth import check_auth
 import os, binascii, jwt
 
 
 bp = Blueprint("auth", __name__, url_prefix= "/auth")
 
 @bp.get("/")
+@check_auth()
 def login():
     """
     Renderiza la página de inicio de sesión con el formulario de autenticación.
@@ -18,6 +20,7 @@ def login():
     return render_template("auth/login.html", formulario=formulario)
 
 @bp.post("/authenticate")
+@check_auth()
 def authenticate():
     """
     Autentica al usuario verificando sus credenciales
@@ -52,8 +55,6 @@ def logout():
         del session["user_id"]
         session.clear()
         flash("La sesión se cerró correctamente", "info")
-    else:
-        flash("No hay sesión activa", "danger")
 
     return redirect(url_for("auth.login"))
 
