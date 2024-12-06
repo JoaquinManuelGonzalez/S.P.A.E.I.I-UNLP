@@ -10,6 +10,7 @@ from src.web.seeds import seed_countries, seed_generos, seed_estados_civiles, se
 from src.web.controllers.routes import registrar_rutas
 from src.web.handlers.auth import is_authenticated, get_id_sesion, get_rol_sesion
 from src.web.handlers.permisos import check_permiso
+from flask_mail import Mail
     
 session = Session()
 def create_app(env="development", static_folder="../../static", template_folders=""):
@@ -33,10 +34,9 @@ def create_app(env="development", static_folder="../../static", template_folders
     session.init_app(app)
     bcrypt.init_app(app)
     app = registrar_rutas(app)
+    mail = Mail(app)
     
-
-
-
+    
     @app.route("/")
     def home():
         """
