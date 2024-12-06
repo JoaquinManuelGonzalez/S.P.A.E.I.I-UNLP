@@ -1,0 +1,57 @@
+<!-- templates/alumnos/index.html -->
+{% extends 'layout.html' %}
+
+{% block title %}Portal para Alumnos Entrantes{% endblock %}
+
+{% block content %}
+  <div class="container py-5">
+    <h1 class="display-4 mb-4 text-center">Portal para Alumnos Entrantes</h1>
+    <hr class="mb-4">
+    <p class="lead text-muted">
+      Bienvenido al portal oficial para alumnos internacionales que desean aprender y progresar en nuestra universidad. 
+      En este portal podrás gestionar diversas actividades importantes como:
+    </p>
+
+    <!-- Cards para las actividades -->
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+      <div class="col">
+        <div class="card shadow-lg border-light h-100">
+          <img src="{{ url_for('static', filename='images/postulacion-image.png') }}" class="card-img-top" alt="Repostulación">
+          <div class="card-body">
+            <h5 class="card-title">Repostulación</h5>
+            <p class="card-text">Realiza la repostulación para los nuevos períodos de inscripción y asegúrate de estar al día con todos los trámites necesarios.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card shadow-lg border-light h-100">
+          <img src="{{ url_for('static', filename='images/asignaturas-image.png') }}" class="card-img-top" alt="Elección de Asignaturas">
+          <div class="card-body">
+            <h5 class="card-title">Elección de Asignaturas</h5>
+            <p class="card-text">Elige las asignaturas que te gustaría cursar en el próximo semestre. Consulta las opciones disponibles y selecciona según tus intereses.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card shadow-lg border-light h-100">
+          <img src="{{ url_for('static', filename='images/documentacion-image.png') }}" class="card-img-top" alt="Consulta de Documentación">
+          <div class="card-body">
+            <h5 class="card-title">Consulta de Documentación</h5>
+            <p class="card-text">Accede a toda la documentación relevante para tu postulación, incluyendo requisitos, plazos y procedimientos a seguir.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Leyenda debajo de las cards -->
+    <div class="text-center mt-5">
+      <p class="display-5 text-muted">
+        En La Universidad Nacional de La Plata siempre serás bienvenido
+      </p>
+      <img src="{{ url_for('static', filename='images/unlp-2.jpg') }}" 
+           alt="Alumnos Internacionales" 
+           class="img-fluid rounded shadow-lg mt-4" 
+           style="max-width: 90%; border: 3px solid #dee2e6; border-radius: 15px;">
+    </div>
+  </div>
+{% endblock %}

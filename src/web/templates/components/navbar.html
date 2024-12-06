@@ -1,35 +1,134 @@
-<nav class="navbar navbar-expand-lg">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="{{ url_for('home') }}">
-            <img src="/static/images/logo_cedica.jpg" alt="Logo de CEDICA" class="img-fluid" width="100">
+<nav class="navbar navbar-expand-lg bg-light shadow-sm">
+  <a class="navbar-brand" href="{{ url_for('home') }}">
+    <img src="{{ url_for('static', filename='images/logo-unlp.png') }}"
+         width="200"
+         height="70"
+         alt="Logo UNLP"
+         class="p-2 m-1" />
+  </a>
+  <button class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+      {% if is_authenticated(session) %}
+        {% if check_permiso(session, 'usuarios_listar') %}
+          <li class="nav-item active">
+            <a class="nav-link" href="{{ url_for('usuarios.listar') }}">Usuarios</a>
+          </li>
+        {% endif %}
+        <li class="nav-item active">
+          <a class="nav-link" href="/facultades">Facultades</a>
+        </li>
+        <li class="nav-item active">
+          <a class="nav-link" href="/facultades">Postulaciones</a>
+        </li>
+        <li class="nav-item active">
+          <a class="nav-link" href="/facultades">Repostulación</a>
+        </li>
+        <li class="nav-item active">
+          <a class="nav-link" href="/facultades">Elección de Asignaturas</a>
+        </li>
+        <li class="nav-item active">
+          <a class="nav-link" href="/facultades">Ver Documentación</a>
+        </li>
+        <li class="nav-item toggle-hidden" style="display: none;">
+          <a class="dropdown-item text-success" href="{{ url_for('usuarios.ver_detalle_usuario', id_usuario=get_id_sesion(session)) }}">
+            Ver perfil
+            {% include "icons/person-fill-gear.html" %}
+          </a>
+        </li>
+        <li class="nav-item toggle-hidden" style="display: none;">
+          <a class="nav-link text-danger" href="{{ url_for('auth.logout') }}">
+            Cerrar Sesión
+            {% include "icons/x-octagon-fill.html" %}
+          </a>
+        </li>
+        {% for link in links %}
+        <li class="nav-item">
+          <a class="nav-link" href="{{ link.url }}">{{ link.text }}</a>
+        </li>
+        {% endfor %}
+      </ul>
+      <span class="nav-item dropdown toggle-hidden show px-5">
+        <a class="nav-link dropdown-toggle"
+        href="#"
+        id="userDropdown"
+        role="button"
+        data-bs-toggle="dropdown"
+        aria-expanded="false">
+        {% include "icons/person-circle.html" %}
+        {{ session['user_name'] }}
+      </a>
+      <ul class="dropdown-menu dropdown-menu-end"
+      aria-labelledby="userDropdown"
+      style="min-width: 150px;">
+      <li>
+        <a class="dropdown-item text-success" href="{{ url_for('usuarios.ver_detalle_usuario', id_usuario=get_id_sesion(session)) }}">
+          Ver perfil
+          {% include "icons/person-fill-gear.html" %}
         </a>
-
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarNavDropdown"
-                aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNavDropdown">
-            <ul class="navbar-nav text-center mx-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="/facultades">Facultades</a>
-                </li>
-            </ul>
-            <ul class="navbar-nav text-center">
-                    <li class="nav-item dropdown py-2 py-lg-0">
-                        <ul class="dropdown-menu text-center text-lg-start mt-2 mt-lg-0">
-                            <li><a class="dropdown-item" href="#">Perfil</a></li>
-                            <li><a class="dropdown-item" href="#">Cerrar sesión</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item">
-                        <a class="btn btn-outline-secondary my-2 my-lg-0 me-lg-3"
-                           href="#">Iniciar sesión</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="btn btn-outline-secondary my-2 my-lg-0" href="#">Registrarse</a>
-                    </li>
-            </ul>
-        </div>
-    </div>
+      </li>
+      <li>
+        <a class="dropdown-item text-danger" href="{{ url_for('auth.logout') }}">
+          Cerrar Sesión
+          {% include "icons/x-octagon-fill.html" %}
+        </a>
+      </li>
+    </ul>
+  </span>
+  {% else %}
+  <li class="nav-item active">
+    <a class="nav-link" href="http://localhost:5173">Volver</a>
+  </li>
+  {% endif %}
+</div>
 </nav>
+
+<style>
+  .navbar {
+    background-color: #e2e6ea;  /* Gris un poco más oscuro */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);  /* Sombra suave */
+  }
+
+  .nav-link {
+    color: #333;  /* Color de texto oscuro */
+  }
+
+  .nav-link:hover {
+    border-bottom: 1px solid #000;  /* Efecto hover */
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var navbar = document.getElementById('navbarNav');
+    var toggleHiddenElements = document.querySelectorAll('.toggle-hidden');
+
+    function toggleHiddenDisplay() {
+      toggleHiddenElements.forEach(function (element) {
+        if (element.style.display === 'none') {
+          element.style.display = 'block';
+        } else {
+          element.style.display = 'none';
+        }
+      });
+    }
+
+    navbar.addEventListener('hidden.bs.collapse', function () {
+      console.log('Navbar has collapsed');
+      toggleHiddenDisplay();
+    });
+
+    navbar.addEventListener('show.bs.collapse', function () {
+      console.log('Navbar has expanded');
+      toggleHiddenDisplay();
+    });
+  });
+</script>

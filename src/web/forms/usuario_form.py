@@ -1,5 +1,5 @@
 from wtforms import StringField, PasswordField, SubmitField, SelectField, HiddenField
-from wtforms.validators import DataRequired, Length, ValidationError
+from wtforms.validators import DataRequired, Length, ValidationError, EqualTo
 from src.core.services import usuario_service
 from flask_wtf import FlaskForm
 from flask import session
@@ -12,6 +12,8 @@ class Usuario_Form(FlaskForm):
     apellido = StringField('Apellido', validators=[DataRequired(), Length(min=2, max=100)])
     email = StringField('Email', validators=[DataRequired()])
     contraseña = PasswordField('Contraseña', validators=[DataRequired(), Length(min=8, max=100)])
+    nueva_contraseña = PasswordField('Nueva Contraseña', validators=[Length(min=8, max=100), EqualTo('confirmar_contraseña', message='Las contraseñas no coinciden.')])
+    confirmar_contraseña = PasswordField('Confirmar Nueva Contraseña')
     id_rol = SelectField('Rol', choices=[], validators=[DataRequired()])
     id_usuario_editado = HiddenField('id_usuario_editado')
 
@@ -23,6 +25,17 @@ class Usuario_Form(FlaskForm):
 
 
     def validate_contraseña(form, field):
+        password = field.data
+        if (not re.search("[a-z]", password) or
+            not re.search("[A-Z]", password) or
+            not re.search("[0-9]", password) or
+            not re.search("[!@#$%^&*(),.?\":{}|<>]", password)):
+            raise ValidationError(
+                'La contraseña debe tener al menos una letra minúscula, una letra mayúscula, un número, '
+                'un carácter especial y un mínimo de 8 caracteres.'
+            )
+            
+    def validate_nueva_contraseña(form, field):
         password = field.data
         if (not re.search("[a-z]", password) or
             not re.search("[A-Z]", password) or

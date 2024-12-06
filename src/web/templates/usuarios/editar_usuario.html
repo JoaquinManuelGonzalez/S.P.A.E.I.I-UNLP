@@ -42,13 +42,35 @@
                 {% endif %}
             </div>
 
+            <div class="mb-3">
+                {{ formulario.nueva_contraseña.label }}{{ formulario.nueva_contraseña(class="form-control") }}
+                {% if formulario.errors %}
+                    {% for error in formulario.nueva_contraseña.errors %}
+                        <div class="text-danger">{{ formulario.errors[0] }}
+                            <span style="color: red;">{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            
+            <div class="mb-3">
+                {{ formulario.confirmar_contraseña.label }}{{ formulario.confirmar_contraseña(class="form-control") }}
+                {% if formulario.errors %}
+                    {% for error in formulario.confirmar_contraseña.errors %}
+                        <div class="text-danger">{{ formulario.errors[0] }}
+                            <span style="color: red;">{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
             <button type="submit" class="btn btn-primary">Guardar</button>
         </div>
     </form>
 </div>
 <script>
     function confirmarEliminacion() {
-        return confirm("¿Estás seguro de que deseas eliminar este usuario?");
+        return confirm("¿Estás seguro de que deseas editar este usuario?");
     }
 </script>
 {% endblock %}

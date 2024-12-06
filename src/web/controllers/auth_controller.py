@@ -32,8 +32,9 @@ def authenticate():
     if not user:
         flash("Usuario o contraseña incorrecta", "danger")
         return redirect(url_for("auth.login"))
-    session["user"] = user.email
-    session["id"] = user.id
+    session["user_email"] = user.email
+    session["user_name"] = user.nombre
+    session["user_id"] = user.id
     flash("¡Se inició sesión correctamente!", "success")
     return redirect(url_for("home"))
 
@@ -45,9 +46,10 @@ def logout():
     Retorna:
         redirect: Redirige al formulario de login, mostrando un mensaje flash dependiendo del estado de la sesión.
     """
-    if session.get("user"):
-        del session["user"]
-        del session["id"]
+    if session.get("user_email"):
+        del session["user_email"]
+        del session["user_name"]
+        del session["user_id"]
         session.clear()
         flash("La sesión se cerró correctamente", "info")
     else:

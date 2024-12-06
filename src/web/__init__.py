@@ -9,7 +9,7 @@ from datetime import timedelta
 from src.web.seeds import seed_countries, seed_generos, seed_estados_civiles, seeds_usuarios
 from src.web.controllers.routes import registrar_rutas
 from src.web.handlers.auth import is_authenticated, get_id_sesion, get_rol_sesion
-from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, jwt_required
+from src.web.handlers.permisos import check_permiso
     
 session = Session()
 def create_app(env="development", static_folder="../../static", template_folders=""):
@@ -33,7 +33,6 @@ def create_app(env="development", static_folder="../../static", template_folders
     session.init_app(app)
     bcrypt.init_app(app)
     app = registrar_rutas(app)
-    jwt = JWTManager(app)
     
 
 
@@ -45,15 +44,13 @@ def create_app(env="development", static_folder="../../static", template_folders
         Returns:
             render_template: Retorna el template layout.html
         """
-        token = create_access_token(identity="usuario")
-        print("Hola, esto es un JWT")
-        print(type(token))
         return render_template("home.html")
     
 
     app.jinja_env.globals.update(is_authenticated= is_authenticated)
     app.jinja_env.globals.update(get_id_sesion= get_id_sesion)
     app.jinja_env.globals.update(get_rol_sesion= get_rol_sesion)
+    app.jinja_env.globals.update(check_permiso= check_permiso)
 
 
     @app.cli.command(name="reset-db")
@@ -69,7 +66,7 @@ def create_app(env="development", static_folder="../../static", template_folders
         Comando para crear los seeds de la base de datos
         """
         seeds_usuarios()
-        seed_countries()
+        #seed_countries()
         seed_generos()
         seed_estados_civiles()
 

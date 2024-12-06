@@ -10,7 +10,7 @@ def is_authenticated(session):
     Returns:
         bool: True si el usuario está autenticado, False en caso contrario.
     """
-    return session.get("user") is not None
+    return session.get("user_email") is not None
 
 
 def get_rol_sesion(session):
@@ -42,9 +42,5 @@ def get_id_sesion(session):
     Returns:
         int: El ID del usuario si está autenticado, None en caso contrario.
     """
-    email_usuario = session.get("user")
-    if email_usuario:
-        usuario = Usuario.query.filter_by(email=email_usuario).first()
-        id_usuario = usuario.id
-        return id_usuario
-    return None
+
+    return session.get("user_id") if is_authenticated(session) else None
