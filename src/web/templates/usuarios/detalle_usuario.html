@@ -22,10 +22,12 @@
             </div>
 
             <div class="mb-3">
-                {{ formulario.id_rol.label }}{{ formulario.id_rol(class="form-select", disabled=True) }}
+                {{ formulario.id_rol.label }}{{ formulario.id_rol(class="form-control", disabled=True) }}
             </div>
 
-            <button type="submit" class="btn btn-primary">Editar</button>   
+            {% if check_permiso(session, 'admin') or usuario.id == get_id_sesion(session) %}
+                <button type="submit" class="btn btn-primary">Editar</button>
+            {% endif %} 
                      
         </div>
     </form>

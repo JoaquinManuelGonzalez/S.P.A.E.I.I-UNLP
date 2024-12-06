@@ -12,16 +12,19 @@ def seeds_usuarios():
     crear_roles()
     establecer_permisos_roles()
     crear_usuarios()
+
    
 fake = Faker()
 roles = []
 permisos = []
 def crear_permisos():
-    permiso_1 = crear_permiso(nombre='usuarios_listar')
-    permiso_2 = crear_permiso(nombre='usuarios_crear')
-    permiso_3 = crear_permiso(nombre='usuarios_eliminar')
+    permiso_0 = crear_permiso(nombre='admin')
+    permiso_1 = crear_permiso(nombre='usuarios_eliminar')
+    permiso_2 = crear_permiso(nombre='usuarios_listar')
+    permiso_3 = crear_permiso(nombre='usuarios_crear')
     permiso_4 = crear_permiso(nombre='usuarios_editar')
     permiso_5 = crear_permiso(nombre='usuarios_detalle')
+    permisos.append(permiso_0)
     permisos.append(permiso_1)
     permisos.append(permiso_2)
     permisos.append(permiso_3)
@@ -40,15 +43,19 @@ def crear_roles():
         
 def establecer_permisos_roles():
     #PRESIDENCIA_JEFE
-    for i in range(5):
+    for i in range(6):
         crear_rol_permiso(id_rol=roles[0].id, id_permiso=permisos[i].id)
     
     #PREISIDENCIA_GESTOR
-    for i in range(5):
+    for i in range(2,6):
         crear_rol_permiso(id_rol=roles[1].id, id_permiso=permisos[i].id)
     
     #PUNTO_FOCAL
+    crear_rol_permiso(id_rol=roles[2].id, id_permiso=permisos[4].id)
+    crear_rol_permiso(id_rol=roles[2].id, id_permiso=permisos[5].id)
     #ALUMNO
+    crear_rol_permiso(id_rol=roles[3].id, id_permiso=permisos[4].id)
+    crear_rol_permiso(id_rol=roles[3].id, id_permiso=permisos[5].id)
 
 
 def crear_usuarios():
