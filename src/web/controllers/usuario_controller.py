@@ -108,8 +108,6 @@ def procesar_recuperacion():
     if formulario.validate_on_submit():
         user = usuario_service.recuperar_contraseña(formulario) 
         if user:
-            #enviar_correo_recuperacion(user)  # Función que envía el correo con el token
-            flash("Te hemos enviado un correo con tu nueva contraseña.", "info")
             return redirect(url_for("auth.login"))
         else:
             flash("El correo no está registrado en nuestro sistema.", "danger")

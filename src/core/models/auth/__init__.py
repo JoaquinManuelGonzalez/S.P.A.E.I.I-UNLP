@@ -32,18 +32,3 @@ def check_user(email, password):
         return user
     
     return None
-
-
-def check_block(user):
-    """
-    Verifica si la cuenta del usuario está activa.
-    
-    Args:
-        user (Usuario): El objeto Usuario a verificar.
-    
-    Returns:
-        Usuario: El objeto Usuario si está activo, None en caso contrario.
-    """
-    if user.activo == True:
-        return user
-    return None
