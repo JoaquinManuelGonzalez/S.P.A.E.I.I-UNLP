@@ -6,14 +6,16 @@
 {% block content %}
 <div class="container mt-5">
     <form method="POST" action={{ url_for('usuarios.actualizar_usuario', id_usuario=usuario.id) }} onsubmit="return confirmarEliminacion();" class="container-fluid full-height d-flex justify-content-center align-items-center" style="max-width: 500px; max-height: 750px; overflow: hidden;">
-        {{ formulario.csrf_token }}
+        {{ formulario_usuario.csrf_token }}
+        {{ formulario_contraseña.csrf_token }}
+        
         <div class="container my-5">
             
             <div class="mb-3">
-                {{ formulario.nombre.label }}{{ formulario.nombre(class="form-control") }}
-                {% if formulario.errors %}
-                    {% for error in formulario.nombre.errors %}
-                        <div class="text-danger">{{ formulario.errors[0] }}
+                {{ formulario_usuario.nombre.label }}{{ formulario_usuario.nombre(class="form-control") }}
+                {% if formulario_usuario.errors %}
+                    {% for error in formulario_usuario.nombre.errors %}
+                        <div class="text-danger">{{ formulario_usuario.errors[0] }}
                             <span style="color: red;">{{ error }}</span>
                         </div>
                     {% endfor %}
@@ -21,10 +23,10 @@
             </div>
 
             <div class="mb-3">
-                {{ formulario.apellido.label }}{{ formulario.apellido(class="form-control") }}
-                {% if formulario.errors %}
-                    {% for error in formulario.apellido.errors %}
-                        <div class="text-danger">{{ formulario.errors[0] }}
+                {{ formulario_usuario.apellido.label }}{{ formulario_usuario.apellido(class="form-control") }}
+                {% if formulario_usuario.errors %}
+                    {% for error in formulario_usuario.apellido.errors %}
+                        <div class="text-danger">{{ formulario_usuario.errors[0] }}
                             <span style="color: red;">{{ error }}</span>
                         </div>
                     {% endfor %}
@@ -32,10 +34,10 @@
             </div>
             
             <div class="mb-3">
-                {{ formulario.email.label }}{{ formulario.email(class="form-control") }}
-                {% if formulario.errors %}
-                    {% for error in formulario.email.errors %}
-                        <div class="text-danger">{{ formulario.errors[0] }}
+                {{ formulario_usuario.email.label }}{{ formulario_usuario.email(class="form-control") }}
+                {% if formulario_usuario.errors %}
+                    {% for error in formulario_usuario.email.errors %}
+                        <div class="text-danger">{{ formulario_usuario.errors[0] }}
                             <span style="color: red;">{{ error }}</span>
                         </div>
                     {% endfor %}
@@ -43,10 +45,10 @@
             </div>
 
             <div class="mb-3">
-                {{ formulario.nueva_contraseña.label }}{{ formulario.nueva_contraseña(class="form-control") }}
-                {% if formulario.errors %}
-                    {% for error in formulario.nueva_contraseña.errors %}
-                        <div class="text-danger">{{ formulario.errors[0] }}
+                {{ formulario_contraseña.nueva_contraseña.label }}{{ formulario_contraseña.nueva_contraseña(class="form-control") }}
+                {% if formulario_contraseña.errors %}
+                    {% for error in formulario_contraseña.nueva_contraseña.errors %}
+                        <div class="text-danger">{{ formulario_contraseña.errors[0] }}
                             <span style="color: red;">{{ error }}</span>
                         </div>
                     {% endfor %}
@@ -54,10 +56,10 @@
             </div>
             
             <div class="mb-3">
-                {{ formulario.confirmar_contraseña.label }}{{ formulario.confirmar_contraseña(class="form-control") }}
-                {% if formulario.errors %}
-                    {% for error in formulario.confirmar_contraseña.errors %}
-                        <div class="text-danger">{{ formulario.errors[0] }}
+                {{ formulario_contraseña.confirmar_contraseña.label }}{{ formulario_contraseña.confirmar_contraseña(class="form-control") }}
+                {% if formulario_contraseña.errors %}
+                    {% for error in formulario_contraseña.confirmar_contraseña.errors %}
+                        <div class="text-danger">{{ formulario_contraseña.errors[0] }}
                             <span style="color: red;">{{ error }}</span>
                         </div>
                     {% endfor %}

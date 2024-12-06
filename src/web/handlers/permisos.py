@@ -1,6 +1,6 @@
 from flask import abort, session, request
 from functools import wraps
-from src.core.services.usuario_service import buscar_usuario_email, buscar_permisos_usuario
+from src.core.services.usuario_service import buscar_usuario_email, buscar_permisos_usuario, buscar_usuario
 
 
 def check(permiso):
@@ -30,10 +30,11 @@ def check_permiso(session, permiso):
     Returns:
         bool: Retorna True si el usuario tiene el permiso, False en caso contrario.
     """
-    email_usuario = session.get('user_email')
-    if email_usuario is None:
+    id_usuario = session.get('user_id')
+    if id_usuario is None:
         return False
-    usuario = buscar_usuario_email(email=email_usuario)
+    #usuario = buscar_usuario_email(email=email_usuario)
+    usuario = buscar_usuario(id_usuario)
     permisos = [permiso.permiso.nombre for permiso in buscar_permisos_usuario(usuario)]
     
     # if permiso not in permisos:

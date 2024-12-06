@@ -6,6 +6,7 @@ from src.core.bcrypt import bcrypt
 from src.core.database import db
 from datetime import datetime
 import string, secrets
+from flask import session
 
 
 def listar_usuarios(pagina:int):
@@ -58,11 +59,13 @@ def editar_usuario(usuario:Usuario, contraseña_nueva:str) -> None:
         Args:
             usuario (Usuario): El usuario a editar
     '''
+    print(session)
     if contraseña_nueva:
         hash_contraseña = bcrypt.generate_password_hash(contraseña_nueva.encode('utf-8')).decode('utf-8')
         usuario.contraseña = hash_contraseña
     db.session.add(usuario)
     db.session.commit()
+    print(session)
     flash('El usuario se ha editado correctamente', 'success')
 
     
@@ -89,7 +92,6 @@ def generar_contraseña(longitud=12):
     contraseña = ''.join(secrets.choice(caracteres) for _ in range(longitud))
     return contraseña
 
-    
 def buscar_usuario(id_usuario:int) -> Usuario:
     return Usuario.query.get_or_404(id_usuario)
 

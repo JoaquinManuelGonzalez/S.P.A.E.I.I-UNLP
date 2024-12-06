@@ -1,8 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, flash, session, url_for
 from src.core.services import usuario_service
 from src.web.handlers.permisos import check
-from src.web.forms import Usuario_Form
-from src.web.forms.recuperar_contraseña_form import RecuperarContraseñaForm
+from src.web.forms import Usuario_Form, Nueva_Contraseña_Form, RecuperarContraseñaForm
 
 usuario_bp = Blueprint("usuarios", __name__, url_prefix="/usuarios")
 
@@ -54,18 +53,27 @@ def ver_detalle_usuario(id_usuario:int):
 @check("usuarios_editar")   
 def editar_usuario(id_usuario:int):
     usuario = usuario_service.buscar_usuario(id_usuario)
-    formulario = Usuario_Form(obj=usuario, id_usuario_editado=id_usuario)
-    return render_template("usuarios/editar_usuario.html", formulario=formulario, usuario=usuario)
+    formulario_usuario = Usuario_Form(obj=usuario, id_usuario_editado=id_usuario)
+    formulario_contraseña = Nueva_Contraseña_Form()
+    return render_template("usuarios/editar_usuario.html", formulario_usuario=formulario_usuario, formulario_contraseña=formulario_contraseña , usuario=usuario)
 
 @usuario_bp.route("/actualizar/<int:id_usuario>", methods=['POST'])
 @check("usuarios_editar")
 def actualizar_usuario(id_usuario:int):
     usuario = usuario_service.buscar_usuario(id_usuario)
-    formulario = Usuario_Form(obj=usuario, id_usuario_editado=id_usuario)
-    if formulario.validate_on_submit():
-        formulario.populate_obj(usuario)
-        usuario_service.editar_usuario(usuario, formulario.nueva_contraseña.data)
+    roles = usuario_service.listar_roles()
+    formulario_usuario = Usuario_Form(obj=usuario, id_usuario_editado=id_usuario)
+    formulario_usuario.id_rol.choices = [(rol.id, rol.nombre) for rol in roles]
+    formulario_contraseña = Nueva_Contraseña_Form(request.form)
+    if formulario_usuario.validate_on_submit() and formulario_contraseña.validate_on_submit():
+        formulario_usuario.populate_obj(usuario)
+        usuario_service.editar_usuario(usuario, formulario_contraseña.nueva_contraseña.data)
+    else:
+        return render_template("usuarios/editar_usuario.html", formulario_usuario=formulario_usuario, formulario_contraseña=formulario_contraseña , usuario=usuario)
     return redirect("/")
+
+
+
 
 @usuario_bp.post("/eliminar/<int:id_usuario>")
 @check("usuarios_eliminar")

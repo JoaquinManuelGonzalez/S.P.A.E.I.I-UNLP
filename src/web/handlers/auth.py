@@ -23,7 +23,7 @@ def get_rol_sesion(session):
     Returns:
         str: El nombre del rol del usuario si está autenticado, None en caso contrario.
     """
-    email_usuario = session.get("user")
+    email_usuario = session.get("user_email")
     if email_usuario:
         usuario = Usuario.query.filter_by(email=email_usuario).first()
         rol_usuario = usuario.rol.nombre
