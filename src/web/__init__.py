@@ -66,7 +66,7 @@ def create_app(env="development", static_folder="../../static", template_folders
         Comando para crear los seeds de la base de datos
         """
         seeds_usuarios()
-        #seed_countries()
+        seed_countries()
         seed_generos()
         seed_estados_civiles()
 

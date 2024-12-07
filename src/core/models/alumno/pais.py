@@ -6,9 +6,9 @@ class Pais(db.Model):
     __tablename__ = 'pais'
 
     id = db.Column(db.Integer, primary_key=True)
-    nombre_esp = db.Column(db.String(100), nullable=False)
-    nombre_eng = db.Column(db.String(100), nullable=False)
-    nombre_port = db.Column(db.String(100), nullable=False)
+    nombre_es = db.Column(db.String(100), nullable=False)
+    nombre_en = db.Column(db.String(100), nullable=False)
+    nombre_pt = db.Column(db.String(100), nullable=False)
     hispanohablante = db.Column(db.Boolean, default=False)
 
     creacion = db.Column(db.DateTime, default=datetime.now)

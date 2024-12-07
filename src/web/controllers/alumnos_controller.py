@@ -1,19 +1,22 @@
-from flask import Blueprint, request, render_template
-from src.core.services import alumno_service
-from src.core.services import archivo_service
+from flask import Blueprint, request, render_template, session
+from src.core.services import alumno_service, archivo_service, usuario_service
+from src.web.handlers.auth import get_rol_sesion, get_id_sesion
 
 
 alumnos_bp = Blueprint("alumnos_bp", __name__, url_prefix="/alumnos")
 
 
 @alumnos_bp.get("/")
-def index():
-    return render_template("alumnos/index.html")
-
-
-@alumnos_bp.get("/listar-alumnos")
 def listar_alumnos():
 
+    """
+    faltudad = None
+    if get_rol_sesion(session) == "punto_focal":
+        id_punto_focal = get_id_sesion(session)
+        facultad = usuario_service.buscar_usuario(id_punto_focal)
+        # NECESITO SABER LA FACULTAD DEL PUNTO FOCAL 
+    """
+    
     nombre = request.args.get("nombre")
     apellido = request.args.get("apellido")
     email = request.args.get("email")
