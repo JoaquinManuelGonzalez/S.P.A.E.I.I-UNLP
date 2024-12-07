@@ -1,5 +1,5 @@
-from flask import Flask, render_template, jsonify
-# from src.web.handlers import error
+from flask import Flask, render_template, jsonify, send_file, abort
+import os
 from src.core import database
 from src.core.bcrypt import bcrypt
 from src.core.config import config
@@ -36,8 +36,7 @@ def create_app(env="development", static_folder="../../static", template_folders
     bcrypt.init_app(app)
     app = registrar_rutas(app)
     mail = Mail(app)
-    
-    
+        
     @app.route("/")
     def home():
         """
@@ -45,8 +44,7 @@ def create_app(env="development", static_folder="../../static", template_folders
         Returns:
             render_template: Retorna el template layout.html
         """
-        return render_template("home.html")
-    
+        return render_template("home.html")    
 
     app.jinja_env.globals.update(is_authenticated= is_authenticated)
     app.jinja_env.globals.update(get_id_sesion= get_id_sesion)
@@ -55,9 +53,7 @@ def create_app(env="development", static_folder="../../static", template_folders
     app.jinja_env.globals.update(get_id_alumno_sesion= get_id_alumno_sesion)
     
     app.register_error_handler(404, error.error_not_found)
-    app.register_error_handler(403, error.sin_permisos)
-    
-
+    app.register_error_handler(403, error.sin_permisos)    
 
     @app.cli.command(name="reset-db")
     def reset_db():
