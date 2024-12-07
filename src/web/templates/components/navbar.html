@@ -18,29 +18,46 @@
   <div class="collapse navbar-collapse" id="navbarNav">
     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
       {% if is_authenticated(session) %}
-        {% if check_permiso(session, 'usuarios_listar') %}
+        {% if check_permiso(session, 'alumno') %}
           <li class="nav-item active">
-            <a class="nav-link" href="{{ url_for('usuarios.listar') }}">Usuarios</a>
+            <a class="nav-link" href="/facultades">Repostulación</a>
           </li>
+          <li class="nav-item active">
+            <a class="nav-link" href="/facultades">Elección de Asignaturas</a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link" href="/facultades">Ver Documentación</a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link" href="/facultades">Mis Postulaciones</a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link" href="{{ url_for('alumnos_bp.ver_detalle_alumno', id_alumno=get_id_alumno_sesion(session)) }}">Información Personal</a>
+          </li>
+        {% else %}
+          <li class="nav-item active">
+            <a class="nav-link" href="/facultades">Postulaciones</a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link" href="{{ url_for('alumnos_bp.listar_alumnos') }}">Alumnos Entrantes</a>
+          </li>
+          {% if check_permiso(session, 'usuarios_listar') %}
+            <li class="nav-item active">
+              <a class="nav-link" href="{{ url_for('usuarios.listar') }}">Usuarios</a>
+            </li>
+          {% endif %}
+          {% if check_permiso(session, 'admin') %}
+            <li class="nav-item active">
+              <a class="nav-link" href="/facultades">Facultades</a>
+            </li>
+            <li class="nav-item active">
+              <a class="nav-link" href="/facultades">Archivos Base</a>
+            </li>
+            <li class="nav-item active">
+              <a class="nav-link" href="/facultades">Solicitudes de Postulación</a>
+            </li>
+          {% endif %}
         {% endif %}
-        <li class="nav-item active">
-          <a class="nav-link" href="/facultades">Facultades</a>
-        </li>
-        <li class="nav-item active">
-          <a class="nav-link" href="/facultades">Postulaciones</a>
-        </li>
-        <li class="nav-item active">
-          <a class="nav-link" href="/facultades">Repostulación</a>
-        </li>
-        <li class="nav-item active">
-          <a class="nav-link" href="/facultades">Elección de Asignaturas</a>
-        </li>
-        <li class="nav-item active">
-          <a class="nav-link" href="/facultades">Ver Documentación</a>
-        </li>
-        <li class="nav-item active">
-          <a class="nav-link" href="{{ url_for('alumnos_bp.listar_alumnos') }}">Alumnos Entrantes</a>
-        </li>
         <li class="nav-item toggle-hidden" style="display: none;">
           <a class="dropdown-item text-success" href="{{ url_for('usuarios.ver_detalle_usuario', id_usuario=get_id_sesion(session)) }}">
             Ver perfil

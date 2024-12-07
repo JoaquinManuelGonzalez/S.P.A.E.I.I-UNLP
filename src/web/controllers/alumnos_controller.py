@@ -1,6 +1,7 @@
 from flask import Blueprint, request, render_template, session
 from src.core.services import alumno_service, archivo_service, usuario_service
 from src.web.handlers.auth import get_rol_sesion, get_id_sesion
+from src.web.handlers.permisos import check
 
 
 alumnos_bp = Blueprint("alumnos_bp", __name__, url_prefix="/alumnos")
@@ -39,19 +40,42 @@ def listar_alumnos():
 
 
 @alumnos_bp.get("ver-detalle-alumno/<int:id_alumno>")
+@check("alumnos_detalle")
 def ver_detalle_alumno(id_alumno):
     
     alumno = alumno_service.get_alumno_by_id(id_alumno)
     return render_template("alumnos/ver-detalle-alumno.html", alumno=alumno)
 
 
+@alumnos_bp.get("solicitar-edicion/<int:id_alumno>")
+@check("alumno")
+@check("alumnos_editar")
+def solicitar_edicion(id_alumno):
+    #renderizo el form para mandar mail
+    pass
+
+
+@alumnos_bp.post("solicitar-edicion/<int:id_alumno>/")
+@check("alumno")
+@check("alumnos_editar")
+def enviar_solicitud_edicion(id_alumno):
+    #hago post y mando el mail
+    pass
+
+
 @alumnos_bp.get("editar-alumno/<int:id_alumno>")
+@check("admin")
+@check("alumnos_editar")
 def editar_alumno(id_alumno):
+    #renderizo form para editar
     pass
 
 
 @alumnos_bp.post("editar-alumno/<int:id_alumno>")
+@check("admin")
+@check("alumnos_editar")
 def actualizar_alumno(id_alumno):
+    #hago post y actualizo la info
     pass
 
 
