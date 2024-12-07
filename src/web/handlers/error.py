@@ -30,3 +30,13 @@ def sin_permisos(e):
     """
     error = Error(403, "Forbidden","You don't have permission to access the requested resource")
     return render_template("error.html", error=error),error.code
+
+def error_server(e):
+    """
+    Función que renderiza el template error.html con el error 500.
+
+    Returns:
+        render_template: Retorna el template error.html con el error 500.
+    """
+    error = Error(500, "Internal Server Error","The server encountered an internal error and was unable to complete your request")
+    return render_template("error.html", error=error),error.code
