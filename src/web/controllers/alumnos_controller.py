@@ -152,11 +152,12 @@ def editar_alumno(id_alumno):
                     alumno.cedula_de_identidad = CedulaDeIdentidad()
                 alumno.cedula_de_identidad.numero = form.numero_cedula.data
                 alumno.cedula_de_identidad.pais = form.pais_emision_cedula.data
-        """
-
+                
         db.session.commit()
         flash('Información del alumno actualizada correctamente.', 'success')
         return redirect(url_for('listar_alumnos'))
+        """
+
 
     return render_template('editar_alumno.html', form=form)
 
