@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error!</title>
+    {% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/error.css')}}" />
+    {% endblock %}
+
+</head>
+
+<body>
+    <div class="error-container">
+        <div class="error-code">{{error.code}}</div>
+        <div class="error-message">{{error.name}}</div>
+        <div class="error-detail">{{error.description}}</div>
+        <div class="link-container">
+            <a href="{{ url_for('home')}}" class="more-link">Return to Home!</a>
+        </div>
+    </div>
+
+</body>
+
+
+</html>

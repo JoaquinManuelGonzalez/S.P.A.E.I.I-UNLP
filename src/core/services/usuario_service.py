@@ -7,6 +7,7 @@ from src.core.database import db
 from datetime import datetime
 import string, secrets
 from flask import session
+from src.core.services import email_service
 
 
 def listar_usuarios(pagina:int):
@@ -83,8 +84,9 @@ def recuperar_contraseña(formulario:Recuperar_Form):
         usuario.contraseña = hash.decode('utf-8')
         db.session.add(usuario)
         db.session.commit()
-        flash('La contraseña se ha recuperado correctamente', 'success')
-        print("NUEVA CONTRASEÑA: ", contraseña, "HASH: ", usuario.contraseña, "decode: ", bcrypt.check_password_hash(usuario.contraseña, contraseña))
+        mensaje = f'Su nueva contraseña es: {contraseña}, recuerde cambiarla en su próximo inicio de sesión'
+        email_service.send_email('Recuperación de contraseña', mensaje, [usuario.email])
+        flash('La contraseña se ha recuperado correctamente, revise su casilla de email', 'success')
     return usuario
 
 def generar_contraseña(longitud=12):
