@@ -26,15 +26,15 @@ def seed_countries():
 
     for country in countries:
         try:
-            nombre_esp = country["translations"]["spa"]["common"] if "spa" in country["translations"] else country["name"]["common"]
-            nombre_eng = country["name"]["common"]
-            nombre_port = country["translations"]["por"]["common"] if "por" in country["translations"] else country["name"]["common"]
-            hispanohablante = nombre_esp in ["España", "México", "Costa Rica", "El Salvador", "Guatemala", "Honduras", "Nicaragua", "Panamá", "Cuba", "República Dominicana", "Puerto Rico", "Argentina", "Bolivia", "Chile", "Colombia", "Ecuador", "Paraguay", "Perú", "Uruguay", "Venezuela", "Guinea Ecuatorial"]
+            nombre_es = country["translations"]["spa"]["common"] if "spa" in country["translations"] else country["name"]["common"]
+            nombre_en = country["name"]["common"]
+            nombre_pt = country["translations"]["por"]["common"] if "por" in country["translations"] else country["name"]["common"]
+            hispanohablante = nombre_es in ["España", "México", "Costa Rica", "El Salvador", "Guatemala", "Honduras", "Nicaragua", "Panamá", "Cuba", "República Dominicana", "Puerto Rico", "Argentina", "Bolivia", "Chile", "Colombia", "Ecuador", "Paraguay", "Perú", "Uruguay", "Venezuela", "Guinea Ecuatorial"]
 
             nuevo_pais = Pais(
-                nombre_esp=nombre_esp,
-                nombre_eng=nombre_eng,
-                nombre_port=nombre_port,
+                nombre_es=nombre_es,
+                nombre_en=nombre_en,
+                nombre_pt=nombre_pt,
                 hispanohablante=hispanohablante,
                 creacion=datetime.now(),
                 actualizacion=datetime.now()

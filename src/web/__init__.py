@@ -8,7 +8,7 @@ from flask_session import Session
 from datetime import timedelta
 from src.web.seeds import seed_countries, seed_generos, seed_estados_civiles, seeds_usuarios
 from src.web.controllers.routes import registrar_rutas
-from src.web.handlers.auth import is_authenticated, get_id_sesion, get_rol_sesion
+from src.web.handlers.auth import is_authenticated, get_id_sesion, get_rol_sesion, get_id_alumno_sesion
 from src.web.handlers.permisos import check_permiso
 from flask_mail import Mail
 from src.web.handlers import error
@@ -50,6 +50,7 @@ def create_app(env="development", static_folder="../../static", template_folders
     app.jinja_env.globals.update(get_id_sesion= get_id_sesion)
     app.jinja_env.globals.update(get_rol_sesion= get_rol_sesion)
     app.jinja_env.globals.update(check_permiso= check_permiso)
+    app.jinja_env.globals.update(get_id_alumno_sesion= get_id_alumno_sesion)
     
     app.register_error_handler(404, error.error_not_found)
     app.register_error_handler(403, error.sin_permisos)    
@@ -67,7 +68,7 @@ def create_app(env="development", static_folder="../../static", template_folders
         Comando para crear los seeds de la base de datos
         """
         seeds_usuarios()
-        #seed_countries()
+        seed_countries()
         seed_generos()
         seed_estados_civiles()
 
