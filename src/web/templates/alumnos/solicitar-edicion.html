@@ -1,0 +1,195 @@
+{% extends "layout.html" %}
+
+{% block title %}Solicitar Edición de Datos{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <style>
+        /* Sombras y animaciones para las cards */
+        .card-hover {
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+        }
+
+        .card-hover:hover {
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+            transform: translateY(-5px);
+        }
+
+        /* Animaciones para los botones */
+        .btn-hover {
+            transition: box-shadow 0.3s ease, transform 0.2s ease;
+        }
+
+        .btn-hover:hover {
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+            transform: translateY(-3px);
+        }
+
+        /* Estilos para el header de las cards con gris más claro */
+        .card-header {
+            background-color: #6c757f; /* Gris más claro */
+            color: #fff;
+        }
+
+        /* Espaciado entre botones */
+        .btn-group-spacing {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        @media (min-width: 576px) {
+            .btn-group-spacing {
+                flex-direction: row;
+                gap: 20px;
+            }
+        }
+
+        /* Leyenda profesional */
+        .alert-info {
+            background-color: #f8f9fa;
+            color: #495057; /* Texto más oscuro */
+            border: 1px solid #ced4da; /* Borde ligeramente más oscuro */
+            font-style: italic;
+        }
+
+        /* Estilos personalizados para los botones */
+        .btn-custom {
+            font-size: 1rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 18px;
+            font-weight: 600;
+            text-transform: uppercase;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #004085;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: #6c757f;
+            border-color: #6c757f;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a636b;
+            border-color: #4e555b;
+            transform: translateY(-2px);
+        }
+
+        /* Estilos para el modal */
+        .modal-dialog {
+            max-width: 500px;
+            margin: 1.75rem auto;
+        }
+
+        /* Responsive design */
+        @media (max-width: 767px) {
+            .container {
+                padding-top: 2rem;
+                padding-bottom: 2rem;
+            }
+
+            .btn-custom {
+                padding: 0.5rem 1.2rem;
+                font-size: 0.9rem;
+            }
+
+            .section-header {
+                font-size: 1.25rem;
+            }
+
+            .modal-dialog {
+                max-width: 100%;
+                margin: 20px auto;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="display-4 mb-4 text-center text-dark">Solicitar Edición de Datos</h1>
+    <hr class="mb-5">
+
+    <form method="POST" action="{{ url_for('alumnos_bp.enviar_solicitud_edicion', id_alumno=alumno.id) }}" id="editForm" class="needs-validation" novalidate>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="row g-4">
+            <div class="col-12">
+                <div class="card shadow-sm card-hover">
+                    <div class="card-header">
+                        <h5 class="mb-0">Información Personal</h5>
+                    </div>
+                    <div class="card-body">
+                        <textarea class="form-control" name="informacion_personal" rows="4" placeholder="Especifique qué información personal desea modificar."></textarea>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="col-12">
+                <div class="card shadow-sm card-hover">
+                    <div class="card-header">
+                        <h5 class="mb-0">Información de Ubicación</h5>
+                    </div>
+                    <div class="card-body">
+                        <textarea class="form-control" name="informacion_ubicacion" rows="4" placeholder="Especifique qué información de ubicación desea modificar."></textarea>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="col-12">
+                <div class="card shadow-sm card-hover">
+                    <div class="card-header">
+                        <h5 class="mb-0">Documentos Asociados</h5>
+                    </div>
+                    <div class="card-body">
+                        <textarea class="form-control" name="documentos" rows="4" placeholder="Especifique qué documentos desea modificar."></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <div class="alert alert-info text-center mt-4">
+            El administrador del sistema recibirá una notificación sobre esta solicitud y usted será informado por correo electrónico una vez realizados los cambios.
+        </div>
+    
+        <div class="text-center mt-4 btn-group-spacing justify-content-center">
+            <a href="{{ url_for('alumnos_bp.ver_detalle_alumno', id_alumno=alumno.id) }}" class="btn btn-secondary btn-lg px-5 btn-custom">Cancelar</a>
+            <!-- Botón para abrir el modal -->
+            <button type="button" class="btn btn-primary btn-lg px-5 btn-custom" data-bs-toggle="modal" data-bs-target="#confirmModal">
+                Enviar Solicitud
+            </button>
+        </div>
+    </form>
+    
+</div>
+
+<!-- Modal de Confirmación -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalLabel">Confirmar Solicitud de Edición</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ¿Está seguro de que desea enviar esta solicitud de edición? El administrador del sistema será notificado y usted recibirá un correo cuando los cambios se realicen.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-custom" data-bs-dismiss="modal">Cancelar</button>
+                <!-- El botón dentro del modal que confirma el envío -->
+                <button type="submit" class="btn btn-primary btn-custom" form="editForm">Confirmar y Enviar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
