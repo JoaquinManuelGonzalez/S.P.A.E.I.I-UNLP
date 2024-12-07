@@ -41,7 +41,7 @@ def filtrar_alumnos(
     query = InformacionAlumnoEntrante.query
 
     if nombre:
-        query = query.filter(InformacionAlumnoEntrante.name.ilike(f"{nombre}%"))
+        query = query.filter(InformacionAlumnoEntrante.nombre.ilike(f"{nombre}%"))
     if apellido:
         query = query.filter(InformacionAlumnoEntrante.apellido.ilike(f"{apellido}%"))
     if email:
@@ -51,3 +51,7 @@ def filtrar_alumnos(
         query = ordenar_alumnos(query, ordenado_por, orden)
 
     return query.paginate(page=pagina, per_page=por_pagina, error_out=False)
+
+
+def get_alumno_by_id(id_alumno):
+    return InformacionAlumnoEntrante.query.get(id_alumno)

@@ -47,8 +47,8 @@
 
   <!-- Tabla -->
   <div class="table-responsive shadow-sm">
-    <table class="table table-bordered table-striped align-middle">
-      <thead style="background-color: #f8f9fa; color: #333;">
+    <table class="table table-bordered table-hover table-striped align-middle">
+      <thead style="table-light">
         <tr>
           <th>Nombre</th>
           <th>Apellido</th>
@@ -64,11 +64,11 @@
             <td>{{ alumno.nombre }}</td>
             <td>{{ alumno.apellido }}</td>
             <td>{{ alumno.email }}</td>
-            <td>{{ alumno.pais_de_nacimiento.nombre_esp }}</td>
-            <td>
-              <a href="{{ url_for('alumnos_bp.detalle_alumno', id=alumno.id) }}" class="btn btn-info btn-sm">Ver</a>
-              <a href="{{ url_for('alumnos_bp.editar_alumno', id=alumno.id) }}" class="btn btn-warning btn-sm">Editar</a>
-              <a href="{{ url_for('alumnos_bp.eliminar_alumno', id=alumno.id) }}" class="btn btn-danger btn-sm">Eliminar</a>
+            <td>{{ alumno.pais_de_nacimiento.nombre_es }}</td>
+            <td class="text-center">
+              <a href="{{ url_for('alumnos_bp.ver_detalle_alumno', id_alumno=alumno.id) }}" class="btn btn-info btn-sm">Ver Detalle</a>
+              <a href="{{ url_for('alumnos_bp.editar_alumno', id_alumno=alumno.id) }}" class="btn btn-warning btn-sm">Editar Alumno</a>
+              <a href="{{ url_for('alumnos_bp.eliminar_alumno', id_alumno=alumno.id) }}" class="btn btn-danger btn-sm">Eliminar Alumno</a>
             </td>
           </tr>
           {% endfor %}

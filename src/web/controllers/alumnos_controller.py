@@ -36,3 +36,25 @@ def listar_alumnos():
     )
 
     return render_template("alumnos/listar-alumnos.html", alumnos=alumnos)
+
+
+@alumnos_bp.get("ver-detalle-alumno/<int:id_alumno>")
+def ver_detalle_alumno(id_alumno):
+    
+    alumno = alumno_service.get_alumno_by_id(id_alumno)
+    return render_template("alumnos/ver-detalle-alumno.html", alumno=alumno)
+
+
+@alumnos_bp.get("editar-alumno/<int:id_alumno>")
+def editar_alumno(id_alumno):
+    pass
+
+
+@alumnos_bp.post("editar-alumno/<int:id_alumno>")
+def actualizar_alumno(id_alumno):
+    pass
+
+
+@alumnos_bp.post("eliminar-alumno/<int:id_alumno>")
+def eliminar_alumno(id_alumno):
+    pass
