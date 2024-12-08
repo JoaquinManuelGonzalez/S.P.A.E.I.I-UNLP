@@ -81,11 +81,11 @@
 
       <div class="row">
         <div class="col-md-6 mb-3">
-          {{ form.genero.label(class="form-label") }}
-          {{ form.genero(class="form-select") }}
-          {% if form.genero.errors %}
+          {{ form.id_genero.label(class="form-label") }}
+          {{ form.id_genero(class="form-select") }}
+          {% if form.id_genero.errors %}
             <div class="text-danger">
-              {% for error in form.genero.errors %}
+              {% for error in form.id_genero.errors %}
                 <p>{{ error }}</p>
               {% endfor %}
             </div>
@@ -93,37 +93,11 @@
         </div>
 
         <div class="col-md-6 mb-3">
-          {{ form.estado_civil.label(class="form-label") }}
-          {{ form.estado_civil(class="form-select") }}
-          {% if form.estado_civil.errors %}
+          {{ form.id_estado_civil.label(class="form-label") }}
+          {{ form.id_estado_civil(class="form-select") }}
+          {% if form.id_estado_civil.errors %}
             <div class="text-danger">
-              {% for error in form.estado_civil.errors %}
-                <p>{{ error }}</p>
-              {% endfor %}
-            </div>
-          {% endif %}
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-6 mb-3">
-          {{ form.pais_de_nacimiento.label(class="form-label") }}
-          {{ form.pais_de_nacimiento(class="form-select", value=form.pais_de_nacimiento.data or alumno.pais_de_nacimiento) }}
-          {% if form.pais_de_nacimiento.errors %}
-            <div class="text-danger">
-              {% for error in form.pais_de_nacimiento.errors %}
-                <p>{{ error }}</p>
-              {% endfor %}
-            </div>
-          {% endif %}
-        </div>
-
-        <div class="col-md-6 mb-3">
-          {{ form.pais_de_residencia.label(class="form-label") }}
-          {{ form.pais_de_residencia(class="form-select", value=form.pais_de_residencia.data or alumno.pais_de_residencia) }}
-          {% if form.pais_de_residencia.errors %}
-            <div class="text-danger">
-              {% for error in form.pais_de_residencia.errors %}
+              {% for error in form.id_estado_civil.errors %}
                 <p>{{ error }}</p>
               {% endfor %}
             </div>
@@ -133,11 +107,37 @@
 
       <div class="row">
         <div class="col-md-6 mb-3">
-          {{ form.pais_nacionalidad.label(class="form-label") }}
-          {{ form.pais_nacionalidad(class="form-select", value=form.pais_nacionalidad.data or alumno.pais_nacionalidad) }}
-          {% if form.pais_nacionalidad.errors %}
+          {{ form.id_pais_de_nacimiento.label(class="form-label") }}
+          {{ form.id_pais_de_nacimiento(class="form-select", value=form.id_pais_de_nacimiento.data or alumno.id_pais_de_nacimiento) }}
+          {% if form.id_pais_de_nacimiento.errors %}
             <div class="text-danger">
-              {% for error in form.pais_nacionalidad.errors %}
+              {% for error in form.id_pais_de_nacimiento.errors %}
+                <p>{{ error }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="col-md-6 mb-3">
+          {{ form.id_pais_de_residencia.label(class="form-label") }}
+          {{ form.id_pais_de_residencia(class="form-select", value=form.id_pais_de_residencia.data or alumno.id_pais_de_residencia) }}
+          {% if form.id_pais_de_residencia.errors %}
+            <div class="text-danger">
+              {% for error in form.id_pais_de_residencia.errors %}
+                <p>{{ error }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          {{ form.id_pais_nacionalidad.label(class="form-label") }}
+          {{ form.id_pais_nacionalidad(class="form-select", value=form.id_pais_nacionalidad.data or alumno.id_pais_nacionalidad) }}
+          {% if form.id_pais_nacionalidad.errors %}
+            <div class="text-danger">
+              {% for error in form.id_pais_nacionalidad.errors %}
                 <p>{{ error }}</p>
               {% endfor %}
             </div>
@@ -159,11 +159,11 @@
 
       <div class="row">
         <div class="col-md-6 mb-3">
-          {{ form.pais_emision_pasaporte.label(class="form-label") }}
-          {{ form.pais_emision_pasaporte(class="form-select", value=form.pais_emision_pasaporte.data or alumno.pais_emision_pasaporte) }}
-          {% if form.pais_emision_pasaporte.errors %}
+          {{ form.id_pais_emision_pasaporte.label(class="form-label") }}
+          {{ form.id_pais_emision_pasaporte(class="form-select", value=form.id_pais_emision_pasaporte.data or alumno.id_pais_emision_pasaporte) }}
+          {% if form.id_pais_emision_pasaporte.errors %}
             <div class="text-danger">
-              {% for error in form.pais_emision_pasaporte.errors %}
+              {% for error in form.id_pais_emision_pasaporte.errors %}
                 <p>{{ error }}</p>
               {% endfor %}
             </div>
@@ -185,11 +185,11 @@
 
       <div class="row">
         <div class="col-md-6 mb-3">
-          {{ form.pais_emision_cedula.label(class="form-label") }}
-          {{ form.pais_emision_cedula(class="form-select", value=form.pais_emision_cedula.data or alumno.pais_emision_cedula) }}
-          {% if form.pais_emision_cedula.errors %}
+          {{ form.id_pais_emision_cedula.label(class="form-label") }}
+          {{ form.id_pais_emision_cedula(class="form-select", value=form.id_pais_emision_cedula.data or alumno.id_pais_emision_cedula) }}
+          {% if form.id_pais_emision_cedula.errors %}
             <div class="text-danger">
-              {% for error in form.pais_emision_cedula.errors %}
+              {% for error in form.id_pais_emision_cedula.errors %}
                 <p>{{ error }}</p>
               {% endfor %}
             </div>
