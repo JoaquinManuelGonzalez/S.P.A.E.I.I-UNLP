@@ -30,17 +30,25 @@ def check_permiso(session, permiso):
     Returns:
         bool: Retorna True si el usuario tiene el permiso, False en caso contrario.
     """
-    id_usuario = session.get('user_id')
-    if id_usuario is None:
+    #primero corroboro si hay un alumno en sesion
+    id_usuario_sesion = session.get('user_id')
+    usuario_sesion = buscar_usuario(id_usuario_sesion)
+    if id_usuario_sesion is None:
         return False
-    #usuario = buscar_usuario_email(email=email_usuario)
-    usuario = buscar_usuario(id_usuario)
-    permisos = [permiso.permiso.nombre for permiso in buscar_permisos_usuario(usuario)]
+    permisos = [permiso.permiso.nombre for permiso in buscar_permisos_usuario(usuario_sesion)]
     
-    # if permiso not in permisos:
-    #     id_usuario = int(request.path.split('/')[-1])
-    #     if (id_usuario != session.get('user_id')):
-    #         return False
+    #si se busca ver detalle o edicion, se verifica que sea el mismo usuario
+    if permiso.endswith('detalle') or permiso.endswith('editar'):
+        id_buscado = int(request.path.split('/')[-1])
+        if ("admin" in permisos) or ("gestor" in permisos) or ("punto_focal" in permisos):
+            return True
+        #SI ES PUNTO FOCAL ME VA A INTERESAR VER QUE PASA CON LOS ALUMNOS QUE ME PERTENECEN SOLAMENTE
+        if "alumno" in request.path:
+            if (id_buscado != usuario_sesion.id_alumno):
+                return False
+        elif "usuarios" in request.path.split('/'):
+            if (id_buscado != id_usuario_sesion):
+                return False
     
     return permiso in permisos
 

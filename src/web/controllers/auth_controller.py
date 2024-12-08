@@ -8,7 +8,6 @@ import os, binascii, jwt
 bp = Blueprint("auth", __name__, url_prefix= "/auth")
 
 @bp.get("/")
-@check_auth()
 def login():
     """
     Renderiza la página de inicio de sesión con el formulario de autenticación.
@@ -20,7 +19,6 @@ def login():
     return render_template("auth/login.html", formulario=formulario)
 
 @bp.post("/authenticate")
-@check_auth()
 def authenticate():
     """
     Autentica al usuario verificando sus credenciales
