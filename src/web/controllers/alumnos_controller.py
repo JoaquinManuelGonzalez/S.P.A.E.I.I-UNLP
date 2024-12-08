@@ -59,7 +59,7 @@ def solicitar_edicion(id_alumno):
     return render_template("alumnos/solicitar-edicion.html", alumno=alumno)
 
 
-@alumnos_bp.post("solicitar-edicion/<int:id_alumno>/")
+@alumnos_bp.post("solicitar-edicion/<int:id_alumno>")
 @check("alumno")
 @check("alumnos_editar")
 def enviar_solicitud_edicion(id_alumno):
