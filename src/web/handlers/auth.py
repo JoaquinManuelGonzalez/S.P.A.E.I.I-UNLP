@@ -74,7 +74,9 @@ def get_id_alumno_sesion(session):
     Returns:
         int: El ID del usuario si está autenticado, None en caso contrario.
     """
-    user_id = session.get("user_id") if is_authenticated(session) else None
+    user_id = session.get("user_id")
     if user_id:
         usuario = Usuario.query.get(user_id)
-        return usuario.id_alumno
+        if usuario.id_alumno:
+            return usuario.id_alumno
+        return -1

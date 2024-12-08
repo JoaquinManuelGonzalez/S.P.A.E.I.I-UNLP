@@ -48,6 +48,8 @@ def crear_permisos():
     permiso_22 = crear_permiso(nombre='alumnos_editar')
     permiso_23 = crear_permiso(nombre='alumnos_eliminar')
     permiso_24 = crear_permiso(nombre='alumnos_detalle')
+    permiso_25 = crear_permiso(nombre='gestor')
+    permiso_26 = crear_permiso(nombre='punto_focal')
 
 
     permisos_presidencia_jefe.append(permiso_0)
@@ -90,13 +92,17 @@ def crear_permisos():
     permisos_presidencia_gestor.append(permiso_18)
     permisos_presidencia_gestor.append(permiso_21)
     permisos_presidencia_gestor.append(permiso_24)
+    permisos_presidencia_gestor.append(permiso_25)
 
+    permisos_punto_focal.append(permiso_4)
+    permisos_punto_focal.append(permiso_5)
     permisos_punto_focal.append(permiso_6)
     permisos_punto_focal.append(permiso_7)
     permisos_punto_focal.append(permiso_9)
     permisos_punto_focal.append(permiso_10)
     permisos_punto_focal.append(permiso_21)
     permisos_punto_focal.append(permiso_24)
+    permisos_punto_focal.append(permiso_26)
 
     permisos_alumno.append(permiso_4)
     permisos_alumno.append(permiso_5)
