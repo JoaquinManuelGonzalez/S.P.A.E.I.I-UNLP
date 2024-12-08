@@ -4,6 +4,8 @@ from src.web.handlers.auth import get_rol_sesion, get_id_sesion
 from src.web.handlers.permisos import check
 from src.web.forms import AlumnoForm
 from src.core.database import db
+from src.core.services.genero_service import listar_generos
+from src.core.services.estado_civil_service import listar_estados_civiles
 
 
 alumnos_bp = Blueprint("alumnos_bp", __name__, url_prefix="/alumnos")
@@ -110,9 +112,7 @@ def enviar_solicitud_edicion(id_alumno):
 def editar_alumno(id_alumno):
 
     alumno = alumno_service.get_alumno_by_id(id_alumno)
-    form = AlumnoForm(alumno=alumno)  # Pasando el objeto alumno al formulario
-
-    form.pais_de_nacimiento.data = alumno.pais_de_nacimiento.id
+    form = AlumnoForm(obj=alumno)  # Pasando el objeto alumno al formulario   
 
     return render_template('alumnos/editar_alumno.html', form=form, alumno=alumno)
 
