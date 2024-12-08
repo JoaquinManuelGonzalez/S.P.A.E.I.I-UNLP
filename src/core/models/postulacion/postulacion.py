@@ -16,10 +16,6 @@ class Postulacion(db.Model):
     creacion = db.Column(db.DateTime, default=datetime.now)
     actualizacion = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
 
-    id_estado = db.Column(db.Integer, db.ForeignKey('estado.id'), nullable=False)
-    id_informacion_alumno_entrante = db.Column(db.Integer, db.ForeignKey('informacion_alumno_entrante.id'), nullable=False)
-    id_programa = db.Column(db.Integer, db.ForeignKey('programa.id'), nullable=False)
-
     estado = db.relationship('Estado', back_populates='postulaciones')
     informacion_alumno_entrante = db.relationship('InformacionAlumnoEntrante', back_populates='postulaciones')
     tutores = db.relationship('Tutor', secondary='postulacion_tutor', back_populates='postulaciones')

@@ -1,8 +1,12 @@
 from flask import Blueprint, jsonify, request
+from flask_wtf.csrf import generate_csrf
 
 
 from src.core.services import paises_service, genero_service, estado_civil_service
-from src.web.schemas import estado_civil_schema, genero_schema, pais_schema, postulacion_schema
+from src.web.schemas import (
+    estado_civil_schema, genero_schema, pais_schema, postulacion_schema, informacion_alumno_entrante_schema,
+    tutor_schema, archivo_schema
+)
 
 
 
@@ -10,6 +14,7 @@ bp = Blueprint("solicitud_postulacion", __name__, url_prefix="/api/postulacion")
 
 
 #@base.validation(schema=PostulacionForm, method="POST")
+
 @bp.post("/primer-formulario")
 def primer_formulario():
     """
@@ -17,14 +22,35 @@ def primer_formulario():
     """
     data = request.get_json()
     print(data)
+    data_postulacion = data["postulacion"]
+    data_alumno = data["alumno"]
+    id_programa = data["id_programa"]
+    data_tutor_institucional = data["tutorInstitucional"]
+    data_tutor_academico = data["tutorAcademico"]
+    data_cedula = data["cedula_de_identidad"]
+    data_pasaporte = data["pasaporte"]
+    data_archivos = data["archivo"]
+    
+    archivo_pasaporte = data_archivos["pasaporte"]
+    archivo_cedula = data_archivos["cedula_de_identidad"]
+    certificado_b1 = data_archivos["certificado_b1"]
+    plan_trabajo = data_archivos["plan_trabajo"]
+    carta_recomendacion = data_archivos["carta_recomendacion"]
+
+
+
+    alumno = informacion_alumno_entrante_schema.load(data_alumno)
+    data_postulacion["id_estado"] = 1
+    data_postulacion["id_informacion_alumno_entrante"] = alumno.id
+    data_postulacion["id_programa"] = id_programa
+    postulacion = postulacion_schema.load(data_postulacion)
+   
+    tutor_institucional = tutor_schema.load(data_tutor_institucional)
+    tutor_academico = tutor_schema.load(data_tutor_academico)
+
+
     return jsonify(data), 201
-    """
-    postulacion_data = postulacion_schema.load(body["postulacion"])
-
-
-
-    return jsonify(body), 201
-    """
+    
 
 @bp.get("/primer-formulario-data")
 def primer_formulario_get():
@@ -39,11 +65,12 @@ def primer_formulario_get():
     data_generos = genero_schema.generos_schema.dump(generos)
     data_estados_civiles = estado_civil_schema.estados_civiles_schema.dump(estados_civiles)
 
-
+    token = generate_csrf()
     data_response = {
         "paises": data_paises,
         "generos": data_generos,
         "estados_civiles": data_estados_civiles,
+        "csrf_token": token
         #"programa": programa
     }
 
