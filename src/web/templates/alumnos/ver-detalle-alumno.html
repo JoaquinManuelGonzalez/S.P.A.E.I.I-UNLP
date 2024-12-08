@@ -271,7 +271,7 @@
     <div class="d-flex justify-content-center mt-4">
         {% if check_permiso(session, 'alumno') %}
             <a href="{{ url_for('alumnos_bp.solicitar_edicion', id_alumno=alumno.id) }}" class="btn btn-primary btn-custom mx-2">Solicitar Edición de Datos</a>
-        {% else %}
+        {% elif check_permiso(session, 'admin') %}
             <a href="{{ url_for('alumnos_bp.editar_alumno', id_alumno=alumno.id) }}" class="btn btn-primary btn-custom mx-2">Editar Alumno</a>
             <a href="{{ url_for('alumnos_bp.eliminar_alumno', id_alumno=alumno.id) }}" class="btn btn-danger btn-custom mx-2" data-bs-toggle="modal" data-bs-target="#confirmarEliminarModal">Eliminar</a>
         {% endif %}
@@ -289,8 +289,8 @@
                     ¿Estás seguro de que deseas eliminar este alumno? Esta acción no se puede deshacer.
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <a href="{{ url_for('alumnos_bp.eliminar_alumno', id_alumno=alumno.id) }}" class="btn btn-danger">Eliminar Alumno</a>
+                    <button type="button" class="btn btn-secondary btn-custom" data-bs-dismiss="modal">Cancelar</button>
+                    <a href="{{ url_for('alumnos_bp.eliminar_alumno', id_alumno=alumno.id) }}" class="btn btn-danger btn-custom">Eliminar Alumno</a>
                 </div>
             </div>
         </div>

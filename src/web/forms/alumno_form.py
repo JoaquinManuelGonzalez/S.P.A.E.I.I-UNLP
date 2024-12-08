@@ -39,3 +39,36 @@ class AlumnoForm(FlaskForm):
 
     # Botón de envío
     submit = SubmitField('Guardar Cambios')
+
+    # Sobrescribir el método __init__ para poblar los campos SelectField y precargar datos
+    def __init__(self, alumno=None, *args, **kwargs):
+        super(AlumnoForm, self).__init__(*args, **kwargs)
+
+        print(obtener_paises_choices())
+
+        # Poblar las opciones para los SelectFields
+        self.genero.choices = obtener_generos_choices()
+        self.estado_civil.choices = obtener_estados_civiles_choices()
+        self.pais_de_nacimiento.choices = obtener_paises_choices()
+        self.pais_de_residencia.choices = obtener_paises_choices()
+        self.pais_nacionalidad.choices = obtener_paises_choices()
+        self.pais_emision_pasaporte.choices = obtener_paises_choices()
+        self.pais_emision_cedula.choices = obtener_paises_choices()
+
+        # Precargar los valores del alumno en los campos
+        if alumno:
+            self.nombre.data = alumno.nombre
+            self.apellido.data = alumno.apellido
+            self.email.data = alumno.email
+            self.domicilio_pais_de_residencia.data = alumno.domicilio_pais_de_residencia
+            self.fecha_de_nacimiento.data = alumno.fecha_de_nacimiento
+            self.discapacitado.data = alumno.discapacitado
+            self.genero.data = alumno.id_genero  # Asegúrate de que el ID esté correctamente asignado
+            self.estado_civil.data = alumno.id_estado_civil
+            self.pais_de_nacimiento.data = alumno.pais_de_nacimiento.nombre_es
+            self.pais_de_residencia.data = alumno.id_pais_de_residencia
+            self.pais_nacionalidad.data = alumno.id_pais_nacionalidad
+            self.numero_pasaporte.data = alumno.pasaporte.numero if alumno.pasaporte else ''
+            self.pais_emision_pasaporte.data = alumno.pasaporte.id_pais if alumno.pasaporte else ''
+            self.numero_cedula.data = alumno.cedula_de_identidad.numero if alumno.cedula_de_identidad else ''
+            self.pais_emision_cedula.data = alumno.cedula_de_identidad.id_pais if alumno.cedula_de_identidad else ''

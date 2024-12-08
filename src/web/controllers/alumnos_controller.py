@@ -10,6 +10,7 @@ alumnos_bp = Blueprint("alumnos_bp", __name__, url_prefix="/alumnos")
 
 
 @alumnos_bp.get("/")
+@check("alumnos_listar")
 def listar_alumnos():
 
     """
@@ -109,57 +110,11 @@ def enviar_solicitud_edicion(id_alumno):
 def editar_alumno(id_alumno):
 
     alumno = alumno_service.get_alumno_by_id(id_alumno)
-    form = AlumnoForm(obj=alumno)
+    form = AlumnoForm(alumno=alumno)  # Pasando el objeto alumno al formulario
 
-    form.numero_pasaporte.data = alumno.pasaporte.numero if alumno.pasaporte else 123
-    form.pais_emision_pasaporte.data = alumno.pasaporte.pais if alumno.pasaporte else 123
-    form.numero_cedula.data = alumno.cedula_de_identidad.numero if alumno.cedula_de_identidad else paises_service.get_pais_by_id(1)
-    form.pais_emision_cedula.data = alumno.cedula_de_identidad.pais if alumno.cedula_de_identidad else paises_service.get_pais_by_id(1)
+    form.pais_de_nacimiento.data = alumno.pais_de_nacimiento.id
 
-    """
-    # Pre-cargar datos de pasaporte y cédula si existen
-    if alumno.pasaporte:
-        form.numero_pasaporte.data = alumno.pasaporte.numero
-        form.pais_emision_pasaporte.data = alumno.pasaporte.pais
-    if alumno.cedula_de_identidad:
-        form.numero_cedula.data = alumno.cedula_de_identidad.numero
-        form.pais_emision_cedula.data = alumno.cedula_de_identidad.pais
-    
-
-    if form.validate_on_submit():
-        # Actualizar información del alumno
-        form.populate_obj(alumno)
-
-        # Actualizar pasaporte si cambia el número o el país
-        if form.numero_pasaporte.data and form.pais_emision_pasaporte.data:
-            if (alumno.pasaporte is None or 
-                alumno.pasaporte.numero != form.numero_pasaporte.data or 
-                alumno.pasaporte.pais != form.pais_emision_pasaporte.data):
-                if alumno.pasaporte is None:
-                    alumno.pasaporte = pasaporte_service.crear_pasaporte(
-                        numero=form.numero_pasaporte.data,
-                        pais=form.pais_emision_pasaporte.data
-                    )
-                alumno.pasaporte.numero = form.numero_pasaporte.data
-                alumno.pasaporte.pais = form.pais_emision_pasaporte.data
-
-        # Actualizar cédula de identidad si cambia el número o el país
-        if form.numero_cedula.data and form.pais_emision_cedula.data:
-            if (alumno.cedula_de_identidad is None or 
-                alumno.cedula_de_identidad.numero != form.numero_cedula.data or 
-                alumno.cedula_de_identidad.pais != form.pais_emision_cedula.data):
-                if alumno.cedula_de_identidad is None:
-                    alumno.cedula_de_identidad = CedulaDeIdentidad()
-                alumno.cedula_de_identidad.numero = form.numero_cedula.data
-                alumno.cedula_de_identidad.pais = form.pais_emision_cedula.data
-                
-        db.session.commit()
-        flash('Información del alumno actualizada correctamente.', 'success')
-        return redirect(url_for('listar_alumnos'))
-        """
-
-
-    return render_template('editar_alumno.html', form=form)
+    return render_template('alumnos/editar_alumno.html', form=form, alumno=alumno)
 
 
 @alumnos_bp.post("editar-alumno/<int:id_alumno>")
@@ -170,6 +125,6 @@ def actualizar_alumno(id_alumno):
     pass
 
 
-@alumnos_bp.post("eliminar-alumno/<int:id_alumno>")
+@alumnos_bp.post("alumnos/eliminar-alumno/<int:id_alumno>")
 def eliminar_alumno(id_alumno):
     pass
