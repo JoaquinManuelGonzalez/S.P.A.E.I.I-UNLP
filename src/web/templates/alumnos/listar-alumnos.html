@@ -66,9 +66,7 @@
             <td>{{ alumno.email }}</td>
             <td>{{ alumno.pais_de_nacimiento.nombre_es }}</td>
             <td class="text-center">
-              <a href="{{ url_for('alumnos_bp.ver_detalle_alumno', id_alumno=alumno.id) }}" class="btn btn-info btn-sm">Ver Detalle</a>
-              <a href="{{ url_for('alumnos_bp.editar_alumno', id_alumno=alumno.id) }}" class="btn btn-warning btn-sm">Editar Alumno</a>
-              <a href="{{ url_for('alumnos_bp.eliminar_alumno', id_alumno=alumno.id) }}" class="btn btn-danger btn-sm">Eliminar Alumno</a>
+              <a href="{{ url_for('alumnos_bp.ver_detalle_alumno', id_alumno=alumno.id) }}" class="btn btn-secondary btn-sm">Ver Detalle</a>
             </td>
           </tr>
           {% endfor %}
@@ -87,40 +85,40 @@
   </div>
 
   <!-- Paginación -->
-  <nav>
-    <ul class="pagination justify-content-center">
-      {% if alumnos.has_prev %}
-        <li class="page-item">
-          <a class="page-link" href="?pagina={{ alumnos.prev_num }}&{{ request.query_string|safe }}" aria-label="Anterior">
-            <span aria-hidden="true">&laquo;</span>
-          </a>
+<nav>
+  <ul class="pagination justify-content-center">
+    {% if alumnos.has_prev %}
+      <li class="page-item">
+        <a class="page-link" href="?pagina={{ alumnos.prev_num }}&nombre={{ request.args.get('nombre', '') }}&apellido={{ request.args.get('apellido', '') }}&email={{ request.args.get('email', '') }}&ordenado_por={{ request.args.get('ordenado_por', '') }}&orden={{ request.args.get('orden', '') }}" aria-label="Anterior">
+          <span aria-hidden="true">&laquo;</span>
+        </a>
+      </li>
+    {% else %}
+      <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+    {% endif %}
+
+    {% for page_num in alumnos.iter_pages(left_edge=2, right_edge=2, left_current=1, right_current=1) %}
+      {% if page_num %}
+        <li class="page-item {% if page_num == alumnos.page %}active{% endif %}">
+          <a class="page-link" href="?pagina={{ page_num }}&nombre={{ request.args.get('nombre', '') }}&apellido={{ request.args.get('apellido', '') }}&email={{ request.args.get('email', '') }}&ordenado_por={{ request.args.get('ordenado_por', '') }}&orden={{ request.args.get('orden', '') }}">{{ page_num }}</a>
         </li>
       {% else %}
-        <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+        <li class="page-item disabled"><span class="page-link">…</span></li>
       {% endif %}
+    {% endfor %}
 
-      {% for page_num in alumnos.iter_pages(left_edge=2, right_edge=2, left_current=1, right_current=1) %}
-        {% if page_num %}
-          <li class="page-item {% if page_num == alumnos.page %}active{% endif %}">
-            <a class="page-link" href="?pagina={{ page_num }}&{{ request.query_string|safe }}">{{ page_num }}</a>
-          </li>
-        {% else %}
-          <li class="page-item disabled"><span class="page-link">…</span></li>
-        {% endif %}
-      {% endfor %}
+    {% if alumnos.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?pagina={{ alumnos.next_num }}&nombre={{ request.args.get('nombre', '') }}&apellido={{ request.args.get('apellido', '') }}&email={{ request.args.get('email', '') }}&ordenado_por={{ request.args.get('ordenado_por', '') }}&orden={{ request.args.get('orden', '') }}" aria-label="Siguiente">
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+      </li>
+    {% else %}
+      <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+    {% endif %}
+  </ul>
+</nav>
 
-      {% if alumnos.has_next %}
-        <li class="page-item">
-          <a class="page-link" href="?pagina={{ alumnos.next_num }}&{{ request.query_string|safe }}" aria-label="Siguiente">
-            <span aria-hidden="true">&raquo;</span>
-          </a>
-        </li>
-      {% else %}
-        <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
-      {% endif %}
-    </ul>
-  </nav>
-</div>
 
 <!-- Modal para indicar que no se encontraron resultados -->
 <div class="modal fade" id="noResultsModal" tabindex="-1" aria-labelledby="noResultsModalLabel" aria-hidden="true">
