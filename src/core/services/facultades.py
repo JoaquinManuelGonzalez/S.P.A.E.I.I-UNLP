@@ -1,8 +1,9 @@
+from sqlalchemy import and_, exists, func, or_, select, union_all
 from src.core.database import db
 from datetime import datetime
 from src.core.models.facultad import Facultad
 
-def create_facultad(nombre):
+def create_facultad(nombre, acronimo):
     """
     Creates a new Facultad record in the database.
 
@@ -17,7 +18,7 @@ def create_facultad(nombre):
     """
 
     try:
-        new_facultad = Facultad(nombre=nombre)
+        new_facultad = Facultad(nombre=nombre, acronimo=acronimo)
         db.session.add(new_facultad)
         db.session.commit()
         return new_facultad
@@ -55,8 +56,10 @@ def listar_facultades(nombre: str|None = None):
     Returns:
         list: A list of Facultad objects.
     """
-
-    return Facultad.query.filter(Facultad.nombre.ilike(f"%{nombre}%") or Facultad.acronimo.ilike(f"%{nombre}%")).all()
+    if nombre and nombre != "":
+        return Facultad.query.filter(or_(Facultad.nombre.ilike(f"%{nombre}%"), Facultad.acronimo.ilike(f"%{nombre}%"))).all()
+    else:
+        return get_all_facultades()
 
 def update_facultad(facultad_id, nombre):
     """
