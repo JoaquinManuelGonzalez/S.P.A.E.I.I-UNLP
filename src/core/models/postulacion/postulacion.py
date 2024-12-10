@@ -19,6 +19,7 @@ class Postulacion(db.Model):
     estado = db.relationship('Estado', back_populates='postulaciones')
     informacion_alumno_entrante = db.relationship('InformacionAlumnoEntrante', back_populates='postulaciones')
     tutores = db.relationship('Tutor', secondary='postulacion_tutor', back_populates='postulaciones')
+    asignaturas = db.relationship('Asignatura', secondary='postulacion_asignatura', back_populates='postulaciones')
     programa = db.relationship('Programa', back_populates='postulaciones')
     archivos = db.relationship('Archivo', back_populates='postulacion', foreign_keys='Archivo.id_postulacion')
 

@@ -15,13 +15,14 @@ alumnos_bp = Blueprint("alumnos_bp", __name__, url_prefix="/alumnos")
 @check("alumnos_listar")
 def listar_alumnos():
 
-    """
-    faltudad = None
+    '''
+    facultad = None
     if get_rol_sesion(session) == "punto_focal":
         id_punto_focal = get_id_sesion(session)
         facultad = usuario_service.buscar_usuario(id_punto_focal)
         # NECESITO SABER LA FACULTAD DEL PUNTO FOCAL 
-    """
+    '''
+    
     
     nombre = request.args.get("nombre")
     apellido = request.args.get("apellido")

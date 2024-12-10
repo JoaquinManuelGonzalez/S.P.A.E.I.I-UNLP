@@ -11,7 +11,9 @@ def seeds_usuarios():
     crear_permisos()        
     crear_roles()
     establecer_permisos_roles()
-    crear_usuarios()
+    
+    usuarios = crear_usuarios()
+    return usuarios
 
    
 fake = Faker()
@@ -191,6 +193,8 @@ def crear_usuarios():
     for i in range (len(usuarios)):
         db.session.add(usuarios[i])
     db.session.commit()
+    
+    return usuarios
 
     
         

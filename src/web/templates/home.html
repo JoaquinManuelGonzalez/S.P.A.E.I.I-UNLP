@@ -70,6 +70,8 @@
                      style="max-width: 90%; border: 3px solid #dee2e6; border-radius: 15px;">
             </div>
         </div>
+    {% elif get_rol_sesion(session) == "punto_focal" %}
+        {% include "focal/focal_home.html" %}
     {% else %}
         <div class="container py-5">
             <h1 class="display-4 mb-4 text-center">Portal de Administración</h1>

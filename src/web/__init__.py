@@ -6,7 +6,7 @@ from src.core.config import config
 from flask_wtf.csrf import CSRFProtect
 from flask_session import Session
 from datetime import timedelta
-from src.web.seeds import seed_paises, seed_generos, seed_estados_civiles, seeds_usuarios
+from src.web.seeds import seed_paises, seed_generos, seed_estados_civiles, seeds_usuarios, seeds_facultades
 from src.web.controllers.routes import registrar_rutas
 from src.web.handlers.auth import is_authenticated, get_id_sesion, get_rol_sesion, get_id_alumno_sesion
 from src.web.handlers.permisos import check_permiso
@@ -67,9 +67,10 @@ def create_app(env="development", static_folder="../../static", template_folders
         """
         Comando para crear los seeds de la base de datos
         """
-        seeds_usuarios()
+        usuarios = seeds_usuarios()
         seed_paises()
         seed_generos()
         seed_estados_civiles()
+        seeds_facultades(usuarios)
 
     return app

@@ -8,10 +8,16 @@ class Facultad(db.Model):
     nombre = db.Column(db.String(100), nullable=False)
     acronimo = db.Column(db.String(10), nullable=False)
 
+    puntos_focales = db.relationship(
+        'Usuario',
+        back_populates='facultad',
+        lazy='select'
+    )
+
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
 
     deleted_at = db.Column(db.DateTime, nullable=True, default=None)
 
-    def repr(self):
+    def __repr__(self):
         return f'<Facultad {self.nombre}>'
