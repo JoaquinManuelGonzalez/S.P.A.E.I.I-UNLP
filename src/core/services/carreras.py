@@ -2,7 +2,7 @@ from src.core.database import db
 from datetime import datetime
 from src.core.models.carrera import Carrera
 
-def create_carrera(nombre, id_facultad):
+def create_carrera(nombre, facultad_id):
     """
     Creates a new Carrera record in the database.
 
@@ -18,7 +18,7 @@ def create_carrera(nombre, id_facultad):
     """
 
     try:
-        new_carrera = Carrera(nombre=nombre, id_facultad=id_facultad)
+        new_carrera = Carrera(nombre=nombre, facultad_id=facultad_id)
         db.session.add(new_carrera)
         db.session.commit()
         return new_carrera
@@ -50,9 +50,9 @@ def get_carreras_by_facultad(facultad_id: int):
         list: A list of Carrera objects.
     """
 
-    return Carrera.query.filter(Carrera.id_facultad == facultad_id).all()
+    return Carrera.query.filter(Carrera.facultad_id == facultad_id).all()
 
-def update_carrera(carrera_id, nombre=None, id_facultad=None):
+def update_carrera(carrera_id, nombre=None, facultad_id=None):
     """
     Updates a Carrera record in the database.
 
@@ -73,8 +73,8 @@ def update_carrera(carrera_id, nombre=None, id_facultad=None):
         if carrera_to_update:
             if nombre:
                 carrera_to_update.nombre = nombre
-            if id_facultad:
-                carrera_to_update.id_facultad = id_facultad
+            if facultad_id:
+                carrera_to_update.facultad_id = facultad_id
             db.session.commit()
             return carrera_to_update
         else:

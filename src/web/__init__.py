@@ -6,6 +6,8 @@ from src.core.config import config
 from flask_wtf.csrf import CSRFProtect
 from src.web.seeds import seed_countries, seed_generos, seed_estados_civiles, seeds_usuarios
 from src.web.seeds.seed_facultades import seed_facultades
+from src.web.seeds.seed_carreras import seed_carreras
+from src.web.seeds.seed_asignaturas import seed_asignaturas
 from src.web.controllers.routes import registrar_rutas
 from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, jwt_required
 
@@ -62,5 +64,7 @@ def create_app(env="development", static_folder="../../static", template_folders
         seed_generos()
         seed_estados_civiles()
         seed_facultades()
+        seed_carreras()
+        seed_asignaturas()
 
     return app

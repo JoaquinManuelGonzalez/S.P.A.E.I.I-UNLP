@@ -33,9 +33,7 @@ def visualizar(facultad_id):
 
     query = request.args
 
-    nombre_carrera = query.get('nombre_search_carrera', None)
     nombre_asignatura = query.get('nombre_search_asignatura', None)
-    nombre_punto_focal = query.get('nombre_search_punto_focal', None)
     
     facultad = facultades_service.get_facultad_by_id(facultad_id=facultad_id)
     if facultad is None:
@@ -43,9 +41,9 @@ def visualizar(facultad_id):
         return redirect(url_for("facultades.listar"))
     
     carreras = carreras_service.get_carreras_by_facultad(facultad_id)
-    asignaturas = asignaturas_service.get_asignaturas_cursadas_por_carreras(carreras)
+    asignaturas = asignaturas_service.get_asignaturas_cursadas_por_carreras(carreras, nombre=nombre_asignatura)
     puntos_focales = []
 
-    return render_template("facultades/visualizar.html", facultad=facultad, carreras=carreras, nombre_carrera=nombre_carrera, 
+    return render_template("facultades/visualizar.html", facultad=facultad, carreras=carreras, 
                            asignaturas=asignaturas, nombre_asignatura=nombre_asignatura, 
-                           puntos_focales=puntos_focales, nombre_punto_focal=nombre_punto_focal)
+                           puntos_focales=puntos_focales)

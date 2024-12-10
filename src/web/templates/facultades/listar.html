@@ -27,7 +27,7 @@
                             <td class="text-center align-middle">{{ facultad.acronimo }}</td>
                             <td class="text-center align-middle">
                                 <div class="btn-group">
-                                    <a href="#" class="btn btn-primary" data-bs-toggle="tooltip"
+                                    <a href="{{ url_for('facultades.visualizar', facultad_id=facultad.id) }}" class="btn btn-primary" data-bs-toggle="tooltip"
                                        data-bs-title="Ver"><i class="bi bi-eye-fill"></i></a>
                                 </div>
                             </td>

@@ -67,7 +67,7 @@ def get_asignaturas_cursadas_en(facultad_id: int):
 
     return Asignatura.query.filter(Asignatura.facultad_id == facultad_id).all()
 
-def get_asignaturas_cursadas_por_carreras(carreras):
+def get_asignaturas_cursadas_por_carreras(carreras, nombre):
     """Obtiene todas las asignaturas que se cursan en las carreras pasadas por parámetro.
 
     Args:
@@ -83,6 +83,7 @@ def get_asignaturas_cursadas_por_carreras(carreras):
     # Consulta para obtener todas las asignaturas asociadas a las carreras especificadas
     asignaturas = Asignatura.query.join(asignaturas_carreras) \
                                .filter(asignaturas_carreras.columns.carrera_id.in_(carrera_ids)) \
+                               .filter(Asignatura.nombre.ilike(f"%{nombre}%")) \
                                .distinct() \
                                .all()
 

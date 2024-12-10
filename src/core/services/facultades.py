@@ -39,6 +39,19 @@ def get_facultad_by_id(facultad_id: int) -> Facultad:
 
     return Facultad.query.get(facultad_id)
 
+def get_facultad_by_acronimo(acronimo: str) -> Facultad:
+    """
+    Gets a Facultad record by its acronimo.
+
+    Args:
+        acronimo (str): The acronimo of the Facultad to retrieve.
+
+    Returns:
+        Facultad: The Facultad object with the specified ID, or None if not found.
+    """
+
+    return Facultad.query.filter(Facultad.acronimo == acronimo).first()
+
 def get_all_facultades():
     """
     Gets all Facultad records from the database.

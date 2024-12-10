@@ -4,9 +4,10 @@ from src.core.models.facultad import Facultad
 
 def seed_facultades():
     # Ciencias Exactas y Naturales
-    facultades_service.create_facultad(nombre="Facultad de Ciencias Exactas", acronimo="FCEyN")
+    facultades_service.create_facultad(nombre="Facultad de Ciencias Exactas", acronimo="FCE")
     facultades_service.create_facultad(nombre="Facultad de Ciencias Naturales y Museo", acronimo="FCNyM")
     facultades_service.create_facultad(nombre="Facultad de Ciencias Astronómicas y Geofísicas", acronimo="FCAG")
+    facultades_service.create_facultad(nombre="Facultad de Informática", acronimo="FINF")
 
     # Ciencias de la Salud
     facultades_service.create_facultad(nombre="Facultad de Ciencias Médicas", acronimo="FCM")
@@ -14,7 +15,7 @@ def seed_facultades():
     facultades_service.create_facultad(nombre="Facultad de Ciencias Veterinarias", acronimo="FCV")
 
     # Ingeniería
-    facultades_service.create_facultad(nombre="Facultad de Ingeniería", acronimo="FI")
+    facultades_service.create_facultad(nombre="Facultad de Ingeniería", acronimo="FING")
 
     # Ciencias Sociales
     facultades_service.create_facultad(nombre="Facultad de Ciencias Jurídicas y Sociales", acronimo="FCJS")
