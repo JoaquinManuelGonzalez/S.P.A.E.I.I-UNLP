@@ -131,3 +131,6 @@ def crear_rol_permiso(id_rol:int, id_permiso:int) -> RolPermiso:
 def buscar_permisos_usuario(id_usuario:int):
     permisos = RolPermiso.query.filter_by(id_rol=id_usuario.id_rol)
     return permisos
+
+def get_puntos_focales_by_facultad(facultad_id: int):
+    return Usuario.query.filter(Usuario.facultad_id == facultad_id).all()

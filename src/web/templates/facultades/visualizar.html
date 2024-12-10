@@ -28,21 +28,21 @@
                         <thead>
                         <tr>
                             <th scope="col">Nombre</th>
-                            <th scope="col" class="text-center">Acciones</th>
+                            <th scope="col" class="text-end">Acciones</th>
                         </tr>
                         </thead>
                         <tbody>
                         {% for carrera in carreras %}
                             <tr>
                                 <th scope="row" class="align-middle">{{ carrera.nombre }}</th>
-                                <td class="text-center align-middle">
+                                <td class="text-end align-middle">
                                     <div class="btn-group">
                                         <a href="#" class="btn btn-primary" data-bs-toggle="tooltip"
                                            data-bs-title="Ver"><i class="bi bi-eye-fill"></i></a>
                                     </div>
                                     <a href="#" class="btn btn-warning" data-bs-toggle="tooltip"
                                        data-bs-title="Editar"><i class="bi bi-pencil-fill"></i></a>
-                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal-{{ carrera.id }}" data-carrera-id="{{ carrera.id }}" data-bs-title="Eliminar">
+                                    <button type="button" class="btn btn-danger" data-bs-title="Eliminar" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal-{{ carrera.id }}" data-carrera-id="{{ carrera.id }}" data-bs-title="Eliminar">
                                        <i class="bi bi-trash-fill"></i>
                                     </button>
                                     <div class="modal fade" id="confirmDeleteModal-{{ carrera.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -105,7 +105,7 @@
                         <tr>
                             <th scope="col">Nombre</th>
                             <th scope="col" class="text-center">Se dicta en</th>
-                            <th scope="col" class="text-center">Acciones</th>
+                            <th scope="col" class="text-end">Acciones</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -113,14 +113,14 @@
                             <tr>
                                 <th scope="row" class="align-middle">{{ asignatura.nombre }}</th>
                                 <td class="text-center align-middle">{{ asignatura.facultad.acronimo }}</td>
-                                <td class="text-center align-middle">
+                                <td class="text-end align-middle">
                                     <div class="btn-group">
                                         <a href="#" class="btn btn-primary" data-bs-toggle="tooltip"
                                            data-bs-title="Ver"><i class="bi bi-eye-fill"></i></a>
                                     </div>
                                     <a href="#" class="btn btn-warning" data-bs-toggle="tooltip"
                                        data-bs-title="Editar"><i class="bi bi-pencil-fill"></i></a>
-                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal-{{ asignatura.id }}" data-asignatura-id="{{ asignatura.id }}" data-bs-title="Eliminar">
+                                    <button type="button" class="btn btn-danger" data-bs-title="Eliminar" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal-{{ asignatura.id }}" data-asignatura-id="{{ asignatura.id }}" data-bs-title="Eliminar">
                                        <i class="bi bi-trash-fill"></i>
                                     </button>
                                     <div class="modal fade" id="confirmDeleteModal-{{ asignatura.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -152,7 +152,41 @@
                     </table>
                 </div>
             </div>
-            {{ render_pagination(asignaturas, "facultades.visualizar", nombre_asignatura=nombre_asignatura) }}
+            <nav aria-label="Page navigation example shadow">
+                <ul class="pagination justify-content-center">
+                    {% if asignaturas.has_prev %}
+                        <li class="page-item">
+                            <a type="submit" href="{{ url_for('facultades.visualizar', pagina=asignaturas.prev_num, nombre=nombre_asignatura) }}" class="page-link"><span aria-hidden="true">&laquo; Anterior</span></a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">&laquo; Anterior</span>
+                        </li>
+                    {% endif %}
+            
+                    {% for page_num in range(1, asignaturas.pages + 1) %}
+                        {% if page_num == asignaturas.page %}
+                            <li class="page-item active" aria-current="page">
+                                <span class="page-link">{{ page_num }}</span>
+                            </li>
+                        {% else %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('facultades.visualizar', pagina=page_num, nombre=nombre_asignatura) }}">{{ page_num }}</a>
+                            </li>
+                        {% endif %} 
+                    {% endfor %}
+            
+                    {% if asignaturas.has_next %}
+                        <li class="page-item">
+                            <a type="submit" href="{{ url_for('facultades.visualizar', pagina=asignaturas.next_num, nombre=nombre_asignatura) }}" class="page-link"><span aria-hidden="true">Siguiente &laquo;</span></a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">Siguiente &raquo;</span>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
         </div>
         
         <br>
@@ -171,21 +205,21 @@
                         <thead>
                         <tr>
                             <th scope="col">Nombre</th>
-                            <th scope="col" class="text-center">Acciones</th>
+                            <th scope="col" class="text-end">Acciones</th>
                         </tr>
                         </thead>
                         <tbody>
                         {% for punto_focal in puntos_focales %}
                             <tr>
                                 <th scope="row" class="align-middle">{{ punto_focal.nombre }}</th>
-                                <td class="text-center align-middle">
+                                <td class="text-end align-middle">
                                     <div class="btn-group">
                                         <a href="#" class="btn btn-primary" data-bs-toggle="tooltip"
                                            data-bs-title="Ver"><i class="bi bi-eye-fill"></i></a>
                                     </div>
                                     <a href="#" class="btn btn-warning" data-bs-toggle="tooltip"
                                        data-bs-title="Editar"><i class="bi bi-pencil-fill"></i></a>
-                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal-{{ punto_focal.id }}" data-punto_focal-id="{{ punto_focal.id }}" data-bs-title="Eliminar">
+                                    <button type="button" class="btn btn-danger" data-bs-title="Eliminar" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal-{{ punto_focal.id }}" data-punto_focal-id="{{ punto_focal.id }}" data-bs-title="Eliminar">
                                        <i class="bi bi-trash-fill"></i>
                                     </button>
                                     <div class="modal fade" id="confirmDeleteModal-{{ punto_focal.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -226,15 +260,11 @@
             const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
             const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 
-            const nombre_search_asignatura = document.getElementById("nombre_search_asignatura")
-            nombre_search_asignatura.addEventListener("change", () => {
-                console.log("auxilio")
+            document.getElementById("nombre_search_asignatura").addEventListener("change", () => {
                 const url = URL.parse(window.location.href);
                 const params = url.searchParams;
-                if (!params.has("nombre_search_asignatura") || (params.get("nombre_search_asignatura") !== nombre_search_asignatura.value)) {
-                    params.set("nombre_search_asignatura", nombre_search_asignatura.value);
-                    window.location.href = url.toString();
-                }
+                params.set("nombre_search_asignatura", nombre_search_asignatura.value);
+                window.location.href = url.toString();
             });
         });
     </script>
