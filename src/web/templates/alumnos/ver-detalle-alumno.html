@@ -1,0 +1,299 @@
+{% extends "layout.html" %}
+
+{% block title %}Detalle del Alumno{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <style>
+        /* Estilos personalizados */
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            background-color: #6c757f; /* Gris más claro */
+            color: #fff;
+            font-weight: 600;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+            background-color: #f9f9f9;
+        }
+
+        .card-footer {
+            background-color: #f1f1f1;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+            text-align: center;
+        }
+
+        .nav-tabs {
+            border-bottom: 2px solid #ddd;
+        }
+
+        .nav-item {
+            margin-right: 1rem;
+        }
+
+        .nav-link {
+            border: none;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .nav-link.active {
+            color: #007bff;
+            border-bottom: 2px solid #007bff;
+        }
+
+        .section-header {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 1.5rem;
+        }
+
+        .icon {
+            font-size: 1.5rem;
+            color: #007bff;
+        }
+
+        .container {
+            padding-top: 3rem;
+            padding-bottom: 3rem;
+        }
+
+        .modal-content {
+            border-radius: 10px;
+        }
+
+        /* Animación para la carga de contenido en los tabs */
+        .tab-pane {
+            opacity: 0;
+            animation: fadeIn 0.5s forwards;
+        }
+
+        .tab-content .active {
+            opacity: 1;
+            animation: fadeIn 0.5s forwards;
+        }
+
+        /* Animación */
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        /* Estilos para los botones */
+        .btn-custom {
+            font-size: 1rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 18px;
+            font-weight: 600;
+            text-transform: uppercase;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #004085;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+            border-color: #bd2130;
+            transform: translateY(-2px);
+        }
+
+        /* Estilos para el modal */
+        .modal-dialog {
+            max-width: 500px;
+            margin: 1.75rem auto;
+        }
+
+        /* Responsive design */
+        @media (max-width: 767px) {
+            .container {
+                padding-top: 2rem;
+                padding-bottom: 2rem;
+            }
+
+            .btn-custom {
+                padding: 0.5rem 1.2rem;
+                font-size: 0.9rem;
+            }
+
+            .section-header {
+                font-size: 1.25rem;
+            }
+
+            .nav-tabs {
+                flex-direction: column;
+            }
+
+            .nav-item {
+                margin-right: 0;
+                margin-bottom: 0.5rem;
+            }
+
+            .nav-link {
+                font-size: 0.9rem;
+                padding: 0.75rem 1.5rem;
+            }
+
+            .d-flex {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .d-flex a {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            .modal-dialog {
+                max-width: 100%;
+                margin: 20px auto;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    {% if check_permiso(session, 'admin') %}
+        <h1 class="display-4 mb-4 text-center text-dark">Detalle del Alumno</h1>
+    {% else %}
+        <h1 class="display-4 mb-4 text-center text-dark">Información Personal</h1>
+    {% endif %}
+    <hr class="mb-5">
+
+    <!-- Tabs de navegación -->
+    <ul class="nav nav-tabs" id="alumnoTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <a class="nav-link active" id="personal-tab" data-bs-toggle="tab" href="#personal" role="tab" aria-controls="personal" aria-selected="true">Información Personal</a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" id="ubicacion-tab" data-bs-toggle="tab" href="#ubicacion" role="tab" aria-controls="ubicacion" aria-selected="false">Información de Ubicación</a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" id="documentos-tab" data-bs-toggle="tab" href="#documentos" role="tab" aria-controls="documentos" aria-selected="false">Documentos Asociados</a>
+        </li>
+        {% if check_permiso(session, 'admin') %}
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="historial-tab" data-bs-toggle="tab" href="#historial" role="tab" aria-controls="historial" aria-selected="false">Historial</a>
+            </li>
+        {% endif %}
+    </ul>
+
+    <div class="tab-content" id="alumnoTabsContent">
+        <!-- Información Personal -->
+        <div class="tab-pane fade show active" id="personal" role="tabpanel" aria-labelledby="personal-tab">
+            <div class="card shadow-sm border-0 mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Información Personal</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Nombre:</strong> {{ alumno.nombre }}</p>
+                    <p><strong>Apellido:</strong> {{ alumno.apellido }}</p>
+                    <p><strong>Email:</strong> {{ alumno.email }}</p>
+                    <p><strong>Fecha de Nacimiento:</strong> {{ alumno.fecha_de_nacimiento.strftime('%d/%m/%Y') }}</p>
+                    <p><strong>Género:</strong> {{ alumno.genero.nombre_es }}</p>
+                    <p><strong>Estado Civil:</strong> {{ alumno.estado_civil.nombre_es }}</p>
+                    <p><strong>Discapacitado:</strong> {{ 'Sí' if alumno.discapacitado else 'No' }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Información de Ubicación -->
+        <div class="tab-pane fade" id="ubicacion" role="tabpanel" aria-labelledby="ubicacion-tab">
+            <div class="card shadow-sm border-0 mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Información de Ubicación</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>País de Nacimiento:</strong> {{ alumno.pais_de_nacimiento.nombre_es }}</p>
+                    <p><strong>País de Residencia:</strong> {{ alumno.pais_de_residencia.nombre_es }}</p>
+                    <p><strong>Nacionalidad:</strong> {{ alumno.pais_nacionalidad.nombre_es }}</p>
+                    <p><strong>Domicilio:</strong> {{ alumno.domicilio_pais_de_residencia }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Documentos Asociados -->
+        <div class="tab-pane fade" id="documentos" role="tabpanel" aria-labelledby="documentos-tab">
+            <div class="card shadow-sm border-0 mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Documentación</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Pasaporte:</strong> 
+                        {{ alumno.pasaporte.numero if alumno.pasaporte else "No posee información asociada." }}
+                    </p>
+                    <p><strong>Cédula de Identidad:</strong> 
+                        {{ alumno.cedula_de_identidad.numero if alumno.cedula_de_identidad else "No posee información asociada." }}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Historial de Creación y Actualización -->
+        <div class="tab-pane fade" id="historial" role="tabpanel" aria-labelledby="historial-tab">
+            <div class="card shadow-sm border-0 mt-4">
+                <div class="card-footer text-muted">
+                    <small>Creado el: {{ alumno.creacion.strftime('%d/%m/%Y') }}</small><br>
+                    <small>Última actualización: {{ alumno.actualizacion.strftime('%d/%m/%Y') }}</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botones de acción -->
+    <div class="d-flex justify-content-center mt-4">
+        {% if check_permiso(session, 'alumno') %}
+            <a href="{{ url_for('alumnos_bp.solicitar_edicion', id_alumno=alumno.id) }}" class="btn btn-primary btn-custom mx-2">Solicitar Edición de Datos</a>
+        {% elif check_permiso(session, 'admin') %}
+            <a href="{{ url_for('alumnos_bp.editar_alumno', id_alumno=alumno.id) }}" class="btn btn-primary btn-custom mx-2">Editar Alumno</a>
+            <a href="{{ url_for('alumnos_bp.eliminar_alumno', id_alumno=alumno.id) }}" class="btn btn-danger btn-custom mx-2" data-bs-toggle="modal" data-bs-target="#confirmarEliminarModal">Eliminar</a>
+        {% endif %}
+    </div>
+
+    <!-- Modal de Confirmación de Eliminación -->
+    <div class="modal fade" id="confirmarEliminarModal" tabindex="-1" aria-labelledby="confirmarEliminarModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmarEliminarModalLabel">Confirmar Eliminación</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    ¿Estás seguro de que deseas eliminar este alumno? Esta acción no se puede deshacer.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-custom" data-bs-dismiss="modal">Cancelar</button>
+                    <a href="{{ url_for('alumnos_bp.eliminar_alumno', id_alumno=alumno.id) }}" class="btn btn-danger btn-custom">Eliminar Alumno</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

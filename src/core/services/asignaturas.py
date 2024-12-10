@@ -83,11 +83,12 @@ def get_asignaturas_cursadas_por_carreras(carreras, nombre):
     # Consulta para obtener todas las asignaturas asociadas a las carreras especificadas
     asignaturas = Asignatura.query.join(asignaturas_carreras) \
                                .filter(asignaturas_carreras.columns.carrera_id.in_(carrera_ids)) \
-                               .filter(Asignatura.nombre.ilike(f"%{nombre}%")) \
-                               .distinct() \
-                               .all()
+                               .distinct()
+    
+    if nombre and nombre != "":
+        asignaturas = asignaturas.filter(Asignatura.nombre.ilike(f"%{nombre}%"))
 
-    return asignaturas
+    return asignaturas.all()
 
 def delete_asignatura(asignatura_id):
     """Elimina una asignatura (soft delete).

@@ -1,8 +1,7 @@
-from wtforms import StringField, PasswordField, SubmitField, SelectField, HiddenField
-from wtforms.validators import DataRequired, Length, ValidationError
+from wtforms import StringField, PasswordField, SelectField, HiddenField
+from wtforms.validators import DataRequired, Length, ValidationError, EqualTo
 from src.core.services import usuario_service
 from flask_wtf import FlaskForm
-from flask import session
 import re
 
 
@@ -14,6 +13,7 @@ class Usuario_Form(FlaskForm):
     contraseña = PasswordField('Contraseña', validators=[DataRequired(), Length(min=8, max=100)])
     id_rol = SelectField('Rol', choices=[], validators=[DataRequired()])
     id_usuario_editado = HiddenField('id_usuario_editado')
+    
 
     def validate_email(form, field):
         id_usuario_editado = form.id_usuario_editado.data

@@ -1,9 +1,13 @@
 from src.core.models.usuario import Usuario, Rol, Permiso, RolPermiso
 from flask import request, render_template, redirect, flash
 from src.web.forms import Usuario_Form
+from src.web.forms.recuperar_contraseña_form import RecuperarContraseñaForm as Recuperar_Form
 from src.core.bcrypt import bcrypt
 from src.core.database import db
 from datetime import datetime
+import string, secrets
+from flask import session
+from src.core.services import email_service
 
 
 def listar_usuarios(pagina:int):
@@ -49,18 +53,47 @@ def crear_usuario(formulario:Usuario_Form) -> None:
     db.session.commit()
     flash('El usuario se ha creado correctamente', 'success')
     
-def editar_usuario(usuario:Usuario):
+def editar_usuario(usuario:Usuario, contraseña_nueva:str) -> None:
     '''
         Este método edita un usuario en la base de datos
         
         Args:
             usuario (Usuario): El usuario a editar
     '''
+    print(session)
+    if contraseña_nueva:
+        hash_contraseña = bcrypt.generate_password_hash(contraseña_nueva.encode('utf-8')).decode('utf-8')
+        usuario.contraseña = hash_contraseña
     db.session.add(usuario)
     db.session.commit()
+    print(session)
     flash('El usuario se ha editado correctamente', 'success')
 
     
+def recuperar_contraseña(formulario:Recuperar_Form):
+    '''
+        Este método recupera la contraseña de un usuario en la base de datos
+        
+        Args:
+            formulario (Usuario_Form): El formulario de recuperación de contraseña
+    '''
+    usuario = Usuario.query.filter_by(email=formulario.email.data).first()
+    if usuario:
+        contraseña = generar_contraseña()
+        hash = bcrypt.generate_password_hash(contraseña.encode('utf-8'))
+        usuario.contraseña = hash.decode('utf-8')
+        db.session.add(usuario)
+        db.session.commit()
+        mensaje = f'Su nueva contraseña es: {contraseña}, recuerde cambiarla en su próximo inicio de sesión'
+        email_service.send_email('Recuperación de contraseña', mensaje, [usuario.email])
+        flash('La contraseña se ha recuperado correctamente, revise su casilla de email', 'success')
+    return usuario
+
+def generar_contraseña(longitud=12):
+    caracteres = string.ascii_letters + string.digits + string.punctuation
+    contraseña = ''.join(secrets.choice(caracteres) for _ in range(longitud))
+    return contraseña
+
 def buscar_usuario(id_usuario:int) -> Usuario:
     return Usuario.query.get_or_404(id_usuario)
 

@@ -1,19 +1,27 @@
-{% extends "layout.html" %}
-{% block title %}¡Error!{% endblock %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
 
-{% block content %}
-    <div class="px-4 my-5 text-center">
-        <h1 class="display-4 fw-bold text-body-emphasis mb-0">{{ error.code }}</h1>
-        <h2 class="display-6">{{ error.name }}</h2>
-        <div class="col-lg-6 mx-auto">
-            <p class="lead mb-4">{{ error.description }}</p>
-            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mb-5">
-                <a class="btn btn-primary btn-lg px-4 me-sm-3" href="{{ url_for('home') }}">Ir al inicio</a>
-            </div>
-        </div>
-        <div class="container px-0 px-sm-5">
-            <img src="/static/images/computer-repair-illustration.png" alt="" width="700" height="500" loading="lazy"
-                 class="img-fluid border rounded-3 shadow-lg mb-4">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error!</title>
+    {% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/error.css')}}" />
+    {% endblock %}
+
+</head>
+
+<body>
+    <div class="error-container">
+        <div class="error-code">{{error.code}}</div>
+        <div class="error-message">{{error.name}}</div>
+        <div class="error-detail">{{error.description}}</div>
+        <div class="link-container">
+            <a href="{{ url_for('home')}}" class="more-link">Return to Home!</a>
         </div>
     </div>
-{% endblock %}
+
+</body>
+
+
+</html>
