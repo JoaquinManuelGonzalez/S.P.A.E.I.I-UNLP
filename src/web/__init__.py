@@ -9,6 +9,7 @@ from src.web.controllers.routes import registrar_rutas
 from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, jwt_required
 from flask_cors import CORS
 from src.core import cors
+from src.web.api.primer_formulario import bp as api_bp
 
 #session = Session()
 def create_app(env="development", static_folder="../../static", template_folders=""):
@@ -26,6 +27,8 @@ def create_app(env="development", static_folder="../../static", template_folders
     database.init_app(app)
     bcrypt.init_app(app)
     csrf = CSRFProtect(app)
+    csrf.init_app(app)
+    csrf.exempt(api_bp)
     app = registrar_rutas(app)
     jwt = JWTManager(app)
     CORS(app)

@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, make_response
 from flask_wtf.csrf import generate_csrf
 
 
@@ -21,6 +21,9 @@ def primer_formulario():
     Primer formulario de postulación.
     """
     data = request.get_json()
+    return jsonify(data), 201
+    token = request.headers.get("X-CSRF-Token")
+
     print(data)
     data_postulacion = data["postulacion"]
     data_alumno = data["alumno"]
@@ -74,4 +77,6 @@ def primer_formulario_get():
         #"programa": programa
     }
 
+    #response = make_response(jsonify(data_response), 200)
+    #.headers['Access-Control-Allow-Origin'] = 'http://localhost:5173/primer-formulario'
     return jsonify(data_response), 200
