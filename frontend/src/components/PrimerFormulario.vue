@@ -17,11 +17,11 @@
             </div>
             <div class="mb-4">
               <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-              <input v-model="formData.alumno.email" id="email" type="email" class="mt-1 p-2 border border-gray-300 rounded-md w-full" required placeholder="Ingrese su nombre">
+              <input v-model="formData.alumno.email" id="email" type="email" class="mt-1 p-2 border border-gray-300 rounded-md w-full" required placeholder="Ingrese su email">
             </div>
-            <div>
+            <div class="mb-4">
               <label for="genero" class="block text-sm font-medium text-gray-700">Género conforme pasaporte</label>
-              <select v-model="formData.alumno.id_genero" id="genero" class="mt-1 p-2 border border-gray-300 rounded-md w-full">
+              <select v-model="formData.alumno.id_genero" id="genero" class="mt-1 p-2 border border-gray-300 rounded-md w-full"  required>
                 <option value="">Seleccione su género</option>
                 <option v-for="genero in filteredGeneros" :key="genero.id" :value="genero.id">
                   {{ genero.name }}
@@ -34,7 +34,7 @@
             </div>
             <div class="mb-4">
               <label for="pais_de_nacimiento" class="block text-sm font-medium text-gray-700">País de nacimiento</label>
-              <select v-model="formData.alumno.id_pais_de_nacimiento" id="pais_de_nacimiento" class="mt-1 p-2 border border-gray-300 rounded-md w-full">
+              <select v-model="formData.alumno.id_pais_de_nacimiento" id="pais_de_nacimiento" class="mt-1 p-2 border border-gray-300 rounded-md w-full" required>
                 <option value="">Seleccione su país de nacimiento</option>
                 <option v-for="pais in filteredPaises" :key="pais.id" :value="pais.id">
                   {{ pais.name }}
@@ -43,7 +43,7 @@
             </div>
             <div class="mb-4">
               <label for="paisResidencia" class="block text-sm font-medium text-gray-700">País de residencia</label>
-              <select v-model="formData.alumno.id_pais_de_residencia" id="paisResidencia" class="mt-1 p-2 border border-gray-300 rounded-md w-full">
+              <select v-model="formData.alumno.id_pais_de_residencia" id="paisResidencia" class="mt-1 p-2 border border-gray-300 rounded-md w-full" required>
                 <option value="">Seleccione su país de residencia</option>
                 <option v-for="pais in filteredPaises" :key="pais.id" :value="pais.id">
                   {{ pais.name }}
@@ -56,8 +56,8 @@
             </div>
             <div class="mb-4">
               <label for="nacionalidad" class="block text-sm font-medium text-gray-700">Nacionalidad</label>
-              <select v-model="formData.alumno.id_pais_nacionalidad" id="nacionalidad" class="mt-1 p-2 border border-gray-300 rounded-md w-full" required>
-                <option value="0">Seleccionar tu país</option>
+              <select v-model="formData.alumno.id_pais_nacionalidad" v-on:change="esHispanohablante()" id="nacionalidad" class="mt-1 p-2 border border-gray-300 rounded-md w-full" required>
+                <option value="">Selecciona tu país</option>
                 <option v-for="pais in filteredPaises" :key="pais.id" :value="pais.id">
                   {{ pais.name }}
                 </option>
@@ -66,11 +66,11 @@
             <div>
               <div class="mb-4">
                 <label for="pasaporte" class="block text-sm font-medium text-gray-700">Pasaporte</label>
-                <input v-model="formData.pasaporte.numero" id="pasaporte" type="text" class="mt-1 p-2 border border-gray-300 rounded-md w-full" placeholder="Ingrese su número de pasaporte">
+                <input v-model="formData.pasaporte.numero" id="pasaporte" type="text" class="mt-1 p-2 border border-gray-300 rounded-md w-full" placeholder="Ingrese su número de pasaporte" :required="!mercosur || formData.cedula_de_identidad.numero === '' || formData.archivo.pasaporte != null || formData.pasaporte.id_pais != ''">
               </div>
               <div class="mb-4">
                 <label for="paisEmisionPasaporte" class="block text-sm font-medium text-gray-700"> País de emisión de pasaporte</label>
-                <select v-model="formData.pasaporte.id_pais" id="paisEmisionPasaporte" class="mt-1 p-2 border border-gray-300 rounded-md w-full">
+                <select v-model="formData.pasaporte.id_pais" id="paisEmisionPasaporte" class="mt-1 p-2 border border-gray-300 rounded-md w-full" :required="!mercosur || formData.pasaporte.numero != '' || formData.archivo.pasaporte != null">
                   <option value="">Selecciona tu país de emisión de pasaporte</option>
                   <option v-for="pais in filteredPaises" :key="pais.id" :value="pais.id">
                     {{ pais.name }}
@@ -79,17 +79,17 @@
               </div>
               <div class="mb-4">
                 <label for="fotoPasaporte" class="block text-sm font-medium text-gray-700">Foto/Archivo de pasaporte</label>
-                <input v-on:change="onFileChange($event, 'fotoPasaporte')" id="fotoPasaporte" type="file" class="mt-1 p-2 border border-gray-300 rounded-md w-full">
+                <input v-on:change="onFileChange($event, 'fotoPasaporte')" id="fotoPasaporte" type="file" class="mt-1 p-2 border border-gray-300 rounded-md w-full" :required="!mercosur || formData.pasaporte.numero != '' || formData.pasaporte.id_pais != ''">
               </div>
             </div>
-            <div>
+            <div v-if="mercosur">
               <div class="mb-4">
                 <label for="cedulaIdentidad" class="block text-sm font-medium text-gray-700">Cédula de identidad</label>
-                <input v-model="formData.cedula_de_identidad.numero" id="cedulaIdentidad" type="text" class="mt-1 p-2 border border-gray-300 rounded-md w-full" placeholder="Ingrese su número de cédula de identidad">
+                <input v-model="formData.cedula_de_identidad.numero" id="cedulaIdentidad" type="text" class="mt-1 p-2 border border-gray-300 rounded-md w-full" placeholder="Ingrese su número de cédula de identidad" :required="formData.pasaporte.numero === '' || formData.archivo.cedula_de_identidad != null || formData.cedula_de_identidad.id_pais != ''">
               </div>
               <div class="mb-4">
                 <label for="paisEmisionCedulaIdentidad" class="block text-sm font-medium text-gray-700"> País de emisión de cédula de identidad</label>
-                <select v-model="formData.cedula_de_identidad.id_pais" id="paisEmisionCedulaIdentidad" class="mt-1 p-2 border border-gray-300 rounded-md w-full">
+                <select v-model="formData.cedula_de_identidad.id_pais" id="paisEmisionCedulaIdentidad" class="mt-1 p-2 border border-gray-300 rounded-md w-full" :required="formData.cedula_de_identidad.numero != '' || formData.archivo.cedula_de_identidad != null">
                   <option value="">Selecciona tu país de emisión de cédula de identidad</option>
                   <option v-for="pais in filteredPaises" :key="pais.id" :value="pais.id">
                     {{ pais.name }}
@@ -98,12 +98,13 @@
               </div>
               <div class="mb-4">
                 <label for="fotoCedulaIdentidad" class="block text-sm font-medium text-gray-700">Foto/Archivo de cédula de identidad</label>
-                <input v-on:change="onFileChange($event, 'fotoCedulaIdentidad')" id="fotoCedulaIdentidad" type="file" class="mt-1 p-2 border border-gray-300 rounded-md w-full">
+                <input v-on:change="onFileChange($event, 'fotoCedulaIdentidad')" id="fotoCedulaIdentidad" type="file" class="mt-1 p-2 border border-gray-300 rounded-md w-full" :required="formData.cedula_de_identidad.numero != '' || formData.cedula_de_identidad.id_pais != ''">
               </div>
             </div>
             <div class="mb-4">
               <label for="estadoCivil" class="block text-sm font-medium text-gray-700">Estado Civil</label>
-              <select v-model="formData.alumno.id_estado_civil" id="estadoCivil" class="mt-1 p-2 border border-gray-300 rounded-md w-full">
+              <select v-model="formData.alumno.id_estado_civil" id="estadoCivil" class="mt-1 p-2 border border-gray-300 rounded-md w-full" required>
+                <option value="">Seleccione su estado civil</option>
                 <option v-for="estado in filteredEstadosCiviles" :key="estado.id" :value="estado.id">
                   {{ estado.name }}
                 </option>
@@ -111,7 +112,7 @@
             </div>
             <div class="mb-4">
               <label for="certificadoB1" class="block text-sm font-medium text-gray-700">Certificado B1 o superior de español</label>
-              <input v-on:change="onFileChange($event, 'certificadoB1')" id="certificadoB1" type="file" class="mt-1 p-2 border border-gray-300 rounded-md w-full" required>
+              <input v-on:change="onFileChange($event, 'certificadoB1')" id="certificadoB1" type="file" class="mt-1 p-2 border border-gray-300 rounded-md w-full" :required="!es_hispanohablante">
             </div>
           </div>
   
@@ -129,9 +130,9 @@
               <input v-model="nivelEstudio" id="posgrado" name="nivelEstudio" type="radio" class="" required value="posgrado">
               <label for="posgrado" class="ml-1 text-sm font-normal text-gray-700">Estudiante de posgrado</label>
             </div>
-            <div class="mb-4">
+            <div v-if="nivelEstudio === 'posgrado'" class="mb-4">
               <label for="planTrabajo" class="block text-sm font-medium text-gray-700">Foto/Archivo del plan de trabajo</label>
-              <input v-on:change="onFileChange($event, 'planTrabajo')" id="planTrabajo" type="file" class="mt-1 p-2 border border-gray-300 rounded-md w-full">
+              <input v-on:change="onFileChange($event, 'planTrabajo')" id="planTrabajo" type="file" class="mt-1 p-2 border border-gray-300 rounded-md w-full" :required="nivelEstudio === 'posgrado'">
             </div>
             <div class="mb-4">
               <label for="consulado_visacion" class="block text-sm font-medium text-gray-700">Consulado de visación</label>
@@ -145,13 +146,13 @@
               <label for="programa" class="ml-1 text-sm font-normal text-gray-700">Programa estudiantil</label>
               <p class="mt-1 text-xs font-normal text-gray-700">Puede ver los Convenios que posee la Universidda Nacional de La Plata visitando el siguiente enlace: <a href=""></a></p>
             </div>
-            <div class="mb-4">
+            <div v-if="convenioPrograma === 'convenio'" class="mb-4">
               <label for="convenio" class="block text-sm font-medium text-gray-700">Convenio Universitario</label>
-              <input v-model="formData.postulacion.convenio" id="convenio" type="text" class="mt-1 p-2 border border-gray-300 rounded-md w-full" placeholder="Ingrese su convenio universitario">
+              <input v-model="formData.postulacion.convenio" id="convenio" type="text" class="mt-1 p-2 border border-gray-300 rounded-md w-full" placeholder="Ingrese su convenio universitario" :required="convenioPrograma === 'convenio'">
             </div>
-            <div class="mb-4">
+            <div v-if="convenioPrograma === 'programa'" class="mb-4">
               <label for="nombre_programa" class="block text-sm font-medium text-gray-700">Programa estudiantil</label>
-              <select v-model="formData.id_programa" id="nombre_programa" class="mt-1 p-2 border border-gray-300 rounded-md w-full">
+              <select v-model="formData.id_programa" id="nombre_programa" class="mt-1 p-2 border border-gray-300 rounded-md w-full" :required="convenioPrograma === 'programa'">
                 <option value="">Seleccione su programa</option>
                 <option value="programa1">Programa 1</option>
                 <option value="programa2">Programa 2</option>
@@ -205,7 +206,7 @@
   import { usePrimerFormularioStore } from '../stores/PrimerFormularioStore';
 
   const store = usePrimerFormularioStore();
-  const { formData, errors, loading, paises, estados_civiles, generos, convenioPrograma, nivelEstudio } = storeToRefs(store);
+  const { formData, errors, loading, paises, estados_civiles, generos, convenioPrograma, nivelEstudio, es_hispanohablante, mercosur } = storeToRefs(store);
   
   // Accedemos al idioma actual a través de i18n
   const { locale } = useI18n();
@@ -218,8 +219,10 @@
     const countries = paises.value.map(pais => ({
       id: pais.id,
       name: pais[`nombre_${currentLocale}`], // Usamos el nombre en el idioma actual
+      hispanohablante: pais.hispanohablante
     }));
-    console.log(countries);
+    console.log("el pais con id 1 es")
+    console.log(paises.value);
     return countries;
   });
 
@@ -249,13 +252,12 @@
     console.log(formData);
     console.log(nivelEstudio);
     console.log(convenioPrograma);
-    await store.submitForm();
-    /*
+    //await store.submitForm();
     try {
       await store.submitForm();
     } catch (error) {
       console.error(error);
-    }*/
+    }
   };
 
   // Manejo de cambio de archivo
@@ -279,6 +281,15 @@
         break;
     }
   };
+
+  const esHispanohablante = () => {
+    es_hispanohablante.value = paises.value[formData.value.alumno.id_pais_nacionalidad - 1].hispanohablante;
+    let paises_mercosur = [42 /*Perú*/, 62 /*Colombia*/, 90 /*Paraguay*/, 125 /*Argentina*/, 150 /*Surinam*/, 166 /*Guyana*/, 169 /*Uruguay*/, 176 /*Panama*/, 202 /*Bolivia*/, 203 /*Chile*/, 210 /*Ecuador*/, 223 /*Brasil*/, 228 /*Venexuela*/]
+    let nombres_mercosur = ["Perú", "Colombia", "Paraguay", "Argentina", "Surinam", "Guyana", "Uruguay", "Panamá", "Bolivia", "Chile", "Ecuador", "Brasil", "Venezuela"]
+    let nombre = paises.value[formData.value.alumno.id_pais_nacionalidad - 1].nombre_es;
+    mercosur.value = paises_mercosur.includes(formData.value.alumno.id_pais_nacionalidad);
+  }
+
 </script>
 
 

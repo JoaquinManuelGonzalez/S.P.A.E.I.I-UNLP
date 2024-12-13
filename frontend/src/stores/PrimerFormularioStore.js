@@ -59,6 +59,8 @@ export const usePrimerFormularioStore = defineStore('primer_formulario_store', {
         estados_civiles: [],
         convenioPrograma: "",
         nivelEstudio: "",
+        es_hispanohablante: false,
+        mercosur: false,
         csrf_token: "",
     }),
     actions: {
@@ -78,6 +80,8 @@ export const usePrimerFormularioStore = defineStore('primer_formulario_store', {
                     }
                 }
                 console.log(this.formData);
+                console.log("así estan los archivos");
+                console.log(this.formData.archivo);
                 //axios.defaults.headers.post['X-CSRF-Token'] = this.csrf_token;
                 const response = await axios.post('http://127.0.0.1:5000/api/postulacion/primer-formulario', this.formData, 
                     {
@@ -90,8 +94,6 @@ export const usePrimerFormularioStore = defineStore('primer_formulario_store', {
                     console.log(response);
                 });
                 this.errors = null;
-                console.log("esta es la respuesta:");
-                console.log(response);
             } catch (error) {
                 this.errors = error;
                 console.log("este es el error:");
@@ -110,7 +112,8 @@ export const usePrimerFormularioStore = defineStore('primer_formulario_store', {
                 this.generos = response.data.generos;
                 this.paises = response.data.paises;
                 this.csrf_token = response.data.csrf_token;
-                console.log(this.csrf_token);
+                console.log("estos son los paises");
+                console.log(this.paises[1]);
             } catch (error) {
                 this.errors = error.response.data;
             } finally {
