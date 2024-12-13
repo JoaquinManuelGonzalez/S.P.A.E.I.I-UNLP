@@ -16,4 +16,4 @@ class EstadoCivil(db.Model):
     informacion_alumnos_entrantes = db.relationship('InformacionAlumnoEntrante', back_populates='estado_civil')
 
     def __repr__(self):
-        return f"<EstadoCivil id-{self.id}, nombre-{self.nombre}"
+        return f"<EstadoCivil id-{self.id}, nombre-{self.nombre_es}"

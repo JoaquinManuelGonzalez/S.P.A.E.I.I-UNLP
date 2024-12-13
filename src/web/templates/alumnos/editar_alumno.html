@@ -1,0 +1,205 @@
+{% extends "layout.html" %}
+
+{% block content %}
+  <div class="container mt-5">
+    <h2 class="text-center">Editar Información del Alumno</h2>
+    <form method="POST" action="{{ url_for('alumnos_bp.editar_alumno', id_alumno=alumno.id) }}">
+      {{ form.hidden_tag() }}
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          {{ form.nombre.label(class="form-label") }}
+          {{ form.nombre(class="form-control", placeholder="Ingrese el nombre del alumno", value=form.nombre.data or alumno.nombre) }}
+          {% if form.nombre.errors %}
+            <div class="text-danger">
+              {% for error in form.nombre.errors %}
+                <p>{{ error }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="col-md-6 mb-3">
+          {{ form.apellido.label(class="form-label") }}
+          {{ form.apellido(class="form-control", placeholder="Ingrese el apellido del alumno", value=form.apellido.data or alumno.apellido) }}
+          {% if form.apellido.errors %}
+            <div class="text-danger">
+              {% for error in form.apellido.errors %}
+                <p>{{ error }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          {{ form.email.label(class="form-label") }}
+          {{ form.email(class="form-control", placeholder="Ingrese el correo electrónico", value=form.email.data or alumno.email) }}
+          {% if form.email.errors %}
+            <div class="text-danger">
+              {% for error in form.email.errors %}
+                <p>{{ error }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="col-md-6 mb-3">
+          {{ form.domicilio_pais_de_residencia.label(class="form-label") }}
+          {{ form.domicilio_pais_de_residencia(class="form-control", placeholder="Ingrese el país de residencia", value=form.domicilio_pais_de_residencia.data or alumno.domicilio_pais_de_residencia) }}
+          {% if form.domicilio_pais_de_residencia.errors %}
+            <div class="text-danger">
+              {% for error in form.domicilio_pais_de_residencia.errors %}
+                <p>{{ error }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          {{ form.fecha_de_nacimiento.label(class="form-label") }}
+          {{ form.fecha_de_nacimiento(class="form-control", placeholder="Seleccione la fecha de nacimiento", value=form.fecha_de_nacimiento.data or alumno.fecha_de_nacimiento.strftime('%Y-%m-%d')) }}
+          {% if form.fecha_de_nacimiento.errors %}
+            <div class="text-danger">
+              {% for error in form.fecha_de_nacimiento.errors %}
+                <p>{{ error }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="col-md-6 mb-3">
+          {{ form.discapacitado.label(class="form-check-label") }}
+          <div class="form-check">
+            {{ form.discapacitado(class="form-check-input", checked=form.discapacitado.data or alumno.discapacitado) }}
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          {{ form.id_genero.label(class="form-label") }}
+          {{ form.id_genero(class="form-select") }}
+          {% if form.id_genero.errors %}
+            <div class="text-danger">
+              {% for error in form.id_genero.errors %}
+                <p>{{ error }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="col-md-6 mb-3">
+          {{ form.id_estado_civil.label(class="form-label") }}
+          {{ form.id_estado_civil(class="form-select") }}
+          {% if form.id_estado_civil.errors %}
+            <div class="text-danger">
+              {% for error in form.id_estado_civil.errors %}
+                <p>{{ error }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          {{ form.id_pais_de_nacimiento.label(class="form-label") }}
+          {{ form.id_pais_de_nacimiento(class="form-select", value=form.id_pais_de_nacimiento.data or alumno.id_pais_de_nacimiento) }}
+          {% if form.id_pais_de_nacimiento.errors %}
+            <div class="text-danger">
+              {% for error in form.id_pais_de_nacimiento.errors %}
+                <p>{{ error }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="col-md-6 mb-3">
+          {{ form.id_pais_de_residencia.label(class="form-label") }}
+          {{ form.id_pais_de_residencia(class="form-select", value=form.id_pais_de_residencia.data or alumno.id_pais_de_residencia) }}
+          {% if form.id_pais_de_residencia.errors %}
+            <div class="text-danger">
+              {% for error in form.id_pais_de_residencia.errors %}
+                <p>{{ error }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          {{ form.id_pais_nacionalidad.label(class="form-label") }}
+          {{ form.id_pais_nacionalidad(class="form-select", value=form.id_pais_nacionalidad.data or alumno.id_pais_nacionalidad) }}
+          {% if form.id_pais_nacionalidad.errors %}
+            <div class="text-danger">
+              {% for error in form.id_pais_nacionalidad.errors %}
+                <p>{{ error }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="col-md-6 mb-3">
+          {{ form.numero_pasaporte.label(class="form-label") }}
+          {{ form.numero_pasaporte(class="form-control", placeholder="Ingrese el número de pasaporte", value=form.numero_pasaporte.data or alumno.numero_pasaporte) }}
+          {% if form.numero_pasaporte.errors %}
+            <div class="text-danger">
+              {% for error in form.numero_pasaporte.errors %}
+                <p>{{ error }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          {{ form.id_pais_emision_pasaporte.label(class="form-label") }}
+          {{ form.id_pais_emision_pasaporte(class="form-select", value=form.id_pais_emision_pasaporte.data or alumno.id_pais_emision_pasaporte) }}
+          {% if form.id_pais_emision_pasaporte.errors %}
+            <div class="text-danger">
+              {% for error in form.id_pais_emision_pasaporte.errors %}
+                <p>{{ error }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="col-md-6 mb-3">
+          {{ form.numero_cedula.label(class="form-label") }}
+          {{ form.numero_cedula(class="form-control", placeholder="Ingrese el número de cédula", value=form.numero_cedula.data or alumno.numero_cedula) }}
+          {% if form.numero_cedula.errors %}
+            <div class="text-danger">
+              {% for error in form.numero_cedula.errors %}
+                <p>{{ error }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          {{ form.id_pais_emision_cedula.label(class="form-label") }}
+          {{ form.id_pais_emision_cedula(class="form-select", value=form.id_pais_emision_cedula.data or alumno.id_pais_emision_cedula) }}
+          {% if form.id_pais_emision_cedula.errors %}
+            <div class="text-danger">
+              {% for error in form.id_pais_emision_cedula.errors %}
+                <p>{{ error }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="text-center mt-4">
+        {{ form.submit(class="btn btn-primary btn-lg") }}
+      </div>
+    </form>
+  </div>
+{% endblock %}

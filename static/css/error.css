@@ -1,0 +1,66 @@
+/* General body styling */
+body {
+    font-family: Arial, sans-serif;
+    background: #f2f2f2;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+}
+
+/* Container styling for error message */
+.error-container {
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    max-width: 600px;
+    margin: 1rem;
+}
+
+/* Error code styling */
+.error-code {
+    font-size: 4rem;
+    font-weight: bold;
+    color: #e74c3c; /* Red color */
+    margin-bottom: 0.5rem;
+}
+
+/* Error message styling */
+.error-message {
+    font-size: 1.5rem;
+    color: #555;
+    margin-bottom: 1rem;
+}
+
+/* Error detail styling */
+.error-detail {
+    font-size: 1rem;
+    color: #777;
+    margin-bottom: 2rem;
+}
+
+/* Link container styling */
+.link-container {
+    margin-top: 1.5rem;
+}
+
+/* Styling for the link */
+.more-link {
+    text-decoration: none;
+    color: #3498db; /* Blue color */
+    font-weight: bold;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    background-color: #ecf0f1; /* Light background */
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.more-link:hover {
+    background-color: #3498db;
+    color: #ffffff;
+}

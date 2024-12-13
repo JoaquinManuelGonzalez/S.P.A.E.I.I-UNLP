@@ -17,70 +17,98 @@
   </button>
   <div class="collapse navbar-collapse" id="navbarNav">
     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-      <li class="nav-item active">
-        <a class="nav-link" href="{{ url_for('usuarios.listar') }}">Usuarios</a>
-      </li>
-      <li class="nav-item active">
-        <a class="nav-link" href="/facultades">Facultades</a>
-      </li>
-      <li class="nav-item active">
-        <a class="nav-link" href="/facultades">Postulaciones</a>
-      </li>
-      <li class="nav-item active">
-        <a class="nav-link" href="/facultades">Repostulación</a>
-      </li>
-      <li class="nav-item active">
-        <a class="nav-link" href="/facultades">Elección de Asignaturas</a>
-      </li>
-      <li class="nav-item active">
-        <a class="nav-link" href="/facultades">Ver Documentación</a>
-      </li>
-      <li class="nav-item toggle-hidden" style="display: none;">
-        <a class="dropdown-item text-success" href="{{ url_for('usuarios.ver_detalle_usuario', id_usuario=1) }}">
-          Ver perfil
-          {% include "icons/person-fill-gear.html" %}
-        </a>
-      </li>
-      <li class="nav-item toggle-hidden" style="display: none;">
-        <a class="nav-link text-danger" href="#">
-          Cerrar Sesión
-          {% include "icons/x-octagon-fill.html" %}
-        </a>
-      </li>
-      {% for link in links %}
-        <li class="nav-item">
-          <a class="nav-link" href="{{ link.url }}">{{ link.text }}</a>
-        </li>
-      {% endfor %}
-    </ul>
-    <span class="nav-item dropdown toggle-hidden show px-5">
-      <a class="nav-link dropdown-toggle"
-         href="#"
-         id="userDropdown"
-         role="button"
-         data-bs-toggle="dropdown"
-         aria-expanded="false">
-        {% include "icons/person-circle.html" %}
-        {{ session['user_alias'] }}
-      </a>
-      <ul class="dropdown-menu dropdown-menu-end"
-          aria-labelledby="userDropdown"
-          style="min-width: 150px;">
-        <li>
-          <a class="dropdown-item text-success" href="{{ url_for('usuarios.ver_detalle_usuario', id_usuario=1) }}">
+      {% if is_authenticated(session) %}
+        {% if check_permiso(session, 'alumno') %}
+          <li class="nav-item active">
+            <a class="nav-link" href="/facultades">Repostulación</a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link" href="/facultades">Elección de Asignaturas</a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link" href="/facultades">Ver Documentación</a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link" href="/facultades">Mis Postulaciones</a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link" href="{{ url_for('alumnos_bp.ver_detalle_alumno', id_alumno=get_id_alumno_sesion(session)) }}">Información Personal</a>
+          </li>
+        {% else %}
+          <li class="nav-item active">
+            <a class="nav-link" href="/facultades">Postulaciones</a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link" href="{{ url_for('alumnos_bp.listar_alumnos') }}">Alumnos Entrantes</a>
+          </li>
+          {% if check_permiso(session, 'usuarios_listar') %}
+            <li class="nav-item active">
+              <a class="nav-link" href="{{ url_for('usuarios.listar') }}">Usuarios</a>
+            </li>
+          {% endif %}
+          {% if check_permiso(session, 'admin') %}
+            <li class="nav-item active">
+              <a class="nav-link" href="/facultades">Facultades</a>
+            </li>
+            <li class="nav-item active">
+              <a class="nav-link" href="/facultades">Archivos Base</a>
+            </li>
+            <li class="nav-item active">
+              <a class="nav-link" href="/facultades">Solicitudes de Postulación</a>
+            </li>
+          {% endif %}
+        {% endif %}
+        <li class="nav-item toggle-hidden" style="display: none;">
+          <a class="dropdown-item text-success" href="{{ url_for('usuarios.ver_detalle_usuario', id_usuario=get_id_sesion(session)) }}">
             Ver perfil
             {% include "icons/person-fill-gear.html" %}
           </a>
         </li>
-        <li>
-          <a class="dropdown-item text-danger" href="#">
+        <li class="nav-item toggle-hidden" style="display: none;">
+          <a class="nav-link text-danger" href="{{ url_for('auth.logout') }}">
             Cerrar Sesión
             {% include "icons/x-octagon-fill.html" %}
           </a>
         </li>
+        {% for link in links %}
+        <li class="nav-item">
+          <a class="nav-link" href="{{ link.url }}">{{ link.text }}</a>
+        </li>
+        {% endfor %}
       </ul>
-    </span>
-  </div>
+      <span class="nav-item dropdown toggle-hidden show px-5">
+        <a class="nav-link dropdown-toggle"
+        href="#"
+        id="userDropdown"
+        role="button"
+        data-bs-toggle="dropdown"
+        aria-expanded="false">
+        {% include "icons/person-circle.html" %}
+        {{ session['user_name'] }}
+      </a>
+      <ul class="dropdown-menu dropdown-menu-end"
+      aria-labelledby="userDropdown"
+      style="min-width: 150px;">
+      <li>
+        <a class="dropdown-item text-success" href="{{ url_for('usuarios.ver_detalle_usuario', id_usuario=get_id_sesion(session)) }}">
+          Ver perfil
+          {% include "icons/person-fill-gear.html" %}
+        </a>
+      </li>
+      <li>
+        <a class="dropdown-item text-danger" href="{{ url_for('auth.logout') }}">
+          Cerrar Sesión
+          {% include "icons/x-octagon-fill.html" %}
+        </a>
+      </li>
+    </ul>
+  </span>
+  {% else %}
+  <li class="nav-item active">
+    <a class="nav-link" href="http://localhost:5173">Volver</a>
+  </li>
+  {% endif %}
+</div>
 </nav>
 
 <style>

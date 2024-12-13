@@ -33,4 +33,4 @@ class Pais(db.Model):
     )
 
     def __repr__(self):
-        return f'<Pais id-{self.id}, nombre-{self.nombre_esp}, hispanohablante-{self.hispanohablante}>'
+        return f'<Pais id-{self.id}, nombre-{self.nombre_es}, hispanohablante-{self.hispanohablante}>'

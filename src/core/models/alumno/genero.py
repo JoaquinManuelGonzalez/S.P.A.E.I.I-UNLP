@@ -16,4 +16,4 @@ class Genero(db.Model):
     informacion_alumnos_entrantes = db.relationship('InformacionAlumnoEntrante', back_populates='genero')
 
     def __repr__(self):
-        return f"<Genero id-{self.id}, nombre-{self.nombre}"
+        return f"<Genero id-{self.id}, nombre-{self.nombre_es}"

@@ -1,48 +1,290 @@
-import requests
+import json
 from datetime import datetime
 from src.core.database import db
 from src.core.models.alumno.pais import Pais
 
 
-def fetch_countries():
+def seed_paises():
+    
+    data_json = '''
+    [
+        {"id":"1","nombre_es":"Islas Georgias del Sur y Sandwich del Sur","nombre_en":"South Georgia","nombre_pt":"Ilhas Geórgia do Sul e Sandwich do Sul","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"2","nombre_es":"Grenada","nombre_en":"Grenada","nombre_pt":"Granada","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"3","nombre_es":"Suiza","nombre_en":"Switzerland","nombre_pt":"Suíça","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"4","nombre_es":"Sierra Leone","nombre_en":"Sierra Leone","nombre_pt":"Serra Leoa","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"5","nombre_es":"Hungría","nombre_en":"Hungary","nombre_pt":"Hungria","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"6","nombre_es":"Taiwán","nombre_en":"Taiwan","nombre_pt":"Ilha Formosa","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"7","nombre_es":"Wallis y Futuna","nombre_en":"Wallis and Futuna","nombre_pt":"Wallis e Futuna","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"8","nombre_es":"Barbados","nombre_en":"Barbados","nombre_pt":"Barbados","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"9","nombre_es":"Islas Pitcairn","nombre_en":"Pitcairn Islands","nombre_pt":"Ilhas Pitcairn","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"10","nombre_es":"Costa de Marfil","nombre_en":"Ivory Coast","nombre_pt":"Costa do Marfim","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"11","nombre_es":"Túnez","nombre_en":"Tunisia","nombre_pt":"Tunísia","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"12","nombre_es":"Italia","nombre_en":"Italy","nombre_pt":"Itália","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"13","nombre_es":"Benín","nombre_en":"Benin","nombre_pt":"Benin","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"14","nombre_es":"Indonesia","nombre_en":"Indonesia","nombre_pt":"Indonésia","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"15","nombre_es":"Cabo Verde","nombre_en":"Cape Verde","nombre_pt":"Cabo Verde","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"16","nombre_es":"San Cristóbal y Nieves","nombre_en":"Saint Kitts and Nevis","nombre_pt":"São Cristóvão e Nevis","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"17","nombre_es":"Laos","nombre_en":"Laos","nombre_pt":"Laos","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"18","nombre_es":"Caribe Neerlandés","nombre_en":"Caribbean Netherlands","nombre_pt":"Países Baixos Caribenhos","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"19","nombre_es":"Uganda","nombre_en":"Uganda","nombre_pt":"Uganda","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"20","nombre_es":"Andorra","nombre_en":"Andorra","nombre_pt":"Andorra","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"21","nombre_es":"Burundi","nombre_en":"Burundi","nombre_pt":"Burundi","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"22","nombre_es":"Sudáfrica","nombre_en":"South Africa","nombre_pt":"África do Sul","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"23","nombre_es":"Francia","nombre_en":"France","nombre_pt":"França","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"24","nombre_es":"Libia","nombre_en":"Libya","nombre_pt":"Líbia","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"25","nombre_es":"México","nombre_en":"Mexico","nombre_pt":"México","hispanohablante":"1","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"26","nombre_es":"Gabón","nombre_en":"Gabon","nombre_pt":"Gabão","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"27","nombre_es":"Islas Marianas del Norte","nombre_en":"Northern Mariana Islands","nombre_pt":"Marianas Setentrionais","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"28","nombre_es":"Macedonia del Norte","nombre_en":"North Macedonia","nombre_pt":"Macedónia do Norte","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"29","nombre_es":"China","nombre_en":"China","nombre_pt":"China","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"30","nombre_es":"Yemen","nombre_en":"Yemen","nombre_pt":"Iémen","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"31","nombre_es":"San Bartolomé","nombre_en":"Saint Barthélemy","nombre_pt":"São Bartolomeu","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"32","nombre_es":"Guernsey","nombre_en":"Guernsey","nombre_pt":"Guernsey","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"33","nombre_es":"Islas Salomón","nombre_en":"Solomon Islands","nombre_pt":"Ilhas Salomão","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"34","nombre_es":"Islas Svalbard y Jan Mayen","nombre_en":"Svalbard and Jan Mayen","nombre_pt":"Ilhas Svalbard e Jan Mayen","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"35","nombre_es":"Islas Faroe","nombre_en":"Faroe Islands","nombre_pt":"Ilhas Faroé","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"36","nombre_es":"Uzbekistán","nombre_en":"Uzbekistan","nombre_pt":"Uzbequistão","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"37","nombre_es":"Egipto","nombre_en":"Egypt","nombre_pt":"Egito","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"38","nombre_es":"Senegal","nombre_en":"Senegal","nombre_pt":"Senegal","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"39","nombre_es":"Sri Lanka","nombre_en":"Sri Lanka","nombre_pt":"Sri Lanka","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"40","nombre_es":"Palestina","nombre_en":"Palestine","nombre_pt":"Palestina","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"41","nombre_es":"Bangladesh","nombre_en":"Bangladesh","nombre_pt":"Bangladesh","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"42","nombre_es":"Perú","nombre_en":"Peru","nombre_pt":"Perú","hispanohablante":"1","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"43","nombre_es":"Singapur","nombre_en":"Singapore","nombre_pt":"Singapura","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"44","nombre_es":"Turquía","nombre_en":"Turkey","nombre_pt":"Turquia","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"45","nombre_es":"Afganistán","nombre_en":"Afghanistan","nombre_pt":"Afeganistão","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"46","nombre_es":"Aruba","nombre_en":"Aruba","nombre_pt":"Aruba","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"47","nombre_es":"Islas Cook","nombre_en":"Cook Islands","nombre_pt":"Ilhas Cook","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"48","nombre_es":"Reino Unido","nombre_en":"United Kingdom","nombre_pt":"Reino Unido","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"49","nombre_es":"Zambia","nombre_en":"Zambia","nombre_pt":"Zâmbia","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"50","nombre_es":"Finlandia","nombre_en":"Finland","nombre_pt":"Finlândia","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"51","nombre_es":"Níger","nombre_en":"Niger","nombre_pt":"Níger","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"52","nombre_es":"Isla de Navidad","nombre_en":"Christmas Island","nombre_pt":"Ilha do Natal","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"53","nombre_es":"Islas Tokelau","nombre_en":"Tokelau","nombre_pt":"Tokelau","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"54","nombre_es":"Guinea-Bisáu","nombre_en":"Guinea-Bissau","nombre_pt":"Guiné-Bissau","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"55","nombre_es":"Azerbaiyán","nombre_en":"Azerbaijan","nombre_pt":"Azerbeijão","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"56","nombre_es":"Reunión","nombre_en":"Réunion","nombre_pt":"Reunião","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"57","nombre_es":"Djibouti","nombre_en":"Djibouti","nombre_pt":"Djibouti","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"58","nombre_es":"Corea del Norte","nombre_en":"North Korea","nombre_pt":"Coreia do Norte","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"59","nombre_es":"Mauricio","nombre_en":"Mauritius","nombre_pt":"Maurício","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"60","nombre_es":"Montserrat","nombre_en":"Montserrat","nombre_pt":"Montserrat","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"61","nombre_es":"Islas Vírgenes de los Estados Unidos","nombre_en":"United States Virgin Islands","nombre_pt":"Ilhas Virgens dos Estados Unidos","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"62","nombre_es":"Colombia","nombre_en":"Colombia","nombre_pt":"Colômbia","hispanohablante":"1","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"63","nombre_es":"Grecia","nombre_en":"Greece","nombre_pt":"Grécia","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"64","nombre_es":"Croacia","nombre_en":"Croatia","nombre_pt":"Croácia","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"65","nombre_es":"Marruecos","nombre_en":"Morocco","nombre_pt":"Marrocos","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"66","nombre_es":"Argelia","nombre_en":"Algeria","nombre_pt":"Argélia","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"67","nombre_es":"Antártida","nombre_en":"Antarctica","nombre_pt":"Antártida","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"68","nombre_es":"Países Bajos","nombre_en":"Netherlands","nombre_pt":"Holanda","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"69","nombre_es":"Sudán","nombre_en":"Sudan","nombre_pt":"Sudão","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"70","nombre_es":"Fiyi","nombre_en":"Fiji","nombre_pt":"Fiji","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"71","nombre_es":"Liechtenstein","nombre_en":"Liechtenstein","nombre_pt":"Liechtenstein","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"72","nombre_es":"Nepal","nombre_en":"Nepal","nombre_pt":"Nepal","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"73","nombre_es":"Puerto Rico","nombre_en":"Puerto Rico","nombre_pt":"Porto Rico","hispanohablante":"1","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"74","nombre_es":"Georgia","nombre_en":"Georgia","nombre_pt":"Geórgia","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"75","nombre_es":"Pakistán","nombre_en":"Pakistan","nombre_pt":"Paquistão","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"76","nombre_es":"Mónaco","nombre_en":"Monaco","nombre_pt":"Mónaco","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"77","nombre_es":"Botswana","nombre_en":"Botswana","nombre_pt":"Botswana","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"78","nombre_es":"Líbano","nombre_en":"Lebanon","nombre_pt":"Líbano","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"79","nombre_es":"Papúa Nueva Guinea","nombre_en":"Papua New Guinea","nombre_pt":"Papua Nova Guiné","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"80","nombre_es":"Mayotte","nombre_en":"Mayotte","nombre_pt":"Mayotte","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"81","nombre_es":"República Dominicana","nombre_en":"Dominican Republic","nombre_pt":"República Dominicana","hispanohablante":"1","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"82","nombre_es":"Isla de Norfolk","nombre_en":"Norfolk Island","nombre_pt":"Ilha Norfolk","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"83","nombre_es":"Isla Bouvet","nombre_en":"Bouvet Island","nombre_pt":"Ilha Bouvet","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"84","nombre_es":"Catar","nombre_en":"Qatar","nombre_pt":"Catar","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"85","nombre_es":"Madagascar","nombre_en":"Madagascar","nombre_pt":"Madagáscar","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"86","nombre_es":"India","nombre_en":"India","nombre_pt":"Índia","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"87","nombre_es":"Siria","nombre_en":"Syria","nombre_pt":"Síria","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"88","nombre_es":"Montenegro","nombre_en":"Montenegro","nombre_pt":"Montenegro","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"89","nombre_es":"Suazilandia","nombre_en":"Eswatini","nombre_pt":"Suazilândia","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"90","nombre_es":"Paraguay","nombre_en":"Paraguay","nombre_pt":"Paraguai","hispanohablante":"1","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"91","nombre_es":"El Salvador","nombre_en":"El Salvador","nombre_pt":"El Salvador","hispanohablante":"1","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"92","nombre_es":"Ucrania","nombre_en":"Ukraine","nombre_pt":"Ucrânia","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"93","nombre_es":"Isla de Man","nombre_en":"Isle of Man","nombre_pt":"Ilha de Man","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"94","nombre_es":"Namibia","nombre_en":"Namibia","nombre_pt":"Namíbia","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"95","nombre_es":"Emiratos Árabes Unidos","nombre_en":"United Arab Emirates","nombre_pt":"Emirados Árabes Unidos","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"96","nombre_es":"Bulgaria","nombre_en":"Bulgaria","nombre_pt":"Bulgária","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"97","nombre_es":"Groenlandia","nombre_en":"Greenland","nombre_pt":"Gronelândia","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"98","nombre_es":"Alemania","nombre_en":"Germany","nombre_pt":"Alemanha","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"99","nombre_es":"Camboya","nombre_en":"Cambodia","nombre_pt":"Camboja","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"100","nombre_es":"Irak","nombre_en":"Iraq","nombre_pt":"Iraque","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"101","nombre_es":"Tierras Australes y Antárticas Francesas","nombre_en":"French Southern and Antarctic Lands","nombre_pt":"Terras Austrais e Antárticas Francesas","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"102","nombre_es":"Suecia","nombre_en":"Sweden","nombre_pt":"Suécia","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"103","nombre_es":"Cuba","nombre_en":"Cuba","nombre_pt":"Cuba","hispanohablante":"1","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"104","nombre_es":"Kirguizistán","nombre_en":"Kyrgyzstan","nombre_pt":"Quirguistão","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"105","nombre_es":"Rusia","nombre_en":"Russia","nombre_pt":"Rússia","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"106","nombre_es":"Malasia","nombre_en":"Malaysia","nombre_pt":"Malásia","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"107","nombre_es":"Santo Tomé y Príncipe","nombre_en":"São Tomé and Príncipe","nombre_pt":"São Tomé e Príncipe","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"108","nombre_es":"Chipre","nombre_en":"Cyprus","nombre_pt":"Chipre","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"109","nombre_es":"Canadá","nombre_en":"Canada","nombre_pt":"Canadá","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"110","nombre_es":"Malawi","nombre_en":"Malawi","nombre_pt":"Malawi","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"111","nombre_es":"Arabia Saudí","nombre_en":"Saudi Arabia","nombre_pt":"Arábia Saudita","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"112","nombre_es":"Bosnia y Herzegovina","nombre_en":"Bosnia and Herzegovina","nombre_pt":"Bósnia e Herzegovina","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"113","nombre_es":"Etiopía","nombre_en":"Ethiopia","nombre_pt":"Etiópia","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"114","nombre_es":"España","nombre_en":"Spain","nombre_pt":"Espanha","hispanohablante":"1","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"115","nombre_es":"Eslovenia","nombre_en":"Slovenia","nombre_pt":"Eslovénia","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"116","nombre_es":"Omán","nombre_en":"Oman","nombre_pt":"Omã","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"117","nombre_es":"San Pedro y Miquelón","nombre_en":"Saint Pierre and Miquelon","nombre_pt":"Saint-Pierre e Miquelon","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"118","nombre_es":"Macao","nombre_en":"Macau","nombre_pt":"Macau","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"119","nombre_es":"San Marino","nombre_en":"San Marino","nombre_pt":"San Marino","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"120","nombre_es":"Lesotho","nombre_en":"Lesotho","nombre_pt":"Lesoto","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"121","nombre_es":"Islas Marshall","nombre_en":"Marshall Islands","nombre_pt":"Ilhas Marshall","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"122","nombre_es":"Sint Maarten","nombre_en":"Sint Maarten","nombre_pt":"São Martinho","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"123","nombre_es":"Islandia","nombre_en":"Iceland","nombre_pt":"Islândia","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"124","nombre_es":"Luxemburgo","nombre_en":"Luxembourg","nombre_pt":"Luxemburgo","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"125","nombre_es":"Argentina","nombre_en":"Argentina","nombre_pt":"Argentina","hispanohablante":"1","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"126","nombre_es":"Islas Turks y Caicos","nombre_en":"Turks and Caicos Islands","nombre_pt":"Ilhas Turks e Caicos","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"127","nombre_es":"Nauru","nombre_en":"Nauru","nombre_pt":"Nauru","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"128","nombre_es":"Islas Cocos o Islas Keeling","nombre_en":"Cocos (Keeling) Islands","nombre_pt":"Ilhas Cocos (Keeling)","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"129","nombre_es":"Sahara Occidental","nombre_en":"Western Sahara","nombre_pt":"Saara Ocidental","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"130","nombre_es":"Dominica","nombre_en":"Dominica","nombre_pt":"Dominica","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"131","nombre_es":"Costa Rica","nombre_en":"Costa Rica","nombre_pt":"Costa Rica","hispanohablante":"1","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"132","nombre_es":"Australia","nombre_en":"Australia","nombre_pt":"Austrália","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"133","nombre_es":"Tailandia","nombre_en":"Thailand","nombre_pt":"Tailândia","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"134","nombre_es":"Haití","nombre_en":"Haiti","nombre_pt":"Haiti","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"135","nombre_es":"Tuvalu","nombre_en":"Tuvalu","nombre_pt":"Tuvalu","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"136","nombre_es":"Honduras","nombre_en":"Honduras","nombre_pt":"Honduras","hispanohablante":"1","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"137","nombre_es":"Guinea Ecuatorial","nombre_en":"Equatorial Guinea","nombre_pt":"Guiné Equatorial","hispanohablante":"1","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"138","nombre_es":"Santa Lucía","nombre_en":"Saint Lucia","nombre_pt":"Santa Lúcia","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"139","nombre_es":"Polinesia Francesa","nombre_en":"French Polynesia","nombre_pt":"Polinésia Francesa","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"140","nombre_es":"Bielorrusia","nombre_en":"Belarus","nombre_pt":"Bielorússia","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"141","nombre_es":"Letonia","nombre_en":"Latvia","nombre_pt":"Letónia","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"142","nombre_es":"Palau","nombre_en":"Palau","nombre_pt":"Palau","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"143","nombre_es":"Guadalupe","nombre_en":"Guadeloupe","nombre_pt":"Guadalupe","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"144","nombre_es":"Filipinas","nombre_en":"Philippines","nombre_pt":"Filipinas","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"145","nombre_es":"Gibraltar","nombre_en":"Gibraltar","nombre_pt":"Gibraltar","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"146","nombre_es":"Dinamarca","nombre_en":"Denmark","nombre_pt":"Dinamarca","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"147","nombre_es":"Camerún","nombre_en":"Cameroon","nombre_pt":"Camarões","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"148","nombre_es":"Guinea","nombre_en":"Guinea","nombre_pt":"Guiné","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"149","nombre_es":"Bahrein","nombre_en":"Bahrain","nombre_pt":"Bahrein","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"150","nombre_es":"Surinam","nombre_en":"Suriname","nombre_pt":"Suriname","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"151","nombre_es":"Congo (Rep. Dem.)","nombre_en":"DR Congo","nombre_pt":"República Democrática do Congo","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"152","nombre_es":"Somalia","nombre_en":"Somalia","nombre_pt":"Somália","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"153","nombre_es":"Chequia","nombre_en":"Czechia","nombre_pt":"Chéquia","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"154","nombre_es":"Nueva Caledonia","nombre_en":"New Caledonia","nombre_pt":"Nova Caledónia","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"155","nombre_es":"Vanuatu","nombre_en":"Vanuatu","nombre_pt":"Vanuatu","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"156","nombre_es":"Santa Elena, Ascensión y Tristán de Acuña","nombre_en":"Saint Helena, Ascension and Tristan da Cunha","nombre_pt":"Santa Helena, Ascensão e Tristão da Cunha","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"157","nombre_es":"Togo","nombre_en":"Togo","nombre_pt":"Togo","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"158","nombre_es":"Islas Vírgenes del Reino Unido","nombre_en":"British Virgin Islands","nombre_pt":"Ilhas Virgens","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"159","nombre_es":"Kenia","nombre_en":"Kenya","nombre_pt":"Quénia","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"160","nombre_es":"Niue","nombre_en":"Niue","nombre_pt":"Niue","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"161","nombre_es":"Islas Heard y McDonald","nombre_en":"Heard Island and McDonald Islands","nombre_pt":"Ilha Heard e Ilhas McDonald","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"162","nombre_es":"Ruanda","nombre_en":"Rwanda","nombre_pt":"Ruanda","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"163","nombre_es":"Estonia","nombre_en":"Estonia","nombre_pt":"Estónia","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"164","nombre_es":"Rumania","nombre_en":"Romania","nombre_pt":"Roménia","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"165","nombre_es":"Trinidad y Tobago","nombre_en":"Trinidad and Tobago","nombre_pt":"Trinidade e Tobago","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"166","nombre_es":"Guyana","nombre_en":"Guyana","nombre_pt":"Guiana","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"167","nombre_es":"Timor Oriental","nombre_en":"Timor-Leste","nombre_pt":"Timor-Leste","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"168","nombre_es":"Vietnam","nombre_en":"Vietnam","nombre_pt":"Vietname","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"169","nombre_es":"Uruguay","nombre_en":"Uruguay","nombre_pt":"Uruguai","hispanohablante":"1","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"170","nombre_es":"Ciudad del Vaticano","nombre_en":"Vatican City","nombre_pt":"Cidade do Vaticano","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"171","nombre_es":"Hong Kong","nombre_en":"Hong Kong","nombre_pt":"Hong Kong","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"172","nombre_es":"Austria","nombre_en":"Austria","nombre_pt":"Áustria","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"173","nombre_es":"Antigua y Barbuda","nombre_en":"Antigua and Barbuda","nombre_pt":"Antígua e Barbuda","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"174","nombre_es":"Turkmenistán","nombre_en":"Turkmenistan","nombre_pt":"Turquemenistão","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"175","nombre_es":"Mozambique","nombre_en":"Mozambique","nombre_pt":"Moçambique","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"176","nombre_es":"Panamá","nombre_en":"Panama","nombre_pt":"Panamá","hispanohablante":"1","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"177","nombre_es":"Micronesia","nombre_en":"Micronesia","nombre_pt":"Micronésia","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"178","nombre_es":"Irlanda","nombre_en":"Ireland","nombre_pt":"Irlanda","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"179","nombre_es":"Curazao","nombre_en":"Curaçao","nombre_pt":"ilha da Curação","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"180","nombre_es":"Guayana Francesa","nombre_en":"French Guiana","nombre_pt":"Guiana Francesa","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"181","nombre_es":"Noruega","nombre_en":"Norway","nombre_pt":"Noruega","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"182","nombre_es":"Alandia","nombre_en":"Åland Islands","nombre_pt":"Alândia","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"183","nombre_es":"República Centroafricana","nombre_en":"Central African Republic","nombre_pt":"República Centro-Africana","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"184","nombre_es":"Burkina Faso","nombre_en":"Burkina Faso","nombre_pt":"Burkina Faso","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"185","nombre_es":"Eritrea","nombre_en":"Eritrea","nombre_pt":"Eritreia","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"186","nombre_es":"Tanzania","nombre_en":"Tanzania","nombre_pt":"Tanzânia","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"187","nombre_es":"Corea del Sur","nombre_en":"South Korea","nombre_pt":"Coreia do Sul","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"188","nombre_es":"Jordania","nombre_en":"Jordan","nombre_pt":"Jordânia","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"189","nombre_es":"Mauritania","nombre_en":"Mauritania","nombre_pt":"Mauritânia","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"190","nombre_es":"Lituania","nombre_en":"Lithuania","nombre_pt":"Lituânia","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"191","nombre_es":"Islas Ultramarinas Menores de Estados Unidos","nombre_en":"United States Minor Outlying Islands","nombre_pt":"Ilhas Menores Distantes dos Estados Unidos","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"192","nombre_es":"República Eslovaca","nombre_en":"Slovakia","nombre_pt":"Eslováquia","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"193","nombre_es":"Angola","nombre_en":"Angola","nombre_pt":"Angola","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"194","nombre_es":"Kazajistán","nombre_en":"Kazakhstan","nombre_pt":"Cazaquistão","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"195","nombre_es":"Moldavia","nombre_en":"Moldova","nombre_pt":"Moldávia","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"196","nombre_es":"Mali","nombre_en":"Mali","nombre_pt":"Mali","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"197","nombre_es":"Islas Malvinas","nombre_en":"Falkland Islands","nombre_pt":"Ilhas Malvinas","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"198","nombre_es":"Armenia","nombre_en":"Armenia","nombre_pt":"Arménia","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"199","nombre_es":"Samoa","nombre_en":"Samoa","nombre_pt":"Samoa","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"200","nombre_es":"Jersey","nombre_en":"Jersey","nombre_pt":"Jersey","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"201","nombre_es":"Japón","nombre_en":"Japan","nombre_pt":"Japão","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"202","nombre_es":"Bolivia","nombre_en":"Bolivia","nombre_pt":"Bolívia","hispanohablante":"1","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"203","nombre_es":"Chile","nombre_en":"Chile","nombre_pt":"Chile","hispanohablante":"1","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"204","nombre_es":"Estados Unidos","nombre_en":"United States","nombre_pt":"Estados Unidos","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"205","nombre_es":"San Vicente y Granadinas","nombre_en":"Saint Vincent and the Grenadines","nombre_pt":"São Vincente e Granadinas","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"206","nombre_es":"Bermudas","nombre_en":"Bermuda","nombre_pt":"Bermudas","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"207","nombre_es":"Seychelles","nombre_en":"Seychelles","nombre_pt":"Seicheles","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"208","nombre_es":"Territorio Británico del Océano Índico","nombre_en":"British Indian Ocean Territory","nombre_pt":"Território Britânico do Oceano Índico","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"209","nombre_es":"Guatemala","nombre_en":"Guatemala","nombre_pt":"Guatemala","hispanohablante":"1","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"210","nombre_es":"Ecuador","nombre_en":"Ecuador","nombre_pt":"Equador","hispanohablante":"1","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"211","nombre_es":"Martinica","nombre_en":"Martinique","nombre_pt":"Martinica","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"212","nombre_es":"Tayikistán","nombre_en":"Tajikistan","nombre_pt":"Tajiquistão","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"213","nombre_es":"Malta","nombre_en":"Malta","nombre_pt":"Malta","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"214","nombre_es":"Gambia","nombre_en":"Gambia","nombre_pt":"Gâmbia","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"215","nombre_es":"Nigeria","nombre_en":"Nigeria","nombre_pt":"Nigéria","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"216","nombre_es":"Bahamas","nombre_en":"Bahamas","nombre_pt":"Bahamas","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"217","nombre_es":"Kosovo","nombre_en":"Kosovo","nombre_pt":"Kosovo","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"218","nombre_es":"Kuwait","nombre_en":"Kuwait","nombre_pt":"Kuwait","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"219","nombre_es":"Maldivas","nombre_en":"Maldives","nombre_pt":"Maldivas","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"220","nombre_es":"Sudán del Sur","nombre_en":"South Sudan","nombre_pt":"Sudão do Sul","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"221","nombre_es":"Iran","nombre_en":"Iran","nombre_pt":"Irão","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"222","nombre_es":"Albania","nombre_en":"Albania","nombre_pt":"Albânia","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"223","nombre_es":"Brasil","nombre_en":"Brazil","nombre_pt":"Brasil","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"224","nombre_es":"Serbia","nombre_en":"Serbia","nombre_pt":"Sérvia","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"225","nombre_es":"Belice","nombre_en":"Belize","nombre_pt":"Belize","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"226","nombre_es":"Myanmar","nombre_en":"Myanmar","nombre_pt":"Myanmar","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"227","nombre_es":"Bután","nombre_en":"Bhutan","nombre_pt":"Butão","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"228","nombre_es":"Venezuela","nombre_en":"Venezuela","nombre_pt":"Venezuela","hispanohablante":"1","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"229","nombre_es":"Liberia","nombre_en":"Liberia","nombre_pt":"Libéria","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"230","nombre_es":"Jamaica","nombre_en":"Jamaica","nombre_pt":"Jamaica","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"231","nombre_es":"Polonia","nombre_en":"Poland","nombre_pt":"Polónia","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"232","nombre_es":"Islas Caimán","nombre_en":"Cayman Islands","nombre_pt":"Ilhas Caimão","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"233","nombre_es":"Brunei","nombre_en":"Brunei","nombre_pt":"Brunei","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"234","nombre_es":"Comoras","nombre_en":"Comoros","nombre_pt":"Comores","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"235","nombre_es":"Guam","nombre_en":"Guam","nombre_pt":"Guam","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"236","nombre_es":"Tonga","nombre_en":"Tonga","nombre_pt":"Tonga","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"237","nombre_es":"Kiribati","nombre_en":"Kiribati","nombre_pt":"Kiribati","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"238","nombre_es":"Ghana","nombre_en":"Ghana","nombre_pt":"Gana","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"239","nombre_es":"Chad","nombre_en":"Chad","nombre_pt":"Chade","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"240","nombre_es":"Zimbabue","nombre_en":"Zimbabwe","nombre_pt":"Zimbabwe","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"241","nombre_es":"Saint Martin","nombre_en":"Saint Martin","nombre_pt":"São Martinho","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"242","nombre_es":"Mongolia","nombre_en":"Mongolia","nombre_pt":"Mongólia","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"243","nombre_es":"Portugal","nombre_en":"Portugal","nombre_pt":"Portugal","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"244","nombre_es":"Samoa Americana","nombre_en":"American Samoa","nombre_pt":"Samoa Americana","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"245","nombre_es":"Congo","nombre_en":"Republic of the Congo","nombre_pt":"Congo","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"246","nombre_es":"Bélgica","nombre_en":"Belgium","nombre_pt":"Bélgica","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"247","nombre_es":"Israel","nombre_en":"Israel","nombre_pt":"Israel","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"248","nombre_es":"Nueva Zelanda","nombre_en":"New Zealand","nombre_pt":"Nova Zelândia","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"249","nombre_es":"Nicaragua","nombre_en":"Nicaragua","nombre_pt":"Nicarágua","hispanohablante":"1","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"250","nombre_es":"Anguilla","nombre_en":"Anguilla","nombre_pt":"Anguilla","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"}
+    ]
+    '''
 
-    url = "https://restcountries.com/v3.1/all"
+    # Cargar el JSON
+    paises_data = json.loads(data_json)
 
-    response = requests.get(url)
+    # Iterar sobre los países y agregar cada uno a la base de datos
+    for pais in paises_data:
+        # Convertir las fechas de 'creacion' y 'actualizacion' a objetos datetime
+        creacion = datetime.strptime(pais['creacion'], "%Y-%m-%d %H:%M:%S")
+        actualizacion = datetime.strptime(pais['actualizacion'], "%Y-%m-%d %H:%M:%S")
 
-    if response.status_code == 200:
-        return response.json()
-    else:
-        print(f"Error al consumir la API: {response.status_code}")
-        return []
+        # Crear un nuevo objeto Pais
+        nuevo_pais = Pais(
+            id=pais['id'],
+            nombre_es=pais['nombre_es'],
+            nombre_en=pais['nombre_en'],
+            nombre_pt=pais['nombre_pt'],
+            hispanohablante=bool(int(pais['hispanohablante'])),
+            creacion=creacion,
+            actualizacion=actualizacion
+        )
 
-def seed_countries():
+        # Agregar el país a la sesión
+        db.session.add(nuevo_pais)
 
-    countries = fetch_countries()
-
-    if not countries:
-        print("No se pudieron obtener los datos de países.")
-        return
-
-    for country in countries:
-        try:
-            nombre_es = country["translations"]["spa"]["common"] if "spa" in country["translations"] else country["name"]["common"]
-            nombre_en = country["name"]["common"]
-            nombre_pt = country["translations"]["por"]["common"] if "por" in country["translations"] else country["name"]["common"]
-            hispanohablante = nombre_es in ["España", "México", "Costa Rica", "El Salvador", "Guatemala", "Honduras", "Nicaragua", "Panamá", "Cuba", "República Dominicana", "Puerto Rico", "Argentina", "Bolivia", "Chile", "Colombia", "Ecuador", "Paraguay", "Perú", "Uruguay", "Venezuela", "Guinea Ecuatorial"]
-
-            nuevo_pais = Pais(
-                nombre_es=nombre_es,
-                nombre_en=nombre_en,
-                nombre_pt=nombre_pt,
-                hispanohablante=hispanohablante,
-                creacion=datetime.now(),
-                actualizacion=datetime.now()
-            )
-            db.session.add(nuevo_pais)
-            
-        except Exception as e:
-            print(f"Error al agregar el país {country.get('name', {}).get('common', 'Desconocido')}: {e}")
-
+    # Guardar los cambios en la base de datos
     db.session.commit()
-    print("Seed completado con todos los países.")
+
+    print("Datos de países insertados correctamente.")

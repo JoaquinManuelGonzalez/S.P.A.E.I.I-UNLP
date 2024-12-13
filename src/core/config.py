@@ -10,6 +10,13 @@ class Config(object):
     TESTING = False
     SECRET_KEY= "tu_clave_secreta_aqui"
     SESSION_TYPE = "filesystem"
+    MAIL_SERVER = "smtp.gmail.com"
+    MAIL_PORT = 587
+    MAIL_USE_TLS = True
+    MAIL_USE_SSL = False
+    MAIL_USERNAME = environ.get("MAIL_USERNAME")
+    MAIL_PASSWORD = environ.get("MAIL_PASSWORD")
+    MAIL_DEFAULT_SENDER = environ.get("MAIL_USERNAME")
 
 
 class ProductionConfig(Config):

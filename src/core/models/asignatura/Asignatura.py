@@ -1,4 +1,5 @@
 from src.core.database import db
+from src.core.models.postulacion import postulacion_asignatura
 from datetime import datetime
 
 asignaturas_carreras = db.Table('asignaturas_carreras',
@@ -14,6 +15,7 @@ class Asignatura(db.Model):
     facultad_id = db.Column(db.Integer, db.ForeignKey("facultades.id"), nullable=False)
     facultad = db.relationship("Facultad")
     carreras = db.relationship("Carrera", secondary=asignaturas_carreras)
+    postulaciones = db.relationship('Postulacion', secondary='postulacion_asignatura', back_populates='asignaturas')
 
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
