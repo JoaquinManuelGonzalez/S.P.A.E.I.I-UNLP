@@ -73,8 +73,6 @@ def actualizar_usuario(id_usuario:int):
     return redirect("/")
 
 
-
-
 @usuario_bp.post("/eliminar/<int:id_usuario>")
 @check("usuarios_eliminar")
 def eliminar_usuario(id_usuario:int):
@@ -88,6 +86,21 @@ def eliminar_usuario(id_usuario:int):
         redirect: Redirige a la lista de usuarios.
     '''
     usuario_service.eliminar_usuario(id_usuario)
+    return redirect("/usuarios")
+
+@usuario_bp.post("/reactivar/<int:id_usuario>")
+@check("usuarios_eliminar")
+def reactivar_usuario(id_usuario:int):
+    '''
+    Reactiva un usuario.
+    
+    Args:
+        id_usuario (int): El id del usuario a reactivar.
+        
+    Returns:
+        redirect: Redirige a la lista de usuarios.
+    '''
+    usuario_service.reactivar_usuario(id_usuario)
     return redirect("/usuarios")
 
 @usuario_bp.get("/recuperar")

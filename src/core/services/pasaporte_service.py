@@ -30,3 +30,7 @@ def actualizar_informacion_pasaporte(
     db.session.commit()
 
     return pasaporte
+
+
+def check_numero(numero):
+    return bool(Pasaporte.query.filter_by(numero=numero).first())

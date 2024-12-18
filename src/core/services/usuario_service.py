@@ -7,7 +7,7 @@ from src.core.database import db
 from datetime import datetime
 import string, secrets
 from flask import session
-from src.core.services import email_service
+from src.core.services import email_service, alumno_service
 
 
 def listar_usuarios(pagina:int):
@@ -65,7 +65,8 @@ def editar_usuario(usuario:Usuario, contraseña_nueva:str) -> None:
         usuario.contraseña = hash_contraseña
     db.session.add(usuario)
     db.session.commit()
-    print(session)
+    alumno = alumno_service.get_alumno_by_id(usuario.id_alumno)
+    alumno_service.actualizar_alumno(alumno, usuario.nombre, usuario.apellido, usuario.email)
     flash('El usuario se ha editado correctamente', 'success')
     
 def eliminar_usuario(id_usuario:int) -> None:
@@ -80,6 +81,19 @@ def eliminar_usuario(id_usuario:int) -> None:
     db.session.add(usuario)
     db.session.commit()
     flash('El usuario se ha eliminado correctamente', 'success')
+    
+def reactivar_usuario(id_usuario:int) -> None:
+    """
+        Este método reactiva un usuario en la base de datos
+        
+        Args:
+            id_usuario (int): El id del usuario
+    """
+    usuario = buscar_usuario(id_usuario)
+    usuario.estado = EstadoUsuario.ACTIVO
+    db.session.add(usuario)
+    db.session.commit()
+    flash('El usuario se ha reactivado correctamente', 'success')
 
     
 def recuperar_contraseña(formulario:Recuperar_Form):
@@ -146,3 +160,15 @@ def buscar_permisos_usuario(id_usuario:int):
 
 def get_puntos_focales_by_facultad(facultad_id: int):
     return Usuario.query.filter(Usuario.facultad_id == facultad_id).all()
+
+def actualizar_informacion_usuario_alumno(
+        usuario,
+        nombre,
+        apellido,
+        email,
+):
+    usuario.nombre = nombre
+    usuario.apellido = apellido
+    usuario.email = email
+
+    db.session.commit()
