@@ -71,13 +71,21 @@
                     <td>{{ usuario.email }}</td>
                     <td>{{ usuario.rol.nombre }}</td>
                     <td>{{ usuario.creacion.strftime("%Y-%m-%d") }}</td>
-                    <td>
+                    <td>{{ usuario.estado.value }}<td>
                         <a href={{ url_for('usuarios.ver_detalle_usuario', id_usuario=usuario.id) }} class="btn btn-primary">Detalle</a>
                         {% if check_permiso(session, 'usuarios_eliminar') %}
-                            <form action="{{ url_for('usuarios.eliminar_usuario', id_usuario=usuario.id) }}" method="POST" style="display:inline;" onsubmit="return confirmarEliminacion();">
-                                <button type="submit" class="btn btn-danger">Eliminar</button>
-                                <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}" />
-                            </form>
+                            {% if usuario.estado.value == "activo" %}
+                                <form action="{{ url_for('usuarios.eliminar_usuario', id_usuario=usuario.id) }}" method="POST" style="display:inline;" onsubmit="return confirmarEliminacion();">
+                                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                                    <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}" />
+                                </form>
+                            {% else %}
+
+                                <form action="{{ url_for('usuarios.reactivar_usuario', id_usuario=usuario.id) }}" method="POST" style="display:inline;" onsubmit="return confirmarEliminacion();">
+                                    <button type="submit" class="btn btn-success">Reactivar</button>
+                                    <input id="csrf_token" name="csrf_token" type="hidden" value="{{ csrf_token() }}" />
+                                </form>
+                            {% endif %}
                         {% endif %}
                     </td>
                 </tr>

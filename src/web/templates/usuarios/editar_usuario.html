@@ -11,38 +11,40 @@
         
         <div class="container my-5">
             
-            <div class="mb-3">
-                {{ formulario_usuario.nombre.label }}{{ formulario_usuario.nombre(class="form-control") }}
-                {% if formulario_usuario.errors %}
-                    {% for error in formulario_usuario.nombre.errors %}
-                        <div class="text-danger">{{ formulario_usuario.errors[0] }}
-                            <span style="color: red;">{{ error }}</span>
-                        </div>
-                    {% endfor %}
-                {% endif %}
-            </div>
+            {% if check_permiso(session, "admin") %}
+                <div class="mb-3">
+                    {{ formulario_usuario.nombre.label }}{{ formulario_usuario.nombre(class="form-control") }}
+                    {% if formulario_usuario.errors %}
+                        {% for error in formulario_usuario.nombre.errors %}
+                            <div class="text-danger">{{ formulario_usuario.errors[0] }}
+                                <span style="color: red;">{{ error }}</span>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
 
-            <div class="mb-3">
-                {{ formulario_usuario.apellido.label }}{{ formulario_usuario.apellido(class="form-control") }}
-                {% if formulario_usuario.errors %}
-                    {% for error in formulario_usuario.apellido.errors %}
-                        <div class="text-danger">{{ formulario_usuario.errors[0] }}
-                            <span style="color: red;">{{ error }}</span>
-                        </div>
-                    {% endfor %}
-                {% endif %}
-            </div>
-            
-            <div class="mb-3">
-                {{ formulario_usuario.email.label }}{{ formulario_usuario.email(class="form-control") }}
-                {% if formulario_usuario.errors %}
-                    {% for error in formulario_usuario.email.errors %}
-                        <div class="text-danger">{{ formulario_usuario.errors[0] }}
-                            <span style="color: red;">{{ error }}</span>
-                        </div>
-                    {% endfor %}
-                {% endif %}
-            </div>
+                <div class="mb-3">
+                    {{ formulario_usuario.apellido.label }}{{ formulario_usuario.apellido(class="form-control") }}
+                    {% if formulario_usuario.errors %}
+                        {% for error in formulario_usuario.apellido.errors %}
+                            <div class="text-danger">{{ formulario_usuario.errors[0] }}
+                                <span style="color: red;">{{ error }}</span>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                
+                <div class="mb-3">
+                    {{ formulario_usuario.email.label }}{{ formulario_usuario.email(class="form-control") }}
+                    {% if formulario_usuario.errors %}
+                        {% for error in formulario_usuario.email.errors %}
+                            <div class="text-danger">{{ formulario_usuario.errors[0] }}
+                                <span style="color: red;">{{ error }}</span>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            {% endif %}
 
             <div class="mb-3">
                 {{ formulario_contraseña.nueva_contraseña.label }}{{ formulario_contraseña.nueva_contraseña(class="form-control") }}
