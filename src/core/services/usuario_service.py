@@ -1,4 +1,4 @@
-from src.core.models.usuario import Usuario, Rol, Permiso, RolPermiso
+from src.core.models.usuario import Usuario, Rol, Permiso, RolPermiso, EstadoUsuario
 from flask import request, render_template, redirect, flash
 from src.web.forms import Usuario_Form
 from src.web.forms.recuperar_contraseña_form import RecuperarContraseñaForm as Recuperar_Form
@@ -7,7 +7,7 @@ from src.core.database import db
 from datetime import datetime
 import string, secrets
 from flask import session
-from src.core.services import email_service
+from src.core.services import email_service, alumno_service
 
 
 def listar_usuarios(pagina:int):
@@ -60,14 +60,40 @@ def editar_usuario(usuario:Usuario, contraseña_nueva:str) -> None:
         Args:
             usuario (Usuario): El usuario a editar
     '''
-    print(session)
     if contraseña_nueva:
         hash_contraseña = bcrypt.generate_password_hash(contraseña_nueva.encode('utf-8')).decode('utf-8')
         usuario.contraseña = hash_contraseña
     db.session.add(usuario)
     db.session.commit()
-    print(session)
+    alumno = alumno_service.get_alumno_by_id(usuario.id_alumno)
+    alumno_service.actualizar_alumno(alumno, usuario.nombre, usuario.apellido, usuario.email)
     flash('El usuario se ha editado correctamente', 'success')
+    
+def eliminar_usuario(id_usuario:int) -> None:
+    """
+        Este método elimina logicamente un usuario en la base de datos
+        
+        Args:
+            id_usuario (int): El id del usuario
+    """
+    usuario = buscar_usuario(id_usuario)
+    usuario.estado = EstadoUsuario.ELIMINADO
+    db.session.add(usuario)
+    db.session.commit()
+    flash('El usuario se ha eliminado correctamente', 'success')
+    
+def reactivar_usuario(id_usuario:int) -> None:
+    """
+        Este método reactiva un usuario en la base de datos
+        
+        Args:
+            id_usuario (int): El id del usuario
+    """
+    usuario = buscar_usuario(id_usuario)
+    usuario.estado = EstadoUsuario.ACTIVO
+    db.session.add(usuario)
+    db.session.commit()
+    flash('El usuario se ha reactivado correctamente', 'success')
 
     
 def recuperar_contraseña(formulario:Recuperar_Form):

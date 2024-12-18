@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, flash, session, url_for
+from flask import Blueprint, render_template, request, redirect, flash, url_for
 from src.core.services import usuario_service
 from src.web.handlers.permisos import check
 from src.web.forms import Usuario_Form, Nueva_Contraseña_Form, RecuperarContraseñaForm
@@ -73,8 +73,6 @@ def actualizar_usuario(id_usuario:int):
     return redirect("/")
 
 
-
-
 @usuario_bp.post("/eliminar/<int:id_usuario>")
 @check("usuarios_eliminar")
 def eliminar_usuario(id_usuario:int):
@@ -88,7 +86,21 @@ def eliminar_usuario(id_usuario:int):
         redirect: Redirige a la lista de usuarios.
     '''
     usuario_service.eliminar_usuario(id_usuario)
-    flash('El usuario se ha eliminado correctamente', 'success')
+    return redirect("/usuarios")
+
+@usuario_bp.post("/reactivar/<int:id_usuario>")
+@check("usuarios_eliminar")
+def reactivar_usuario(id_usuario:int):
+    '''
+    Reactiva un usuario.
+    
+    Args:
+        id_usuario (int): El id del usuario a reactivar.
+        
+    Returns:
+        redirect: Redirige a la lista de usuarios.
+    '''
+    usuario_service.reactivar_usuario(id_usuario)
     return redirect("/usuarios")
 
 @usuario_bp.get("/recuperar")
