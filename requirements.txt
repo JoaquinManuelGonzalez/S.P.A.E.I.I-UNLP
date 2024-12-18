@@ -16,3 +16,4 @@ marshmallow==3.23.1
 flask-jwt-extended
 Flask-Mail
 flask-cors==5.0.0
+email-validator

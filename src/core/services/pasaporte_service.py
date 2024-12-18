@@ -34,3 +34,6 @@ def actualizar_informacion_pasaporte(
 def get_pasaporte_by_id(id_pasaporte):
     pasaporte = Pasaporte.query.get(id_pasaporte)
     return pasaporte
+
+def check_numero(numero):
+    return bool(Pasaporte.query.filter_by(numero=numero).first())

@@ -1,0 +1,97 @@
+{% extends "layout.html" %}
+
+{% block title %}Asignar {{ asignatura.nombre }} a carreras{% endblock %}
+
+{% block content %}
+    <div class="container-lg">
+        <div class="row align-items-center">
+            <div class="col">
+                <h1 class="m-0">Asignar {{ asignatura.nombre }} a carreras</h1>
+            </div>
+        </div>
+        
+        <div class="row align-items-center my-3 py-3 border-bottom border-top">
+            <div class="col col-md-4">
+                <label for="search" class="form-label">Buscar por nombre:</label>
+                <div class="input-group">
+                    <span class="input-group-text" id="search-search">
+                        <i class="bi bi-search"></i>
+                    </span>
+                    <input type="text" id="search" name="search" class="form-control" placeholder="Ingresar nombre"
+                           value="{{ search or '' }}">
+                </div>
+                <label for="search" class="form-label">Buscar por facultad a la que corresponde:</label>
+                <select class="form-select" id="facultad" name="facultad">
+                    <option value="">Seleccione una facultad</option>
+                    {% for facultad in facultades %}
+                        <option {{ facultad_id == facultad.id and "selected" or "" }}
+                                value="{{ facultad.id }}">{{ facultad.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <div class="col">
+                <table class="table table-striped table-hover">
+                    <thead>
+                    <tr>
+                        <th scope="col">Nombre</th>
+                        <th scope="col" class="text-center">Facultad</th>
+                        <th scope="col" class="text-center">Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for carrera in carreras %}
+                        <tr>
+                            <th scope="row" class="align-middle">{{ carrera.nombre }}</th>
+                            <td class="text-center align-middle">{{ carrera.facultad.nombre }}</td>
+                            <td class="text-center align-middle">
+                                <div class="btn-group">
+                                    <a href="{{ url_for("asignaturas.asignar_carrera", asignatura_id=asignatura.id, carrera_id=carrera.id) }}" class="btn btn-success" data-bs-toggle="tooltip" data-bs-title="Asignar"><i class="bi-plus-square-fill"></i></a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col text-center">
+                <a class="btn btn-secondary me-2" href="{{ url_for("asignaturas.visualizar", asignatura_id = asignatura.id) }}" role="button">Volver</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+            const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+
+            const search = document.getElementById("search");
+            const facultad = document.getElementById("facultad");
+            const change_filters = () => {
+                const url = URL.parse(window.location.href);
+                const current_url = url.toString();
+                const params = url.searchParams;
+                if (!params.has("search") || (params.get("search") !== search.value)) {
+                    params.set("search", search.value);
+                }
+                if (!params.has("facultad") || (params.get("facultad") !== facultad.value)) {
+                    params.set("facultad", facultad.value);
+                }
+                if (current_url !== url.toString()) {
+                    window.location.href = url.toString();
+                }
+            };
+            search.addEventListener("change", change_filters);
+            facultad.addEventListener("change", change_filters);
+        });
+    </script>
+{% endblock %}

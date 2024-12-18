@@ -4,7 +4,12 @@ from src.core.models.alumno.pais import Pais
 from src.core.models.alumno.cedula_de_identidad import CedulaDeIdentidad
 from src.core.models.alumno.pasaporte import Pasaporte
 from src.core.models.alumno.informacion_alumno_entrante import InformacionAlumnoEntrante
+from src.core.models.asignatura import Asignatura
+from src.core.models.postulacion.estado import Estado
+from src.core.models.postulacion.postulacion import Postulacion
 from src.core.database import db
+from sqlalchemy.sql import exists
+
 
 def ordenar_alumnos(
         query,
@@ -28,6 +33,31 @@ def ordenar_alumnos(
             return query.order_by(InformacionAlumnoEntrante.email.desc())
 
 
+def get_alumnos_con_postulaciones_activas(facultad_id):
+    # Estados que queremos excluir
+    estados_excluir = [
+        'Solicitud de Postulacion',
+        'Solicitud Rechazada',
+    ]
+
+    # Subconsulta para verificar si existe una postulación válida asociada al alumno
+    subconsulta = (
+        db.session.query(Postulacion.id)
+        .join(Postulacion.asignaturas)  # Unir con Asignatura
+        .join(Asignatura.facultad)      # Unir con Facultad
+        .join(Postulacion.estado)       # Unir con Estado
+        .filter(
+            Asignatura.facultad_id == facultad_id,   # Filtrar por facultad específica
+            Estado.nombre.notin_(estados_excluir),   # Excluir estados no deseados
+            Postulacion.id_informacion_alumno_entrante == InformacionAlumnoEntrante.id
+        )
+        .exists()  # Verificar si existe una postulación que cumpla con los filtros
+    )
+
+    # Devuelve la consulta para que pueda ser extendida
+    return db.session.query(InformacionAlumnoEntrante).filter(subconsulta)
+
+
 def filtrar_alumnos(
         nombre,
         apellido,
@@ -35,10 +65,14 @@ def filtrar_alumnos(
         pagina,
         ordenado_por,
         orden,
-        por_pagina
+        por_pagina,
+        facultad
 ):
     
-    query = InformacionAlumnoEntrante.query
+    if facultad:
+        query = get_alumnos_con_postulaciones_activas(facultad)
+    else:
+        query = InformacionAlumnoEntrante.query
 
     if nombre:
         query = query.filter(InformacionAlumnoEntrante.nombre.ilike(f"{nombre}%"))
@@ -60,4 +94,53 @@ def crear_informacion_alumno_entrante(**data):
     alumno = InformacionAlumnoEntrante(**data)
     db.session.add(alumno)
     db.session.commit()
+    return alumno
+
+def check_email(email):
+    return bool(InformacionAlumnoEntrante.query.filter_by(email=email).first())
+
+
+def actualizar_informacion_alumno(
+    alumno,
+    nombre,
+    apellido,
+    email,
+    fecha_de_nacimiento,
+    genero,
+    estado_civil,
+    discapacitado,
+    pais_de_nacimiento,
+    pais_de_residencia,
+    pais_de_nacionalidad,
+    domicilio_pais_de_residencia,
+):
+    alumno.nombre = nombre
+    alumno.apellido = apellido
+    alumno.email = email
+    alumno.fecha_de_nacimiento = fecha_de_nacimiento
+    alumno.genero = genero
+    alumno.estado_civil = estado_civil
+    alumno.discapacitado = discapacitado
+    alumno.pais_de_nacimiento = pais_de_nacimiento
+    alumno.pais_de_residencia = pais_de_residencia
+    alumno.pais_nacionalidad = pais_de_nacionalidad
+    alumno.domicilio_pais_de_residencia = domicilio_pais_de_residencia
+
+    db.session.commit()
+
+    return alumno
+
+
+def actualizar_alumno(
+    alumno,
+    nombre,
+    apellido,
+    email,
+):
+    alumno.nombre = nombre
+    alumno.apellido = apellido
+    alumno.email = email
+
+    db.session.commit()
+
     return alumno

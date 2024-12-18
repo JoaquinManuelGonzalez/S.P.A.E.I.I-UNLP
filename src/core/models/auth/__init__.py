@@ -15,7 +15,7 @@ def find_user_by_email(email):
     return user
 
 
-def check_user(email, password):
+def check_user_password(email, password):
     """
     Verifica si las credenciales proporcionadas (correo electrónico y contraseña) son correctas.
     

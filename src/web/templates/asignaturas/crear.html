@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+{% block title %}Crear Asignatura{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    
+    <form method="POST" class="container-fluid full-height d-flex justify-content-center align-items-center" style="max-width: 500px; max-height: 750px; overflow: hidden;">
+        {{ formulario.csrf_token }}
+        <div class="container my-5">
+            
+            <div class="mb-3">
+                {{ formulario.nombre.label }}{{ formulario.nombre(class="form-control") }}
+                {% if formulario.errors %}
+                    {% for error in formulario.nombre.errors %}
+                        <div class="text-danger">{{ formulario.errors[0] }}
+                            <span style="color: red;">{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                {{ formulario.facultad_id.label }}{{ formulario.facultad_id(class="form-select") }}
+                {% if formulario.facultad_id.errors %}
+                    <div class="text-danger">{{ formulario.facultad_id.errors[0] }}</div>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="btn btn-primary my-3">Crear</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
