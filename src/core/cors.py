@@ -21,5 +21,5 @@ def init_app(app: Flask) -> None:
         r"/api/postulacion/primer-formulario-data": {
             "origins": allowed_origin,
             "methods": ["GET"]
-        }
+        },
     })

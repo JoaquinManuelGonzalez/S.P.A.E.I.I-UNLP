@@ -53,7 +53,6 @@ def create_app(env="development", static_folder="../../static", template_folders
 
     session.init_app(app)
     bcrypt.init_app(app)
-    app = registrar_rutas(app)
     mail = Mail(app)
         
     @app.route("/")

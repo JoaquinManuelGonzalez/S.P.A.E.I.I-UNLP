@@ -205,8 +205,9 @@
   import { useI18n } from 'vue-i18n';
   import { usePrimerFormularioStore } from '../stores/PrimerFormularioStore';
 
+
   const store = usePrimerFormularioStore();
-  const { formData, errors, loading, paises, estados_civiles, generos, convenioPrograma, nivelEstudio, es_hispanohablante, mercosur } = storeToRefs(store);
+  const { formData, errors, loading, paises, estados_civiles, generos, nivelEstudio, convenioPrograma, es_hispanohablante, mercosur } = storeToRefs(store);
   
   // Accedemos al idioma actual a través de i18n
   const { locale } = useI18n();
@@ -251,10 +252,19 @@
   const submitForm = async () => {
     console.log(formData);
     console.log(nivelEstudio);
-    console.log(convenioPrograma);
     //await store.submitForm();
+    if(nivelEstudio.value === 'posgrado'){
+      formData.value.postulacion.de_posgrado = true;
+    }
+    formData.value.convenioPrograma = convenioPrograma.value;
+    formData.value.mercosur = mercosur.value;
     try {
-      await store.submitForm();
+      console.log("Entra al try");
+      if(validar()){
+        console.log("arriba del submit");
+        await store.submitForm();
+        console.log("abajo del submit");
+      }
     } catch (error) {
       console.error(error);
     }
@@ -263,21 +273,28 @@
   // Manejo de cambio de archivo
   const onFileChange = (event, key) => {
     const file = event.target.files[0];
+    console.log(file);
+    console.log(file.name);
     switch(key){
       case 'fotoPasaporte':
         formData.value.archivo.pasaporte = file;
+        formData.value.titulos.titulo_pasaporte = file.name;
         break;
       case 'fotoCedulaIdentidad':
         formData.value.archivo.cedula_de_identidad = file;
+        formData.value.titulos.titulo_cedula_de_identidad = file.name;
         break;
       case 'certificadoB1':
         formData.value.archivo.certificado_b1 = file;
+        formData.value.titulos.titulo_certificado_b1 = file.name;
         break;
       case 'planTrabajo':
         formData.value.archivo.plan_trabajo = file;
+        formData.value.titulos.titulo_plan_trabajo = file.name;
         break;
       case 'cartaRecomendacion':
         formData.value.archivo.carta_recomendacion = file;
+        formData.value.titulos.titulo_carta_recomendacion = file.name;
         break;
     }
   };
@@ -288,6 +305,129 @@
     let nombres_mercosur = ["Perú", "Colombia", "Paraguay", "Argentina", "Surinam", "Guyana", "Uruguay", "Panamá", "Bolivia", "Chile", "Ecuador", "Brasil", "Venezuela"]
     let nombre = paises.value[formData.value.alumno.id_pais_nacionalidad - 1].nombre_es;
     mercosur.value = paises_mercosur.includes(formData.value.alumno.id_pais_nacionalidad);
+  }
+
+  const soloLetras = (valor) => {
+    return /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(valor);
+  }
+
+  const validarArchivo = (archivo) => {
+    const allowedExtensions = ['.pdf', '.jpg', '.jpeg', '.png'];
+    const fileExtension = archivo.name.slice(archivo.name.lastIndexOf('.')).toLowerCase();
+    return allowedExtensions.includes(fileExtension);
+  }
+
+  const soloNumeros = (value) => /^[0-9]+$/.test(value);
+
+  const validar = () => {
+    errors.value = [];
+    if(formData.value.alumno.apellido.length < 3 || formData.value.alumno.apellido.length > 50 || !soloLetras(formData.value.alumno.apellido)){
+      errors["apellido"] = "El apellido debe contener solo letras. Como mínimo 3 y como máximo 50 caracteres";
+      alert(errors["apellido"]);
+      return false;
+    }
+    if(formData.value.alumno.nombre.length < 3 || formData.value.alumno.nombre.length > 50 || !soloLetras(formData.value.alumno.nombre)){
+      errors["nombre"] = "El nombre debe contener solo letras. Como mínimo 3 y como máximo 50 caracteres";
+      alert(errors["nombre"]);
+      return false;
+    }
+    if(formData.value.alumno.email.length < 3 || formData.value.alumno.email.length > 50){
+      errors["email"] = "El email debe tener al menos 3 caracteres y como máximo 50 caracteres";
+      alert(errors["email"]);
+      return false;
+    }
+    if(!soloNumeros(formData.value.pasaporte.numero)){
+      errors["numero_pasaporte"] = "El pasaporte solo debe contener números";
+      alert(errors["numero_pasaporte"]);
+      return false;
+    }
+    if(formData.value.archivo.pasaporte != null){
+      if(!validarArchivo(formData.value.archivo.pasaporte)){
+        errors["archivo_pasaporte"] = "Formato de archivo no válido. Solo se permiten archivos .pdf, .jpg, .jpeg, .png";
+        alert(errors["archivo_pasaporte"]);
+        return false;
+      }
+    }
+    if(mercosur.value){
+      if(formData.value.cedula_de_identidad.numero != "" && !soloNumeros(formData.value.cedula_de_identidad.numero)){
+        errors["numero_cedula_de_identidad"] = "La cédula de identidad solo debe contener números";
+        alert(errors["numero_cedula_de_identidad"]);
+        return false;
+      }
+      if(formData.value.archivo.cedula_de_identidad != null){
+        if(!validarArchivo(formData.value.archivo.cedula_de_identidad)){
+          errors["archivo_cedula_de_identidad"] = "Formato de archivo no válido. Solo se permiten archivos .pdf, .jpg, .jpeg, .png";
+          alert(errors["archivo_cedula_de_identidad"]);
+          return false;
+        }
+      }
+    }
+    if(formData.value.archivo.certificado_b1 != null){
+      if(!validarArchivo(formData.value.archivo.certificado_b1)){
+        errors["archivo_certificado_b1"] = "Formato de archivo no válido. Solo se permiten archivos .pdf, .jpg, .jpeg, .png";
+        alert(errors["archivo_certificado_b1"]);
+        return false;
+      }
+    }
+    if(nivelEstudio === 'posgrado'){
+      if(formData.value.archivo.plan_trabajo != null){
+        if(!validarArchivo(formData.value.archivo.plan_trabajo)){
+          errors["archivo_plan_trabajo"] = "Formato de archivo no válido. Solo se permiten archivos .pdf, .jpg, .jpeg, .png";
+          alert(errors["archivo_plan_trabajo"]);
+          return false;
+        }
+      }
+    }
+    if(formData.value.archivo.carta_recomendacion != null){
+      if(!validarArchivo(formData.value.archivo.carta_recomendacion)){
+        errors["archivo_carta_recomendacion"] = "Formato de archivo no válido. Solo se permiten archivos .pdf, .jpg, .jpeg, .png";
+        alert(errors["archivo_carta_recomendacion"]);
+        return false;
+      }
+    }
+    if(formData.value.postulacion.universidad_origen.length < 3 || formData.value.postulacion.universidad_origen.length > 50){
+      errors["universidad_origen"] = "La universidad de origen debe tener al menos 3 caracteres y como máximo 50 caracteres";
+      alert("La universidad de origen debe tener al menos 3 caracteres y como máximo 50 caracteres");
+      return false;
+    }
+    if(formData.value.postulacion.consulado_visacion.length < 3 || formData.value.postulacion.consulado_visacion.length > 50){
+      errors["consulado_visacion"] = "El consulado de visación debe tener al menos 3 caracteres y como máximo 50 caracteres";
+      alert(errors["consulado_visacion"]);
+      return false;
+    }
+    if(formData.value.tutorInstitucional.apellido.length < 3 || formData.value.tutorInstitucional.apellido.length > 50 || !soloLetras(formData.value.tutorInstitucional.apellido)){
+      errors["apellido_tutor_institucional"] = "El apellido del tutor institucional debe contener solo letras. Como mínimo 3 y como máximo 50 caracteres";
+      alert(errors["apellido_tutor_institucional"]);
+      return false;
+    }
+    if(formData.value.tutorInstitucional.nombre.length < 3 || formData.value.tutorInstitucional.nombre.length > 50 || !soloLetras(formData.value.tutorInstitucional.nombre)){
+      errors["nombre_tutor_institucional"] = "El nombre del tutor institucional debe contener solo letras. Como mínimo 3 y como máximo 50 caracteres";
+      alert(errors["nombre_tutor_institucional"]);
+      return false;
+    }
+    if(formData.value.tutorInstitucional.email.length < 3 || formData.value.tutorInstitucional.email.length > 50){
+      errors["email_tutor_institucional"] = "El email del tutor institucional debe tener al menos 3 caracteres y como máximo 50 caracteres";
+      alert(errors["email_tutor_institucional"]);
+      return false;
+    }
+    if(formData.value.tutorAcademico.apellido.length < 3 || formData.value.tutorAcademico.apellido.length > 50 || !soloLetras(formData.value.tutorAcademico.apellido)){
+      errors["apellido_tutor_academico"] = "El apellido del tutor académico debe contener solo letras. Como mínimo 3 y como máximo 50 caracteres";
+      alert(errors["apellido_tutor_academico"]);
+      return false;
+    }
+    if(formData.value.tutorAcademico.nombre.length < 3 || formData.value.tutorAcademico.nombre.length > 50 || !soloLetras(formData.value.tutorAcademico.nombre)){
+      errors["nombre_tutor_academico"] = "El nombre del tutor académico debe contener solo letras. Como mínimo 3 y como máximo 50 caracteres";
+      alert(errors["nombre_tutor_academico"]);
+      return false;
+    }
+    if(formData.value.tutorAcademico.email.length < 3 || formData.value.tutorAcademico.email.length > 50){
+      errors["email_tutor_academico"] = "El email del tutor académico debe tener al menos 3 caracteres y como máximo 50 caracteres";
+      alert(errors["email_tutor_academico"]);
+      return false;
+    }
+    console.log(errors);
+    return errors.value.length === 0;
+    
   }
 
 </script>

@@ -6,7 +6,7 @@ class InformacionAlumnoEntranteSchema(Schema):
     apellido = fields.Str(required=True, validate=validate.Length(min=3, max=50))
     email = fields.Email(required=True, validate=validate.Length(min=3, max=320))
     domicilio_pais_de_residencia = fields.Str(required=True, validate=validate.Length(min=3, max=320))
-    fecha_de_nacimiento = fields.DateTime(required=True)
+    fecha_de_nacimiento = fields.Date(required=True)
     discapacitado = fields.Bool(required=False)
     id_genero = fields.Int(required=True)
     id_estado_civil = fields.Int(required=True)

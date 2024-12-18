@@ -51,14 +51,23 @@ export const usePrimerFormularioStore = defineStore('primer_formulario_store', {
                 cedula_de_identidad: null,
                 pasaporte: null,
             },
+            titulos:{
+                titulo_certificado_b1: "",
+                titulo_plan_trabajo: "",
+                titulo_carta_recomendacion: "",
+                titulo_cedula_de_identidad: "",
+                titulo_pasaporte: "",
+            },
+            convenioPrograma: "",
+            mercosur: false,
         },
-        errors: null,
+        errors: [],
         loading: false,
         paises: [],
         generos: [],
         estados_civiles: [],
-        convenioPrograma: "",
         nivelEstudio: "",
+        convenioPrograma: "",
         es_hispanohablante: false,
         mercosur: false,
         csrf_token: "",
@@ -82,18 +91,18 @@ export const usePrimerFormularioStore = defineStore('primer_formulario_store', {
                 console.log(this.formData);
                 console.log("así estan los archivos");
                 console.log(this.formData.archivo);
-                //axios.defaults.headers.post['X-CSRF-Token'] = this.csrf_token;
+                console.log(this.formData.titulos);
                 const response = await axios.post('http://127.0.0.1:5000/api/postulacion/primer-formulario', this.formData, 
                     {
                         headers: {
                             'Content-Type': 'application/json',
-                            'X-CSRF-Token': this.csrf_token,
+                            //'X-CSRF-Token': this.csrf_token,
                         },
                     },
-                ).then(response => {
-                    console.log(response);
-                });
-                this.errors = null;
+                );
+                this.errors = [];
+                console.log("este es el response:");
+                console.log(response);
             } catch (error) {
                 this.errors = error;
                 console.log("este es el error:");
