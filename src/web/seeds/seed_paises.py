@@ -9,7 +9,7 @@ def seed_paises():
     data_json = '''
     [
         {"id":"1","nombre_es":"Islas Georgias del Sur y Sandwich del Sur","nombre_en":"South Georgia","nombre_pt":"Ilhas Geórgia do Sul e Sandwich do Sul","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
-        {"id":"2","nombre_es":"Grenada","nombre_en":"Grenada","nombre_pt":"Granada","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
+        {"id":"2","nombre_es":"Granada","nombre_en":"Grenada","nombre_pt":"Granada","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
         {"id":"3","nombre_es":"Suiza","nombre_en":"Switzerland","nombre_pt":"Suíça","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
         {"id":"4","nombre_es":"Sierra Leone","nombre_en":"Sierra Leone","nombre_pt":"Serra Leoa","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},
         {"id":"5","nombre_es":"Hungría","nombre_en":"Hungary","nombre_pt":"Hungria","hispanohablante":"0","creacion":"2024-12-06 21:47:17","actualizacion":"2024-12-06 21:47:17"},

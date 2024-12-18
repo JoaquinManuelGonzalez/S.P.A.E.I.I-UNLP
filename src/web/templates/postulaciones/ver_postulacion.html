@@ -1,0 +1,129 @@
+{% extends "layout.html" %}
+{% block title %}Detalle de postulacion{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}
+<h1 class="text-center mb-4">Detalle de la postulacion</h1>
+<div class="container mt-4">
+  <div class="row">
+    <!-- Columna de Datos Personales -->
+    <div class="col-md-6 border-end">
+      <h3 class="mb-3">Datos Personales</h3>
+      <div class="d-flex mb-2">
+        <h5 class="me-2 mb-0">Nombre:</h5>
+        <p class="mb-0">{{ alumno.nombre }}</p>
+      </div>
+      <div class="d-flex mb-2">
+        <h5 class="me-2 mb-0">Apellido:</h5>
+        <p class="mb-0">{{ alumno.apellido }}</p>
+      </div>
+      <div class="d-flex mb-2">
+        <h5 class="me-2 mb-0">Email:</h5>
+        <p class="mb-0">{{ alumno.email }}</p>
+      </div>
+      <div class="d-flex mb-2">
+        <h5 class="me-2 mb-0">Género conforme pasaporte:</h5>
+        <p class="mb-0">{{ genero.nombre_es }}</p>
+      </div>
+      <div class="d-flex mb-2">
+        <h5 class="me-2 mb-0">Fecha de nacimiento:</h5>
+        <p class="mb-0">{{ alumno.fecha_de_nacimiento.strftime("%d-%m-%Y") }}</p>
+      </div>
+      <div class="d-flex mb-2">
+        <h5 class="me-2 mb-0">País de nacimiento:</h5>
+        <p class="mb-0">{{ pais_nacimiento.nombre_es }}</p>
+      </div>
+      <div class="d-flex mb-2">
+        <h5 class="me-2 mb-0">País de residencia:</h5>
+        <p class="mb-0">{{ pais_residencia.nombre_es }}</p>
+      </div>
+      <div class="d-flex mb-2">
+        <h5 class="me-2 mb-0">Domicilio de residencia:</h5>
+        <p class="mb-0">{{ alumno.domicilio_pais_de_residencia }}</p>
+      </div>
+      <div class="d-flex mb-2">
+        <h5 class="me-2 mb-0">Nacionalidad:</h5>
+        <p class="mb-0">{{ nacionalidad.nombre_es }}</p>
+      </div>
+      <div class="d-flex mb-2">
+        <h5 class="me-2 mb-0">Número de pasaporte:</h5>
+        <p class="mb-0">{{ pasaporte.numero }}</p>
+      </div>
+      <div class="d-flex mb-2">
+        <h5 class="me-2 mb-0">País de emisión de pasaporte:</h5>
+        <p class="mb-0">{{ pais_pasaporte.nombre_es }}</p>
+      </div>
+      <div class="d-flex mb-2">
+        <h5 class="me-2 mb-0">Número de cédula de identidad:</h5>
+        <p class="mb-0">{{ cedula_de_identidad.numero }}</p>
+      </div>
+      <div class="d-flex mb-2">
+        <h5 class="me-2 mb-0">País de emisión de cédula de identidad:</h5>
+        <p class="mb-0">{{ pais_cedula_de_identidad.nombre_es }}</p>
+      </div>
+      <div class="d-flex mb-2">
+        <h5 class="me-2 mb-0">Estado civil:</h5>
+        <p class="mb-0">{{ estado_civil.nombre_es }}</p>
+      </div>
+    </div>
+
+    <!-- Columna de Datos Académicos y Tutores -->
+    <div class="col-md-6">
+      <h3 class="mb-3">Datos Académicos</h3>
+      <div class="d-flex mb-2">
+        <h5 class="me-2 mb-0">Universidad de origen:</h5>
+        <p class="mb-0">{{ postulacion.universidad_origen }}</p>
+      </div>
+      <div class="d-flex mb-2">
+        <h5 class="me-2 mb-0">Nivel de estudio:</h5>
+        <p class="mb-0">
+          {% if postulacion.de_posgrado %}
+            Posgrado
+          {% else %}
+            Grado
+          {% endif %}
+        </p>
+      </div>
+      <div class="d-flex mb-2">
+        <h5 class="me-2 mb-0">Consulado de visación:</h5>
+        <p class="mb-0">{{ postulacion.consulado_visacion }}</p>
+      </div>
+      <div class="d-flex mb-2">
+        <h5 class="me-2 mb-0">Convenio:</h5>
+        <p class="mb-0">{{ postulacion.convenio }}</p>
+      </div>
+      <div class="d-flex mb-2">
+        <h5 class="me-2 mb-0">Programa:</h5>
+        <p class="mb-0">{{ programa.nombre }}</p>
+      </div>
+      <h3 class="mt-4 mb-3">Datos de Tutores</h3>
+      <div class="d-flex mb-2">
+        <h5 class="me-2 mb-0">Tutor Institucional:</h5>
+        <p class="mb-0">{{ tutor_institucional.nombre }} {{ tutor_institucional.apellido }}</p>
+      </div>
+      <div class="d-flex mb-2">
+        <h5 class="me-2 mb-0">Email:</h5>
+        <p class="mb-0">{{ tutor_institucional.email }}</p>
+      </div>
+      <div class="d-flex mb-2">
+        <h5 class="me-2 mb-0">Tutor Académico:</h5>
+        <p class="mb-0">{{ tutor_academico.nombre }} {{ tutor_academico.apellido }}</p>
+      </div>
+      <div class="d-flex mb-2">
+        <h5 class="me-2 mb-0">Email:</h5>
+        <p class="mb-0">{{ tutor_academico.email }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div>
+
+ 
+
+
+</div>
+
+
+{% endblock %}
