@@ -1,6 +1,8 @@
+from sqlalchemy import text
 from src.core.database import db
 from datetime import datetime
 from src.core.models.carrera import Carrera
+from src.core.models.asignatura import asignaturas_carreras
 
 def create_carrera(nombre, facultad_id):
     """
@@ -52,6 +54,28 @@ def get_carreras_by_facultad(facultad_id: int):
 
     return Carrera.query.filter(Carrera.facultad_id == facultad_id).all()
 
+def get_carreras(nombre: str, facultad_id: int, asignatura_id: int):
+    """
+    Gets all Carrera records from the database.
+
+    Args:
+        facultad_id (int): El ID de la facultad de la cual quiero las carreras.
+        nombre (str): El nombre de la carrera que estoy buscando.
+        pagina (int): La pagina en la que se encuentra.
+
+    Returns:
+        list: A list of Carrera objects.
+    """
+
+    query = text("SELECT * " + 
+                 "FROM carreras c " + 
+                 "WHERE (c.facultad_id = :facultad_id OR :facultad_id IS NULL) " + 
+                 "AND (LOWER(c.nombre) LIKE CONCAT('%', LOWER(:nombre), '%') OR :nombre IS NULL) " + 
+                 "AND NOT EXISTS (SELECT * FROM asignaturas_carreras ac WHERE ac.asignatura_id = :asignatura_id AND c.id = ac.carrera_id)")
+
+    resultado = db.session.query(Carrera).from_statement(query).params(asignatura_id=asignatura_id, nombre=nombre, facultad_id=facultad_id).all()
+    return resultado
+
 def update_carrera(carrera_id, nombre=None, facultad_id=None):
     """
     Updates a Carrera record in the database.
@@ -100,7 +124,7 @@ def delete_carrera(carrera_id):
     try:
         carrera_to_delete = Carrera.query.get(carrera_id)
         if carrera_to_delete:
-            carrera_to_delete.deleted_at = datetime.utcnow()
+            carrera_to_delete.deleted_at = datetime.now()
             db.session.commit()
             return True
         else:
