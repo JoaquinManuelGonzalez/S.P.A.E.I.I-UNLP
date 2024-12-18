@@ -107,6 +107,9 @@ def crear_estados():
     estados.append(Estado(
         nombre='Postulacion Completada'
     ))
+    estados.append(Estado(
+        nombre='Postulacion Finalizada'
+    ))
 
     for i in range (len(estados)):
         db.session.add(estados[i])

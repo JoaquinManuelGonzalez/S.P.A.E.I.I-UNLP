@@ -1,13 +1,13 @@
-from src.core.models.usuario import Usuario, Rol, Permiso, RolPermiso
+from src.core.models.usuario import Usuario, Rol, Permiso, RolPermiso, EstadoUsuario
 from flask import request, render_template, redirect, flash
 from src.web.forms import Usuario_Form
 from src.web.forms.recuperar_contraseña_form import RecuperarContraseñaForm as Recuperar_Form
 from src.core.bcrypt import bcrypt
 from src.core.database import db
 from datetime import datetime
-import string, secrets
+import string, secrets, random, string
 from flask import session
-from src.core.services import email_service
+from src.core.services import email_service, alumno_service
 
 
 def listar_usuarios(pagina:int):
@@ -40,6 +40,8 @@ def filtrar_usuarios(pagina:int):
     return query.paginate(page=pagina, per_page=5, error_out=False)
 
 def crear_usuario(formulario:Usuario_Form) -> None:
+#este crear es para el crud que utiliza el formulario
+    contraseña_original = formulario.contraseña.data
     hash = bcrypt.generate_password_hash(formulario.contraseña.data.encode('utf-8'))
     formulario.contraseña.data = hash.decode('utf-8')
     usuario = Usuario(
@@ -51,7 +53,42 @@ def crear_usuario(formulario:Usuario_Form) -> None:
     )
     db.session.add(usuario)
     db.session.commit()
+    mensaje = f'Usted tiene un nuevo usuario registrado en SPAEII. Sus credenciales de ingreso son: usuario: {usuario.email}, contraseña: {contraseña_original} , recuerde cambiarla en su próximo inicio de sesión'
+    email_service.send_email('Nuevo usuario registrado en SPAEII', mensaje, [usuario.email])
     flash('El usuario se ha creado correctamente', 'success')
+    
+def crear_usuario_solicitud_aprobada(nombre, apellido, email, id_alumno):
+#este crear es cuando se aprueba una solicitud, considera si el usuario estaba eliminado
+    usuario = buscar_usuario_email(email)
+    id_rol_alumno = buscar_id_rol('alumno')
+    contraseña = generar_contraseña()
+    contraseña_encriptada = encriptar_contraseña(contraseña)
+    if usuario and usuario.estado.value == "eliminado":
+        usuario.estado = EstadoUsuario.ACTIVO
+        usuario.contraseña = contraseña_encriptada
+    else:
+        usuario = Usuario(
+            nombre=nombre,
+            apellido=apellido,
+            email=email,
+            contraseña=contraseña_encriptada,
+            id_rol=id_rol_alumno,
+            id_alumno=id_alumno,
+        )
+    db.session.add(usuario)
+    db.session.commit()
+    mensaje = f'Usted tiene un nuevo usuario registrado en SPAEII. Sus credenciales de ingreso son: usuario: {email}, contraseña: {contraseña} , recuerde cambiarla en su próximo inicio de sesión'
+    email_service.send_email('Nuevo usuario registrado en SPAEII', mensaje, [email])
+
+    
+def generar_contraseña(longitud=12):
+    caracteres = string.ascii_letters + string.digits + string.punctuation
+    return ''.join(random.choice(caracteres) for _ in range(longitud))
+
+def encriptar_contraseña(contrasena):
+    salt = bcrypt.gensalt()
+    hashed = bcrypt.hashpw(contrasena.encode(), salt)
+    return hashed
     
 def editar_usuario(usuario:Usuario, contraseña_nueva:str) -> None:
     '''
@@ -60,14 +97,40 @@ def editar_usuario(usuario:Usuario, contraseña_nueva:str) -> None:
         Args:
             usuario (Usuario): El usuario a editar
     '''
-    print(session)
     if contraseña_nueva:
         hash_contraseña = bcrypt.generate_password_hash(contraseña_nueva.encode('utf-8')).decode('utf-8')
         usuario.contraseña = hash_contraseña
     db.session.add(usuario)
     db.session.commit()
-    print(session)
+    alumno = alumno_service.get_alumno_by_id(usuario.id_alumno)
+    alumno_service.actualizar_alumno(alumno, usuario.nombre, usuario.apellido, usuario.email)
     flash('El usuario se ha editado correctamente', 'success')
+    
+def eliminar_usuario(id_usuario:int) -> None:
+    """
+        Este método elimina logicamente un usuario en la base de datos
+        
+        Args:
+            id_usuario (int): El id del usuario
+    """
+    usuario = buscar_usuario(id_usuario)
+    usuario.estado = EstadoUsuario.ELIMINADO
+    db.session.add(usuario)
+    db.session.commit()
+    flash('El usuario se ha eliminado correctamente', 'success')
+    
+def reactivar_usuario(id_usuario:int) -> None:
+    """
+        Este método reactiva un usuario en la base de datos
+        
+        Args:
+            id_usuario (int): El id del usuario
+    """
+    usuario = buscar_usuario(id_usuario)
+    usuario.estado = EstadoUsuario.ACTIVO
+    db.session.add(usuario)
+    db.session.commit()
+    flash('El usuario se ha reactivado correctamente', 'success')
 
     
 def recuperar_contraseña(formulario:Recuperar_Form):
@@ -110,6 +173,9 @@ def crear_permiso(nombre:str) -> Permiso:
 
 def listar_roles():
     return Rol.query.all()
+
+def buscar_id_rol (rol:str) -> int:
+    return Rol.query.filter_by(nombre=rol).first()
 
 def crear_rol(nombre:str) -> Rol:
     rol = Rol(
