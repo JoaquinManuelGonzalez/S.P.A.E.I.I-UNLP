@@ -126,7 +126,7 @@ def actualizar_informacion_alumno(
     return alumno
 
 
-def actualizar_informacion_alumno(
+def actualizar_alumno(
     alumno,
     nombre,
     apellido,
