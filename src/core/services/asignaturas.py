@@ -6,7 +6,7 @@ from src.core.services import carreras as carreras_service
 from src.web.forms import AsignaturaForm
 
 def crear_asignatura_web(formulario: AsignaturaForm):
-    create_asignatura(nombre=formulario.nombre.data, facultad_id=formulario.facultad_id.data)
+    return create_asignatura(nombre=formulario.nombre.data, facultad_id=formulario.facultad_id.data)
 
 def create_asignatura(nombre: str, facultad_id: int, id_carreras = []) -> Asignatura:
     """Crea una nueva asignatura en la base de datos.
@@ -30,6 +30,23 @@ def create_asignatura(nombre: str, facultad_id: int, id_carreras = []) -> Asigna
         db.session.add(new_asignatura)
         db.session.commit()
         return new_asignatura
+    except Exception as e:
+        db.session.rollback()
+        raise Exception(f"Error creating Asignatura: {e}")
+    
+def editar_asignatura_web(asignatura_id: int, formulario: AsignaturaForm):
+    return edit_asignatura(asignatura_id=asignatura_id, nombre=formulario.nombre.data, facultad_id=formulario.facultad_id.data)
+
+def edit_asignatura(asignatura_id: int, nombre: str, facultad_id: int) -> Asignatura:
+
+    asignatura = get_asignatura_by_id(asignatura_id)
+    asignatura.nombre = nombre
+    asignatura.facultad_id = facultad_id
+
+    try:
+        db.session.add(asignatura)
+        db.session.commit()
+        return asignatura
     except Exception as e:
         db.session.rollback()
         raise Exception(f"Error creating Asignatura: {e}")

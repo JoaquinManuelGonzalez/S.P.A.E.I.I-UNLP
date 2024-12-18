@@ -41,6 +41,24 @@ def crear():
         return redirect(url_for("asignaturas.listado_asignar_carreras", asignatura_id = asignatura.id))
     return render_template("asignaturas/crear.html", formulario=formulario)
 
+#-----Editar-----
+@asignaturas_bp.route("/<int:asignatura_id>/editar", methods=['GET', 'POST'])
+def editar(asignatura_id):
+    """Edita una Asignatura.
+
+    Returns:
+        flask.templating.render_template: Plantilla para editar una Asignatura.
+    """
+    asignatura = asignaturas_service.get_asignatura_by_id(asignatura_id)
+    formulario = AsignaturaForm(obj=asignatura)
+
+    facultades = facultades_service.get_all_facultades()
+    formulario.facultad_id.choices =  [("", "Seleccione una facultad")] + [(facultad.id, facultad.nombre) for facultad in facultades]
+    if formulario.validate_on_submit():
+        asignatura = asignaturas_service.editar_asignatura_web(asignatura_id,formulario)
+        return redirect(url_for("asignaturas.visualizar", asignatura_id = asignatura.id))
+    return render_template("asignaturas/editar.html", formulario=formulario, asignatura_id=asignatura_id)
+
 #-----Asignar asignatura a carreras-----
 @asignaturas_bp.get("/<int:asignatura_id>/asignar_carreras")
 def listado_asignar_carreras(asignatura_id):
