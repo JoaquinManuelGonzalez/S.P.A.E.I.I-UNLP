@@ -15,7 +15,7 @@ def find_user_by_email(email):
     return user
 
 
-def check_user(email, password):
+def check_user_password(email, password):
     """
     Verifica si las credenciales proporcionadas (correo electrónico y contraseña) son correctas.
     
@@ -27,7 +27,6 @@ def check_user(email, password):
         Usuario: El objeto Usuario si las credenciales son correctas, None en caso contrario.
     """
     user = find_user_by_email(email)
-
 
     if user and bcrypt.check_password_hash(user.contraseña, password):
         return user
