@@ -30,3 +30,7 @@ def actualizar_informacion_cedula_de_identidad(
     db.session.commit()
 
     return cedula_de_identidad
+
+
+def check_numero(numero):
+    return bool(CedulaDeIdentidad.query.filter_by(numero=numero).first())

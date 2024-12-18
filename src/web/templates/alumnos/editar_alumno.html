@@ -103,19 +103,13 @@
       <div class="card p-5 shadow-lg rounded">
 
         <!-- Información Personal -->
-        <h4 class="font-weight-semibold mb-4">Información Personal</h4>
+        <h4 class="font-weight-semibold">Información Personal</h4>
+        <hr>
         <div class="row mb-4">
           <div class="col-md-6">
             <div class="form-group">
               {{ form.nombre.label(class="form-label font-weight-semibold text-dark") }}
               {{ form.nombre(class="form-control", placeholder="Ingrese el nombre del alumno", value=form.nombre.data or alumno.nombre) }}
-              {% if form.nombre.errors %}
-              <div class="text-danger">
-                {% for error in form.nombre.errors %}
-                <p>{{ error }}</p>
-                {% endfor %}
-              </div>
-              {% endif %}
             </div>
           </div>
 
@@ -123,13 +117,6 @@
             <div class="form-group">
               {{ form.apellido.label(class="form-label font-weight-semibold") }}
               {{ form.apellido(class="form-control", placeholder="Ingrese el apellido del alumno", value=form.apellido.data or alumno.apellido) }}
-              {% if form.apellido.errors %}
-                <div class="text-danger">
-                  {% for error in form.apellido.errors %}
-                    <p>{{ error }}</p>
-                  {% endfor %}
-                </div>
-              {% endif %}
             </div>
           </div>
         </div>
@@ -139,13 +126,6 @@
             <div class="form-group">
               {{ form.email.label(class="form-label font-weight-semibold") }}
               {{ form.email(class="form-control", placeholder="Ingrese el correo electrónico", value=form.email.data or alumno.email) }}
-              {% if form.email.errors %}
-                <div class="text-danger">
-                  {% for error in form.email.errors %}
-                    <p>{{ error }}</p>
-                  {% endfor %}
-                </div>
-              {% endif %}
             </div>
           </div>
 
@@ -153,13 +133,6 @@
             <div class="form-group">
               {{ form.fecha_de_nacimiento.label(class="form-label font-weight-semibold") }}
               {{ form.fecha_de_nacimiento(class="form-control", placeholder="Seleccione la fecha de nacimiento", value=form.fecha_de_nacimiento.data or alumno.fecha_de_nacimiento.strftime('%Y-%m-%d')) }}
-              {% if form.fecha_de_nacimiento.errors %}
-                <div class="text-danger">
-                  {% for error in form.fecha_de_nacimiento.errors %}
-                    <p>{{ error }}</p>
-                  {% endfor %}
-                </div>
-              {% endif %}
             </div>
           </div>
         </div>
@@ -169,13 +142,6 @@
             <div class="form-group">
               {{ form.id_genero.label(class="form-label font-weight-semibold") }}
               {{ form.id_genero(class="form-select") }}
-              {% if form.id_genero.errors %}
-                <div class="text-danger">
-                  {% for error in form.id_genero.errors %}
-                    <p>{{ error }}</p>
-                  {% endfor %}
-                </div>
-              {% endif %}
             </div>
           </div>
 
@@ -183,13 +149,6 @@
             <div class="form-group">
               {{ form.id_estado_civil.label(class="form-label font-weight-semibold") }}
               {{ form.id_estado_civil(class="form-select") }}
-              {% if form.id_estado_civil.errors %}
-                <div class="text-danger">
-                  {% for error in form.id_estado_civil.errors %}
-                    <p>{{ error }}</p>
-                  {% endfor %}
-                </div>
-              {% endif %}
             </div>
           </div>
         </div>
@@ -203,32 +162,19 @@
                   {% if form.discapacitado.data or alumno.discapacitado %}checked{% endif %}>
                 <label class="form-check-label" for="{{ form.discapacitado.id }}"></label>
               </div>
-              {% if form.discapacitado.errors %}
-                <div class="text-danger mt-2">
-                  {% for error in form.discapacitado.errors %}
-                    <p>{{ error }}</p>
-                  {% endfor %}
-                </div>
-              {% endif %}
             </div>
           </div>
         </div>    
 
         <!-- Información de Ubicación -->
-        <h4 class="font-weight-semibold mt-4 mb-4">Información de Ubicación</h4>
+        <h4 class="font-weight-semibold mt-4">Información de Ubicación</h4>
+        <hr>
         <div class="row mb-4">
           <div class="col-md-6">
             <div class="form-group">
               {{ form.id_pais_de_nacimiento.label(class="form-label font-weight-semibold") }}
               <!-- Select con clase select2 -->
               {{ form.id_pais_de_nacimiento(class="form-select select2", value=form.id_pais_de_nacimiento.data or alumno.id_pais_de_nacimiento) }}
-              {% if form.id_pais_de_nacimiento.errors %}
-                <div class="text-danger">
-                  {% for error in form.id_pais_de_nacimiento.errors %}
-                    <p>{{ error }}</p>
-                  {% endfor %}
-                </div>
-              {% endif %}
             </div>
           </div>
 
@@ -236,13 +182,6 @@
             <div class="form-group">
               {{ form.id_pais_de_residencia.label(class="form-label font-weight-semibold") }}
               {{ form.id_pais_de_residencia(class="form-select select2", value=form.id_pais_de_residencia.data or alumno.id_pais_de_residencia) }}
-              {% if form.id_pais_de_residencia.errors %}
-                <div class="text-danger">
-                  {% for error in form.id_pais_de_residencia.errors %}
-                    <p>{{ error }}</p>
-                  {% endfor %}
-                </div>
-              {% endif %}
             </div>
           </div>
         </div>
@@ -252,13 +191,6 @@
             <div class="form-group">
               {{ form.id_pais_nacionalidad.label(class="form-label font-weight-semibold") }}
               {{ form.id_pais_nacionalidad(class="form-select select2", value=form.id_pais_nacionalidad.data or alumno.id_pais_nacionalidad) }}
-              {% if form.id_pais_nacionalidad.errors %}
-                <div class="text-danger">
-                  {% for error in form.id_pais_nacionalidad.errors %}
-                    <p>{{ error }}</p>
-                  {% endfor %}
-                </div>
-              {% endif %}
             </div>
           </div>
 
@@ -266,31 +198,18 @@
             <div class="form-group">
               {{ form.domicilio_pais_de_residencia.label(class="form-label font-weight-semibold") }}
               {{ form.domicilio_pais_de_residencia(class="form-control", placeholder="Ingrese el país de residencia", value=form.domicilio_pais_de_residencia.data or alumno.domicilio_pais_de_residencia) }}
-              {% if form.domicilio_pais_de_residencia.errors %}
-                <div class="text-danger">
-                  {% for error in form.domicilio_pais_de_residencia.errors %}
-                    <p>{{ error }}</p>
-                  {% endfor %}
-                </div>
-              {% endif %}
             </div>
           </div>
         </div>
 
         <!-- Documentos Asociados -->
-        <h4 class="font-weight-semibold mt-4 mb-4">Documentos Asociados</h4>
+        <h4 class="font-weight-semibold mt-4">Documentos Asociados</h4>
+        <hr>
         <div class="row mb-4">
           <div class="col-md-6">
             <div class="form-group">
               {{ form.numero_pasaporte.label(class="form-label font-weight-semibold") }}
               {{ form.numero_pasaporte(class="form-control", placeholder="Ingrese el número de pasaporte", value=form.numero_pasaporte.data or alumno.numero_pasaporte) }}
-              {% if form.numero_pasaporte.errors %}
-                <div class="text-danger">
-                  {% for error in form.numero_pasaporte.errors %}
-                    <p>{{ error }}</p>
-                  {% endfor %}
-                </div>
-              {% endif %}
             </div>
           </div>
 
@@ -298,13 +217,6 @@
             <div class="form-group">
               {{ form.numero_cedula.label(class="form-label font-weight-semibold") }}
               {{ form.numero_cedula(class="form-control", placeholder="Ingrese el número de cédula", value=form.numero_cedula.data or alumno.numero_cedula) }}
-              {% if form.numero_cedula.errors %}
-                <div class="text-danger">
-                  {% for error in form.numero_cedula.errors %}
-                    <p>{{ error }}</p>
-                  {% endfor %}
-                </div>
-              {% endif %}
             </div>
           </div>
         </div>
@@ -314,13 +226,6 @@
             <div class="form-group">
               {{ form.id_pais_emision_pasaporte.label(class="form-label font-weight-semibold") }}
               {{ form.id_pais_emision_pasaporte(class="form-select select2", value=form.id_pais_emision_pasaporte.data or alumno.id_pais_emision_pasaporte) }}
-              {% if form.id_pais_emision_pasaporte.errors %}
-                <div class="text-danger">
-                  {% for error in form.id_pais_emision_pasaporte.errors %}
-                    <p>{{ error }}</p>
-                  {% endfor %}
-                </div>
-              {% endif %}
             </div>
           </div>
 
@@ -328,20 +233,34 @@
             <div class="form-group">
               {{ form.id_pais_emision_cedula.label(class="form-label font-weight-semibold") }}
               {{ form.id_pais_emision_cedula(class="form-select select2", value=form.id_pais_emision_cedula.data or alumno.id_pais_emision_cedula) }}
-              {% if form.id_pais_emision_cedula.errors %}
-                <div class="text-danger">
-                  {% for error in form.id_pais_emision_cedula.errors %}
-                    <p>{{ error }}</p>
-                  {% endfor %}
-                </div>
-              {% endif %}
             </div>
           </div>
         </div>
 
         <div class="d-flex flex-column flex-md-row justify-content-between mt-4">
           <a href="{{ url_for('alumnos_bp.ver_detalle_alumno', id_alumno=alumno.id) }}" class="btn btn-secondary btn-lg btn-custom col-12 col-md-auto mb-2 mb-md-0">Volver</a>
-          <button type="submit" class="btn btn-primary btn-lg btn-custom col-12 col-md-auto">Guardar Cambios</button>
+          <button type="button" class="btn btn-primary btn-lg btn-custom col-12 col-md-auto" data-bs-toggle="modal" data-bs-target="#confirmModal">
+            Guardar Cambios
+          </button>
+        </div>
+        
+        <!-- Modal de Confirmación -->
+        <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalLabel">Confirmar Cambios</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+              </div>
+              <div class="modal-body">
+                ¿Estás seguro de que quieres guardar los cambios?
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-custom" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-primary btn-custom">Guardar</button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </form>

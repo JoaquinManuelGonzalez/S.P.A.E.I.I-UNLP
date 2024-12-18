@@ -181,7 +181,7 @@
 {% block content %}
 <div class="container py-5">
     {% if check_permiso(session, 'admin') %}
-        <h1 class="display-4 mb-4 text-center text-dark">Detalle del Alumno</h1>
+        <h1 class="display-4 mb-4 text-center text-dark">Detalle del Alumno Entrante</h1>
     {% else %}
         <h1 class="display-4 mb-4 text-center text-dark">Información Personal</h1>
     {% endif %}
@@ -273,27 +273,7 @@
             <a href="{{ url_for('alumnos_bp.solicitar_edicion', id_alumno=alumno.id) }}" class="btn btn-primary btn-custom mx-2">Solicitar Edición de Datos</a>
         {% elif check_permiso(session, 'admin') %}
             <a href="{{ url_for('alumnos_bp.editar_alumno', id_alumno=alumno.id) }}" class="btn btn-primary btn-custom mx-2">Editar Alumno</a>
-            <a href="{{ url_for('alumnos_bp.eliminar_alumno', id_alumno=alumno.id) }}" class="btn btn-danger btn-custom mx-2" data-bs-toggle="modal" data-bs-target="#confirmarEliminarModal">Eliminar</a>
         {% endif %}
-    </div>
-
-    <!-- Modal de Confirmación de Eliminación -->
-    <div class="modal fade" id="confirmarEliminarModal" tabindex="-1" aria-labelledby="confirmarEliminarModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="confirmarEliminarModalLabel">Confirmar Eliminación</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    ¿Estás seguro de que deseas eliminar este alumno? Esta acción no se puede deshacer.
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary btn-custom" data-bs-dismiss="modal">Cancelar</button>
-                    <a href="{{ url_for('alumnos_bp.eliminar_alumno', id_alumno=alumno.id) }}" class="btn btn-danger btn-custom">Eliminar Alumno</a>
-                </div>
-            </div>
-        </div>
     </div>
 </div>
 {% endblock %}
