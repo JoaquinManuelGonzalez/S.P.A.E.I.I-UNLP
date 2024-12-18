@@ -48,6 +48,7 @@ def listado_asignar_carreras(asignatura_id):
     """
     asignatura = asignaturas_service.get_asignatura_by_id(asignatura_id)
     search = request.args.get("search", None)
+    search = search.strip().lower() if search else None
     facultad_id = request.args.get("facultad", None)
     try:
         facultad_id = int(facultad_id)
@@ -55,7 +56,7 @@ def listado_asignar_carreras(asignatura_id):
         facultad_id = None
 
     pagina = request.args.get('pagina', 1, type=int)
-    carreras = carreras_service.get_carreras(nombre=search, facultad_id=facultad_id, pagina=pagina, asignatura_id=asignatura.id)
+    carreras = carreras_service.get_carreras(nombre=search, facultad_id=facultad_id, asignatura_id=asignatura.id)
 
     facultades = facultades_service.get_all_facultades()
     return render_template("asignaturas/asignatura_carrera.html", facultades=facultades, carreras=carreras, search=search, facultad_id=facultad_id, pagina=pagina, asignatura=asignatura)
