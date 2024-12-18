@@ -1,4 +1,4 @@
-from src.core.models.usuario import Usuario, Rol, Permiso, RolPermiso
+from src.core.models.usuario import Usuario, Rol, Permiso, RolPermiso, EstadoUsuario
 from flask import request, render_template, redirect, flash
 from src.web.forms import Usuario_Form
 from src.web.forms.recuperar_contraseña_form import RecuperarContraseñaForm as Recuperar_Form
@@ -60,7 +60,6 @@ def editar_usuario(usuario:Usuario, contraseña_nueva:str) -> None:
         Args:
             usuario (Usuario): El usuario a editar
     '''
-    print(session)
     if contraseña_nueva:
         hash_contraseña = bcrypt.generate_password_hash(contraseña_nueva.encode('utf-8')).decode('utf-8')
         usuario.contraseña = hash_contraseña
@@ -68,6 +67,19 @@ def editar_usuario(usuario:Usuario, contraseña_nueva:str) -> None:
     db.session.commit()
     print(session)
     flash('El usuario se ha editado correctamente', 'success')
+    
+def eliminar_usuario(id_usuario:int) -> None:
+    """
+        Este método elimina logicamente un usuario en la base de datos
+        
+        Args:
+            id_usuario (int): El id del usuario
+    """
+    usuario = buscar_usuario(id_usuario)
+    usuario.estado = EstadoUsuario.ELIMINADO
+    db.session.add(usuario)
+    db.session.commit()
+    flash('El usuario se ha eliminado correctamente', 'success')
 
     
 def recuperar_contraseña(formulario:Recuperar_Form):

@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, flash, session, url_for
+from flask import Blueprint, render_template, request, redirect, flash, url_for
 from src.core.services import usuario_service
 from src.web.handlers.permisos import check
 from src.web.forms import Usuario_Form, Nueva_Contraseña_Form, RecuperarContraseñaForm
@@ -88,7 +88,6 @@ def eliminar_usuario(id_usuario:int):
         redirect: Redirige a la lista de usuarios.
     '''
     usuario_service.eliminar_usuario(id_usuario)
-    flash('El usuario se ha eliminado correctamente', 'success')
     return redirect("/usuarios")
 
 @usuario_bp.get("/recuperar")
