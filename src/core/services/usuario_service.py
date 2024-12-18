@@ -134,3 +134,15 @@ def buscar_permisos_usuario(id_usuario:int):
 
 def get_puntos_focales_by_facultad(facultad_id: int):
     return Usuario.query.filter(Usuario.facultad_id == facultad_id).all()
+
+def actualizar_informacion_usuario_alumno(
+        usuario,
+        nombre,
+        apellido,
+        email,
+):
+    usuario.nombre = nombre
+    usuario.apellido = apellido
+    usuario.email = email
+
+    db.session.commit()
