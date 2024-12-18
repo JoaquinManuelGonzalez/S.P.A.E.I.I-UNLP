@@ -91,7 +91,7 @@
         <div class="row">
             <div class="col text-center">
                 <a class="btn btn-secondary me-2" href="{{ url_for("facultades.visualizar", facultad_id = asignatura.facultad.id) }}" role="button">Volver</a>
-                <a class="btn btn-primary me-2" href="#" role="button">Editar</a>
+                <a class="btn btn-primary me-2" href="{{ url_for("asignaturas.editar", asignatura_id = asignatura.id) }}" role="button">Editar</a>
             </div>
         </div>
     </div>

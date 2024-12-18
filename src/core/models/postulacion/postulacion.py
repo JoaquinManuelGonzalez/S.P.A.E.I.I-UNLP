@@ -11,7 +11,7 @@ class Postulacion(db.Model):
     convenio = db.Column(db.String(50), nullable=True)
     id_estado = db.Column(db.Integer, db.ForeignKey('estado.id'), nullable=False)
     id_informacion_alumno_entrante = db.Column(db.Integer, db.ForeignKey('informacion_alumno_entrante.id'), nullable=False)
-    id_programa = db.Column(db.Integer, db.ForeignKey('programa.id'), nullable=False)
+    id_programa = db.Column(db.Integer, db.ForeignKey('programa.id'), nullable=True)
     
     creacion = db.Column(db.DateTime, default=datetime.now)
     actualizacion = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)

@@ -118,7 +118,7 @@
                                         <a href="{{ url_for("asignaturas.visualizar", asignatura_id = asignatura.id) }}" class="btn btn-primary" data-bs-toggle="tooltip"
                                            data-bs-title="Ver"><i class="bi bi-eye-fill"></i></a>
                                     </div>
-                                    <a href="#" class="btn btn-warning" data-bs-toggle="tooltip"
+                                    <a href="{{ url_for("asignaturas.editar", asignatura_id = asignatura.id) }}" class="btn btn-warning" data-bs-toggle="tooltip"
                                        data-bs-title="Editar"><i class="bi bi-pencil-fill"></i></a>
                                     <button type="button" class="btn btn-danger" data-bs-title="Eliminar" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal-{{ asignatura.id }}" data-asignatura-id="{{ asignatura.id }}" data-bs-title="Eliminar">
                                        <i class="bi bi-trash-fill"></i>
