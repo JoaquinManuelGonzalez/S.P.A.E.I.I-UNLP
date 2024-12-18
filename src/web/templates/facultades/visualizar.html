@@ -115,7 +115,7 @@
                                 <td class="text-center align-middle">{{ asignatura.facultad.acronimo }}</td>
                                 <td class="text-end align-middle">
                                     <div class="btn-group">
-                                        <a href="#" class="btn btn-primary" data-bs-toggle="tooltip"
+                                        <a href="{{ url_for("asignaturas.visualizar", asignatura_id = asignatura.id) }}" class="btn btn-primary" data-bs-toggle="tooltip"
                                            data-bs-title="Ver"><i class="bi bi-eye-fill"></i></a>
                                     </div>
                                     <a href="#" class="btn btn-warning" data-bs-toggle="tooltip"
