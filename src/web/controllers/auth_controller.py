@@ -29,9 +29,12 @@ def authenticate():
             - Renderiza el layout principal si la autenticación es exitosa.
     """
     params = request.form
-    user = auth.check_user(params["email"], params["contraseña"])
+    user = auth.check_user_password(params["email"], params["contraseña"])
     if not user:
         flash("Usuario o contraseña incorrecta", "danger")
+        return redirect(url_for("auth.login"))
+    if user.estado.value == "eliminado":
+        flash("El usuario no existe", "danger")
         return redirect(url_for("auth.login"))
     session["user_email"] = user.email
     session["user_name"] = user.nombre
