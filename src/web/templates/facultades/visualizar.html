@@ -83,7 +83,7 @@
                     <h3 class="m-0">Asignaturas</h3>
                 </div>
                 <div class="col text-end">
-                    <a href="#" type="button" class="btn btn-success">Nueva Asignatura</a>
+                    <a href="{{ url_for('asignaturas.crear') }}" type="button" class="btn btn-success">Nueva Asignatura</a>
                 </div>    
             </div>
             <div class="row align-items-center my-3 py-3 border-bottom border-top">
@@ -156,7 +156,7 @@
                 <ul class="pagination justify-content-center">
                     {% if asignaturas.has_prev %}
                         <li class="page-item">
-                            <a type="submit" href="{{ url_for('facultades.visualizar', pagina=asignaturas.prev_num, nombre=nombre_asignatura) }}" class="page-link"><span aria-hidden="true">&laquo; Anterior</span></a>
+                            <a type="submit" href="{{ url_for('facultades.visualizar', pagina=asignaturas.prev_num, nombre=nombre_asignatura, facultad_id=facultad.id) }}" class="page-link"><span aria-hidden="true">&laquo; Anterior</span></a>
                         </li>
                     {% else %}
                         <li class="page-item disabled">
@@ -171,14 +171,14 @@
                             </li>
                         {% else %}
                             <li class="page-item">
-                                <a class="page-link" href="{{ url_for('facultades.visualizar', pagina=page_num, nombre=nombre_asignatura) }}">{{ page_num }}</a>
+                                <a class="page-link" href="{{ url_for('facultades.visualizar', pagina=page_num, nombre=nombre_asignatura, facultad_id=facultad.id) }}">{{ page_num }}</a>
                             </li>
                         {% endif %} 
                     {% endfor %}
             
                     {% if asignaturas.has_next %}
                         <li class="page-item">
-                            <a type="submit" href="{{ url_for('facultades.visualizar', pagina=asignaturas.next_num, nombre=nombre_asignatura) }}" class="page-link"><span aria-hidden="true">Siguiente &laquo;</span></a>
+                            <a type="submit" href="{{ url_for('facultades.visualizar', pagina=asignaturas.next_num, nombre=nombre_asignatura, facultad_id=facultad.id) }}" class="page-link"><span aria-hidden="true">Siguiente &laquo;</span></a>
                         </li>
                     {% else %}
                         <li class="page-item disabled">
