@@ -127,7 +127,7 @@
               <p class="block text-sm font-medium text-gray-700">Nivel de estudio</p>
               <input v-model="nivelEstudio" id="grado" name="nivelEstudio" type="radio" class="" required value="grado">
               <label for="grado" class="ml-1 text-sm font-normal text-gray-700">Estudiante de grado</label>
-              <input v-model="nivelEstudio" id="posgrado" name="nivelEstudio" type="radio" class="" required value="posgrado">
+              <input v-model="nivelEstudio" id="posgrado" name="nivelEstudio" type="radio" class="ml-4" required value="posgrado">
               <label for="posgrado" class="ml-1 text-sm font-normal text-gray-700">Estudiante de posgrado</label>
             </div>
             <div v-if="nivelEstudio === 'posgrado'" class="mb-4">
@@ -142,9 +142,9 @@
               <p class="block text-sm font-medium text-gray-700">Desea postularse por</p>
               <input v-model="convenioPrograma" id="convenioUniversitario" name="convenioPrograma" type="radio" class="" required value="convenio">
               <label for="convenioUniversitario" class="ml-1 text-sm font-normal text-gray-700">Convenio universitario</label>
-              <input v-model="convenioPrograma" id="programa" name="convenioPrograma" type="radio" class="" required value="programa">
+              <input v-model="convenioPrograma" id="programa" name="convenioPrograma" type="radio" class="ml-4" required value="programa">
               <label for="programa" class="ml-1 text-sm font-normal text-gray-700">Programa estudiantil</label>
-              <p class="mt-1 text-xs font-normal text-gray-700">Puede ver los Convenios que posee la Universidda Nacional de La Plata visitando el siguiente enlace: <a href=""></a></p>
+              <p class="mt-1 text-xs font-normal text-gray-700">Puede ver los Convenios que posee la Universidda Nacional de La Plata visitando haciendo click <a href="https://conveniosunlp.presi.unlp.edu.ar/convenios" class="text-blue-500">aquí</a></p>
             </div>
             <div v-if="convenioPrograma === 'convenio'" class="mb-4">
               <label for="convenio" class="block text-sm font-medium text-gray-700">Convenio Universitario</label>
@@ -154,8 +154,9 @@
               <label for="nombre_programa" class="block text-sm font-medium text-gray-700">Programa estudiantil</label>
               <select v-model="formData.id_programa" id="nombre_programa" class="mt-1 p-2 border border-gray-300 rounded-md w-full" :required="convenioPrograma === 'programa'">
                 <option value="">Seleccione su programa</option>
-                <option value="programa1">Programa 1</option>
-                <option value="programa2">Programa 2</option>
+                <option v-for="programa in programas" :key="programa.id" :value="programa.id">
+                  {{ programa.nombre }}
+                </option>
               </select>
             </div>
             <div class="mb-4">
@@ -207,7 +208,7 @@
 
 
   const store = usePrimerFormularioStore();
-  const { formData, errors, loading, paises, estados_civiles, generos, nivelEstudio, convenioPrograma, es_hispanohablante, mercosur } = storeToRefs(store);
+  const { formData, errors, loading, paises, estados_civiles, programas, generos, nivelEstudio, convenioPrograma, es_hispanohablante, mercosur } = storeToRefs(store);
   
   // Accedemos al idioma actual a través de i18n
   const { locale } = useI18n();
@@ -336,7 +337,7 @@
       alert(errors["email"]);
       return false;
     }
-    if(!soloNumeros(formData.value.pasaporte.numero)){
+    if(formData.value.pasaporte.numero != "" && !soloNumeros(formData.value.pasaporte.numero)){
       errors["numero_pasaporte"] = "El pasaporte solo debe contener números";
       alert(errors["numero_pasaporte"]);
       return false;

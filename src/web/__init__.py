@@ -4,7 +4,7 @@ from src.core import database
 from src.core.bcrypt import bcrypt
 from src.core.config import config
 from flask_wtf.csrf import CSRFProtect
-from src.web.seeds import seed_paises, seed_generos, seed_estados_civiles, seeds_usuarios, seeds_facultades
+from src.web.seeds import seed_paises, seed_generos, seed_estados_civiles, seeds_usuarios, seeds_facultades, seed_programa
 from src.web.seeds.seed_facultades import seed_facultades
 from src.web.seeds.seed_carreras import seed_carreras
 from src.web.seeds.seed_asignaturas import seed_asignaturas
@@ -15,6 +15,7 @@ from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity
 from flask_cors import CORS
 from src.core import cors
 from src.web.api.primer_formulario import bp as api_bp
+from src.web.storage import storage
 
 #session = Session()
 from src.web.handlers.auth import is_authenticated, get_id_sesion, get_rol_sesion, get_id_alumno_sesion
@@ -48,7 +49,7 @@ def create_app(env="development", static_folder="../../static", template_folders
     CORS(app)
     cors.init_app(app)
     #session.init_app(app)
-
+    storage.init_app(app)
 
 
     session.init_app(app)
@@ -93,5 +94,6 @@ def create_app(env="development", static_folder="../../static", template_folders
         seed_carreras()
         seed_asignaturas()
         seeds_facultades(usuarios)
+        seed_programa.seed_programa()
 
     return app

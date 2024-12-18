@@ -1,0 +1,74 @@
+{% extends "layout.html" %}
+{% block title %}Postulaciones{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}
+<h1>Postulaciones</h1>
+<form method="get" class="mb-4">
+    <div class="row g-2 align-items-end">
+      <div class="col-md-3">
+        <input type="text" name="nombre" class="form-control" placeholder="Nombre" value="{{ request.args.get('nombre', '') }}">
+      </div>
+      <div class="col-md-3">
+        <input type="text" name="apellido" class="form-control" placeholder="Apellido" value="{{ request.args.get('apellido', '') }}">
+      </div>
+      <div class="col-md-3">
+        <input type="text" name="email" class="form-control" placeholder="Email" value="{{ request.args.get('email', '') }}">
+      </div>
+      </div>
+      <div class="col-md-3">
+        <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+      </div>
+    </div>
+    <div class="row g-2 mt-3">
+      <div class="col-md-6">
+        <select name="ordenado_por" class="form-select bg-light border-secondary">
+          <option value="" disabled selected>Ordenar por...</option>
+          <option value="nombre" {% if request.args.get('ordenado_por') == 'nombre' %}selected{% endif %}>Nombre</option>
+          <option value="apellido" {% if request.args.get('ordenado_por') == 'apellido' %}selected{% endif %}>Apellido</option>
+          <option value="email" {% if request.args.get('ordenado_por') == 'email' %}selected{% endif %}>Email</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <select name="orden" class="form-select bg-light border-secondary">
+          <option value="" disabled selected>Orden...</option>
+          <option value="asc" {% if request.args.get('orden') == 'asc' %}selected{% endif %}>Ascendente</option>
+          <option value="desc" {% if request.args.get('orden') == 'desc' %}selected{% endif %}>Descendente</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <button type="submit" class="btn btn-success w-100">Ordenar</button>
+      </div>
+    </div>
+</form>
+<div class="table-responsive shadow-sm">
+    <table class="table table-bordered table-hover table-striped align-middle">
+        <thead style="table-light">
+            <tr>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Email</th>
+                <th>Fecha de Postulación</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if not postulaciones.items %}
+                <tr>
+                    <td class="text-center font-medium" colspan="6">No se encontraron postulaciones</td>
+                </tr>
+                {% endif %}
+            {% for postulacion in postulaciones %}
+            <tr class="border-b border-gray-200 py-2">
+                <td>{{ postulacion.informacion_alumno_entrante.nombre }}</td>
+                <td>{{ postulacion.informacion_alumno_entrante.apellido }}</td>
+                <td>{{ postulacion.informacion_alumno_entrante.email }}</td>
+                <td>{{ postulacion.creacion.strftime("%d-%m-%Y") }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+{% endblock %}

@@ -30,3 +30,7 @@ def actualizar_informacion_cedula_de_identidad(
     db.session.commit()
 
     return cedula_de_identidad
+
+def get_cedula_de_identidad_by_id(id_cedula_de_identidad):
+    cedula_de_identidad = CedulaDeIdentidad.query.get(id_cedula_de_identidad)
+    return cedula_de_identidad

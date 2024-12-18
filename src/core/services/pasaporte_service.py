@@ -30,3 +30,7 @@ def actualizar_informacion_pasaporte(
     db.session.commit()
 
     return pasaporte
+
+def get_pasaporte_by_id(id_pasaporte):
+    pasaporte = Pasaporte.query.get(id_pasaporte)
+    return pasaporte

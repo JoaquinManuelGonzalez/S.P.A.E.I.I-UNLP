@@ -1,11 +1,15 @@
 from flask import Blueprint, jsonify, request, make_response
 from flask_wtf.csrf import generate_csrf
 import base64
+from flask import current_app as app
 import os
+import io
+from src.core.database import db
 
 from src.core.services import (paises_service, genero_service, 
 estado_civil_service, archivo_service, alumno_service, pasaporte_service, 
-cedula_de_identidad_service, postulacion_service, tutor_service)
+cedula_de_identidad_service, postulacion_service, tutor_service, programa_service,
+estado_postulacion_service, email_service)
 from src.web.schemas.archivo_schema import archivo_schema
 from src.web.schemas.cedula_de_identidad_schema import cedula_de_identidad_schema
 from src.web.schemas.postulacion_schema import postulacion_schema
@@ -15,7 +19,7 @@ from src.web.schemas.tutor_schema import tutor_schema
 from src.web.schemas.genero_schema import generos_schema
 from src.web.schemas.pais_schema import paises_schema
 from src.web.schemas.informacion_alumno_entrante_schema import informacion_alumno_entrante_schema
-
+from src.web.schemas.programa_schema import programas_schema
 
 
 
@@ -65,6 +69,7 @@ def primer_formulario():
             return jsonify({"error": "No se encontraron datos del pasaporte"}), 400
         else:
             archivo_pasaporte = base64.b64decode(data_archivos["pasaporte"])
+            save_file_minio(archivo_pasaporte, data_titulos["titulo_pasaporte"])
             if not data_titulos["titulo_pasaporte"]:
                 return jsonify({"error": "No se encontraron datos del título del pasaporte"}), 400
             titulo_pasaporte = {
@@ -84,6 +89,7 @@ def primer_formulario():
             return jsonify({"error": "No se encontraron datos de la cédula de identidad ni del pasaporte"}), 400
         if data_pasaporte:
             archivo_pasaporte = base64.b64decode(data_archivos["pasaporte"])
+            save_file_minio(archivo_pasaporte, data_titulos["titulo_pasaporte"])
             if not data_titulos["titulo_pasaporte"]:
                 return jsonify({"error": "No se encontraron datos del título del pasaporte"}), 400
             titulo_pasaporte = {
@@ -100,6 +106,7 @@ def primer_formulario():
             pasaporte_archivo.pasaporte = pasaporte
         if data_cedula:
             archivo_cedula = base64.b64decode(data_archivos["cedula_de_identidad"])
+            save_file_minio(archivo_cedula, data_titulos["titulo_pasaporte"])
             if not data_titulos["titulo_cedula_de_identidad"]:
                 return jsonify({"error": "No se encontraron datos del título del pasaporte"}), 400
             titulo_cedula = {
@@ -121,6 +128,7 @@ def primer_formulario():
         return jsonify({"error": "No se encontraron datos de la carta de recomendación"}), 400
     else:
         archivo_carta_recomendacion = base64.b64decode(data_archivos["carta_recomendacion"])
+        save_file_minio(archivo_carta_recomendacion, data_titulos["titulo_carta_recomendacion"])
         if not data_titulos["titulo_carta_recomendacion"]:
             return jsonify({"error": "No se encontraron datos del título de la carta de recomendación"}), 400
         titulo_carta_recomendacion = {
@@ -145,22 +153,27 @@ def primer_formulario():
         return jsonify({"error": f"Error al cargar los datos del alumno: {err}"}), 400
     alumno = alumno_service.crear_informacion_alumno_entrante(**alumno)
 
-    data_postulacion["id_estado"] = 1
+    estado_postulacion = estado_postulacion_service.get_estado_by_name("Solicitud de Postulacion")
+
+    data_postulacion["id_estado"] = estado_postulacion.id
     data_postulacion["id_informacion_alumno_entrante"] = alumno.id
     if convenio_programa == "programa":
         data_postulacion["id_programa"] = id_programa
+        del data_postulacion["convenio"]
     try:
         postulacion = postulacion_schema.load(data_postulacion)
     except Exception as err:
         return jsonify({"error": f"Error al cargar los datos de la postulación: {err}"}), 400
     postulacion = postulacion_service.crear_postulacion(**postulacion)
     postulacion.informacion_alumno_entrante = alumno
-    
+    postulacion.estado = estado_postulacion
+
     if postulacion.de_posgrado:
         if not data_archivos["plan_trabajo"]:
             return jsonify({"error": "No se encontraron datos del plan de trabajo"}), 400
         else:
             plan_trabajo = base64.b64decode(data_archivos["plan_trabajo"])
+            save_file_minio(plan_trabajo, data_titulos["titulo_plan_trabajo"])
             if not data_titulos["titulo_plan_trabajo"]:
                 return jsonify({"error": "No se encontraron datos del título del plan de trabajo"}), 400
             titulo_plan_trabajo = {
@@ -177,6 +190,7 @@ def primer_formulario():
     if pais_nacionalidad.hispanohablante:
         if data_archivos["certificado_b1"]:
             archivo_certificado_b1 = base64.b64decode(data_archivos["certificado_b1"])
+            save_file_minio(archivo_certificado_b1, data_titulos["titulo_certificado_b1"])
             if not data_titulos["titulo_certificado_b1"]:
                 return jsonify({"error": "No se encontraron datos del título del certificado B1"}), 400
             titulo_certificado_b1 = {
@@ -192,6 +206,7 @@ def primer_formulario():
             return jsonify({"error": "No se encontraron datos del certificado B1"}), 400
         else:
             archivo_certificado_b1 = base64.b64decode(data_archivos["certificado_b1"])
+            save_file_minio(archivo_certificado_b1, data_titulos["titulo_certificado_b1"])
             if not data_titulos["titulo_certificado_b1"]:
                 return jsonify({"error": "No se encontraron datos del título del certificado B1"}), 400
             titulo_certificado_b1 = {
@@ -208,11 +223,13 @@ def primer_formulario():
     except:
         return jsonify({"error": "Error al cargar los datos del tutor institucional"}), 400
     tutor_institucional = tutor_service.crear_tutor(**tutor_institucional)
+    print(f"tutor institucional: {tutor_institucional}")
     try:
         tutor_academico = tutor_schema.load(data_tutor_academico)
     except:
         return jsonify({"error": "Error al cargar los datos del tutor académico"}), 400
     tutor_academico = tutor_service.crear_tutor(**tutor_academico)
+    print(f"tutor academico: {tutor_academico}")
 
     carta_recomendacion.informacion_alumno_entrante = alumno
     carta_recomendacion.postulacion = postulacion
@@ -225,7 +242,7 @@ def primer_formulario():
         cedula_de_identidad_archivo.informacion_alumno_entrante = alumno
         cedula_de_identidad_archivo.postulacion = postulacion
     
-    if data_archivos["certificado_b1"] != "":
+    if data_archivos["certificado_b1"] != None:
         certificado_b1.informacion_alumno_entrante = alumno
         certificado_b1.postulacion = postulacion
 
@@ -233,11 +250,11 @@ def primer_formulario():
         plan_trabajo.informacion_alumno_entrante = alumno
         plan_trabajo.postulacion = postulacion
 
-    tutor_institucional.postulaciones.append = postulacion
-    tutor_academico.postulaciones.append = postulacion
+    postulacion.tutores.append(tutor_institucional)
+    postulacion.tutores.append(tutor_academico)
+    db.session.commit()
 
-
-
+    email_service.send_email("Solicitud de Postulación", "Se ha recibido una solicitud de postulación", ["lautygutierrez5@gmail.com"])
     return jsonify(data), 201
     
     
@@ -251,20 +268,43 @@ def primer_formulario_get():
     paises = paises_service.listar_paises()
     generos = genero_service.listar_generos()
     estados_civiles = estado_civil_service.listar_estados_civiles()
-    #programa = get_programa()
+    programas = programa_service.listar_programas()
     data_paises = paises_schema.dump(paises)
     data_generos = generos_schema.dump(generos)
     data_estados_civiles = estados_civiles_schema.dump(estados_civiles)
+    data_programas = programas_schema.dump(programas)
 
     token = generate_csrf()
     data_response = {
         "paises": data_paises,
         "generos": data_generos,
         "estados_civiles": data_estados_civiles,
-        "csrf_token": token
-        #"programa": programa
+        "csrf_token": token,
+        "programas": data_programas
     }
 
     #response = make_response(jsonify(data_response), 200)
     #.headers['Access-Control-Allow-Origin'] = 'http://localhost:5173/primer-formulario'
     return jsonify(data_response), 200
+
+
+def save_file_minio(file, filename):
+    """
+    Guarda un archivo en Minio.
+    """
+    try:
+        client = app.storage.client
+        # Convertir el archivo de bytes a un objeto BytesIO (simulando un archivo en memoria)
+        file_data = io.BytesIO(file)
+        size = len(file)  # Obtener el tamaño del archivo desde los bytes
+        print(f"file_dara: {file_data}")
+        # Subir el archivo a Minio
+        client.put_object(
+            "spaeii",  # Nombre del bucket
+            filename,  # Nombre del archivo en Minio
+            file_data,  # El archivo en formato BytesIO
+            size,  # Tamaño del archivo
+            content_type='application/octet-stream'  # Asumiendo un tipo de contenido genérico
+        )
+    except Exception as e:
+        raise Exception(f"Error al guardar el archivo en Minio: {e}")

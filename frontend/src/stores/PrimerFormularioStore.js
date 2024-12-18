@@ -66,6 +66,7 @@ export const usePrimerFormularioStore = defineStore('primer_formulario_store', {
         paises: [],
         generos: [],
         estados_civiles: [],
+        programas: [],
         nivelEstudio: "",
         convenioPrograma: "",
         es_hispanohablante: false,
@@ -121,6 +122,7 @@ export const usePrimerFormularioStore = defineStore('primer_formulario_store', {
                 this.generos = response.data.generos;
                 this.paises = response.data.paises;
                 this.csrf_token = response.data.csrf_token;
+                this.programas = response.data.programas;
                 console.log("estos son los paises");
                 console.log(this.paises[1]);
             } catch (error) {
