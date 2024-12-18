@@ -12,7 +12,8 @@ from src.core.services import (
 )
 from src.web.handlers.auth import get_rol_sesion, get_id_sesion
 from src.web.handlers.permisos import check
-from src.web.forms import AlumnoForm
+from src.web.forms import AlumnoForm, DocumentacionAlumnoForm
+
 from src.core.database import db
 
 
@@ -243,3 +244,12 @@ def actualizar_alumno(id_alumno):
 @alumnos_bp.post("alumnos/eliminar-alumno/<int:id_alumno>")
 def eliminar_alumno(id_alumno):
     pass
+
+
+@alumnos_bp.get("alumnos/ver-documentacion/<int:id_alumno>")
+def ver_documentacion(id_alumno):
+    
+    alumno = alumno_service.get_alumno_by_id(id_alumno)
+    form = DocumentacionAlumnoForm()
+
+    return render_template("alumnos/mi-documentacion.html", form=form, alumno=alumno)

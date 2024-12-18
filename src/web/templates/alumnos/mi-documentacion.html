@@ -1,0 +1,153 @@
+{% extends "layout.html" %}
+
+{% block title %}Mi documentación{% endblock title %}
+
+{% block head %}
+
+    {{ super() }}
+    <!-- Animaciones y Transiciones -->
+    <style>
+        /* Estilo para las tarjetas */
+        .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+    
+        .card:hover {
+        transform: translateY(-7px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+    
+        .btn-custom {
+            font-size: 1rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 18px;
+            font-weight: 600;
+            text-transform: uppercase;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #004085;
+            transform: translateY(-2px);
+        }
+    
+        /* Botones de enlace */
+        .btn-outline-dark:hover {
+        background-color: #343a40;
+        color: white;
+        }
+    
+        .card-header {
+        font-weight: bold;
+        }
+    
+        .text-dark {
+        color: #212529;
+        }
+  </style>
+
+{% endblock head %}
+
+{% block content %}
+<div class="container py-5">
+  <h1 class="text-center display-4 text-dark">Gestión de Documentación</h1>
+  <p class="mb-4 lead text-muted text-center">
+    En esta sección podrás editar los archivos que están relacionados a tu información personal y no a tus postulaciones.
+  </p>
+  <hr>
+
+  <div class="row g-4 mt-4">
+    <!-- Card de Archivos Subidos -->
+    <div class="col-md-6">
+      <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-header bg-secondary text-white rounded-top-4">
+          <h5 class="mb-0 fw-semibold">Archivos Subidos</h5>
+        </div>
+        <div class="card-body">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <strong>Pasaporte:</strong>
+              {% if alumno.pasaporte and alumno.pasaporte.archivo %}
+                <a href="{{ url_for('download_file', path=alumno.pasaporte.archivo.path) }}" class="btn btn-primary btn-sm" target="_blank">Ver Archivo</a>
+              {% else %}
+                <span class="text-muted">No cargado</span>
+              {% endif %}
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <strong>Cédula de Identidad:</strong>
+              {% if alumno.cedula_de_identidad and alumno.cedula_de_identidad.archivo %}
+                <a href="{{ url_for('download_file', path=alumno.cedula_de_identidad.archivo.path) }}" class="btn btn-primary btn-sm" target="_blank">Ver Archivo</a>
+              {% else %}
+                <span class="text-muted">No cargado</span>
+              {% endif %}
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <strong>Certificado B1 o Superior de Español:</strong>
+              {% for archivo in alumno.archivos %}
+                {% if archivo.titulo == 'certificado_espanol' %}
+                  <a href="{{ url_for('download_file', path=archivo.path) }}" class="btn btn-primary btn-sm" target="_blank">Ver Archivo</a>
+                {% endif %}
+              {% else %}
+                <span class="text-muted">No cargado</span>
+              {% endfor %}
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <strong>Certificado de Discapacidad:</strong>
+              {% for archivo in alumno.archivos %}
+                {% if archivo.titulo == 'certificado_discapacidad' %}
+                  <a href="{{ url_for('download_file', path=archivo.path) }}" class="btn btn-primary btn-sm" target="_blank">Ver Archivo</a>
+                {% endif %}
+              {% else %}
+                <span class="text-muted">No cargado</span>
+              {% endfor %}
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card de Actualizar Documentación -->
+    <div class="col-md-6">
+      <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-header bg-secondary text-white rounded-top-4">
+          <h5 class="mb-0 fw-semibold">Actualizar Documentación</h5>
+        </div>
+        <div class="card-body">
+          <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+            {{ form.hidden_tag() }}
+
+            <div class="mb-4">
+              {{ form.pasaporte.label(class="form-label fw-bold text-dark") }}
+              {{ form.pasaporte(class="form-control rounded-3") }}
+            </div>
+
+            <div class="mb-4">
+              {{ form.cedula_identidad.label(class="form-label fw-bold text-dark") }}
+              {{ form.cedula_identidad(class="form-control rounded-3") }}
+            </div>
+
+            <div class="mb-4">
+              {{ form.certificado_espanol.label(class="form-label fw-bold text-dark") }}
+              {{ form.certificado_espanol(class="form-control rounded-3") }}
+            </div>
+
+            <div class="mb-4">
+              {{ form.certificado_discapacidad.label(class="form-label fw-bold text-dark") }}
+              {{ form.certificado_discapacidad(class="form-control rounded-3") }}
+            </div>
+
+            <button type="submit" class="btn btn-custom btn-primary w-100 py-2 rounded-3">Actualizar Documentación</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

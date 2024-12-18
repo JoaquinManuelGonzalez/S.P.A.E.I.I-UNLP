@@ -38,8 +38,6 @@ def get_alumnos_con_postulaciones_activas(facultad_id):
     estados_excluir = [
         'Solicitud de Postulacion',
         'Solicitud Rechazada',
-        'Postulacion Invalidada por Facultad',
-        'Postulacion Completada'
     ]
 
     # Subconsulta para verificar si existe una postulación válida asociada al alumno
@@ -122,6 +120,21 @@ def actualizar_informacion_alumno(
     alumno.pais_de_residencia = pais_de_residencia
     alumno.pais_nacionalidad = pais_de_nacionalidad
     alumno.domicilio_pais_de_residencia = domicilio_pais_de_residencia
+
+    db.session.commit()
+
+    return alumno
+
+
+def actualizar_informacion_alumno(
+    alumno,
+    nombre,
+    apellido,
+    email,
+):
+    alumno.nombre = nombre
+    alumno.apellido = apellido
+    alumno.email = email
 
     db.session.commit()
 
