@@ -48,7 +48,7 @@
                             <td class="text-center align-middle">{{ asignatura.facultad.nombre }}</td>
                             <td class="text-center align-middle">
                                 <div class="btn-group">
-                                    <a href="{{ url_for("carreras.asignar_asignatura", carrera_id=carrera.id, asignatura_id=asignatura.id) }}" class="btn btn-success" data-bs-toggle="tooltip" data-bs-title="Asignar"><i class="bi-plus-square-fill"></i></a>
+                                    <a href="{{ url_for("carreras.asignar_asignatura", carrera_id=carrera.id, asignatura_id=asignatura.id, search=search, facultad_id=facultad_id) }}" class="btn btn-success" data-bs-toggle="tooltip" data-bs-title="Asignar"><i class="bi-plus-square-fill"></i></a>
                                 </div>
                             </td>
                         </tr>

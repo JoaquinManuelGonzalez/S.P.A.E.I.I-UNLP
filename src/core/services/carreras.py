@@ -1,4 +1,4 @@
-from sqlalchemy import text
+from sqlalchemy import and_, func, text
 from src.core.database import db
 from datetime import datetime
 from src.core.models.carrera import Carrera
@@ -72,8 +72,9 @@ def get_carreras_by_facultad(facultad_id: int):
     Returns:
         list: A list of Carrera objects.
     """
+    query = Carrera.query.filter(Carrera.facultad_id == facultad_id)
 
-    return Carrera.query.filter(Carrera.facultad_id == facultad_id and Carrera.deleted_at == None).all()
+    return query.filter(Carrera.deleted_at == None).all()
 
 def get_carreras(nombre: str, facultad_id: int, asignatura_id: int):
 
@@ -98,7 +99,13 @@ def get_carrera_by_nombre_facultad(nombre, facultad_id):
         Carrera: El objeto Carrera o None si no se encuentra.
     """
 
-    return Carrera.query.filter(Carrera.nombre == nombre and Carrera.facultad_id == facultad_id and Carrera.deleted_at == None).first()
+    return Carrera.query.filter(
+            and_(
+                func.binary(Carrera.nombre) == nombre,
+                Carrera.facultad_id == facultad_id,
+                Carrera.deleted_at == None
+            )
+        ).first()
 
 def update_carrera(carrera_id, nombre=None, facultad_id=None):
     """
@@ -147,7 +154,7 @@ def delete_carrera(carrera_id):
 
     try:
         carrera_to_delete = Carrera.query.get(carrera_id)
-        if carrera_to_delete:
+        if carrera_to_delete and not carrera_to_delete.deleted_at:
             carrera_to_delete.deleted_at = datetime.now()
             db.session.commit()
             return True

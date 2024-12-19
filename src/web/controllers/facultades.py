@@ -3,12 +3,14 @@ from src.core.services import facultades as facultades_service
 from src.core.services import carreras as carreras_service
 from src.core.services import asignaturas as asignaturas_service
 from src.core.services import usuario_service as usuarios_service
+from src.web.handlers.permisos import check
 
 
 facultades_bp = Blueprint("facultades", __name__, url_prefix="/facultades")
 
 #-----Listar-----
 @facultades_bp.get('/')
+@check("facultades")
 def listar():
     """Lista todas las facultades.
 
@@ -25,6 +27,7 @@ def listar():
 
 #-----Visualizar-----
 @facultades_bp.get('/<int:facultad_id>')
+@check("facultades")
 def visualizar(facultad_id):
     """Detalle de la facultad con id facultad_id.
 

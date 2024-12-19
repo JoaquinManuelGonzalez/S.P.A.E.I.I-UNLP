@@ -52,6 +52,9 @@ def crear_permisos():
     permiso_24 = crear_permiso(nombre='alumnos_detalle')
     permiso_25 = crear_permiso(nombre='gestor')
     permiso_26 = crear_permiso(nombre='punto_focal')
+    permiso_27 = crear_permiso(nombre='facultades')
+    permiso_28 = crear_permiso(nombre='carreras_crud')
+    permiso_29 = crear_permiso(nombre='asignaturas_crud')
 
 
     permisos_presidencia_jefe.append(permiso_0)
@@ -77,6 +80,9 @@ def crear_permisos():
     permisos_presidencia_jefe.append(permiso_22)
     permisos_presidencia_jefe.append(permiso_23)
     permisos_presidencia_jefe.append(permiso_24)
+    permisos_presidencia_jefe.append(permiso_27)
+    permisos_presidencia_jefe.append(permiso_28)
+    permisos_presidencia_jefe.append(permiso_29)
 
     permisos_presidencia_gestor.append(permiso_2)
     permisos_presidencia_gestor.append(permiso_3)
@@ -95,6 +101,9 @@ def crear_permisos():
     permisos_presidencia_gestor.append(permiso_21)
     permisos_presidencia_gestor.append(permiso_24)
     permisos_presidencia_gestor.append(permiso_25)
+    permisos_presidencia_gestor.append(permiso_27)
+    permisos_presidencia_gestor.append(permiso_28)
+    permisos_presidencia_gestor.append(permiso_29)
 
     permisos_punto_focal.append(permiso_4)
     permisos_punto_focal.append(permiso_5)

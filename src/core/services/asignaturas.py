@@ -1,4 +1,4 @@
-from sqlalchemy import text
+from sqlalchemy import and_, func, text
 from src.core.database import db
 from datetime import datetime
 from src.core.models.asignatura import Asignatura, asignaturas_carreras
@@ -75,7 +75,13 @@ def get_asignatura_by_nombre_facultad(nombre, facultad_id):
         Asignatura: El objeto Asignatura o None si no se encuentra.
     """
 
-    return Asignatura.query.filter(Asignatura.nombre == nombre and Asignatura.facultad_id == facultad_id and Asignatura.deleted_at == None).first()
+    return Asignatura.query.filter(
+        and_(
+            func.binary(Asignatura.nombre) == nombre,
+            Asignatura.facultad_id == facultad_id,
+            Asignatura.deleted_at == None
+        )
+    ).first()
 
 def get_asignaturas_by_carrera(carrera_id: int):
     """Obtiene todas las asignaturas cursadas por un estudiante de la carrera pasada por parámetro.
@@ -148,7 +154,7 @@ def delete_asignatura(asignatura_id):
     """
 
     asignatura = Asignatura.query.get(asignatura_id)
-    if asignatura:
+    if asignatura and not asignatura.deleted_at:
         asignatura.deleted_at = datetime.now()
         db.session.commit()
         return True

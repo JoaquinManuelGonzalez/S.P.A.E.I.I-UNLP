@@ -54,13 +54,13 @@
                                                         aria-label="Close"></button>
                                                 </div>
                                                 <div class="modal-body">
-                                                    ¿Estás seguro que deseas eliminar {{
-                                                    carrera.nombre }}?
+                                                    ¿Estás seguro que deseas eliminar {{ carrera.nombre }}?
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary"
                                                         data-bs-dismiss="modal">Cancelar</button>
-                                                    <form method="POST" action="#">
+                                                    <form method="POST" action="{{ url_for("carreras.eliminar", carrera_id = carrera.id) }}">
+                                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                                         <button type="submit" class="btn btn-danger">Eliminar</button>
                                                     </form>
                                                 </div>
@@ -138,7 +138,7 @@
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary"
                                                         data-bs-dismiss="modal">Cancelar</button>
-                                                    <form method="POST" action="{{ url_for("asignaturas.eliminar", asignatura_id = asignatura.id) }}">
+                                                    <form method="POST" action="{{ url_for("asignaturas.eliminar", asignatura_id = asignatura.id, facultad_id=facultad.id) }}">
                                                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                                         <button type="submit" class="btn btn-danger">Eliminar</button>
                                                     </form>
