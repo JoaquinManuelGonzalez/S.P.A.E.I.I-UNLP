@@ -42,10 +42,10 @@
                                     </div>
                                     <a href="#" class="btn btn-warning" data-bs-toggle="tooltip"
                                        data-bs-title="Editar"><i class="bi bi-pencil-fill"></i></a>
-                                    <button type="button" class="btn btn-danger" data-bs-title="Eliminar" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal-{{ carrera.id }}" data-carrera-id="{{ carrera.id }}" data-bs-title="Eliminar">
+                                    <button type="button" class="btn btn-danger" data-bs-title="Eliminar" data-bs-toggle="modal" data-bs-target="#confirmDeleteModalCarrera-{{ carrera.id }}" data-carrera-id="{{ carrera.id }}" data-bs-title="Eliminar">
                                        <i class="bi bi-trash-fill"></i>
                                     </button>
-                                    <div class="modal fade" id="confirmDeleteModal-{{ carrera.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal fade" id="confirmDeleteModalCarrera-{{ carrera.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                         <div class="modal-dialog">
                                             <div class="modal-content">
                                                 <div class="modal-header">
@@ -120,10 +120,10 @@
                                     </div>
                                     <a href="{{ url_for("asignaturas.editar", asignatura_id = asignatura.id) }}" class="btn btn-warning" data-bs-toggle="tooltip"
                                        data-bs-title="Editar"><i class="bi bi-pencil-fill"></i></a>
-                                    <button type="button" class="btn btn-danger" data-bs-title="Eliminar" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal-{{ asignatura.id }}" data-asignatura-id="{{ asignatura.id }}" data-bs-title="Eliminar">
+                                    <button type="button" class="btn btn-danger" data-bs-title="Eliminar" data-bs-toggle="modal" data-bs-target="#confirmDeleteModalAsignatura-{{ asignatura.id }}" data-asignatura-id="{{ asignatura.id }}" data-bs-title="Eliminar">
                                        <i class="bi bi-trash-fill"></i>
                                     </button>
-                                    <div class="modal fade" id="confirmDeleteModal-{{ asignatura.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal fade" id="confirmDeleteModalAsignatura-{{ asignatura.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                         <div class="modal-dialog">
                                             <div class="modal-content">
                                                 <div class="modal-header">
@@ -138,7 +138,8 @@
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary"
                                                         data-bs-dismiss="modal">Cancelar</button>
-                                                    <form method="POST" action="#">
+                                                    <form method="POST" action="{{ url_for("asignaturas.eliminar", asignatura_id = asignatura.id) }}">
+                                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                                         <button type="submit" class="btn btn-danger">Eliminar</button>
                                                     </form>
                                                 </div>
@@ -219,10 +220,10 @@
                                     </div>
                                     <a href="#" class="btn btn-warning" data-bs-toggle="tooltip"
                                        data-bs-title="Editar"><i class="bi bi-pencil-fill"></i></a>
-                                    <button type="button" class="btn btn-danger" data-bs-title="Eliminar" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal-{{ punto_focal.id }}" data-punto_focal-id="{{ punto_focal.id }}" data-bs-title="Eliminar">
+                                    <button type="button" class="btn btn-danger" data-bs-title="Eliminar" data-bs-toggle="modal" data-bs-target="#confirmDeleteModalPuntoFocal-{{ punto_focal.id }}" data-punto_focal-id="{{ punto_focal.id }}" data-bs-title="Eliminar">
                                        <i class="bi bi-trash-fill"></i>
                                     </button>
-                                    <div class="modal fade" id="confirmDeleteModal-{{ punto_focal.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal fade" id="confirmDeleteModalPuntoFocal-{{ punto_focal.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                         <div class="modal-dialog">
                                             <div class="modal-content">
                                                 <div class="modal-header">

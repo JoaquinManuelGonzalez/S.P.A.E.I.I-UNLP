@@ -120,6 +120,7 @@ def get_asignaturas_cursadas_por_carreras(carreras, nombre, pagina):
     
     if nombre and nombre != "":
         asignaturas = asignaturas.filter(Asignatura.nombre.ilike(f"%{nombre}%"))
+    asignaturas = asignaturas.filter(Asignatura.deleted_at == None)
 
     return asignaturas.paginate(page=pagina, per_page=5, error_out=False)
 

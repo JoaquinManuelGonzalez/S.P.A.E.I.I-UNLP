@@ -31,7 +31,7 @@ def visualizar(facultad_id):
     Returns:
         flask.templating.render_template: Plantilla HTML con el detalle de la facultad con id facultad_id.
     """
-
+    
     query = request.args
 
     nombre_asignatura = query.get('nombre_search_asignatura', None)

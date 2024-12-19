@@ -16,6 +16,7 @@ def visualizar(asignatura_id):
     Returns:
         flask.templating.render_template: Plantilla HTML con el detalle de la asignatura con id asignatura_id.
     """
+    
     asignatura = asignaturas_service.get_asignatura_by_id(asignatura_id)
     if asignatura is None:
         flash("La asignatura no existe o ha sido eliminada.", "error")
@@ -58,6 +59,23 @@ def editar(asignatura_id):
         asignatura = asignaturas_service.editar_asignatura_web(asignatura_id,formulario)
         return redirect(url_for("asignaturas.visualizar", asignatura_id = asignatura.id))
     return render_template("asignaturas/editar.html", formulario=formulario, asignatura_id=asignatura_id)
+
+#-----Eliminar-----
+@asignaturas_bp.post("/<int:asignatura_id>/eliminar")
+def eliminar(asignatura_id):
+    """Elimina una Asignatura.
+
+    Returns:
+        flask.templating.render_template: Visualizacion de facultad de origen.
+    """
+    asignatura = asignaturas_service.get_asignatura_by_id(asignatura_id)
+    pudo = asignaturas_service.delete_asignatura(asignatura_id)
+    if pudo:
+        flash('La asignatura se ha eliminado correctamente', 'success')
+    else:
+        flash('No se pudo eliminar la asignatura', 'error')
+
+    return redirect(url_for("facultades.visualizar", facultad_id = asignatura.facultad_id))
 
 #-----Asignar asignatura a carreras-----
 @asignaturas_bp.get("/<int:asignatura_id>/asignar_carreras")
