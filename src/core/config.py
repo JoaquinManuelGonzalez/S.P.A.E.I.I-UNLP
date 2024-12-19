@@ -46,7 +46,7 @@ class DevelopmentConfig(Config):
     Args:
         Config (class): Clase de configuración base.
     """
-    MINIO_SERVER = "localhost:9000"
+    MINIO_SERVER = "minio:9000"
     MINIO_ACCESS_KEY = environ.get("MINIO_ACCESS_KEY")
     JWT_SECRET_KEY = environ.get("JWT_SECRET_KEY")
     MINIO_SECRET_KEY = environ.get("MINIO_SECRET_KEY")

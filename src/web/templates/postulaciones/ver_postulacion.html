@@ -1,0 +1,173 @@
+{% extends "layout.html" %}
+
+{% block title %}Detalle de la Postulación{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <style>
+        /* Estilos personalizados */
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            background-color: #6c757f; /* Gris más claro */
+            color: #fff;
+            font-weight: 600;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+            background-color: #f9f9f9;
+        }
+
+        .card-footer {
+            background-color: #f1f1f1;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+            text-align: center;
+        }
+
+        .nav-tabs {
+            border-bottom: 2px solid #ddd;
+        }
+
+        .nav-item {
+            margin-right: 1rem;
+        }
+
+        .nav-link {
+            border: none;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .nav-link.active {
+            color: #007bff;
+            border-bottom: 2px solid #007bff;
+        }
+
+        .section-header {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 1.5rem;
+        }
+
+        .container {
+            padding-top: 3rem;
+            padding-bottom: 3rem;
+        }
+
+        .modal-content {
+            border-radius: 10px;
+        }
+
+        /* Animación para la carga de contenido en los tabs */
+        .tab-pane {
+            opacity: 0;
+            animation: fadeIn 0.5s forwards;
+        }
+
+        .tab-content .active {
+            opacity: 1;
+            animation: fadeIn 0.5s forwards;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="display-4 mb-4 text-center text-dark">Detalle de la Postulación</h1>
+    <hr class="mb-5">
+
+    <!-- Tabs de navegación -->
+    <ul class="nav nav-tabs" id="postulacionTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <a class="nav-link active" id="personal-tab" data-bs-toggle="tab" href="#personal" role="tab" aria-controls="personal" aria-selected="true">Datos Personales</a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" id="academicos-tab" data-bs-toggle="tab" href="#academicos" role="tab" aria-controls="academicos" aria-selected="false">Datos Académicos</a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" id="tutores-tab" data-bs-toggle="tab" href="#tutores" role="tab" aria-controls="tutores" aria-selected="false">Datos de Tutores</a>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="postulacionTabsContent">
+        <!-- Datos Personales -->
+        <div class="tab-pane fade show active" id="personal" role="tabpanel" aria-labelledby="personal-tab">
+            <div class="card shadow-sm border-0 mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Datos Personales</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Nombre:</strong> {{ alumno.nombre }}</p>
+                    <p><strong>Apellido:</strong> {{ alumno.apellido }}</p>
+                    <p><strong>Email:</strong> {{ alumno.email }}</p>
+                    <p><strong>Género conforme pasaporte:</strong> {{ genero.nombre_es }}</p>
+                    <p><strong>Fecha de nacimiento:</strong> {{ alumno.fecha_de_nacimiento.strftime("%d-%m-%Y") }}</p>
+                    <p><strong>País de nacimiento:</strong> {{ pais_nacimiento.nombre_es }}</p>
+                    <p><strong>País de residencia:</strong> {{ pais_residencia.nombre_es }}</p>
+                    <p><strong>Domicilio de residencia:</strong> {{ alumno.domicilio_pais_de_residencia }}</p>
+                    <p><strong>Nacionalidad:</strong> {{ nacionalidad.nombre_es }}</p>
+                    <p><strong>Número de pasaporte:</strong> {{ pasaporte.numero }}</p>
+                    <p><strong>País de emisión de pasaporte:</strong> {{ pais_pasaporte.nombre_es }}</p>
+                    <p><strong>Número de cédula de identidad:</strong> {{ cedula_de_identidad.numero }}</p>
+                    <p><strong>País de emisión de cédula de identidad:</strong> {{ pais_cedula_de_identidad.nombre_es }}</p>
+                    <p><strong>Estado civil:</strong> {{ estado_civil.nombre_es }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Datos Académicos -->
+        <div class="tab-pane fade" id="academicos" role="tabpanel" aria-labelledby="academicos-tab">
+            <div class="card shadow-sm border-0 mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Datos Académicos</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Universidad de origen:</strong> {{ postulacion.universidad_origen }}</p>
+                    <p><strong>Nivel de estudio:</strong> 
+                        {% if postulacion.de_posgrado %}
+                            Posgrado
+                        {% else %}
+                            Grado
+                        {% endif %}
+                    </p>
+                    <p><strong>Consulado de visación:</strong> {{ postulacion.consulado_visacion }}</p>
+                    <p><strong>Convenio:</strong> {{ postulacion.convenio }}</p>
+                    <p><strong>Programa:</strong> {{ programa.nombre }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Datos de Tutores -->
+        <div class="tab-pane fade" id="tutores" role="tabpanel" aria-labelledby="tutores-tab">
+            <div class="card shadow-sm border-0 mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Datos de Tutores</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Tutor Institucional:</strong> {{ tutor_institucional.nombre }} {{ tutor_institucional.apellido }}</p>
+                    <p><strong>Email:</strong> {{ tutor_institucional.email }}</p>
+                    <p><strong>Tutor Académico:</strong> {{ tutor_academico.nombre }} {{ tutor_academico.apellido }}</p>
+                    <p><strong>Email:</strong> {{ tutor_academico.email }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

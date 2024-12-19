@@ -36,7 +36,7 @@
           </li>
         {% else %}
           <li class="nav-item active">
-            <a class="nav-link" href="/facultades">Postulaciones</a>
+            <a class="nav-link" href="{{ url_for('postulacion.listar_postulaciones') }}">Postulaciones</a>
           </li>
           <li class="nav-item active">
             <a class="nav-link" href="{{ url_for('alumnos_bp.listar_alumnos') }}">Alumnos Entrantes</a>
@@ -54,7 +54,7 @@
               <a class="nav-link" href="/facultades">Archivos Base</a>
             </li>
             <li class="nav-item active">
-              <a class="nav-link" href="/facultades">Solicitudes de Postulación</a>
+              <a class="nav-link" href="{{ url_for('postulacion.listar_solicitudes_de_postulacion') }}">Solicitudes de Postulación</a>
             </li>
           {% endif %}
         {% endif %}

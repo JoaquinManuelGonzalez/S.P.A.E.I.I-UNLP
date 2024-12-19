@@ -200,8 +200,8 @@ class PostulacionForm(FlaskForm):
     es_hispanohalante = BooleanField(
         "¿Es hispanohablante?"
     )
-    certificado_ingles = FileField(
-        "Certificado de inglés",
+    certificado_b1 = FileField(
+        "Certificado B1 de español",
         validators=[
             FileAllowed(["pdf"], "Solo se permiten archivos .pdf"),
             file_size_limit(5),]
@@ -242,6 +242,6 @@ class PostulacionForm(FlaskForm):
             "programa": self.programa.data,
             "carta_recomendacion": self.carta_recomendacion.data,
             "es_hispanohalante": self.es_hispanohalante.data,
-            "certificado_ingles": self.certificado_ingles.data
+            "certificado_ingles": self.certificado_b1.data
         }
 
