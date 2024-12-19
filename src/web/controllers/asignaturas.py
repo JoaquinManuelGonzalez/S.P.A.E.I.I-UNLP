@@ -2,7 +2,6 @@ from flask import Blueprint, flash, redirect, request, render_template, url_for
 from src.core.services import facultades as facultades_service
 from src.core.services import carreras as carreras_service
 from src.core.services import asignaturas as asignaturas_service
-from src.core.services import usuario_service as usuarios_service
 from src.web.forms import AsignaturaForm
 
 
@@ -58,7 +57,7 @@ def editar(asignatura_id):
     if formulario.validate_on_submit():
         asignatura = asignaturas_service.editar_asignatura_web(asignatura_id,formulario)
         return redirect(url_for("asignaturas.visualizar", asignatura_id = asignatura.id))
-    return render_template("asignaturas/editar.html", formulario=formulario, asignatura_id=asignatura_id)
+    return render_template("asignaturas/editar.html", formulario=formulario, asignatura=asignatura)
 
 #-----Eliminar-----
 @asignaturas_bp.post("/<int:asignatura_id>/eliminar")

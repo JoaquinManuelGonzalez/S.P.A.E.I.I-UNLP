@@ -1,3 +1,4 @@
+from sqlalchemy import text
 from src.core.database import db
 from datetime import datetime
 from src.core.models.asignatura import Asignatura, asignaturas_carreras
@@ -123,6 +124,18 @@ def get_asignaturas_cursadas_por_carreras(carreras, nombre, pagina):
     asignaturas = asignaturas.filter(Asignatura.deleted_at == None)
 
     return asignaturas.paginate(page=pagina, per_page=5, error_out=False)
+
+def get_asignaturas(nombre: str, facultad_id: int, carrera_id: int):
+
+    query = text("SELECT * " + 
+                 "FROM asignaturas a " + 
+                 "WHERE (a.facultad_id = :facultad_id OR :facultad_id IS NULL) " + 
+                 "AND (LOWER(a.nombre) LIKE CONCAT('%', LOWER(:nombre), '%') OR :nombre IS NULL) " + 
+                 "AND (a.deleted_at IS NULL) " +
+                 "AND NOT EXISTS (SELECT * FROM asignaturas_carreras ac WHERE ac.carrera_id = :carrera_id AND a.id = ac.asignatura_id)")
+
+    resultado = db.session.query(Asignatura).from_statement(query).params(carrera_id=carrera_id, nombre=nombre, facultad_id=facultad_id).all()
+    return resultado
 
 def delete_asignatura(asignatura_id):
     """Elimina una asignatura (soft delete).

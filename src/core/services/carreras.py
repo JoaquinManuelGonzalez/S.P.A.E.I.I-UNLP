@@ -3,6 +3,10 @@ from src.core.database import db
 from datetime import datetime
 from src.core.models.carrera import Carrera
 from src.core.models.asignatura import asignaturas_carreras
+from src.web.forms import CarreraForm
+
+def crear_carrera_web(formulario: CarreraForm):
+    return create_carrera(nombre=formulario.nombre.data, facultad_id=formulario.facultad_id.data)
 
 def create_carrera(nombre, facultad_id):
     """
@@ -24,6 +28,23 @@ def create_carrera(nombre, facultad_id):
         db.session.add(new_carrera)
         db.session.commit()
         return new_carrera
+    except Exception as e:
+        db.session.rollback()
+        raise Exception(f"Error creating Carrera: {e}")
+
+def editar_carrera_web(carrera_id: int, formulario: CarreraForm):
+    return edit_carrera(carrera_id=carrera_id, nombre=formulario.nombre.data, facultad_id=formulario.facultad_id.data)
+
+def edit_carrera(carrera_id: int, nombre: str, facultad_id: int) -> Carrera:
+
+    carrera = get_carrera_by_id(carrera_id)
+    carrera.nombre = nombre
+    carrera.facultad_id = facultad_id
+
+    try:
+        db.session.add(carrera)
+        db.session.commit()
+        return carrera
     except Exception as e:
         db.session.rollback()
         raise Exception(f"Error creating Carrera: {e}")
@@ -55,17 +76,6 @@ def get_carreras_by_facultad(facultad_id: int):
     return Carrera.query.filter(Carrera.facultad_id == facultad_id and Carrera.deleted_at == None).all()
 
 def get_carreras(nombre: str, facultad_id: int, asignatura_id: int):
-    """
-    Gets all Carrera records from the database.
-
-    Args:
-        facultad_id (int): El ID de la facultad de la cual quiero las carreras.
-        nombre (str): El nombre de la carrera que estoy buscando.
-        pagina (int): La pagina en la que se encuentra.
-
-    Returns:
-        list: A list of Carrera objects.
-    """
 
     query = text("SELECT * " + 
                  "FROM carreras c " + 
@@ -76,6 +86,19 @@ def get_carreras(nombre: str, facultad_id: int, asignatura_id: int):
 
     resultado = db.session.query(Carrera).from_statement(query).params(asignatura_id=asignatura_id, nombre=nombre, facultad_id=facultad_id).all()
     return resultado
+
+def get_carrera_by_nombre_facultad(nombre, facultad_id):
+    """Obtiene una carrera por su nombre y su facultad.
+
+    Args:
+        nombre (str): El nombre de la carrera.
+        facultad_id (int): El id de la facultad de la que depende.
+
+    Returns:
+        Carrera: El objeto Carrera o None si no se encuentra.
+    """
+
+    return Carrera.query.filter(Carrera.nombre == nombre and Carrera.facultad_id == facultad_id and Carrera.deleted_at == None).first()
 
 def update_carrera(carrera_id, nombre=None, facultad_id=None):
     """
