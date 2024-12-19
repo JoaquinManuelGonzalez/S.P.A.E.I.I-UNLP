@@ -74,7 +74,7 @@ def get_asignatura_by_nombre_facultad(nombre, facultad_id):
         Asignatura: El objeto Asignatura o None si no se encuentra.
     """
 
-    return Asignatura.query.filter(Asignatura.nombre == nombre and Asignatura.facultad_id == facultad_id).first()
+    return Asignatura.query.filter(Asignatura.nombre == nombre and Asignatura.facultad_id == facultad_id and Asignatura.deleted_at == None).first()
 
 def get_asignaturas_by_carrera(carrera_id: int):
     """Obtiene todas las asignaturas cursadas por un estudiante de la carrera pasada por parámetro.
@@ -86,7 +86,7 @@ def get_asignaturas_by_carrera(carrera_id: int):
         list: Una lista de objetos Asignatura.
     """
 
-    return Asignatura.query.filter(Asignatura.carreras.any(id=carrera_id)).all()
+    return Asignatura.query.filter(Asignatura.carreras.any(id=carrera_id) and Asignatura.deleted_at == None).all()
 
 def get_asignaturas_cursadas_en(facultad_id: int):
     """Obtiene todas las asignaturas que se cursan en la facultad pasada por parametro.
@@ -98,7 +98,7 @@ def get_asignaturas_cursadas_en(facultad_id: int):
         list: Una lista de objetos Asignatura.
     """
 
-    return Asignatura.query.filter(Asignatura.facultad_id == facultad_id).all()
+    return Asignatura.query.filter(Asignatura.facultad_id == facultad_id and Asignatura.deleted_at == None).all()
 
 def get_asignaturas_cursadas_por_carreras(carreras, nombre, pagina):
     """Obtiene todas las asignaturas que se cursan en las carreras pasadas por parámetro.

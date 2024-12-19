@@ -52,7 +52,7 @@ def get_carreras_by_facultad(facultad_id: int):
         list: A list of Carrera objects.
     """
 
-    return Carrera.query.filter(Carrera.facultad_id == facultad_id).all()
+    return Carrera.query.filter(Carrera.facultad_id == facultad_id and Carrera.deleted_at == None).all()
 
 def get_carreras(nombre: str, facultad_id: int, asignatura_id: int):
     """
@@ -71,6 +71,7 @@ def get_carreras(nombre: str, facultad_id: int, asignatura_id: int):
                  "FROM carreras c " + 
                  "WHERE (c.facultad_id = :facultad_id OR :facultad_id IS NULL) " + 
                  "AND (LOWER(c.nombre) LIKE CONCAT('%', LOWER(:nombre), '%') OR :nombre IS NULL) " + 
+                 "AND (c.deleted_at IS NULL) " +
                  "AND NOT EXISTS (SELECT * FROM asignaturas_carreras ac WHERE ac.asignatura_id = :asignatura_id AND c.id = ac.carrera_id)")
 
     resultado = db.session.query(Carrera).from_statement(query).params(asignatura_id=asignatura_id, nombre=nombre, facultad_id=facultad_id).all()
