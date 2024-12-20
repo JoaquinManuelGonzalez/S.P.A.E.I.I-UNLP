@@ -110,6 +110,7 @@ export const usePrimerFormularioStore = defineStore('primer_formulario_store', {
                 console.log(error);
             } finally {
                 this.loading = false;
+                this.limpiarFormulario();
             }
         },
         async getData(){
@@ -138,6 +139,51 @@ export const usePrimerFormularioStore = defineStore('primer_formulario_store', {
                 reader.onerror = (error) => reject(error);
                 reader.readAsDataURL(file);
             });
+        },
+        limpiarFormulario() {
+            this.formData.alumno.apellido = "";
+            this.formData.alumno.nombre = "";
+            this.formData.alumno.email = "";
+            this.formData.alumno.domicilio_pais_de_residencia = "";
+            this.formData.alumno.fecha_de_nacimiento = "";
+            this.formData.alumno.id_genero = "";
+            this.formData.alumno.id_estado_civil = "";
+            this.formData.alumno.id_pais_de_nacimiento = "";
+            this.formData.alumno.id_pais_de_residencia = "";
+            this.formData.alumno.id_pais_nacionalidad = "";
+            this.formData.postulacion.de_posgrado = false;
+            this.formData.postulacion.universidad_origen = "";
+            this.formData.postulacion.consulado_visacion = "";
+            this.formData.postulacion.convenio = "";
+            this.formData.id_programa = "";
+            this.formData.tutorInstitucional.nombre = "";
+            this.formData.tutorInstitucional.apellido = "";
+            this.formData.tutorInstitucional.email = "";
+            this.formData.tutorInstitucional.es_institucional = true;
+            this.formData.tutorAcademico.nombre = "";
+            this.formData.tutorAcademico.apellido = "";
+            this.formData.tutorAcademico.email = "";
+            this.formData.tutorAcademico.es_institucional = false;
+            this.formData.cedula_de_identidad.numero = "";
+            this.formData.cedula_de_identidad.id_pais = "";
+            this.formData.pasaporte.numero = "";
+            this.formData.pasaporte.id_pais = "";
+            this.formData.archivo.certificado_b1 = null;
+            this.formData.archivo.plan_trabajo = null;
+            this.formData.archivo.carta_recomendacion = null;
+            this.formData.archivo.cedula_de_identidad = null;
+            this.formData.archivo.pasaporte = null;
+            this.formData.titulos.titulo_certificado_b1 = "";
+            this.formData.titulos.titulo_plan_trabajo = "";
+            this.formData.titulos.titulo_carta_recomendacion = "";
+            this.formData.titulos.titulo_cedula_de_identidad = "";
+            this.formData.titulos.titulo_pasaporte = "";
+            this.formData.convenioPrograma = "";
+            this.formData.mercosur = false;
+            this.nivelEstudio = "";
+            this.convenioPrograma = "";
+            this.es_hispanohablante = false;
+            this.mercosur = false;
         }
             
     },

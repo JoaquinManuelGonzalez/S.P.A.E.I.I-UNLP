@@ -9,3 +9,12 @@ def crear_tutor(**data):
     db.session.add(tutor)
     db.session.commit()
     return tutor
+
+def crear_obtener_tutor(**data):
+    """
+    Crea un tutor si no existe.
+    """
+    tutor = Tutor.query.filter_by(**data).first()
+    if tutor:
+        return tutor
+    return crear_tutor(**data)

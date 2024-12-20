@@ -64,88 +64,9 @@ def primer_formulario():
     if not data_titulos:
         return jsonify({"error": "No se encontraron datos de los títulos"}), 400
 
-    if not mercosur:
-        if not data_pasaporte:
-            return jsonify({"error": "No se encontraron datos del pasaporte"}), 400
-        else:
-            archivo_pasaporte = base64.b64decode(data_archivos["pasaporte"])
-            save_file_minio(archivo_pasaporte, data_titulos["titulo_pasaporte"])
-            if not data_titulos["titulo_pasaporte"]:
-                return jsonify({"error": "No se encontraron datos del título del pasaporte"}), 400
-            titulo_pasaporte = {
-                "titulo": data_titulos["titulo_pasaporte"]
-            }
-            try:
-                pasaporte = archivo_schema.load(titulo_pasaporte)
-            except Exception as err:
-                return jsonify({"error": f"Error al cargar los datos del pasaporte: {err}"}), 400
-            pasaporte_archivo = archivo_service.crear_archivo(**pasaporte)
-            data_pasaporte["id_archivo"] = pasaporte_archivo.id
-            pasaporte = pasaporte_schema.load(data_pasaporte)
-            pasaporte = pasaporte_service.crear_pasaporte(**pasaporte)
-            pasaporte_archivo.pasaporte = pasaporte
-    else:
-        if not data_pasaporte and not data_cedula:
-            return jsonify({"error": "No se encontraron datos de la cédula de identidad ni del pasaporte"}), 400
-        if data_pasaporte:
-            archivo_pasaporte = base64.b64decode(data_archivos["pasaporte"])
-            save_file_minio(archivo_pasaporte, data_titulos["titulo_pasaporte"])
-            if not data_titulos["titulo_pasaporte"]:
-                return jsonify({"error": "No se encontraron datos del título del pasaporte"}), 400
-            titulo_pasaporte = {
-                "titulo": data_titulos["titulo_pasaporte"]
-            }
-            try:
-                pasaporte = archivo_schema.load(titulo_pasaporte)
-            except Exception as err:
-                return jsonify({"error": f"Error al cargar los datos del pasaporte: {err}"}), 400
-            pasaporte_archivo = archivo_service.crear_archivo(**pasaporte)
-            data_pasaporte["id_archivo"] = pasaporte_archivo.id
-            pasaporte = pasaporte_schema.load(data_pasaporte)
-            pasaporte = pasaporte_service.crear_pasaporte(**pasaporte)
-            pasaporte_archivo.pasaporte = pasaporte
-        if data_cedula:
-            archivo_cedula = base64.b64decode(data_archivos["cedula_de_identidad"])
-            save_file_minio(archivo_cedula, data_titulos["titulo_pasaporte"])
-            if not data_titulos["titulo_cedula_de_identidad"]:
-                return jsonify({"error": "No se encontraron datos del título del pasaporte"}), 400
-            titulo_cedula = {
-                "titulo": data_titulos["titulo_cedula_de_identidad"]
-            }
-            try:
-                cedula_de_identidad = archivo_schema.load(titulo_cedula)
-            except Exception as err:
-                return jsonify({"error": f"Error al cargar los datos de la cedula de identidad: {err}"}), 400
-            cedula_de_identidad_archivo = archivo_service.crear_archivo(**cedula_de_identidad)
-            data_cedula["id_archivo"] = cedula_de_identidad_archivo.id
-            cedula_de_identidad = cedula_de_identidad_schema.load(data_cedula)
-            cedula_de_identidad = cedula_de_identidad_service.crear_cedula_de_identidad(**cedula_de_identidad)
-            cedula_de_identidad_archivo.cedula_identidad = cedula_de_identidad
 
-   
-    carta_recomendacion = data_archivos["carta_recomendacion"]
-    if not carta_recomendacion:
-        return jsonify({"error": "No se encontraron datos de la carta de recomendación"}), 400
-    else:
-        archivo_carta_recomendacion = base64.b64decode(data_archivos["carta_recomendacion"])
-        save_file_minio(archivo_carta_recomendacion, data_titulos["titulo_carta_recomendacion"])
-        if not data_titulos["titulo_carta_recomendacion"]:
-            return jsonify({"error": "No se encontraron datos del título de la carta de recomendación"}), 400
-        titulo_carta_recomendacion = {
-            "titulo": data_titulos["titulo_carta_recomendacion"]
-        }
-        try:
-            carta_recomendacion = archivo_schema.load(titulo_carta_recomendacion)
-        except Exception as err:
-            return jsonify({"error": f"Error al cargar los datos de la carta de recomendación: {err}"}), 400
-        carta_recomendacion = archivo_service.crear_archivo(**carta_recomendacion)
-        
     
     data_alumno["discapacitado"] = False
-    if data_pasaporte["numero"] != "":
-        data_alumno["id_pasaporte"] = pasaporte.id
-    if data_cedula["numero"] != "":
-        data_alumno["id_cedula_de_identidad"] = cedula_de_identidad.id
     try:
         print(data_alumno)
         alumno = informacion_alumno_entrante_schema.load(data_alumno)
@@ -168,33 +89,137 @@ def primer_formulario():
     postulacion.informacion_alumno_entrante = alumno
     postulacion.estado = estado_postulacion
 
+
+    if not mercosur:
+        if not data_pasaporte:
+            return jsonify({"error": "No se encontraron datos del pasaporte"}), 400
+        else:
+            archivo_pasaporte = base64.b64decode(data_archivos["pasaporte"])
+            if not data_titulos["titulo_pasaporte"]:
+                return jsonify({"error": "No se encontraron datos del título del pasaporte"}), 400
+            filename = f"{postulacion.id}_{data_titulos["titulo_pasaporte"]}"
+            save_file_minio(archivo_pasaporte, filename)
+            titulo_pasaporte = {
+                "titulo": data_titulos["titulo_pasaporte"],
+                "path": filename
+            }
+            try:
+                pasaporte = archivo_schema.load(titulo_pasaporte)
+            except Exception as err:
+                return jsonify({"error": f"Error al cargar los datos del pasaporte: {err}"}), 400
+            pasaporte_archivo = archivo_service.crear_archivo(**pasaporte)
+            data_pasaporte["id_archivo"] = pasaporte_archivo.id
+            pasaporte = pasaporte_schema.load(data_pasaporte)
+            pasaporte = pasaporte_service.crear_pasaporte(**pasaporte)
+            pasaporte_archivo.pasaporte = pasaporte
+            pasaporte_archivo.informacion_alumno_entrante = alumno
+            pasaporte_archivo.postulacion = postulacion
+            alumno.id_pasaporte = pasaporte.id
+    else:
+        if not data_pasaporte and not data_cedula:
+            return jsonify({"error": "No se encontraron datos de la cédula de identidad ni del pasaporte"}), 400
+        if data_pasaporte:
+            archivo_pasaporte = base64.b64decode(data_archivos["pasaporte"])
+            if not data_titulos["titulo_pasaporte"]:
+                return jsonify({"error": "No se encontraron datos del título del pasaporte"}), 400
+            filename = f"{postulacion.id}_{data_titulos["titulo_pasaporte"]}"
+            save_file_minio(archivo_pasaporte, filename)
+            titulo_pasaporte = {
+                "titulo": data_titulos["titulo_pasaporte"],
+                "path": filename
+            }
+            try:
+                pasaporte = archivo_schema.load(titulo_pasaporte)
+            except Exception as err:
+                return jsonify({"error": f"Error al cargar los datos del pasaporte: {err}"}), 400
+            pasaporte_archivo = archivo_service.crear_archivo(**pasaporte)
+            data_pasaporte["id_archivo"] = pasaporte_archivo.id
+            pasaporte = pasaporte_schema.load(data_pasaporte)
+            pasaporte = pasaporte_service.crear_pasaporte(**pasaporte)
+            pasaporte_archivo.pasaporte = pasaporte
+            pasaporte_archivo.informacion_alumno_entrante = alumno
+            pasaporte_archivo.postulacion = postulacion
+            alumno.id_pasaporte = pasaporte.id
+        if data_cedula:
+            archivo_cedula = base64.b64decode(data_archivos["cedula_de_identidad"])
+            if not data_titulos["titulo_cedula_de_identidad"]:
+                return jsonify({"error": "No se encontraron datos del título del pasaporte"}), 400
+            filename = f"{postulacion.id}_{data_titulos["titulo_pasaporte"]}"
+            save_file_minio(archivo_cedula, filename)
+            titulo_cedula = {
+                "titulo": data_titulos["titulo_cedula_de_identidad"],
+                "path": filename
+            }
+            try:
+                cedula_de_identidad = archivo_schema.load(titulo_cedula)
+            except Exception as err:
+                return jsonify({"error": f"Error al cargar los datos de la cedula de identidad: {err}"}), 400
+            cedula_de_identidad_archivo = archivo_service.crear_archivo(**cedula_de_identidad)
+            data_cedula["id_archivo"] = cedula_de_identidad_archivo.id
+            cedula_de_identidad = cedula_de_identidad_schema.load(data_cedula)
+            cedula_de_identidad = cedula_de_identidad_service.crear_cedula_de_identidad(**cedula_de_identidad)
+            cedula_de_identidad_archivo.cedula_identidad = cedula_de_identidad
+            cedula_de_identidad_archivo.informacion_alumno_entrante = alumno
+            cedula_de_identidad_archivo.postulacion = postulacion
+            alumno.id_cedula_de_identidad = cedula_de_identidad.id
+
+   
+    carta_recomendacion = data_archivos["carta_recomendacion"]
+    if not carta_recomendacion:
+        return jsonify({"error": "No se encontraron datos de la carta de recomendación"}), 400
+    else:
+        archivo_carta_recomendacion = base64.b64decode(data_archivos["carta_recomendacion"])
+        if not data_titulos["titulo_carta_recomendacion"]:
+            return jsonify({"error": "No se encontraron datos del título de la carta de recomendación"}), 400
+        filename = f"{postulacion.id}_{data_titulos["titulo_carta_recomendacion"]}"
+        save_file_minio(archivo_carta_recomendacion, filename)
+        titulo_carta_recomendacion = {
+            "titulo": data_titulos["titulo_carta_recomendacion"],
+            "path": filename
+        }
+        try:
+            carta_recomendacion = archivo_schema.load(titulo_carta_recomendacion)
+        except Exception as err:
+            return jsonify({"error": f"Error al cargar los datos de la carta de recomendación: {err}"}), 400
+        carta_recomendacion = archivo_service.crear_archivo(**carta_recomendacion)
+        
+    
+    
+
+
     if postulacion.de_posgrado:
         if not data_archivos["plan_trabajo"]:
             return jsonify({"error": "No se encontraron datos del plan de trabajo"}), 400
         else:
             plan_trabajo = base64.b64decode(data_archivos["plan_trabajo"])
-            save_file_minio(plan_trabajo, data_titulos["titulo_plan_trabajo"])
             if not data_titulos["titulo_plan_trabajo"]:
                 return jsonify({"error": "No se encontraron datos del título del plan de trabajo"}), 400
+            filename = f"{postulacion.id}_{data_titulos["titulo_plan_trabajo"]}"
+            save_file_minio(plan_trabajo, filename)
             titulo_plan_trabajo = {
-                "titulo": data_titulos["titulo_plan_trabajo"]
+                "titulo": data_titulos["titulo_plan_trabajo"],
+                "path": filename
             }
             try:
                 plan_trabajo = archivo_schema.load(titulo_plan_trabajo)
             except Exception as err:
                 return jsonify({"error": f"Error al cargar los datos del plan de trabajo: {err}"}), 400
             plan_trabajo = archivo_service.crear_archivo(**plan_trabajo)
+            plan_trabajo.informacion_alumno_entrante = alumno
+            plan_trabajo.postulacion = postulacion
 
     
     pais_nacionalidad = paises_service.get_pais_by_id(alumno.id_pais_nacionalidad)
     if pais_nacionalidad.hispanohablante:
         if data_archivos["certificado_b1"]:
             archivo_certificado_b1 = base64.b64decode(data_archivos["certificado_b1"])
-            save_file_minio(archivo_certificado_b1, data_titulos["titulo_certificado_b1"])
             if not data_titulos["titulo_certificado_b1"]:
                 return jsonify({"error": "No se encontraron datos del título del certificado B1"}), 400
+            filename = f"{postulacion.id}_{data_titulos["titulo_certificado_b1"]}"
+            save_file_minio(archivo_certificado_b1, filename)
             titulo_certificado_b1 = {
-                "titulo": data_titulos["titulo_certificado_b1"]
+                "titulo": data_titulos["titulo_certificado_b1"],
+                "path": filename
             }
             try:
                 certificado_b1 = archivo_schema.load(titulo_certificado_b1)
@@ -206,55 +231,45 @@ def primer_formulario():
             return jsonify({"error": "No se encontraron datos del certificado B1"}), 400
         else:
             archivo_certificado_b1 = base64.b64decode(data_archivos["certificado_b1"])
-            save_file_minio(archivo_certificado_b1, data_titulos["titulo_certificado_b1"])
             if not data_titulos["titulo_certificado_b1"]:
                 return jsonify({"error": "No se encontraron datos del título del certificado B1"}), 400
+            filename = f"{postulacion.id}_{data_titulos["titulo_certificado_b1"]}"
+            save_file_minio(archivo_certificado_b1, filename)
             titulo_certificado_b1 = {
-                "titulo": data_titulos["titulo_certificado_b1"]
+                "titulo": data_titulos["titulo_certificado_b1"],
+                "path": filename
             }
             try:
                 certificado_b1 = archivo_schema.load(titulo_certificado_b1)
             except Exception as err:
                 return jsonify({"error": f"Error al cargar los datos del certificado B1: {err}"}), 400
             certificado_b1 = archivo_service.crear_archivo(**certificado_b1)
+            certificado_b1.informacion_alumno_entrante = alumno
+            certificado_b1.postulacion = postulacion
     
     try:
         tutor_institucional = tutor_schema.load(data_tutor_institucional)
     except:
         return jsonify({"error": "Error al cargar los datos del tutor institucional"}), 400
-    tutor_institucional = tutor_service.crear_tutor(**tutor_institucional)
+    tutor_institucional = tutor_service.crear_obtener_tutor(**tutor_institucional)
     print(f"tutor institucional: {tutor_institucional}")
     try:
         tutor_academico = tutor_schema.load(data_tutor_academico)
     except:
         return jsonify({"error": "Error al cargar los datos del tutor académico"}), 400
-    tutor_academico = tutor_service.crear_tutor(**tutor_academico)
+    tutor_academico = tutor_service.crear_obtener_tutor(**tutor_academico)
     print(f"tutor academico: {tutor_academico}")
 
     carta_recomendacion.informacion_alumno_entrante = alumno
     carta_recomendacion.postulacion = postulacion
-
-    if data_pasaporte["numero"] != "":
-        pasaporte_archivo.informacion_alumno_entrante = alumno
-        pasaporte_archivo.postulacion = postulacion
-        
-    if data_cedula["numero"] != "":
-        cedula_de_identidad_archivo.informacion_alumno_entrante = alumno
-        cedula_de_identidad_archivo.postulacion = postulacion
     
-    if data_archivos["certificado_b1"] != None:
-        certificado_b1.informacion_alumno_entrante = alumno
-        certificado_b1.postulacion = postulacion
-
-    if data_archivos["plan_trabajo"] != None:
-        plan_trabajo.informacion_alumno_entrante = alumno
-        plan_trabajo.postulacion = postulacion
+        
 
     postulacion.tutores.append(tutor_institucional)
     postulacion.tutores.append(tutor_academico)
     db.session.commit()
 
-    email_service.send_email("Solicitud de Postulación", "Se ha recibido una solicitud de postulación", ["lautygutierrez5@gmail.com"])
+    email_service.send_email("Solicitud de Postulación", "Se ha recibido una solicitud de postulación", ["bribbrizuela@gmail.com"])
     return jsonify(data), 201
     
     
