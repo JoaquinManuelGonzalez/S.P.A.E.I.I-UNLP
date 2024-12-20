@@ -79,7 +79,7 @@
               </div>
               <div class="mb-4">
                 <label for="fotoPasaporte" class="block text-sm font-medium text-gray-700">Foto/Archivo de pasaporte</label>
-                <input v-on:change="onFileChange($event, 'fotoPasaporte')" id="fotoPasaporte" type="file" class="mt-1 p-2 border border-gray-300 rounded-md w-full" :required="!mercosur || formData.pasaporte.numero != '' || formData.pasaporte.id_pais != ''">
+                <input v-on:change="onFileChange($event, 'fotoPasaporte')" ref="formData.archivo.pasaporte" id="fotoPasaporte" type="file" class="mt-1 p-2 border border-gray-300 rounded-md w-full" :required="!mercosur || formData.pasaporte.numero != '' || formData.pasaporte.id_pais != ''">
               </div>
             </div>
             <div v-if="mercosur">
@@ -98,7 +98,7 @@
               </div>
               <div class="mb-4">
                 <label for="fotoCedulaIdentidad" class="block text-sm font-medium text-gray-700">Foto/Archivo de cédula de identidad</label>
-                <input v-on:change="onFileChange($event, 'fotoCedulaIdentidad')" id="fotoCedulaIdentidad" type="file" class="mt-1 p-2 border border-gray-300 rounded-md w-full" :required="formData.cedula_de_identidad.numero != '' || formData.cedula_de_identidad.id_pais != ''">
+                <input v-on:change="onFileChange($event, 'fotoCedulaIdentidad')" ref="formData.archivo.cedula_de_identidad" id="fotoCedulaIdentidad" type="file" class="mt-1 p-2 border border-gray-300 rounded-md w-full" :required="formData.cedula_de_identidad.numero != '' || formData.cedula_de_identidad.id_pais != ''">
               </div>
             </div>
             <div class="mb-4">
@@ -112,7 +112,7 @@
             </div>
             <div class="mb-4">
               <label for="certificadoB1" class="block text-sm font-medium text-gray-700">Certificado B1 o superior de español</label>
-              <input v-on:change="onFileChange($event, 'certificadoB1')" id="certificadoB1" type="file" class="mt-1 p-2 border border-gray-300 rounded-md w-full" :required="!es_hispanohablante">
+              <input v-on:change="onFileChange($event, 'certificadoB1')" ref="formData.archivo.certificado_b1" id="certificadoB1" type="file" class="mt-1 p-2 border border-gray-300 rounded-md w-full" :required="!es_hispanohablante">
             </div>
           </div>
   
@@ -132,7 +132,7 @@
             </div>
             <div v-if="nivelEstudio === 'posgrado'" class="mb-4">
               <label for="planTrabajo" class="block text-sm font-medium text-gray-700">Foto/Archivo del plan de trabajo</label>
-              <input v-on:change="onFileChange($event, 'planTrabajo')" id="planTrabajo" type="file" class="mt-1 p-2 border border-gray-300 rounded-md w-full" :required="nivelEstudio === 'posgrado'">
+              <input v-on:change="onFileChange($event, 'planTrabajo')" ref="formData.value.archivo.plan_trabajo" id="planTrabajo" type="file" class="mt-1 p-2 border border-gray-300 rounded-md w-full" :required="nivelEstudio === 'posgrado'">
             </div>
             <div class="mb-4">
               <label for="consulado_visacion" class="block text-sm font-medium text-gray-700">Consulado de visación</label>
@@ -161,7 +161,7 @@
             </div>
             <div class="mb-4">
               <label for="cartaRecomendacion" class="block text-sm font-medium text-gray-700">Carta de recomendación de su universidad de origen</label>
-              <input v-on:change="onFileChange($event, 'cartaRecomendacion')" id="cartaRecomendacion" type="file" class="mt-1 p-2 border border-gray-300 rounded-md w-full" required>
+              <input v-on:change="onFileChange($event, 'cartaRecomendacion')" ref="formData.value.archivo.carta_recomendacion" id="cartaRecomendacion" type="file" class="mt-1 p-2 border border-gray-300 rounded-md w-full" required>
             </div>
             <!-- Datos de Tutores -->
             <h3 class="font-semibold text-lg mb-2">Datos de Tutores</h3>
@@ -205,7 +205,7 @@
   import { storeToRefs } from 'pinia';
   import { useI18n } from 'vue-i18n';
   import { usePrimerFormularioStore } from '../stores/PrimerFormularioStore';
-
+  import  router from '../router';
 
   const store = usePrimerFormularioStore();
   const { formData, errors, loading, paises, estados_civiles, programas, generos, nivelEstudio, convenioPrograma, es_hispanohablante, mercosur } = storeToRefs(store);
@@ -265,9 +265,12 @@
         console.log("arriba del submit");
         await store.submitForm();
         console.log("abajo del submit");
+        router.push("/");
+        alert("Formulario enviado con éxito");
       }
     } catch (error) {
-      console.error(error);
+      console.log(error);
+      alert("Error al enviar el formulario");
     }
   };
 
@@ -320,6 +323,8 @@
 
   const soloNumeros = (value) => /^[0-9]+$/.test(value);
 
+  const numerosLetras = (value) => /^[a-zA-Z0-9]+$/.test(value);
+
   const validar = () => {
     errors.value = [];
     if(formData.value.alumno.apellido.length < 3 || formData.value.alumno.apellido.length > 50 || !soloLetras(formData.value.alumno.apellido)){
@@ -337,8 +342,8 @@
       alert(errors["email"]);
       return false;
     }
-    if(formData.value.pasaporte.numero != "" && !soloNumeros(formData.value.pasaporte.numero)){
-      errors["numero_pasaporte"] = "El pasaporte solo debe contener números";
+    if(formData.value.pasaporte.numero != "" && !numerosLetras(formData.value.pasaporte.numero)){
+      errors["numero_pasaporte"] = "El pasaporte solo debe contener números y letras";
       alert(errors["numero_pasaporte"]);
       return false;
     }
