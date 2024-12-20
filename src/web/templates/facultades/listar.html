@@ -3,39 +3,34 @@
 {% block title %}Facultades{% endblock %}
 
 {% block content %}
-    <div class="container-lg">
-        <div class="row align-items-center">
-            <div class="col">
-                <h1 class="m-0">Facultades</h1>
-            </div>
-        </div>
+    <div class="container py-5">
+        <h1 class="display-5 text-center mb-4">Facultades</h1>
+        <hr class="mb-4">
 
-        <div class="table-responsive">
-            <div class="table-responsive">
-                <table class="table table-striped table-hover">
-                    <thead>
+        <div class="table-responsive shadow-sm">
+            <table class="table table-bordered table-hover table-striped align-middle">
+                <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Acrónimo</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for facultad in facultades %}
                     <tr>
-                        <th scope="col">Nombre</th>
-                        <th scope="col" class="text-center">Acrónimo</th>
-                        <th scope="col" class="text-center">Acciones</th>
+                        <th>{{ facultad.nombre }}</th>
+                        <td class="text-center align-middle">{{ facultad.acronimo }}</td>
+                        <td class="text-center align-middle">
+                            <div class="btn-group">
+                                <a href="{{ url_for('facultades.visualizar', facultad_id=facultad.id) }}" class="btn btn-primary" data-bs-toggle="tooltip"
+                                   data-bs-title="Ver"><i class="bi bi-eye-fill"></i></a>
+                            </div>
+                        </td>
                     </tr>
-                    </thead>
-                    <tbody>
-                    {% for facultad in facultades %}
-                        <tr>
-                            <th scope="row" class="align-middle">{{ facultad.nombre }}</th>
-                            <td class="text-center align-middle">{{ facultad.acronimo }}</td>
-                            <td class="text-center align-middle">
-                                <div class="btn-group">
-                                    <a href="{{ url_for('facultades.visualizar', facultad_id=facultad.id) }}" class="btn btn-primary" data-bs-toggle="tooltip"
-                                       data-bs-title="Ver"><i class="bi bi-eye-fill"></i></a>
-                                </div>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+                {% endfor %}
+                </tbody>
+            </table>
         </div>
 
     </div>
