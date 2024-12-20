@@ -28,11 +28,13 @@
     </div>
 
     <div class="container-lg">
-        <div class="col">
-            <h2 class="m-0">Carreras</h2>
-        </div>
-        <div class="col text-end">
-            <a href="{{ url_for("asignaturas.listado_asignar_carreras", asignatura_id = asignatura.id) }}" type="button" class="btn btn-success">Asignar carreras</a>
+        <div class="row align-items-center border-bottom">
+            <div class="col">
+                <h2 class="m-0">Carreras</h2>
+            </div>
+            <div class="col text-end">
+                <a href="{{ url_for("asignaturas.listado_asignar_carreras", asignatura_id = asignatura.id) }}" type="button" class="btn btn-success">Asignar carreras</a>
+            </div>
         </div>
         <div class="table-responsive">
             <div class="col">
