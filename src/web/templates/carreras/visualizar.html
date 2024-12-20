@@ -1,12 +1,12 @@
 {% extends "layout.html" %}
 
-{% block title %}Detalles de Asignatura{% endblock %}
+{% block title %}Detalles de Carrera{% endblock %}
 
 {% block content %}
     <div class="container">
         <div class="row">
             <div class="col">
-                <h1 class="m-0">Datos de Asignatura <strong>{{ asignatura.nombre }}</strong></h1>
+                <h1 class="m-0">Datos de Carrera <strong>{{ carrera.nombre }}</strong></h1>
             </div>
         </div>
         <div class="row justify-content-center my-3 py-3 border-bottom border-top">
@@ -15,11 +15,11 @@
                     <tbody>
                     <tr>
                         <th scope="row" class="text-end">Nombre:</th>
-                        <td class="text-start">{{ asignatura.nombre }}</td>
+                        <td class="text-start">{{ carrera.nombre }}</td>
                     </tr>
                     <tr>
-                        <th scope="row" class="text-end">Facultad en la que se cursa:</th>
-                        <td class="text-start">{{ asignatura.facultad.nombre }}</td>
+                        <th scope="row" class="text-end">Facultad de la que depende:</th>
+                        <td class="text-start">{{ carrera.facultad.nombre }}</td>
                     </tr>
                     </tbody>
                 </table>
@@ -30,10 +30,10 @@
     <div class="container-lg">
         <div class="row align-items-center border-bottom">
             <div class="col">
-                <h2 class="m-0">Carreras</h2>
+                <h2 class="m-0">Asingaturas</h2>
             </div>
             <div class="col text-end">
-                <a href="{{ url_for("asignaturas.listado_asignar_carreras", asignatura_id = asignatura.id) }}" type="button" class="btn btn-success">Asignar carreras</a>
+                <a href="{{ url_for("carreras.listado_asignar_asignaturas", carrera_id = carrera.id) }}" type="button" class="btn btn-success">Asignar asignaturas</a>
             </div>
         </div>
         <div class="table-responsive">
@@ -47,17 +47,17 @@
                     </tr>
                     </thead>
                     <tbody>
-                    {% for carrera in carreras %}
+                    {% for asignatura in asignaturas %}
                         <tr>
-                            <th scope="row" class="align-middle">{{ carrera.nombre }}</th>
-                            <td class="text-center align-middle">{{ carrera.facultad.nombre }}</td>
+                            <th scope="row" class="align-middle">{{ asignatura.nombre }}</th>
+                            <td class="text-center align-middle">{{ asignatura.facultad.nombre }}</td>
                             <td class="text-center align-middle">
                                 <div class="btn-group">
-                                    <a href="{{ url_for("carreras.visualizar", carrera_id = carrera.id) }}" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-title="Ver"><i class="bi bi-eye-fill"></i></a>
-                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal-{{ carrera.id }}" data-carrera-id="{{ carrera.id }}" data-bs-title="Eliminar">
+                                    <a href="{{ url_for("asignaturas.visualizar", asignatura_id = asignatura.id) }}" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-title="Ver"><i class="bi bi-eye-fill"></i></a>
+                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal-{{ asignatura.id }}" data-asignatura-id="{{ asignatura.id }}" data-bs-title="Eliminar">
                                         <i class="bi bi-trash-fill"></i>
                                     </button>
-                                    <div class="modal fade" id="confirmDeleteModal-{{ carrera.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal fade" id="confirmDeleteModal-{{ asignatura.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                         <div class="modal-dialog">
                                             <div class="modal-content">
                                                 <div class="modal-header">
@@ -66,12 +66,12 @@
                                                         aria-label="Close"></button>
                                                 </div>
                                                 <div class="modal-body">
-                                                    ¿Estás seguro que deseas desasignar la carrera {{ carrera.nombre }}?
+                                                    ¿Estás seguro que deseas desasignar la asignatura {{ asignatura.nombre }}?
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary"
                                                         data-bs-dismiss="modal">Cancelar</button>
-                                                    <form method="POST" action="{{ url_for("asignaturas.desasignar_carrera", asignatura_id = asignatura.id, carrera_id = carrera.id) }}">
+                                                    <form method="POST" action="{{ url_for("carreras.desasignar_asignatura", asignatura_id = asignatura.id, carrera_id = carrera.id) }}">
                                                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                                         <button type="submit" class="btn btn-danger">Eliminar</button>
                                                     </form>
@@ -92,8 +92,8 @@
     <div class="container">
         <div class="row">
             <div class="col text-center">
-                <a class="btn btn-secondary me-2" href="{{ url_for("facultades.visualizar", facultad_id = asignatura.facultad.id) }}" role="button">{{ asignatura.facultad.acronimo }}</a>
-                <a class="btn btn-primary me-2" href="{{ url_for("asignaturas.editar", asignatura_id = asignatura.id) }}" role="button">Editar</a>
+                <a class="btn btn-secondary me-2" href="{{ url_for("facultades.visualizar", facultad_id = carrera.facultad.id) }}" role="button">{{ carrera.facultad.acronimo }}</a>
+                <a class="btn btn-primary me-2" href="{{ url_for("carreras.editar", carrera_id = carrera.id) }}" role="button">Editar</a>
             </div>
         </div>
     </div>

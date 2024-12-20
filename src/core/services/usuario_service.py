@@ -199,7 +199,7 @@ def buscar_permisos_usuario(id_usuario:int):
     return permisos
 
 def get_puntos_focales_by_facultad(facultad_id: int):
-    return Usuario.query.filter(Usuario.facultad_id == facultad_id).all()
+    return Usuario.query.filter(Usuario.facultad_id == facultad_id and Usuario.estado == EstadoUsuario.ACTIVO).all()
 
 def actualizar_informacion_usuario_alumno(
         usuario,

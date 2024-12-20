@@ -1,5 +1,6 @@
 from src.core.database import db
 from datetime import datetime
+from src.core.models.asignatura import asignaturas_carreras
 
 class Carrera(db.Model):
     __tablename__ = "carreras"
@@ -8,6 +9,7 @@ class Carrera(db.Model):
     nombre = db.Column(db.String(100), nullable=False)
     facultad_id = db.Column(db.Integer, db.ForeignKey("facultades.id"), nullable=False)
     facultad = db.relationship("Facultad")
+    asignaturas = db.relationship("Asignatura", secondary=asignaturas_carreras)
 
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)

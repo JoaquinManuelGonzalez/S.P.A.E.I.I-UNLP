@@ -5,7 +5,11 @@
 {% endblock %}
 {% block content %}
 <div class="container mt-5">
-    
+    <div class="row align-items-center">
+        <div class="col">
+            <h1 class="m-0">Editar {{ asignatura.nombre }}</h1>
+        </div>
+    </div>
     <form method="POST" class="container-fluid full-height d-flex justify-content-center align-items-center" style="max-width: 500px; max-height: 750px; overflow: hidden;">
         {{ formulario.csrf_token }}
         <div class="container my-5">
@@ -28,7 +32,7 @@
                 {% endif %}
             </div>
 
-            <a href="{{ url_for("asignaturas.visualizar", asignatura_id = asignatura_id) }}" class="btn btn-secondary me-2">Cancelar</a>
+            <a href="{{ url_for("asignaturas.visualizar", asignatura_id = asignatura.id) }}" class="btn btn-secondary me-2">Cancelar</a>
             <button type="submit" class="btn btn-primary my-3">Confirmar cambios</button>
         </div>
     </form>

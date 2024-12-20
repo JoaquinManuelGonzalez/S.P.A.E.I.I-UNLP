@@ -2,14 +2,14 @@ from flask import Blueprint, flash, redirect, request, render_template, url_for
 from src.core.services import facultades as facultades_service
 from src.core.services import carreras as carreras_service
 from src.core.services import asignaturas as asignaturas_service
-from src.core.services import usuario_service as usuarios_service
 from src.web.forms import AsignaturaForm
-
+from src.web.handlers.permisos import check
 
 asignaturas_bp = Blueprint("asignaturas", __name__, url_prefix="/asignaturas")
 
 #-----Visualizar-----
 @asignaturas_bp.get('/<int:asignatura_id>')
+@check("asignaturas_crud")
 def visualizar(asignatura_id):
     """Detalle de la asignatura con id asignatura_id.
 
@@ -25,6 +25,7 @@ def visualizar(asignatura_id):
 
 #-----Crear-----
 @asignaturas_bp.route("/crear", methods=['GET', 'POST'])
+@check("asignaturas_crud")
 def crear():
     """Crea una Asignatura.
 
@@ -44,6 +45,7 @@ def crear():
 
 #-----Editar-----
 @asignaturas_bp.route("/<int:asignatura_id>/editar", methods=['GET', 'POST'])
+@check("asignaturas_crud")
 def editar(asignatura_id):
     """Edita una Asignatura.
 
@@ -58,27 +60,31 @@ def editar(asignatura_id):
     if formulario.validate_on_submit():
         asignatura = asignaturas_service.editar_asignatura_web(asignatura_id,formulario)
         return redirect(url_for("asignaturas.visualizar", asignatura_id = asignatura.id))
-    return render_template("asignaturas/editar.html", formulario=formulario, asignatura_id=asignatura_id)
+    return render_template("asignaturas/editar.html", formulario=formulario, asignatura=asignatura)
 
 #-----Eliminar-----
-@asignaturas_bp.post("/<int:asignatura_id>/eliminar")
-def eliminar(asignatura_id):
+@asignaturas_bp.post("/<int:asignatura_id>/eliminar/<int:facultad_id>")
+@check("asignaturas_crud")
+def eliminar(asignatura_id, facultad_id):
     """Elimina una Asignatura.
 
     Returns:
         flask.templating.render_template: Visualizacion de facultad de origen.
     """
-    asignatura = asignaturas_service.get_asignatura_by_id(asignatura_id)
+
+    previous_url = request.referrer
+
     pudo = asignaturas_service.delete_asignatura(asignatura_id)
     if pudo:
         flash('La asignatura se ha eliminado correctamente', 'success')
     else:
         flash('No se pudo eliminar la asignatura', 'error')
 
-    return redirect(url_for("facultades.visualizar", facultad_id = asignatura.facultad_id))
+    return redirect(previous_url or url_for("facultades.visualizar", facultad_id = facultad_id))
 
 #-----Asignar asignatura a carreras-----
 @asignaturas_bp.get("/<int:asignatura_id>/asignar_carreras")
+@check("asignaturas_crud")
 def listado_asignar_carreras(asignatura_id):
     """Renderiza el listado de carreras para asignar.
 
@@ -94,13 +100,16 @@ def listado_asignar_carreras(asignatura_id):
     except (TypeError, ValueError):
         facultad_id = None
 
-    pagina = request.args.get('pagina', 1, type=int)
-    carreras = carreras_service.get_carreras(nombre=search, facultad_id=facultad_id, asignatura_id=asignatura.id)
-
+    if not (search or facultad_id):
+        carreras = []
+    else:
+        carreras = carreras_service.get_carreras(nombre=search, facultad_id=facultad_id, asignatura_id=asignatura.id)
+    
     facultades = facultades_service.get_all_facultades()
-    return render_template("asignaturas/asignatura_carrera.html", facultades=facultades, carreras=carreras, search=search, facultad_id=facultad_id, pagina=pagina, asignatura=asignatura)
+    return render_template("asignaturas/asignatura_carrera.html", facultades=facultades, carreras=carreras, search=search, facultad_id=facultad_id, asignatura=asignatura)
 
 @asignaturas_bp.get("/<int:asignatura_id>/asignar_carreras/<int:carrera_id>")
+@check("asignaturas_crud")
 def asignar_carrera(asignatura_id, carrera_id):
     """Relaciona una carrera con una materia.
 
@@ -108,15 +117,18 @@ def asignar_carrera(asignatura_id, carrera_id):
         flask.templating.render_template: Plantilla asignar la asignatura a carreras.
     """
 
+    previous_url = request.referrer
+
     pudo = asignaturas_service.relacionar_asignatura_carrera(asignatura_id, carrera_id)
     if pudo:
         flash('La asignatura se ha asignado a la carrera correctamente', 'success')
     else:
         flash('No se pudo asignar la asignatura', 'error')
 
-    return redirect(url_for("asignaturas.listado_asignar_carreras", asignatura_id = asignatura_id))
+    return redirect(previous_url or url_for("asignaturas.listado_asignar_carreras", asignatura_id = asignatura_id))
 
 @asignaturas_bp.post("/<int:asignatura_id>/desasignar_carreras/<int:carrera_id>")
+@check("asignaturas_crud")
 def desasignar_carrera(asignatura_id, carrera_id):
     """Relaciona una carrera con una materia.
 
@@ -124,10 +136,12 @@ def desasignar_carrera(asignatura_id, carrera_id):
         flask.templating.render_template: Plantilla asignar la asignatura a carreras.
     """
 
+    previous_url = request.referrer
+
     pudo = asignaturas_service.desrelacionar_asignatura_carrera(asignatura_id, carrera_id)
     if pudo:
         flash('La asignatura se ha desasignado a la carrera correctamente', 'success')
     else:
         flash('No se pudo desasignar la asignatura', 'error')
 
-    return redirect(url_for("asignaturas.visualizar", asignatura_id = asignatura_id))
+    return redirect(previous_url or url_for("asignaturas.visualizar", asignatura_id = asignatura_id))

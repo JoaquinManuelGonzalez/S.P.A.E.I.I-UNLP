@@ -1,3 +1,4 @@
+from sqlalchemy import and_, func, text
 from src.core.database import db
 from datetime import datetime
 from src.core.models.asignatura import Asignatura, asignaturas_carreras
@@ -74,7 +75,13 @@ def get_asignatura_by_nombre_facultad(nombre, facultad_id):
         Asignatura: El objeto Asignatura o None si no se encuentra.
     """
 
-    return Asignatura.query.filter(Asignatura.nombre == nombre and Asignatura.facultad_id == facultad_id).first()
+    return Asignatura.query.filter(
+        and_(
+            func.binary(Asignatura.nombre) == nombre,
+            Asignatura.facultad_id == facultad_id,
+            Asignatura.deleted_at == None
+        )
+    ).first()
 
 def get_asignaturas_by_carrera(carrera_id: int):
     """Obtiene todas las asignaturas cursadas por un estudiante de la carrera pasada por parámetro.
@@ -86,7 +93,7 @@ def get_asignaturas_by_carrera(carrera_id: int):
         list: Una lista de objetos Asignatura.
     """
 
-    return Asignatura.query.filter(Asignatura.carreras.any(id=carrera_id)).all()
+    return Asignatura.query.filter(Asignatura.carreras.any(id=carrera_id) and Asignatura.deleted_at == None).all()
 
 def get_asignaturas_cursadas_en(facultad_id: int):
     """Obtiene todas las asignaturas que se cursan en la facultad pasada por parametro.
@@ -98,7 +105,7 @@ def get_asignaturas_cursadas_en(facultad_id: int):
         list: Una lista de objetos Asignatura.
     """
 
-    return Asignatura.query.filter(Asignatura.facultad_id == facultad_id).all()
+    return Asignatura.query.filter(Asignatura.facultad_id == facultad_id and Asignatura.deleted_at == None).all()
 
 def get_asignaturas_cursadas_por_carreras(carreras, nombre, pagina):
     """Obtiene todas las asignaturas que se cursan en las carreras pasadas por parámetro.
@@ -124,6 +131,18 @@ def get_asignaturas_cursadas_por_carreras(carreras, nombre, pagina):
 
     return asignaturas.paginate(page=pagina, per_page=5, error_out=False)
 
+def get_asignaturas(nombre: str, facultad_id: int, carrera_id: int):
+
+    query = text("SELECT * " + 
+                 "FROM asignaturas a " + 
+                 "WHERE (a.facultad_id = :facultad_id OR :facultad_id IS NULL) " + 
+                 "AND (LOWER(a.nombre) LIKE CONCAT('%', LOWER(:nombre), '%') OR :nombre IS NULL) " + 
+                 "AND (a.deleted_at IS NULL) " +
+                 "AND NOT EXISTS (SELECT * FROM asignaturas_carreras ac WHERE ac.carrera_id = :carrera_id AND a.id = ac.asignatura_id)")
+
+    resultado = db.session.query(Asignatura).from_statement(query).params(carrera_id=carrera_id, nombre=nombre, facultad_id=facultad_id).all()
+    return resultado
+
 def delete_asignatura(asignatura_id):
     """Elimina una asignatura (soft delete).
 
@@ -135,7 +154,7 @@ def delete_asignatura(asignatura_id):
     """
 
     asignatura = Asignatura.query.get(asignatura_id)
-    if asignatura:
+    if asignatura and not asignatura.deleted_at:
         asignatura.deleted_at = datetime.now()
         db.session.commit()
         return True
