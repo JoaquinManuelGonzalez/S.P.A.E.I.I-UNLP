@@ -269,7 +269,7 @@ def primer_formulario():
     postulacion.tutores.append(tutor_academico)
     db.session.commit()
 
-    email_service.send_email("Solicitud de Postulación", "Se ha recibido una solicitud de postulación", ["bribbrizuela@gmail.com"])
+    email_service.send_email("Solicitud de Postulación", "Se ha recibido una solicitud de postulación", ["algunmail@gmail.com"])
     return jsonify(data), 201
     
     
