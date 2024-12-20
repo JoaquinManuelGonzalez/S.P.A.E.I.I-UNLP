@@ -100,11 +100,13 @@ def listado_asignar_carreras(asignatura_id):
     except (TypeError, ValueError):
         facultad_id = None
 
-    pagina = request.args.get('pagina', 1, type=int)
-    carreras = carreras_service.get_carreras(nombre=search, facultad_id=facultad_id, asignatura_id=asignatura.id)
-
+    if not (search or facultad_id):
+        carreras = []
+    else:
+        carreras = carreras_service.get_carreras(nombre=search, facultad_id=facultad_id, asignatura_id=asignatura.id)
+    
     facultades = facultades_service.get_all_facultades()
-    return render_template("asignaturas/asignatura_carrera.html", facultades=facultades, carreras=carreras, search=search, facultad_id=facultad_id, pagina=pagina, asignatura=asignatura)
+    return render_template("asignaturas/asignatura_carrera.html", facultades=facultades, carreras=carreras, search=search, facultad_id=facultad_id, asignatura=asignatura)
 
 @asignaturas_bp.get("/<int:asignatura_id>/asignar_carreras/<int:carrera_id>")
 @check("asignaturas_crud")

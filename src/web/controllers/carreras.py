@@ -102,7 +102,10 @@ def listado_asignar_asignaturas(carrera_id):
     except (TypeError, ValueError):
         facultad_id = None
 
-    asignaturas = asignaturas_service.get_asignaturas(nombre=search, facultad_id=facultad_id, carrera_id=carrera_id)
+    if not (search or facultad_id):
+        asignaturas = []
+    else:
+        asignaturas = asignaturas_service.get_asignaturas(nombre=search, facultad_id=facultad_id, carrera_id=carrera_id)
 
     facultades = facultades_service.get_all_facultades()
     return render_template("carreras/asignatura_carrera.html", facultades=facultades, asignaturas=asignaturas, search=search, facultad_id=facultad_id, carrera=carrera)
