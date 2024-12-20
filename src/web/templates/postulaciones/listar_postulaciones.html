@@ -88,5 +88,11 @@
             </tbody>
         </table>
     </div>
+
+    <div class="text-end">
+        <a href="{{ url_for('postulacion.exportar_csv', nombre=request.args.get('nombre', ''), apellido=request.args.get('apellido', ''), email=request.args.get('email', ''), estado=request.args.get('estado', ''), ordenado_por=request.args.get('ordenado_por', ''), orden=request.args.get('orden', '')) }}" class="btn btn-success">
+            Exportar CSV
+        </a>
+    </div>
 </div>
 {% endblock %}

@@ -24,6 +24,29 @@ def get_postulacion_by_id(id_postulacion):
     """
     return Postulacion.query.get(id_postulacion)
 
+def get_postulaciones(
+        nombre,
+        apellido,
+        email,
+        estado,
+        ordenado_por,
+        orden,
+):
+    query = Postulacion.query
+
+    if nombre:
+        query = query.filter(Postulacion.informacion_alumno_entrante.has(InformacionAlumnoEntrante.nombre.ilike(f"%{nombre}%")))
+    if apellido:
+        query = query.filter(Postulacion.informacion_alumno_entrante.has(InformacionAlumnoEntrante.apellido.ilike(f"%{apellido}%")))
+    if email:
+        query = query.filter(Postulacion.informacion_alumno_entrante.has(InformacionAlumnoEntrante.email.ilike(f"%{email}%")))
+    if estado:
+        query = query.filter(Postulacion.estado.has(Estado.nombre.ilike(f"%{estado}%")))
+    
+    if ordenado_por:
+        query = ordenar_postulaciones(query, ordenado_por, orden)
+
+    return query.all()
 def filtrar_postulaciones(
         nombre,
         apellido,

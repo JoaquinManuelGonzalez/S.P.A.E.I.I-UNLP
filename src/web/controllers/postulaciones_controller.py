@@ -1,4 +1,5 @@
-from flask import Blueprint, request, render_template, redirect, url_for, flash, session
+import csv
+from flask import Blueprint, Response, request, render_template, redirect, url_for, flash, session
 from src.core.models.postulacion import Postulacion
 from src.core.services import (postulacion_service, alumno_service, estado_postulacion_service,
 paises_service, genero_service, estado_civil_service, pasaporte_service, cedula_de_identidad_service,
@@ -129,3 +130,42 @@ def listar_solicitudes_de_postulacion():
 
     #postulaciones = postulacion_service.listar_postulaciones()
     return render_template('postulaciones/listar_solicitudes_de_postulacion.html', postulaciones=postulaciones, estados=estados)
+
+@postulacion_bp.get('/exportar_csv')
+def exportar_csv():
+    # Obtener los parámetros de filtrado
+    nombre = request.args.get("nombre", None)
+    apellido = request.args.get("apellido", None)
+    email = request.args.get("email", None)
+    estado = request.args.get("estado", None)
+    ordenado_por = request.args.get("ordenado_por", None)
+    orden = request.args.get("orden", None)
+
+    # Filtrar las postulaciones según los parámetros
+    postulaciones = postulacion_service.get_postulaciones(
+        nombre,
+        apellido,
+        email,
+        estado,
+        ordenado_por,
+        orden
+    )
+
+    # Crear los datos para el CSV
+    datos_csv = [["Nombre", "Apellido", "Email", "Fecha de Postulación", "Estado"]]
+    for postulacion in postulaciones:
+        datos_csv.append([
+            postulacion.informacion_alumno_entrante.nombre,
+            postulacion.informacion_alumno_entrante.apellido,
+            postulacion.informacion_alumno_entrante.email,
+            postulacion.creacion.strftime("%d-%m-%Y"),
+            postulacion.estado.nombre,
+        ])
+
+    # Generar la respuesta CSV
+    response = Response(
+        "\n".join([",".join(map(str, fila)) for fila in datos_csv]),
+        mimetype="text/csv",
+    )
+    response.headers["Content-Disposition"] = "attachment; filename=postulaciones.csv"
+    return response
