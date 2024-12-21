@@ -1,8 +1,11 @@
-from flask import Blueprint, request, render_template, redirect, url_for, flash, session
+from flask import Blueprint, request, render_template, redirect, url_for, flash, session, send_file
 from src.core.models.postulacion import Postulacion
 from src.core.services import (postulacion_service, alumno_service, estado_postulacion_service,
 paises_service, genero_service, estado_civil_service, pasaporte_service, cedula_de_identidad_service,
-programa_service)
+programa_service, archivo_service, usuario_service, email_service)
+from flask import current_app as app
+import os
+import io
 
 
 postulacion_bp = Blueprint('postulacion', __name__, url_prefix='/postulaciones')
@@ -48,27 +51,29 @@ def ver_postulacion(id_postulacion):
         pasaporte = pasaporte_service.get_pasaporte_by_id(alumno.id_pasaporte)
         pais_pasaporte = paises_service.get_pais_by_id(pasaporte.id_pais)
     else:
-        pasaporte = ""
-        pais_pasaporte = ""
+        pasaporte = None
+        pais_pasaporte = None
     if alumno.id_cedula_de_identidad is not None:
         cedula_de_identidad = cedula_de_identidad_service.get_cedula_de_identidad_by_id(alumno.id_cedula_de_identidad)
         pais_cedula_de_identidad = paises_service.get_pais_by_id(cedula_de_identidad.id_pais)
     else:
-        cedula_de_identidad = ""
-        pais_cedula_de_identidad = ""
+        cedula_de_identidad = None
+        pais_cedula_de_identidad = None
     if postulacion.id_programa is not None:
         programa = programa_service.get_programa_by_id(postulacion.id_programa)
     else:
-        programa = ""
+        programa = None
 
     tutores = postulacion.tutores
-    tutor_institucional = ""
-    tutor_academico = ""
+    tutor_institucional = None
+    tutor_academico = None
     for tutor in tutores:
         if tutor.es_institucional:
             tutor_institucional = tutor
         else:
             tutor_academico = tutor
+
+    archivos = archivo_service.get_archivos_by_postulacion(postulacion.id)
     
     data = {
         "postulacion": postulacion,
@@ -84,24 +89,39 @@ def ver_postulacion(id_postulacion):
         "pais_pasaporte": pais_pasaporte,
         "pais_cedula_de_identidad": pais_cedula_de_identidad,
         "tutor_institucional": tutor_institucional,
-        "tutor_academico": tutor_academico
+        "tutor_academico": tutor_academico,
+        "archivos": archivos
     }
     return render_template('postulaciones/ver_postulacion.html', **data)
 
 
-@postulacion_bp.post('aprobar_rechazar_postulacion/<int:id_postulacion>')
-def aceptar_rechazar_1(id_postulacion):
-    if request.method == 'POST':
-        decision = request.form['decision']
-
-        if decision == 'aceptar':
-            postulacion_service.aprobar_postulacion_etapa_1(id_postulacion)
-            flash('Postulación aprobada', 'success')
-            return redirect(url_for('postulacion.ver_postulacion', id_postulacion=id_postulacion))
-    else:
-        flash('Debe seleccionar una opción', 'danger')
-        return redirect(url_for('postulacion.ver_postulacion', id_postulacion=id_postulacion))
+@postulacion_bp.post('aprobar_solicitud_de_postulacion/<int:id_postulacion>')
+def aceptar_solicitud(id_postulacion):
+    postulacion = postulacion_service.get_postulacion_by_id(id_postulacion)
+    postulacion_service.actualizar_estado_postulacion(postulacion, "Postulacion Iniciada")
+    alumno = alumno_service.get_alumno_by_id(postulacion.id_informacion_alumno_entrante)
+    usuario_service.crear_usuario_solicitud_aprobada(alumno.nombre, alumno.apellido, alumno.email, alumno.id)
+    flash('Solicitud de postulacion aprobada', 'success')
+    return redirect(url_for('postulacion.listar_solicitudes_de_postulacion'))
     
+
+@postulacion_bp.post('rechazar_solicitud_de_postulacion/<int:id_postulacion>')
+def rechazar_solicitud(id_postulacion):
+    postulacion = postulacion_service.get_postulacion_by_id(id_postulacion)
+    alumno = alumno_service.get_alumno_by_id(postulacion.id_informacion_alumno_entrante)
+    motivo = request.form.get('reject_reason')
+    if not motivo:
+        flash('El motivo de rechazo es obligatorio.', 'danger')
+        return redirect(url_for('postulacion.ver_postulacion', id_postulacion=postulacion.id))
+    else:
+        postulacion_service.actualizar_estado_postulacion(postulacion, "Solicitud Rechazada")
+        titulo = "Solicitud de Postulacion Rechazada"
+        cuerpo = f"Su solicitud de postulacion ha sido rechazada. El motivo de rechazo es: {motivo}"
+        destino = alumno.email
+        email_service.send_email(titulo, cuerpo, [destino])
+        flash('Solicitud de postulacion rechazada', 'danger')
+        return redirect(url_for('postulacion.listar_solicitudes_de_postulacion'))
+
 
 @postulacion_bp.get('/listar_solicitudes_de_postulacion')
 def listar_solicitudes_de_postulacion():
@@ -129,3 +149,23 @@ def listar_solicitudes_de_postulacion():
 
     #postulaciones = postulacion_service.listar_postulaciones()
     return render_template('postulaciones/listar_solicitudes_de_postulacion.html', postulaciones=postulaciones, estados=estados)
+
+@postulacion_bp.get('/descargar_archivo/<filename>')
+def descargar_archivo(filename):
+    client = app.storage.client
+    bucket_name = "spaeii"
+
+    archivo = archivo_service.get_archivo_by_path(filename)
+    try:
+        #extension = os.path.splitext(archivo.filename)[1]
+
+        #download_name = f"{archivo.titulo}{extension}"
+        response = client.get_object(bucket_name, filename)
+
+        file_data = io.BytesIO(response.read())
+        response.close()
+        response.release_conn()
+
+        return send_file(file_data, download_name=filename, as_attachment=True)
+    except Exception:
+        return + "Error al descargar el archivo", 500
