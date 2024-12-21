@@ -1,9 +1,6 @@
 from flask import Blueprint, jsonify, request, make_response
 from flask_wtf.csrf import generate_csrf
 import base64
-from flask import current_app as app
-import os
-import io
 from src.core.database import db
 
 from src.core.services import (paises_service, genero_service, 
@@ -98,7 +95,7 @@ def primer_formulario():
             if not data_titulos["titulo_pasaporte"]:
                 return jsonify({"error": "No se encontraron datos del título del pasaporte"}), 400
             filename = f"{postulacion.id}_{alumno.id}_pasaporte_{data_titulos["titulo_pasaporte"]}"
-            save_file_minio(archivo_pasaporte, filename)
+            archivo_service.save_file_minio(archivo_pasaporte, filename)
             titulo_pasaporte = {
                 "titulo": data_titulos["titulo_pasaporte"],
                 "path": filename
@@ -123,7 +120,7 @@ def primer_formulario():
             if not data_titulos["titulo_pasaporte"]:
                 return jsonify({"error": "No se encontraron datos del título del pasaporte"}), 400
             filename = f"{postulacion.id}_{alumno.id}_pasaporte_{data_titulos["titulo_pasaporte"]}"
-            save_file_minio(archivo_pasaporte, filename)
+            archivo_service.save_file_minio(archivo_pasaporte, filename)
             titulo_pasaporte = {
                 "titulo": data_titulos["titulo_pasaporte"],
                 "path": filename
@@ -145,7 +142,7 @@ def primer_formulario():
             if not data_titulos["titulo_cedula_de_identidad"]:
                 return jsonify({"error": "No se encontraron datos del título del pasaporte"}), 400
             filename = f"{postulacion.id}_{alumno.id}_cedula_{data_titulos["titulo_pasaporte"]}"
-            save_file_minio(archivo_cedula, filename)
+            archivo_service.save_file_minio(archivo_cedula, filename)
             titulo_cedula = {
                 "titulo": data_titulos["titulo_cedula_de_identidad"],
                 "path": filename
@@ -172,7 +169,7 @@ def primer_formulario():
         if not data_titulos["titulo_carta_recomendacion"]:
             return jsonify({"error": "No se encontraron datos del título de la carta de recomendación"}), 400
         filename = f"{postulacion.id}_{alumno.id}_cartaRecomendacion_{data_titulos["titulo_carta_recomendacion"]}"
-        save_file_minio(archivo_carta_recomendacion, filename)
+        archivo_service.save_file_minio(archivo_carta_recomendacion, filename)
         titulo_carta_recomendacion = {
             "titulo": data_titulos["titulo_carta_recomendacion"],
             "path": filename
@@ -195,7 +192,7 @@ def primer_formulario():
             if not data_titulos["titulo_plan_trabajo"]:
                 return jsonify({"error": "No se encontraron datos del título del plan de trabajo"}), 400
             filename = f"{postulacion.id}_{alumno.id}_planDeTrabajo_{data_titulos["titulo_plan_trabajo"]}"
-            save_file_minio(plan_trabajo, filename)
+            archivo_service.save_file_minio(plan_trabajo, filename)
             titulo_plan_trabajo = {
                 "titulo": data_titulos["titulo_plan_trabajo"],
                 "path": filename
@@ -216,7 +213,7 @@ def primer_formulario():
             if not data_titulos["titulo_certificado_b1"]:
                 return jsonify({"error": "No se encontraron datos del título del certificado B1"}), 400
             filename = f"{postulacion.id}_{alumno.id}_certificadoB1_{data_titulos["titulo_certificado_b1"]}"
-            save_file_minio(archivo_certificado_b1, filename)
+            archivo_service.save_file_minio(archivo_certificado_b1, filename)
             titulo_certificado_b1 = {
                 "titulo": data_titulos["titulo_certificado_b1"],
                 "path": filename
@@ -234,7 +231,7 @@ def primer_formulario():
             if not data_titulos["titulo_certificado_b1"]:
                 return jsonify({"error": "No se encontraron datos del título del certificado B1"}), 400
             filename = f"{postulacion.id}_{alumno.id}_certificadoB1_{data_titulos["titulo_certificado_b1"]}"
-            save_file_minio(archivo_certificado_b1, filename)
+            archivo_service.save_file_minio(archivo_certificado_b1, filename)
             titulo_certificado_b1 = {
                 "titulo": data_titulos["titulo_certificado_b1"],
                 "path": filename
@@ -302,24 +299,3 @@ def primer_formulario_get():
     #.headers['Access-Control-Allow-Origin'] = 'http://localhost:5173/primer-formulario'
     return jsonify(data_response), 200
 
-
-def save_file_minio(file, filename):
-    """
-    Guarda un archivo en Minio.
-    """
-    try:
-        client = app.storage.client
-        # Convertir el archivo de bytes a un objeto BytesIO (simulando un archivo en memoria)
-        file_data = io.BytesIO(file)
-        size = len(file)  # Obtener el tamaño del archivo desde los bytes
-        print(f"file_dara: {file_data}")
-        # Subir el archivo a Minio
-        client.put_object(
-            "spaeii",  # Nombre del bucket
-            filename,  # Nombre del archivo en Minio
-            file_data,  # El archivo en formato BytesIO
-            size,  # Tamaño del archivo
-            content_type='application/octet-stream'  # Asumiendo un tipo de contenido genérico
-        )
-    except Exception as e:
-        raise Exception(f"Error al guardar el archivo en Minio: {e}")

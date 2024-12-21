@@ -1,8 +1,11 @@
-from flask import Blueprint, request, render_template, redirect, url_for, flash, session
+from flask import Blueprint, request, render_template, redirect, url_for, flash, session, send_file
 from src.core.models.postulacion import Postulacion
 from src.core.services import (postulacion_service, alumno_service, estado_postulacion_service,
 paises_service, genero_service, estado_civil_service, pasaporte_service, cedula_de_identidad_service,
-programa_service)
+programa_service, archivo_service)
+from flask import current_app as app
+import os
+import io
 
 
 postulacion_bp = Blueprint('postulacion', __name__, url_prefix='/postulaciones')
@@ -69,6 +72,8 @@ def ver_postulacion(id_postulacion):
             tutor_institucional = tutor
         else:
             tutor_academico = tutor
+
+    archivos = archivo_service.get_archivos_by_postulacion(postulacion.id)
     
     data = {
         "postulacion": postulacion,
@@ -84,7 +89,8 @@ def ver_postulacion(id_postulacion):
         "pais_pasaporte": pais_pasaporte,
         "pais_cedula_de_identidad": pais_cedula_de_identidad,
         "tutor_institucional": tutor_institucional,
-        "tutor_academico": tutor_academico
+        "tutor_academico": tutor_academico,
+        "archivos": archivos
     }
     return render_template('postulaciones/ver_postulacion.html', **data)
 
@@ -123,3 +129,23 @@ def listar_solicitudes_de_postulacion():
 
     #postulaciones = postulacion_service.listar_postulaciones()
     return render_template('postulaciones/listar_solicitudes_de_postulacion.html', postulaciones=postulaciones, estados=estados)
+
+@postulacion_bp.get('/descargar_archivo/<filename>')
+def descargar_archivo(filename):
+    client = app.storage.client
+    bucket_name = "spaeii"
+
+    archivo = archivo_service.get_archivo_by_path(filename)
+    try:
+        #extension = os.path.splitext(archivo.filename)[1]
+
+        #download_name = f"{archivo.titulo}{extension}"
+        response = client.get_object(bucket_name, filename)
+
+        file_data = io.BytesIO(response.read())
+        response.close()
+        response.release_conn()
+
+        return send_file(file_data, download_name=filename, as_attachment=True)
+    except Exception:
+        return + "Error al descargar el archivo", 500
