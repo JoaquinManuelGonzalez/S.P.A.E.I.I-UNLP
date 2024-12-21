@@ -51,12 +51,13 @@
                     <th>Apellido</th>
                     <th>Email</th>
                     <th>Fecha de Postulación</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 {% if not postulaciones.items %}
                     <tr>
-                        <td class="text-center font-medium" colspan="6">No se encontraron postulaciones</td>
+                        <td class="text-center font-medium" colspan="5">No se encontraron solicitudes de postulación</td>
                     </tr>
                 {% endif %}
                 {% for postulacion in postulaciones %}
@@ -65,6 +66,11 @@
                     <td>{{ postulacion.informacion_alumno_entrante.apellido }}</td>
                     <td>{{ postulacion.informacion_alumno_entrante.email }}</td>
                     <td>{{ postulacion.creacion.strftime("%d-%m-%Y") }}</td>
+                    <td class="text-center">
+                        <a href="{{ url_for('postulacion.ver_postulacion', id_postulacion=postulacion.id)  }}" class="btn btn-secondary btn-sm">
+                            Ver
+                        </a>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>

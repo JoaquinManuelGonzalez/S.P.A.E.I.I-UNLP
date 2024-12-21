@@ -48,22 +48,22 @@ def ver_postulacion(id_postulacion):
         pasaporte = pasaporte_service.get_pasaporte_by_id(alumno.id_pasaporte)
         pais_pasaporte = paises_service.get_pais_by_id(pasaporte.id_pais)
     else:
-        pasaporte = ""
-        pais_pasaporte = ""
+        pasaporte = None
+        pais_pasaporte = None
     if alumno.id_cedula_de_identidad is not None:
         cedula_de_identidad = cedula_de_identidad_service.get_cedula_de_identidad_by_id(alumno.id_cedula_de_identidad)
         pais_cedula_de_identidad = paises_service.get_pais_by_id(cedula_de_identidad.id_pais)
     else:
-        cedula_de_identidad = ""
-        pais_cedula_de_identidad = ""
+        cedula_de_identidad = None
+        pais_cedula_de_identidad = None
     if postulacion.id_programa is not None:
         programa = programa_service.get_programa_by_id(postulacion.id_programa)
     else:
-        programa = ""
+        programa = None
 
     tutores = postulacion.tutores
-    tutor_institucional = ""
-    tutor_academico = ""
+    tutor_institucional = None
+    tutor_academico = None
     for tutor in tutores:
         if tutor.es_institucional:
             tutor_institucional = tutor
@@ -89,19 +89,13 @@ def ver_postulacion(id_postulacion):
     return render_template('postulaciones/ver_postulacion.html', **data)
 
 
-@postulacion_bp.post('aprobar_rechazar_postulacion/<int:id_postulacion>')
-def aceptar_rechazar_1(id_postulacion):
-    if request.method == 'POST':
-        decision = request.form['decision']
+@postulacion_bp.post('aprobar_solicitud_de_postulacion/<int:id_postulacion>')
+def aceptar_solicitud(id_postulacion):
+    pass
 
-        if decision == 'aceptar':
-            postulacion_service.aprobar_postulacion_etapa_1(id_postulacion)
-            flash('Postulación aprobada', 'success')
-            return redirect(url_for('postulacion.ver_postulacion', id_postulacion=id_postulacion))
-    else:
-        flash('Debe seleccionar una opción', 'danger')
-        return redirect(url_for('postulacion.ver_postulacion', id_postulacion=id_postulacion))
-    
+@postulacion_bp.post('rechazar_solicitud_de_postulacion/<int:id_postulacion>')
+def rechazar_solicitud(id_postulacion):
+    pass  
 
 @postulacion_bp.get('/listar_solicitudes_de_postulacion')
 def listar_solicitudes_de_postulacion():
