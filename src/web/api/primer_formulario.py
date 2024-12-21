@@ -94,7 +94,7 @@ def primer_formulario():
             archivo_pasaporte = base64.b64decode(data_archivos["pasaporte"])
             if not data_titulos["titulo_pasaporte"]:
                 return jsonify({"error": "No se encontraron datos del título del pasaporte"}), 400
-            filename = f"{postulacion.id}_{data_titulos["titulo_pasaporte"]}"
+            filename = f"{postulacion.id}_{alumno.id}_pasaporte_{data_titulos["titulo_pasaporte"]}"
             archivo_service.save_file_minio(archivo_pasaporte, filename)
             titulo_pasaporte = {
                 "titulo": data_titulos["titulo_pasaporte"],
@@ -119,7 +119,7 @@ def primer_formulario():
             archivo_pasaporte = base64.b64decode(data_archivos["pasaporte"])
             if not data_titulos["titulo_pasaporte"]:
                 return jsonify({"error": "No se encontraron datos del título del pasaporte"}), 400
-            filename = f"{postulacion.id}_{data_titulos["titulo_pasaporte"]}"
+            filename = f"{postulacion.id}_{alumno.id}_pasaporte_{data_titulos["titulo_pasaporte"]}"
             archivo_service.save_file_minio(archivo_pasaporte, filename)
             titulo_pasaporte = {
                 "titulo": data_titulos["titulo_pasaporte"],
@@ -141,7 +141,7 @@ def primer_formulario():
             archivo_cedula = base64.b64decode(data_archivos["cedula_de_identidad"])
             if not data_titulos["titulo_cedula_de_identidad"]:
                 return jsonify({"error": "No se encontraron datos del título del pasaporte"}), 400
-            filename = f"{postulacion.id}_{data_titulos["titulo_pasaporte"]}"
+            filename = f"{postulacion.id}_{alumno.id}_cedula_{data_titulos["titulo_pasaporte"]}"
             archivo_service.save_file_minio(archivo_cedula, filename)
             titulo_cedula = {
                 "titulo": data_titulos["titulo_cedula_de_identidad"],
@@ -168,7 +168,7 @@ def primer_formulario():
         archivo_carta_recomendacion = base64.b64decode(data_archivos["carta_recomendacion"])
         if not data_titulos["titulo_carta_recomendacion"]:
             return jsonify({"error": "No se encontraron datos del título de la carta de recomendación"}), 400
-        filename = f"{postulacion.id}_{data_titulos["titulo_carta_recomendacion"]}"
+        filename = f"{postulacion.id}_{alumno.id}_cartaRecomendacion_{data_titulos["titulo_carta_recomendacion"]}"
         archivo_service.save_file_minio(archivo_carta_recomendacion, filename)
         titulo_carta_recomendacion = {
             "titulo": data_titulos["titulo_carta_recomendacion"],
@@ -191,7 +191,7 @@ def primer_formulario():
             plan_trabajo = base64.b64decode(data_archivos["plan_trabajo"])
             if not data_titulos["titulo_plan_trabajo"]:
                 return jsonify({"error": "No se encontraron datos del título del plan de trabajo"}), 400
-            filename = f"{postulacion.id}_{data_titulos["titulo_plan_trabajo"]}"
+            filename = f"{postulacion.id}_{alumno.id}_planDeTrabajo_{data_titulos["titulo_plan_trabajo"]}"
             archivo_service.save_file_minio(plan_trabajo, filename)
             titulo_plan_trabajo = {
                 "titulo": data_titulos["titulo_plan_trabajo"],
@@ -212,7 +212,7 @@ def primer_formulario():
             archivo_certificado_b1 = base64.b64decode(data_archivos["certificado_b1"])
             if not data_titulos["titulo_certificado_b1"]:
                 return jsonify({"error": "No se encontraron datos del título del certificado B1"}), 400
-            filename = f"{postulacion.id}_{data_titulos["titulo_certificado_b1"]}"
+            filename = f"{postulacion.id}_{alumno.id}_certificadoB1_{data_titulos["titulo_certificado_b1"]}"
             archivo_service.save_file_minio(archivo_certificado_b1, filename)
             titulo_certificado_b1 = {
                 "titulo": data_titulos["titulo_certificado_b1"],
@@ -230,7 +230,7 @@ def primer_formulario():
             archivo_certificado_b1 = base64.b64decode(data_archivos["certificado_b1"])
             if not data_titulos["titulo_certificado_b1"]:
                 return jsonify({"error": "No se encontraron datos del título del certificado B1"}), 400
-            filename = f"{postulacion.id}_{data_titulos["titulo_certificado_b1"]}"
+            filename = f"{postulacion.id}_{alumno.id}_certificadoB1_{data_titulos["titulo_certificado_b1"]}"
             archivo_service.save_file_minio(archivo_certificado_b1, filename)
             titulo_certificado_b1 = {
                 "titulo": data_titulos["titulo_certificado_b1"],

@@ -85,6 +85,47 @@
                 opacity: 1;
             }
         }
+        .btn-custom {
+            font-size: 1rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 18px;
+            font-weight: 600;
+            text-transform: uppercase;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #004085;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+            border-color: #bd2130;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            border-color: #545b62;
+            transform: translateY(-2px);
+        }
     </style>
 {% endblock %}
 
@@ -126,10 +167,20 @@
                     <p><strong>País de residencia:</strong> {{ pais_residencia.nombre_es }}</p>
                     <p><strong>Domicilio de residencia:</strong> {{ alumno.domicilio_pais_de_residencia }}</p>
                     <p><strong>Nacionalidad:</strong> {{ nacionalidad.nombre_es }}</p>
-                    <p><strong>Número de pasaporte:</strong> {{ pasaporte.numero }}</p>
-                    <p><strong>País de emisión de pasaporte:</strong> {{ pais_pasaporte.nombre_es }}</p>
-                    <p><strong>Número de cédula de identidad:</strong> {{ cedula_de_identidad.numero }}</p>
-                    <p><strong>País de emisión de cédula de identidad:</strong> {{ pais_cedula_de_identidad.nombre_es }}</p>
+                    {% if pasaporte %}
+                        <p><strong>Número de pasaporte:</strong> {{ pasaporte.numero }}</p>
+                        <p><strong>País de emisión de pasaporte:</strong> {{ pais_pasaporte.nombre_es }}</p>
+                    {% else %}
+                        <p><strong>Número de pasaporte:</strong> No posee información asociada.</p>
+                        <p><strong>País de emisión de pasaporte:</strong> No posee información asociada.</p>
+                    {% endif %}
+                    {% if cedula_de_identidad %}
+                        <p><strong>Número de cédula de identidad:</strong> {{ cedula_de_identidad.numero }}</p>
+                        <p><strong>País de emisión de cédula de identidad:</strong> {{ pais_cedula_de_identidad.nombre_es }}</p>
+                    {% else %}
+                        <p><strong>Número de cédula de identidad:</strong> No posee información asociada.</p>
+                        <p><strong>País de emisión de cédula de identidad:</strong> No posee información asociada.</p>
+                    {% endif %}
                     <p><strong>Estado civil:</strong> {{ estado_civil.nombre_es }}</p>
                 </div>
             </div>
@@ -151,8 +202,13 @@
                         {% endif %}
                     </p>
                     <p><strong>Consulado de visación:</strong> {{ postulacion.consulado_visacion }}</p>
-                    <p><strong>Convenio:</strong> {{ postulacion.convenio }}</p>
-                    <p><strong>Programa:</strong> {{ programa.nombre }}</p>
+                    {% if not programa %}
+                        <p><strong>Convenio:</strong> {{ postulacion.convenio }}</p>
+                        <p><strong>Programa:</strong> No posee información asociada.</p>
+                    {% else %}
+                        <p><strong>Convenio:</strong> No posee información asociada.</p>
+                        <p><strong>Programa:</strong> {{ programa.nombre }}</p>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -164,10 +220,20 @@
                     <h5 class="mb-0">Datos de Tutores</h5>
                 </div>
                 <div class="card-body">
-                    <p><strong>Tutor Institucional:</strong> {{ tutor_institucional.nombre }} {{ tutor_institucional.apellido }}</p>
-                    <p><strong>Email:</strong> {{ tutor_institucional.email }}</p>
-                    <p><strong>Tutor Académico:</strong> {{ tutor_academico.nombre }} {{ tutor_academico.apellido }}</p>
-                    <p><strong>Email:</strong> {{ tutor_academico.email }}</p>
+                    {% if tutor_institucional %}
+                        <p><strong>Tutor Institucional:</strong> {{ tutor_institucional.nombre }} {{ tutor_institucional.apellido }}</p>
+                        <p><strong>Email:</strong> {{ tutor_institucional.email }}</p>
+                    {% else %}
+                        <p><strong>Tutor Institucional:</strong> No posee información asociada.</p>
+                        <p><strong>Email:</strong> No posee información asociada.</p>
+                    {% endif %}
+                    {% if tutor_academico %}
+                        <p><strong>Tutor Académico:</strong> {{ tutor_academico.nombre }} {{ tutor_academico.apellido }}</p>
+                        <p><strong>Email:</strong> {{ tutor_academico.email }}</p>
+                    {% else %}
+                        <p><strong>Tutor Académico:</strong> No posee información asociada.</p>
+                        <p><strong>Email:</strong> No posee información asociada.</p>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -185,5 +251,69 @@
 
 
     </div>
+    {% if postulacion.estado.nombre == "Solicitud de Postulacion" %}
+        <!-- Botones de acción -->
+        <div class="d-flex justify-content-center mt-4">
+            <!-- Botón para aceptar -->
+            <button type="button" class="btn btn-primary btn-custom mx-2" data-bs-toggle="modal" data-bs-target="#acceptModal">
+                Aceptar Solicitud de Postulación
+            </button>
+            <!-- Botón para rechazar -->
+            <button type="button" class="btn btn-danger btn-custom mx-2" data-bs-toggle="modal" data-bs-target="#rejectModal">
+                Rechazar Solicitud de Postulación
+            </button>
+        </div>
+    {% endif %}
+
+    <!-- Modal de Aceptar -->
+    <div class="modal fade" id="acceptModal" tabindex="-1" aria-labelledby="acceptModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form action="{{ url_for('postulacion.aceptar_solicitud', id_postulacion=postulacion.id) }}" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="acceptModalLabel">Aceptar Solicitud de Postulación</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        ¿Estás seguro de que deseas aceptar esta solicitud de postulación? <br>
+                        Esta acción no se podrá deshacer, se creará un nuevo usuario en el sistema correspondiente al alumno entrante y se le notificará vía mail.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Aceptar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Modal de Rechazar -->
+    <div class="modal fade" id="rejectModal" tabindex="-1" aria-labelledby="rejectModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form action="{{ url_for('postulacion.rechazar_solicitud', id_postulacion=postulacion.id) }}" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="rejectModalLabel">Rechazar Solicitud</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            ¿Estás seguro de que deseas rechazar esta solicitud de postulación? <br> Esta acción no se podrá deshacer. Por favor, ingresa el motivo de rechazo, el cual será enviado al alumno entrante vía mail. <br>
+                            <label for="rejectReason" class="form-label"><strong>Motivo de Rechazo:</strong></label>
+                            <textarea class="form-control" id="rejectReason" name="reject_reason" rows="4" required></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-danger">Rechazar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
 </div>
 {% endblock %}
