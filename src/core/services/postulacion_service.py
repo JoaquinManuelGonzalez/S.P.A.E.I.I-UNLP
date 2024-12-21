@@ -32,7 +32,9 @@ def filtrar_postulaciones(
         pagina,
         ordenado_por,
         orden,
-        por_pagina
+        por_pagina,
+        fecha_desde=None,
+        fecha_hasta=None,
 ):
     
     query = Postulacion.query
@@ -45,6 +47,10 @@ def filtrar_postulaciones(
         query = query.filter(Postulacion.informacion_alumno_entrante.has(InformacionAlumnoEntrante.email.ilike(f"%{email}%")))
     if estado:
         query = query.filter(Postulacion.estado.has(Estado.nombre.ilike(f"%{estado}%")))
+    if fecha_desde:
+        query = query.filter(Postulacion.creacion >= fecha_desde)
+    if fecha_hasta:
+        query = query.filter(Postulacion.creacion <= fecha_hasta)
     
     if ordenado_por:
         query = ordenar_postulaciones(query, ordenado_por, orden)
@@ -74,13 +80,14 @@ def ordenar_postulaciones(
             return query.order_by(InformacionAlumnoEntrante.email.desc())
         
 
-def aprobar_postulacion_etapa_1(id_postulacion):
+def actualizar_estado_postulacion(postulacion, nuevo_estado):
     """
-    Aprueba la postulación en la etapa 1.
+    Actualiza el estado de una postulación.
     """
-    postulacion = get_postulacion_by_id(id_postulacion)
-    estado = Estado.query.filter_by(nombre="Postulacion Iniciada").first()
-    postulacion.estado = estado
-    postulacion.id_estado = estado.id
-    db.session.commit()
-    return postulacion
+    nuevo_estado = Estado.query.filter_by(nombre=nuevo_estado).first()
+    if not nuevo_estado:
+        return None
+    else:
+        postulacion.estado = nuevo_estado
+        db.session.commit()
+        return postulacion

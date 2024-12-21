@@ -19,6 +19,12 @@
                 <input type="text" name="email" class="form-control" placeholder="Email" value="{{ request.args.get('email', '') }}">
             </div>
             <div class="col-md-2">
+                <input type="date" name="fecha_desde" class="form-control" value="{{ request.args.get('fecha_desde', '') }}">
+            </div>
+            <div class="col-md-2">
+                <input type="date" name="fecha_hasta" class="form-control" value="{{ request.args.get('fecha_hasta', '') }}">
+            </div>
+            <div class="col-md-2">
                 <select name="estado" class="form-control">
                     <option value="">Seleccionar Estado</option>
                     {% for estado in estados %}
@@ -89,4 +95,41 @@
         </table>
     </div>
 </div>
+
+
+  <!-- Paginación -->
+  <nav>
+    <ul class="pagination justify-content-center">
+      {% if postulaciones.has_prev %}
+        <li class="page-item">
+          <a class="page-link" href="?pagina={{ postulaciones.prev_num }}&nombre={{ request.args.get('nombre', '') }}&apellido={{ request.args.get('apellido', '') }}&email={{ request.args.get('email', '') }}&fecha_desde={{ request.args.get('fecha_desde', '') }}&fecha_hasta={{ request.args.get('fecha_hasta', '') }}&ordenado_por={{ request.args.get('ordenado_por', '') }}&orden={{ request.args.get('orden', '') }}" aria-label="Anterior">
+            <span aria-hidden="true">&laquo;</span>
+          </a>
+        </li>
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+      {% endif %}
+  
+      {% for page_num in postulaciones.iter_pages(left_edge=2, right_edge=2, left_current=1, right_current=1) %}
+        {% if page_num %}
+          <li class="page-item {% if page_num == postulaciones.page %}active{% endif %}">
+            <a class="page-link" href="?pagina={{ page_num }}&nombre={{ request.args.get('nombre', '') }}&apellido={{ request.args.get('apellido', '') }}&email={{ request.args.get('email', '') }}&fecha_desde={{ request.args.get('fecha_desde', '') }}&fecha_hasta={{ request.args.get('fecha_hasta', '') }}&ordenado_por={{ request.args.get('ordenado_por', '') }}&orden={{ request.args.get('orden', '') }}">{{ page_num }}</a>
+          </li>
+        {% else %}
+          <li class="page-item disabled"><span class="page-link">…</span></li>
+        {% endif %}
+      {% endfor %}
+  
+      {% if postulaciones.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="?pagina={{ postulaciones.next_num }}&nombre={{ request.args.get('nombre', '') }}&apellido={{ request.args.get('apellido', '') }}&email={{ request.args.get('email', '') }}&fecha_desde={{ request.args.get('fecha_desde', '') }}&fecha_hasta={{ request.args.get('fecha_hasta', '') }}&ordenado_por={{ request.args.get('ordenado_por', '') }}&orden={{ request.args.get('orden', '') }}" aria-label="Siguiente">
+            <span aria-hidden="true">&raquo;</span>
+          </a>
+        </li>
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+      {% endif %}
+    </ul>
+  </nav>
+  
 {% endblock %}
