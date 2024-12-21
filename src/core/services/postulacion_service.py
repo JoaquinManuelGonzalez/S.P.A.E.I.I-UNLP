@@ -74,13 +74,14 @@ def ordenar_postulaciones(
             return query.order_by(InformacionAlumnoEntrante.email.desc())
         
 
-def aprobar_postulacion_etapa_1(id_postulacion):
+def actualizar_estado_postulacion(postulacion, nuevo_estado):
     """
-    Aprueba la postulación en la etapa 1.
+    Actualiza el estado de una postulación.
     """
-    postulacion = get_postulacion_by_id(id_postulacion)
-    estado = Estado.query.filter_by(nombre="Postulacion Iniciada").first()
-    postulacion.estado = estado
-    postulacion.id_estado = estado.id
-    db.session.commit()
-    return postulacion
+    nuevo_estado = Estado.query.filter_by(nombre=nuevo_estado).first()
+    if not nuevo_estado:
+        return None
+    else:
+        postulacion.estado = nuevo_estado
+        db.session.commit()
+        return postulacion

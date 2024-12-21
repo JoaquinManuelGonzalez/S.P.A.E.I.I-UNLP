@@ -115,6 +115,17 @@
             border-color: #bd2130;
             transform: translateY(-2px);
         }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            border-color: #545b62;
+            transform: translateY(-2px);
+        }
     </style>
 {% endblock %}
 
@@ -240,10 +251,69 @@
 
 
     </div>
-    <!-- Botones de acción -->
-    <div class="d-flex justify-content-center mt-4">
-        <a href="{{ url_for('postulacion.aceptar_solicitud', id_postulacion=postulacion.id) }}" class="btn btn-primary btn-custom mx-2">Aceptar Solicitud de Postulación</a>
-        <a href="{{ url_for('postulacion.rechazar_solicitud', id_postulacion=postulacion.id) }}" class="btn btn-danger btn-custom mx-2">Rechazar Solicitud de Postulación</a>
+    {% if postulacion.estado.nombre == "Solicitud de Postulacion" %}
+        <!-- Botones de acción -->
+        <div class="d-flex justify-content-center mt-4">
+            <!-- Botón para aceptar -->
+            <button type="button" class="btn btn-primary btn-custom mx-2" data-bs-toggle="modal" data-bs-target="#acceptModal">
+                Aceptar Solicitud de Postulación
+            </button>
+            <!-- Botón para rechazar -->
+            <button type="button" class="btn btn-danger btn-custom mx-2" data-bs-toggle="modal" data-bs-target="#rejectModal">
+                Rechazar Solicitud de Postulación
+            </button>
+        </div>
+    {% endif %}
+
+    <!-- Modal de Aceptar -->
+    <div class="modal fade" id="acceptModal" tabindex="-1" aria-labelledby="acceptModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form action="{{ url_for('postulacion.aceptar_solicitud', id_postulacion=postulacion.id) }}" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="acceptModalLabel">Aceptar Solicitud de Postulación</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        ¿Estás seguro de que deseas aceptar esta solicitud de postulación? <br>
+                        Esta acción no se podrá deshacer, se creará un nuevo usuario en el sistema correspondiente al alumno entrante y se le notificará vía mail.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Aceptar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
+
+
+    <!-- Modal de Rechazar -->
+    <div class="modal fade" id="rejectModal" tabindex="-1" aria-labelledby="rejectModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form action="{{ url_for('postulacion.rechazar_solicitud', id_postulacion=postulacion.id) }}" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="rejectModalLabel">Rechazar Solicitud</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            ¿Estás seguro de que deseas rechazar esta solicitud de postulación? <br> Esta acción no se podrá deshacer. Por favor, ingresa el motivo de rechazo, el cual será enviado al alumno entrante vía mail. <br>
+                            <label for="rejectReason" class="form-label"><strong>Motivo de Rechazo:</strong></label>
+                            <textarea class="form-control" id="rejectReason" name="reject_reason" rows="4" required></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-danger">Rechazar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
 </div>
 {% endblock %}

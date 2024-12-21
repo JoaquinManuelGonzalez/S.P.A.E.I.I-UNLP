@@ -60,7 +60,7 @@ def crear_usuario(formulario:Usuario_Form) -> None:
 def crear_usuario_solicitud_aprobada(nombre, apellido, email, id_alumno):
 #este crear es cuando se aprueba una solicitud, considera si el usuario estaba eliminado
     usuario = buscar_usuario_email(email)
-    id_rol_alumno = buscar_id_rol('alumno')
+    id_rol_alumno = buscar_id_rol('alumno').id
     contraseña = generar_contraseña()
     contraseña_encriptada = encriptar_contraseña(contraseña)
     if usuario and usuario.estado.value == "eliminado":
@@ -86,9 +86,7 @@ def generar_contraseña(longitud=12):
     return ''.join(random.choice(caracteres) for _ in range(longitud))
 
 def encriptar_contraseña(contrasena):
-    salt = bcrypt.gensalt()
-    hashed = bcrypt.hashpw(contrasena.encode(), salt)
-    return hashed
+    return bcrypt.generate_password_hash(contrasena).decode('utf-8')
     
 def editar_usuario(usuario:Usuario, contraseña_nueva:str) -> None:
     '''
