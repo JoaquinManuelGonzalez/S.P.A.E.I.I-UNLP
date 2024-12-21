@@ -16,6 +16,8 @@ def listar_postulaciones():
     nombre = request.args.get("nombre")
     apellido = request.args.get("apellido")
     email = request.args.get("email")
+    fecha_desde = request.args.get("fecha_desde")
+    fecha_hasta = request.args.get("fecha_hasta")
     estado = request.args.get("estado")
     pagina = request.args.get("pagina", 1, type=int)
     ordenado_por = request.args.get("ordenado_por", "nombre")
@@ -30,7 +32,9 @@ def listar_postulaciones():
         pagina,
         ordenado_por,
         orden,
-        por_pagina
+        por_pagina,
+        fecha_desde,
+        fecha_hasta,
     )
 
     estados = estado_postulacion_service.listar_estados()

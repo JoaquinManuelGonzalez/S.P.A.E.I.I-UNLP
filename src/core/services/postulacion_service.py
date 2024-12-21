@@ -32,7 +32,9 @@ def filtrar_postulaciones(
         pagina,
         ordenado_por,
         orden,
-        por_pagina
+        por_pagina,
+        fecha_desde=None,
+        fecha_hasta=None,
 ):
     
     query = Postulacion.query
@@ -45,6 +47,10 @@ def filtrar_postulaciones(
         query = query.filter(Postulacion.informacion_alumno_entrante.has(InformacionAlumnoEntrante.email.ilike(f"%{email}%")))
     if estado:
         query = query.filter(Postulacion.estado.has(Estado.nombre.ilike(f"%{estado}%")))
+    if fecha_desde:
+        query = query.filter(Postulacion.creacion >= fecha_desde)
+    if fecha_hasta:
+        query = query.filter(Postulacion.creacion <= fecha_hasta)
     
     if ordenado_por:
         query = ordenar_postulaciones(query, ordenado_por, orden)
