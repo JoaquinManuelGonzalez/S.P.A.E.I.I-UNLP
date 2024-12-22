@@ -115,7 +115,13 @@ def enviar_solicitud_edicion(id_alumno):
 def editar_alumno(id_alumno):
 
     alumno = alumno_service.get_alumno_by_id(id_alumno)
-    form = AlumnoForm(obj=alumno)  # Pasando el objeto alumno al formulario
+    form = AlumnoForm(obj=alumno)
+    form.numero_cedula.data = alumno.cedula_de_identidad.numero
+    form.numero_pasaporte.data = alumno.pasaporte.numero
+    form.id_pais_emision_pasaporte.data = alumno.pasaporte.id_pais
+    form.id_pais_emision_cedula.data = alumno.cedula_de_identidad.id_pais
+
+    print(form.data)
 
     return render_template("alumnos/editar_alumno.html", form=form, alumno=alumno)
 

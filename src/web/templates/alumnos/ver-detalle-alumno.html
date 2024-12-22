@@ -246,11 +246,17 @@
                     <h5 class="mb-0">Documentación</h5>
                 </div>
                 <div class="card-body">
-                    <p><strong>Pasaporte:</strong> 
+                    <p><strong>Número de Pasaporte:</strong> 
                         {{ alumno.pasaporte.numero if alumno.pasaporte else "No posee información asociada." }}
+                    </p>
+                    <p><strong>País de Emisión de Pasaporte:</strong> 
+                        {{ alumno.pasaporte.pais.nombre_es if alumno.pasaporte else "No posee información asociada." }}
                     </p>
                     <p><strong>Cédula de Identidad:</strong> 
                         {{ alumno.cedula_de_identidad.numero if alumno.cedula_de_identidad else "No posee información asociada." }}
+                    </p>
+                    <p><strong>País de Emisión de Cédula de Identidad:</strong> 
+                        {{ alumno.cedula_de_identidad.pais.nombre_es if alumno.cedula_de_identidad else "No posee información asociada." }}
                     </p>
                 </div>
             </div>
