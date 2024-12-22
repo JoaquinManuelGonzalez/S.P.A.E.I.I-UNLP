@@ -1,0 +1,160 @@
+{% extends "layout.html" %}
+{% block title %}Periodos de Inscripcion{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}
+<div class="container pt-4 pb-3"> <!-- Agregué un contenedor con padding adicional -->
+    <h1 class="display-5 text-center mb-4" >Periodos de Postulacion</h1>
+    <hr class="mb-4">
+    <form method="get" class="mb-4">
+        <div class="row g-3">
+            <div class="col-md-2">
+                <input type="date" name="fecha_desde" class="form-control" value="{{ request.args.get('fecha_desde', '') }}">
+            </div>
+            <div class="col-md-2">
+                <input type="date" name="fecha_hasta" class="form-control" value="{{ request.args.get('fecha_hasta', '') }}">
+            </div>
+            <div class="col-md-4">
+                <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+            </div>
+        </div>
+        <div class="row g-3 mt-3">
+            <div class="col-md-3">
+                <select name="orden" class="form-select bg-light border-secondary">
+                    <option value="" disabled selected>Orden...</option>
+                    <option value="asc" {% if request.args.get('orden') == 'asc' %}selected{% endif %}>Ascendente</option>
+                    <option value="desc" {% if request.args.get('orden') == 'desc' %}selected{% endif %}>Descendente</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-success w-100">Ordenar</button>
+            </div>
+        </div>
+    </form>
+    <hr class="mb-4">
+    <div class="text-center mb-3">
+      {% if periodo_actual() %}
+      <button type="button" class="btn btn-outline-danger" data-bs-title="Deshabilitar" data-bs-toggle="modal" data-bs-target="#confirmToggle">
+        Deshabilitar nuevas postulaciones
+      </button>
+      {% else %}
+      <button type="button" class="btn btn-outline-info" data-bs-title="Habilitar" data-bs-toggle="modal" data-bs-target="#confirmToggle">
+        Habilitar nuevas postulaciones
+      </button>
+      {% endif %}
+      <div class="modal fade" id="confirmToggle" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Confirmar elección</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <form method="POST" action="{{ url_for("postulacion.periodo_postulacion_toggle") }}">
+                <div class="modal-body">
+                  {% if periodo_actual() %}
+                    ¿Estás seguro que deseas deshabilitar
+                    el periodo actual de postulaciones?
+                  {% else %}
+                    ¿Estás seguro que deseas habilitar
+                    un nuevo periodo de postulaciones?
+                    <!--<input type="date" name="fecha_desde" class="form-control mt-2" >-->
+                  {% endif %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary"
+                        data-bs-dismiss="modal">Cancelar</button>
+                    
+                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                      {% if not periodo_actual() %}
+                      <button type="submit" class="btn btn-success">Habilitar</button>
+                      {% else %}
+                      <button type="submit" class="btn btn-danger">Deshabilitar</button>
+                      {% endif %}
+                    </form>                 
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <div class="table-responsive shadow-sm">
+        <table class="table table-bordered table-hover table-striped align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Inicio</th>
+                    <th>Fin</th>
+                    <th>Activo</th>
+                    <th>Postulaciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if not periodos.items %}
+                    <tr>
+                        <td class="text-center font-medium" colspan="6">No hay periodos de postulación registrados en el sistema.</td>
+                    </tr>
+                {% endif %}
+                {% for periodo in periodos %}
+                <tr class="border-b border-gray-200 py-2">
+                    <td>{{ periodo.inicio.strftime("%d-%m-%Y") }}</td>
+                    {% if periodo.fin %}
+                    <td>{{ periodo.fin.strftime("%d-%m-%Y") }}</td>
+                    {% else %}
+                    <td>En curso</td>
+                    {% endif %}
+                    {% if periodo.activo() %}
+                    <td class="d-table-cell p-2 bg-info text-white font-weight-bold">Activo</td>
+                    {% else %}
+                    <td>Inactivo</td>
+                    {% endif %}
+                    <td class="text-center">
+                        <a href="{{ url_for('postulacion.listar_postulaciones', id_periodo=periodo.id)  }}" class="btn btn-secondary btn-sm">
+                            Ver Postulaciones asociadas
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+
+  <!-- Paginación -->
+  <nav>
+    <ul class="pagination justify-content-center">
+      {% if periodos.has_prev %}
+        <li class="page-item">
+          <a class="page-link" href="?pagina={{ periodos.prev_num }}&nombre={{ request.args.get('nombre', '') }}&apellido={{ request.args.get('apellido', '') }}&email={{ request.args.get('email', '') }}&fecha_desde={{ request.args.get('fecha_desde', '') }}&fecha_hasta={{ request.args.get('fecha_hasta', '') }}&ordenado_por={{ request.args.get('ordenado_por', '') }}&orden={{ request.args.get('orden', '') }}" aria-label="Anterior">
+            <span aria-hidden="true">&laquo;</span>
+          </a>
+        </li>
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+      {% endif %}
+  
+      {% for page_num in periodos.iter_pages(left_edge=2, right_edge=2, left_current=1, right_current=1) %}
+        {% if page_num %}
+          <li class="page-item {% if page_num == periodos.page %}active{% endif %}">
+            <a class="page-link" href="?pagina={{ page_num }}&nombre={{ request.args.get('nombre', '') }}&apellido={{ request.args.get('apellido', '') }}&email={{ request.args.get('email', '') }}&fecha_desde={{ request.args.get('fecha_desde', '') }}&fecha_hasta={{ request.args.get('fecha_hasta', '') }}&ordenado_por={{ request.args.get('ordenado_por', '') }}&orden={{ request.args.get('orden', '') }}">{{ page_num }}</a>
+          </li>
+        {% else %}
+          <li class="page-item disabled"><span class="page-link">…</span></li>
+        {% endif %}
+      {% endfor %}
+  
+      {% if periodos.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="?pagina={{ periodos.next_num }}&nombre={{ request.args.get('nombre', '') }}&apellido={{ request.args.get('apellido', '') }}&email={{ request.args.get('email', '') }}&fecha_desde={{ request.args.get('fecha_desde', '') }}&fecha_hasta={{ request.args.get('fecha_hasta', '') }}&ordenado_por={{ request.args.get('ordenado_por', '') }}&orden={{ request.args.get('orden', '') }}" aria-label="Siguiente">
+            <span aria-hidden="true">&raquo;</span>
+          </a>
+        </li>
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+      {% endif %}
+    </ul>
+  </nav>
+  
+{% endblock %}

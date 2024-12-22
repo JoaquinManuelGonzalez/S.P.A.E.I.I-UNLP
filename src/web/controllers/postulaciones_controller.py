@@ -2,11 +2,13 @@ from flask import Blueprint, request, render_template, redirect, url_for, flash,
 from src.core.models.postulacion import Postulacion
 from src.core.services import (postulacion_service, alumno_service, estado_postulacion_service,
 paises_service, genero_service, estado_civil_service, pasaporte_service, cedula_de_identidad_service,
-programa_service, archivo_service, usuario_service, email_service)
+programa_service, archivo_service, usuario_service, email_service, periodo_postulacion_service)
+from src.core.database import db
 from flask import current_app as app
+from src.web.handlers.permisos import check
 import os
 import io
-
+import time
 
 postulacion_bp = Blueprint('postulacion', __name__, url_prefix='/postulaciones')
 
@@ -22,6 +24,7 @@ def listar_postulaciones():
     pagina = request.args.get("pagina", 1, type=int)
     ordenado_por = request.args.get("ordenado_por", "nombre")
     orden = request.args.get("orden", "asc")
+    id_periodo = request.args.get("id_periodo")
     por_pagina = 10
 
     postulaciones = postulacion_service.filtrar_postulaciones(
@@ -35,12 +38,15 @@ def listar_postulaciones():
         por_pagina,
         fecha_desde,
         fecha_hasta,
+        id_periodo
     )
+
+    periodos_postulacion = periodo_postulacion_service.listar_periodos_postulacion()
 
     estados = estado_postulacion_service.listar_estados()
 
     #postulaciones = postulacion_service.listar_postulaciones()
-    return render_template('postulaciones/listar_postulaciones.html', postulaciones=postulaciones, estados=estados)
+    return render_template('postulaciones/listar_postulaciones.html', postulaciones=postulaciones, estados=estados, periodos=periodos_postulacion)
 
 @postulacion_bp.get('/ver_postulacion/<int:id_postulacion>')
 def ver_postulacion(id_postulacion):
@@ -173,3 +179,32 @@ def descargar_archivo(filename):
         return send_file(file_data, download_name=filename, as_attachment=True)
     except Exception:
         return + "Error al descargar el archivo", 500
+
+@postulacion_bp.route('/toggle_inscripciones', methods=['GET', 'POST'])
+@check("habilitar_periodo_postulacion")
+def periodo_postulacion_toggle():
+
+    periodos = None
+    print(request.method)
+    if request.method == 'POST':
+        periodo_actual = periodo_postulacion_service.periodo_actual()
+        if periodo_actual:
+            periodo_postulacion_service.deshabilitar_periodo_postulacion()
+        else:
+            #fecha_desde = request.form.get("fecha_desde")
+            #periodo_postulacion_service.habilitar_periodo_postulacion(fecha_desde)
+            periodo_postulacion_service.habilitar_periodo_postulacion()
+        time.sleep(0.2)  # TODO. Forma berreta de asegurarme que la lista se actualiza para cuando haga el redirect
+        return redirect(url_for('postulacion.periodo_postulacion_toggle'))
+    else:
+        fecha_desde = request.args.get("fecha_desde")
+        fecha_hasta = request.args.get("fecha_hasta")
+        orden = request.args.get("orden", "desc")
+        pagina = request.args.get("pagina", 1, type=int)
+        por_pagina = 10
+
+        periodos = periodo_postulacion_service.listar_periodos_postulacion(fecha_desde, fecha_hasta, pagina, por_pagina, orden)
+
+
+
+    return render_template('postulaciones/toggle_inscripciones.html', periodos=periodos)
