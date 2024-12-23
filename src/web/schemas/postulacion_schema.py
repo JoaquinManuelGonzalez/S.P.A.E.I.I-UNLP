@@ -10,7 +10,7 @@ class PostulacionSchema(Schema):
     id_estado = fields.Int(required=True)
     id_informacion_alumno_entrante = fields.Int(required=True)
     id_programa = fields.Int()
-    
+    id_periodo_postulacion = fields.Int(required=True)
     creacion = fields.DateTime(dump_only=True)
     actualizacion = fields.DateTime(dump_only=True)
 
