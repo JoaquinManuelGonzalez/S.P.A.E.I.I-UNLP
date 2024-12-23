@@ -91,3 +91,25 @@ def actualizar_estado_postulacion(postulacion, nuevo_estado):
         postulacion.estado = nuevo_estado
         db.session.commit()
         return postulacion
+    
+
+def filtrar_postulaciones_por_alumno(
+        estado,
+        pagina,
+        por_pagina,
+        fecha_desde,
+        fecha_hasta,
+        id_alumno
+):
+    query = Postulacion.query
+
+    if estado:
+        query = query.filter(Postulacion.estado.has(Estado.nombre.ilike(f"%{estado}%")))
+    if fecha_desde:
+        query = query.filter(Postulacion.creacion >= fecha_desde)
+    if fecha_hasta:
+        query = query.filter(Postulacion.creacion <= fecha_hasta)
+    if id_alumno:
+        query = query.filter(Postulacion.id_informacion_alumno_entrante == id_alumno)
+
+    return query.paginate(page=pagina, per_page=por_pagina, error_out=False)

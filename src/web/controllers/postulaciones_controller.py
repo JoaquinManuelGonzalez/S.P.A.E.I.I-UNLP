@@ -6,7 +6,8 @@ programa_service, archivo_service, usuario_service, email_service)
 from flask import current_app as app
 import os
 import io
-
+from src.web.handlers.auth import get_rol_sesion, get_id_sesion
+from src.web.handlers.permisos import check
 
 postulacion_bp = Blueprint('postulacion', __name__, url_prefix='/postulaciones')
 
@@ -173,3 +174,31 @@ def descargar_archivo(filename):
         return send_file(file_data, download_name=filename, as_attachment=True)
     except Exception:
         return + "Error al descargar el archivo", 500
+    
+
+@postulacion_bp.get('/mis_postulaciones')
+def mis_postulaciones():
+    id_alumno = None
+    if get_rol_sesion(session) == "alumno":
+        usuario = usuario_service.buscar_usuario(get_id_sesion(session))
+        id_alumno = usuario.id_alumno   
+
+    fecha_desde = request.args.get("fecha_desde")
+    fecha_hasta = request.args.get("fecha_hasta")
+    estado = request.args.get("estado")
+    pagina = request.args.get("pagina", 1, type=int)
+    por_pagina = 5
+
+    
+    postulaciones = postulacion_service.filtrar_postulaciones_por_alumno(
+        estado,
+        pagina,
+        por_pagina,
+        fecha_desde,
+        fecha_hasta,
+        id_alumno
+    )
+
+    estados = estado_postulacion_service.listar_estados()
+
+    return render_template("postulaciones/mis_postulaciones.html", postulaciones=postulaciones, estados=estados)

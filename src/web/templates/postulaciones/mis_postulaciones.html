@@ -1,0 +1,100 @@
+{% extends "layout.html" %}
+{% block title %}Mis Postulaciones{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}
+<div class="container py-5"> <!-- Agregué un contenedor con padding adicional -->
+    <h1 class="display-5 text-center mb-4" >Mis postulaciones</h1>
+    <hr class="mb-4">
+    <form method="get" class="mb-4">
+        <div class="row g-3">
+            <div class="col-md-2">
+                <input type="date" name="fecha_desde" class="form-control" value="{{ request.args.get('fecha_desde', '') }}">
+            </div>
+            <div class="col-md-2">
+                <input type="date" name="fecha_hasta" class="form-control" value="{{ request.args.get('fecha_hasta', '') }}">
+            </div>
+            <div class="col-md-2">
+                <select name="estado" class="form-control">
+                    <option value="">Seleccionar Estado</option>
+                    {% for estado in estados %}
+                        <option value="{{ estado.nombre }}" {% if request.args.get('estado') == estado.id|string %}selected{% endif %}>
+                            {{ estado.nombre }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4">
+                <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+            </div>
+        </div>
+    </form>
+    <div class="table-responsive shadow-sm">
+        <table class="table table-bordered table-hover table-striped align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Fecha de Postulación</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if not postulaciones.items %}
+                    <tr>
+                        <td class="text-center font-medium" colspan="3">No se encontraron postulaciones</td>
+                    </tr>
+                {% endif %}
+                {% for postulacion in postulaciones %}
+                <tr class="border-b border-gray-200 py-2">
+                    <td>{{ postulacion.creacion.strftime("%d-%m-%Y") }}</td>
+                    <td>{{ postulacion.estado.nombre }}</td>
+                    <td class="text-center">
+                        <a href="{{ url_for('postulacion.ver_postulacion', id_postulacion=postulacion.id)  }}" class="btn btn-secondary btn-sm">
+                            Ver
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+  <!-- Paginación -->
+  <nav>
+    <ul class="pagination justify-content-center">
+      {% if postulaciones.has_prev %}
+        <li class="page-item">
+          <a class="page-link" href="?pagina={{ postulaciones.prev_num }}&fecha_desde={{ request.args.get('fecha_desde', '') }}&fecha_hasta={{ request.args.get('fecha_hasta', '') }}&estado={{ request.args.get('estado', '') }}" aria-label="Anterior">
+            <span aria-hidden="true">&laquo;</span>
+          </a>
+        </li>
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+      {% endif %}
+  
+      {% for page_num in postulaciones.iter_pages(left_edge=2, right_edge=2, left_current=1, right_current=1) %}
+        {% if page_num %}
+          <li class="page-item {% if page_num == postulaciones.page %}active{% endif %}">
+            <a class="page-link" href="?pagina={{ postulaciones.prev_num }}&fecha_desde={{ request.args.get('fecha_desde', '') }}&fecha_hasta={{ request.args.get('fecha_hasta', '') }}&estado={{ request.args.get('estado', '') }}" aria-label="Anterior">
+          </li>
+        {% else %}
+          <li class="page-item disabled"><span class="page-link">…</span></li>
+        {% endif %}
+      {% endfor %}
+  
+      {% if postulaciones.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="?pagina={{ postulaciones.prev_num }}&fecha_desde={{ request.args.get('fecha_desde', '') }}&fecha_hasta={{ request.args.get('fecha_hasta', '') }}&estado={{ request.args.get('estado', '') }}" aria-label="Anterior">
+            <span aria-hidden="true">&raquo;</span>
+          </a>
+        </li>
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+      {% endif %}
+    </ul>
+  </nav>
+  
+{% endblock %}
