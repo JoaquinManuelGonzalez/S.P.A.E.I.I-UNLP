@@ -29,7 +29,7 @@
             <a class="nav-link" href="{{ url_for('alumnos_bp.ver_documentacion', id_alumno=get_id_alumno_sesion(session)) }}">Mis Archivos</a>
           </li>
           <li class="nav-item active">
-            <a class="nav-link" href="/facultades">Mis Postulaciones</a>
+            <a class="nav-link" href="{{ url_for('postulacion.mis_postulaciones')}}">Mis Postulaciones</a>
           </li>
           <li class="nav-item active">
             <a class="nav-link" href="{{ url_for('alumnos_bp.ver_detalle_alumno', id_alumno=get_id_alumno_sesion(session)) }}">Información Personal</a>

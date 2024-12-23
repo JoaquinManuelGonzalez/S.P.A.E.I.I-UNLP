@@ -33,6 +33,10 @@ def primer_formulario():
     data = request.get_json()
     if not data:
         return jsonify({"error": "No se encontraron datos en el request"}), 400
+    
+    periodo = periodo_postulacion_service.periodo_actual().id
+    if not periodo:
+        return jsonify({"error": "No hay un periodo de postulación activo"}), 400
     data_postulacion = data["postulacion"]
     data_alumno = data["alumno"]
     id_programa = data["id_programa"]
@@ -76,6 +80,7 @@ def primer_formulario():
     estado_postulacion = estado_postulacion_service.get_estado_by_name("Solicitud de Postulacion")
 
     data_postulacion["id_estado"] = estado_postulacion.id
+    data_postulacion["id_periodo_postulacion"] = periodo
     data_postulacion["id_informacion_alumno_entrante"] = alumno.id
     if convenio_programa == "programa":
         data_postulacion["id_programa"] = id_programa
@@ -226,6 +231,8 @@ def primer_formulario():
             except Exception as err:
                 return jsonify({"error": f"Error al cargar los datos del certificado B1: {err}"}), 400
             certificado_b1 = archivo_service.crear_archivo(**certificado_b1)
+            certificado_b1.informacion_alumno_entrante = alumno
+            certificado_b1.postulacion = postulacion
     else:
         if not data_archivos["certificado_b1"]:
             return jsonify({"error": "No se encontraron datos del certificado B1"}), 400
