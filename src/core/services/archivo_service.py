@@ -2,6 +2,7 @@ from src.core.models.archivo import Archivo
 from src.core.database import db
 from flask import current_app as app
 import io
+from flask import send_file
 
 def crear_archivo(**data):
     """
@@ -45,3 +46,17 @@ def get_archivos_by_postulacion(id_postulacion):
     Obtiene los archivos de una postulación.
     """
     return Archivo.query.filter_by(id_postulacion=id_postulacion).all()
+
+def descargar_archivo(filename):
+    try:
+        client = app.storage.client
+        bucket_name = "spaeii"
+        response = client.get_object(bucket_name, filename)
+
+        file_data = io.BytesIO(response.read())
+        response.close()
+        response.release_conn()
+
+        return send_file(file_data, download_name=filename, as_attachment=True)
+    except Exception:
+        return + "Error al descargar el archivo", 500
