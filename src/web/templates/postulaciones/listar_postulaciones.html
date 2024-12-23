@@ -34,6 +34,16 @@
                     {% endfor %}
                 </select>
             </div>
+            <div class="col-md-2">
+              <select name="id_periodo" class="form-control">
+                  <option value="">Seleccionar periodo</option>
+                  {% for periodo in periodos %}
+                      <option value="{{ periodo.id }}" {% if request.args.get("id_periodo") == periodo.id|int %}selected{% endif %}>
+                        {{ periodo }}
+                      </option>
+                  {% endfor %}
+              </select>
+            </div>
             <div class="col-md-4">
                 <button type="submit" class="btn btn-primary w-100">Filtrar</button>
             </div>
@@ -67,6 +77,7 @@
                     <th>Apellido</th>
                     <th>Email</th>
                     <th>Fecha de Postulación</th>
+                    <th>Periodo asociado</th>
                     <th>Estado</th>
                     <th>Acciones</th>
                 </tr>
@@ -83,6 +94,11 @@
                     <td>{{ postulacion.informacion_alumno_entrante.apellido }}</td>
                     <td>{{ postulacion.informacion_alumno_entrante.email }}</td>
                     <td>{{ postulacion.creacion.strftime("%d-%m-%Y") }}</td>
+                    <td class="text-center">
+                      <a href="{{ url_for('postulacion.listar_postulaciones', id_periodo=postulacion.periodo_postulacion.id)  }}" class="btn btn-link btn-sm">
+                        {{ postulacion.periodo_postulacion }}
+                      </a>
+                    </td>
                     <td>{{ postulacion.estado.nombre }}</td>
                     <td class="text-center">
                         <a href="{{ url_for('postulacion.ver_postulacion', id_postulacion=postulacion.id)  }}" class="btn btn-secondary btn-sm">

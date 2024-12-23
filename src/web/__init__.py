@@ -22,7 +22,9 @@ from src.web.handlers.auth import is_authenticated, get_id_sesion, get_rol_sesio
 from src.web.handlers.permisos import check_permiso
 from flask_mail import Mail
 from src.web.handlers import error
-    
+
+from src.core.services.periodo_postulacion_service import periodo_actual
+  
 session = Session()
 def create_app(env="development", static_folder="../../static", template_folders=""):
     """
@@ -70,6 +72,7 @@ def create_app(env="development", static_folder="../../static", template_folders
     app.jinja_env.globals.update(get_rol_sesion= get_rol_sesion)
     app.jinja_env.globals.update(check_permiso= check_permiso)
     app.jinja_env.globals.update(get_id_alumno_sesion= get_id_alumno_sesion)
+    app.jinja_env.globals.update(periodo_actual= periodo_actual)
     
     app.register_error_handler(404, error.error_not_found)
     app.register_error_handler(403, error.sin_permisos)    

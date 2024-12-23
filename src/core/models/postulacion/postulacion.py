@@ -9,9 +9,11 @@ class Postulacion(db.Model):
     universidad_origen = db.Column(db.String(50), nullable=False)
     consulado_visacion = db.Column(db.String(50), nullable=False)
     convenio = db.Column(db.String(50), nullable=True)
+    
     id_estado = db.Column(db.Integer, db.ForeignKey('estado.id'), nullable=False)
     id_informacion_alumno_entrante = db.Column(db.Integer, db.ForeignKey('informacion_alumno_entrante.id'), nullable=False)
     id_programa = db.Column(db.Integer, db.ForeignKey('programa.id'), nullable=True)
+    id_periodo_postulacion = db.Column(db.Integer, db.ForeignKey('periodo_postulacion.id'), nullable=False)
     
     creacion = db.Column(db.DateTime, default=datetime.now)
     actualizacion = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
@@ -22,6 +24,7 @@ class Postulacion(db.Model):
     asignaturas = db.relationship('Asignatura', secondary='postulacion_asignatura', back_populates='postulaciones')
     programa = db.relationship('Programa', back_populates='postulaciones')
     archivos = db.relationship('Archivo', back_populates='postulacion', foreign_keys='Archivo.id_postulacion')
+    periodo_postulacion = db.relationship('PeriodoPostulacion', back_populates='postulaciones')
 
     def __repr__(self):
         return f'<Postulacion id-{self.id}, alumno-{self.informacion_alumno_entrante}, de_posgrado-{self.de_posgrado}, estado-{self.estado}>'

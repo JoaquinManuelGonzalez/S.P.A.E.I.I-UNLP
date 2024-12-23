@@ -4,7 +4,7 @@ from src.core.models.usuario import Usuario
 from src.core.models.asignatura import Asignatura
 from src.core.models.facultad import Facultad
 from src.core.models.carrera import Carrera
-from src.core.models.postulacion import Postulacion, Estado, Programa
+from src.core.models.postulacion import Postulacion, Estado, Programa, PeriodoPostulacion
 #from src.core.models.tipo_carrera import TipoCarrera.py
 from src.core.models.alumno import InformacionAlumnoEntrante
 from src.core.models.alumno.estado_civil import EstadoCivil
@@ -23,6 +23,7 @@ def seeds_facultades(usuarios):
     enlazar_puntos_focales(usuarios)
     crear_estados()
     crear_programas()
+    crear_periodos_de_inscripcion()
     crear_postulaciones(usuarios)
 
 facultades = []
@@ -30,6 +31,7 @@ carreras = []
 asignaturas = []
 estados = []
 programas = []
+periodos_inscripcion = []
 
 def crear_programas():
     for i in range(2):
@@ -110,11 +112,32 @@ def crear_estados():
     estados.append(Estado(
         nombre='Postulacion Finalizada'
     ))
+    estados.append(Estado(
+        nombre='Postulacion Cancelada o Interrumpida' #estado para cuando no se llegó al estado 'Aceptada' antes de que comience un nuevo periodo de inscripcion
+    ))
 
     for i in range (len(estados)):
         db.session.add(estados[i])
     db.session.commit()    
+
+def crear_periodos_de_inscripcion():
+
+    periodo1 = PeriodoPostulacion(
+        inicio = datetime(2024,1,1),
+        fin = datetime(2024,3,1)
+    )
+    periodos_inscripcion.append(periodo1)
+    db.session.add(periodo1)
+
+    periodo2 = PeriodoPostulacion(
+        inicio = datetime.now()
+    )
+    periodos_inscripcion.append(periodo2)
+    db.session.add(periodo2)
     
+    db.session.commit()
+
+
 def crear_postulaciones(usuarios):
     alumnos = list(filter(lambda x: x.rol.nombre == "alumno", usuarios))
 
@@ -150,7 +173,8 @@ def crear_postulaciones(usuarios):
             convenio=None,
             estado=estados[5],
             informacion_alumno_entrante= alumno,
-            programa=programas[i]
+            programa=programas[i],
+            periodo_postulacion = periodos_inscripcion[1]
         )
         db.session.add(postulacion)
     db.session.commit()
