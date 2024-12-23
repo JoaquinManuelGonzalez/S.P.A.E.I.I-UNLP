@@ -14,7 +14,11 @@ import time
 
 postulacion_bp = Blueprint('postulacion', __name__, url_prefix='/postulaciones')
 
+
 @postulacion_bp.get('/')
+@check("postulaciones_listar")
+@check("gestor")
+@check("admin")
 def listar_postulaciones():
 
     nombre = request.args.get("nombre")
@@ -50,7 +54,9 @@ def listar_postulaciones():
     #postulaciones = postulacion_service.listar_postulaciones()
     return render_template('postulaciones/listar_postulaciones.html', postulaciones=postulaciones, estados=estados, periodos=periodos_postulacion)
 
+
 @postulacion_bp.get('/ver_postulacion/<int:id_postulacion>')
+@check("postulaciones_detalle")
 def ver_postulacion(id_postulacion):
     postulacion = postulacion_service.get_postulacion_by_id(id_postulacion)
     alumno = alumno_service.get_alumno_by_id(postulacion.id_informacion_alumno_entrante)
@@ -108,6 +114,7 @@ def ver_postulacion(id_postulacion):
 
 
 @postulacion_bp.post('aprobar_solicitud_de_postulacion/<int:id_postulacion>')
+@check("solicitud_postulacion_aceptar")
 def aceptar_solicitud(id_postulacion):
     postulacion = postulacion_service.get_postulacion_by_id(id_postulacion)
     postulacion_service.actualizar_estado_postulacion(postulacion, "Postulacion Iniciada")
@@ -118,6 +125,7 @@ def aceptar_solicitud(id_postulacion):
     
 
 @postulacion_bp.post('rechazar_solicitud_de_postulacion/<int:id_postulacion>')
+@check("solicitud_postulacion_rechazar")
 def rechazar_solicitud(id_postulacion):
     postulacion = postulacion_service.get_postulacion_by_id(id_postulacion)
     alumno = alumno_service.get_alumno_by_id(postulacion.id_informacion_alumno_entrante)
@@ -136,6 +144,7 @@ def rechazar_solicitud(id_postulacion):
 
 
 @postulacion_bp.get('/listar_solicitudes_de_postulacion')
+@check("solicitud_postulacion_listar")
 def listar_solicitudes_de_postulacion():
     nombre = request.args.get("nombre")
     apellido = request.args.get("apellido")
@@ -163,6 +172,7 @@ def listar_solicitudes_de_postulacion():
     return render_template('postulaciones/listar_solicitudes_de_postulacion.html', postulaciones=postulaciones, estados=estados)
 
 @postulacion_bp.get('/descargar_archivo/<filename>')
+@check("archivo_descargar")
 def descargar_archivo(filename):
     client = app.storage.client
     bucket_name = "spaeii"
@@ -184,6 +194,7 @@ def descargar_archivo(filename):
     
 
 @postulacion_bp.get('/mis_postulaciones')
+@check("alumno")
 def mis_postulaciones():
     id_alumno = None
     if get_rol_sesion(session) == "alumno":
@@ -194,7 +205,7 @@ def mis_postulaciones():
     fecha_hasta = request.args.get("fecha_hasta")
     estado = request.args.get("estado")
     pagina = request.args.get("pagina", 1, type=int)
-    por_pagina = 5
+    por_pagina = 10
 
     
     postulaciones = postulacion_service.filtrar_postulaciones_por_alumno(

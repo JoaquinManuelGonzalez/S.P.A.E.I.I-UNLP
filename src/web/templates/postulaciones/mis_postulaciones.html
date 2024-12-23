@@ -78,7 +78,7 @@
       {% for page_num in postulaciones.iter_pages(left_edge=2, right_edge=2, left_current=1, right_current=1) %}
         {% if page_num %}
           <li class="page-item {% if page_num == postulaciones.page %}active{% endif %}">
-            <a class="page-link" href="?pagina={{ postulaciones.prev_num }}&fecha_desde={{ request.args.get('fecha_desde', '') }}&fecha_hasta={{ request.args.get('fecha_hasta', '') }}&estado={{ request.args.get('estado', '') }}" aria-label="Anterior">
+            <a class="page-link" href="?pagina={{ page_num }}&fecha_desde={{ request.args.get('fecha_desde', '') }}&fecha_hasta={{ request.args.get('fecha_hasta', '') }}&estado={{ request.args.get('estado', '') }}">{{ page_num }}</a>
           </li>
         {% else %}
           <li class="page-item disabled"><span class="page-link">…</span></li>
@@ -87,7 +87,7 @@
   
       {% if postulaciones.has_next %}
         <li class="page-item">
-          <a class="page-link" href="?pagina={{ postulaciones.prev_num }}&fecha_desde={{ request.args.get('fecha_desde', '') }}&fecha_hasta={{ request.args.get('fecha_hasta', '') }}&estado={{ request.args.get('estado', '') }}" aria-label="Anterior">
+          <a class="page-link" href="?pagina={{ postulaciones.next_num }}&fecha_desde={{ request.args.get('fecha_desde', '') }}&fecha_hasta={{ request.args.get('fecha_hasta', '') }}&estado={{ request.args.get('estado', '') }}" aria-label="Anterior">
             <span aria-hidden="true">&raquo;</span>
           </a>
         </li>
