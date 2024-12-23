@@ -6,7 +6,7 @@ from src.core.database import db
 from src.core.services import (paises_service, genero_service, 
 estado_civil_service, archivo_service, alumno_service, pasaporte_service, 
 cedula_de_identidad_service, postulacion_service, tutor_service, programa_service,
-estado_postulacion_service, email_service)
+estado_postulacion_service, email_service, periodo_postulacion_service)
 from src.web.schemas.archivo_schema import archivo_schema
 from src.web.schemas.cedula_de_identidad_schema import cedula_de_identidad_schema
 from src.web.schemas.postulacion_schema import postulacion_schema
@@ -44,8 +44,10 @@ def primer_formulario():
     mercosur = data["mercosur"]
     convenio_programa = data["convenioPrograma"]
     data_titulos = data["titulos"]
+    id_periodo_postulacion = periodo_postulacion_service.periodo_actual().id
     
-
+    if not id_periodo_postulacion:
+        return jsonify({"error": "Actualmente no hay un periodo de inscripción abierto"}), 400
     if not data_postulacion:
         return jsonify({"error": "No se encontraron datos de la postulación"}), 400
     if not data_alumno:
@@ -78,6 +80,7 @@ def primer_formulario():
     if convenio_programa == "programa":
         data_postulacion["id_programa"] = id_programa
         del data_postulacion["convenio"]
+    data_postulacion["id_periodo_postulacion"] = id_periodo_postulacion
     try:
         postulacion = postulacion_schema.load(data_postulacion)
     except Exception as err:
@@ -292,7 +295,7 @@ def primer_formulario_get():
         "generos": data_generos,
         "estados_civiles": data_estados_civiles,
         "csrf_token": token,
-        "programas": data_programas
+        "programas": data_programas,
     }
 
     #response = make_response(jsonify(data_response), 200)

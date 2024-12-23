@@ -208,15 +208,15 @@
         <div class="row mb-4">
           <div class="col-md-6">
             <div class="form-group">
-              {{ form.numero_pasaporte.label(class="form-label font-weight-semibold") }}
-              {{ form.numero_pasaporte(class="form-control", placeholder="Ingrese el número de pasaporte", value=form.numero_pasaporte.data or alumno.numero_pasaporte) }}
+              {{ form_pasaporte.numero.label(class="form-label font-weight-semibold") }}
+              {{ form_pasaporte.numero(class="form-control", placeholder="Ingrese el número de pasaporte", value=form_pasaporte.numero.data or alumno.numero_pasaporte) }}
             </div>
           </div>
 
           <div class="col-md-6">
             <div class="form-group">
-              {{ form.numero_cedula.label(class="form-label font-weight-semibold") }}
-              {{ form.numero_cedula(class="form-control", placeholder="Ingrese el número de cédula", value=form.numero_cedula.data or alumno.numero_cedula) }}
+              {{ form_cedula.numero.label(class="form-label font-weight-semibold") }}
+              {{ form_cedula.numero(class="form-control", placeholder="Ingrese el número de cédula", value=form_cedula.numero.data or alumno.numero_cedula) }}
             </div>
           </div>
         </div>
@@ -224,15 +224,99 @@
         <div class="row mb-4">
           <div class="col-md-6">
             <div class="form-group">
-              {{ form.id_pais_emision_pasaporte.label(class="form-label font-weight-semibold") }}
-              {{ form.id_pais_emision_pasaporte(class="form-select select2") }}
+                {{ form_pasaporte.id_pais.label(class="form-label font-weight-semibold") }}
+                {{ form_pasaporte.id_pais(id="id_pasaporte", class="form-select select2", value=form_pasaporte.id_pais.data) }}
+            </div>
+          </div>
+          
+          <div class="col-md-6">
+            <div class="form-group">
+              {{ form_cedula.id_pais.label(class="form-label font-weight-semibold") }}
+              {{ form_cedula.id_pais(class="form-select select2", value=form_cedula.id_pais.data) }}
+            </div>
+          </div>
+        </div>
+
+        <h4 class="font-weight-semibold mt-4">Archivos Asociados a la Información Personal</h4>
+        <hr>
+        <div class="row">
+          <!-- Archivo de Pasaporte -->
+          <div class="col-12 mb-3">
+            <div class="d-flex align-items-center justify-content-between">
+              <span>Foto o Archivo de Pasaporte:</span>
+              <span class="text-muted text-center">
+                {% if archivos["Pasaporte"] != "No posee información asociada." %}
+                  {{ archivos['Pasaporte'].titulo }}
+                {% else %}
+                  {{ archivos["Pasaporte"] }}
+                {% endif %}
+              </span>
+              <div>
+                {% if archivos["Pasaporte"] != "No posee información asociada." %}
+                  <a href="{{ url_for('alumnos_bp.ver_archivo', id_archivo=archivos["Pasaporte"].id) }}" class="btn btn-secondary btn-sm">Ver Archivo</a>
+                {% endif %}
+                <button type="button" class="btn btn-primary btn-sm">Subir Archivo</button>
+              </div>
             </div>
           </div>
 
-          <div class="col-md-6">
-            <div class="form-group">
-              {{ form.id_pais_emision_cedula.label(class="form-label font-weight-semibold") }}
-              {{ form.id_pais_emision_cedula(class="form-select select2") }}
+          <!-- Archivo de Cédula de Identidad -->
+          <div class="col-12 mb-3">
+            <div class="d-flex align-items-center justify-content-between">
+              <span>Foto o Archivo de Cédula de Identidad:</span>
+              <span class="text-muted text-center">
+                {% if archivos["Cédula de Identidad"] != "No posee información asociada." %}
+                  {{ archivos['Cédula de Identidad'].titulo }}
+                {% else %}
+                  {{ archivos["Cédula de Identidad"] }}
+                {% endif %}
+              </span>
+              <div>
+                {% if archivos["Cédula de Identidad"] != "No posee información asociada." %}
+                  <a href="{{ url_for('alumnos_bp.ver_archivo', id_archivo=archivos["Cédula de Identidad"].id) }}" class="btn btn-secondary btn-sm">Ver Archivo</a>
+                {% endif %}
+                <button type="button" class="btn btn-primary btn-sm">Subir Archivo</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Archivo de Certificado B1 o superior de Español -->
+          <div class="col-12 mb-3">
+            <div class="d-flex align-items-center justify-content-between">
+              <span>Foto o Archivo de Certificado B1 o superior de Español:</span>
+              <span class="text-muted text-center">
+                {% if archivos["Certificado B1"] != "No posee información asociada." %}
+                  {{ archivos['Certificado B1'].titulo }}
+                {% else %}
+                  {{ archivos["Certificado B1"] }}
+                {% endif %}
+              </span>
+              <div>
+                {% if archivos["Certificado B1"] != "No posee información asociada." %}
+                  <a href="{{ url_for('alumnos_bp.ver_archivo', id_archivo=archivos["Certificado B1"].id) }}" class="btn btn-secondary btn-sm">Ver Archivo</a>
+                {% endif %}
+                <button type="button" class="btn btn-primary btn-sm">Subir Archivo</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Archivo de Certificado de Discapacidad -->
+          <div class="col-12 mb-3">
+            <div class="d-flex align-items-center justify-content-between">
+              <span>Foto o Archivo de Certificado de Discapacidad:</span>
+              <span class="text-muted text-center">
+                {% if archivos["Certificado de Discapacidad"] != "No posee información asociada." %}
+                  {{ archivos['Certificado de Discapacidad'].titulo }}
+                {% else %}
+                  {{ archivos["Certificado de Discapacidad"] }}
+                {% endif %}
+              </span>
+              <div>
+                {% if archivos["Certificado de Discapacidad"] != "No posee información asociada." %}
+                  <a href="{{ url_for('alumnos_bp.ver_archivo', id_archivo=archivos["Certificado de Discapacidad"].id) }}" class="btn btn-secondary btn-sm">Ver Archivo</a>
+                {% endif %}
+                <button type="button" class="btn btn-primary btn-sm">Subir Archivo</button>
+              </div>
             </div>
           </div>
         </div>
@@ -285,6 +369,15 @@
         theme: 'bootstrap-5',
         placeholder: "Seleccione una opción",
         allowClear: true
+      });
+    });
+    $(document).ready(function() {
+      // Inicializa Select2 para el campo pasaporte por separado
+      $('#id_pasaporte').select2({
+          theme: 'bootstrap-5',
+          placeholder: "Selecciona un país",
+          allowClear: true,
+          width: '100%' // Asegúrate de que ocupe el espacio completo
       });
     });
   </script>

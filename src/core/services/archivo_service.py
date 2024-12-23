@@ -45,3 +45,23 @@ def get_archivos_by_postulacion(id_postulacion):
     Obtiene los archivos de una postulación.
     """
     return Archivo.query.filter_by(id_postulacion=id_postulacion).all()
+
+def obtener_archivo_por_palabra_clave(archivos, palabra_clave):
+    return next(
+        (archivo for archivo in archivos if palabra_clave in archivo.path), 
+        "No posee información asociada."
+    )
+
+def obtener_archivo_por_id(id_archivo):
+    return Archivo.query.get(id_archivo)
+
+def generar_url_firmada(archivo):
+    """
+    Genera una URL firmada para un archivo en Minio.
+    """
+    client = app.storage.client
+    url = client.presigned_get_object(
+        "spaeii",  # Nombre del bucket
+        archivo.path,  # Nombre del archivo en Minio
+    )
+    return url
