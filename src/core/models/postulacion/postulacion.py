@@ -7,8 +7,10 @@ class Postulacion(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     de_posgrado = db.Column(db.Boolean, nullable=False)
     universidad_origen = db.Column(db.String(50), nullable=False)
-    consulado_visacion = db.Column(db.String(50), nullable=False)
+    consulado_visacion = db.Column(db.String(50), nullable=True)
     convenio = db.Column(db.String(50), nullable=True)
+    fecha_ingreso = db.Column(db.Date, nullable=True)
+    duracion_estadia = db.Column(db.Integer, nullable=True)
     
     id_estado = db.Column(db.Integer, db.ForeignKey('estado.id'), nullable=False)
     id_informacion_alumno_entrante = db.Column(db.Integer, db.ForeignKey('informacion_alumno_entrante.id'), nullable=False)

@@ -1,0 +1,93 @@
+{% extends "layout.html" %}
+{% block title %}Postulaciones{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}
+<div class="container mt-5">
+<div class="row align-items-center">
+    <div class="col">
+        <h1 class="m-0 text-center">Postulación</h1>
+    </div>
+</div>
+<form action="{{ url_for('postulacion.guardar_datos_estadia') }}" method="POST" class="container-fluid full-height d-flex justify-content-center align-items-center" style="max-width: 500px; max-height: 750px; overflow: hidden;">
+    {{ form.csrf_token }}
+    <div class="container my-5">
+        
+        <div class="mb-3">
+            {{ form.psicofisico.label }}{{ form.psicofisico(class="form-control") }}
+            {% if form.errors %}
+                {% for error in form.psicofisico.errors %}
+                    <div class="text-danger">{{ form.errors[0] }}
+                        <span style="color: red;">{{ error }}</span>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            {{ form.politicas_institucionales.label }}{{ form.politicas_institucionales(class="form-control") }}
+            {% if form.errors %}
+                {% for error in form.politicas_institucionales.errors %}
+                    <div class="text-danger">{{ form.errors[0] }}
+                        <span style="color: red;">{{ error }}</span>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            {{ form.discapacidad.label}}{{ form.discapacidad(class="form-radio") }}
+            {% if form.errors %}
+                {% for error in form.discapacidad.errors %}
+                    <div class="text-danger">{{ form.errors[0] }}
+                        <span style="color: red;">{{ error }}</span>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            {{ form.certificado_discapacidad.label }}{{ form.certificado_discapacidad(class="form-control") }}
+            {% if form.errors %}
+                {% for error in form.certificado_discapacidad.errors %}
+                    <div class="text-danger">{{ form.errors[0] }}
+                        <span style="color: red;">{{ error }}</span>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            {{ form.fecha_ingreso.label }}{{ form.fecha_ingreso(class="form-control") }}
+            {% if form.errors %}
+                {% for error in form.fecha_ingreso.errors %}
+                    <div class="text-danger">{{ form.errors[0] }}
+                        <span style="color: red;">{{ error }}</span>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            {{ form.duracion_estadia.label }}{{ form.duracion_estadia(class="form-control") }}
+            {% if form.errors %}
+                {% for error in form.duracion_estadia.errors %}
+                    <div class="text-danger">{{ form.errors[0] }}
+                        <span style="color: red;">{{ error }}</span>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            {{ form.consulado_visacion.label }}{{ form.consulado_visacion(class="form-control") }}
+            {% if form.errors %}
+                {% for error in form.consulado_visacion.errors %}
+                    <div class="text-danger">{{ form.errors[0] }}
+                        <span style="color: red;">{{ error }}</span>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+        </div>
+
+        <button type="submit" class="btn btn-primary my-3">Enviar</button>
+    </div>
+</form>
+</div>
+{% endblock %}

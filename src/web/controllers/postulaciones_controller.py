@@ -11,6 +11,9 @@ import io
 from src.web.handlers.auth import get_rol_sesion, get_id_sesion
 from src.web.handlers.permisos import check
 import time
+from src.web.forms.postulacion_form import PostulacionForm
+from src.web.forms.postulacion_estadia_form import PostulacionEstadiaForm
+from src.web.schemas.archivo_schema import archivo_schema
 
 postulacion_bp = Blueprint('postulacion', __name__, url_prefix='/postulaciones')
 
@@ -229,7 +232,96 @@ def periodo_postulacion_toggle():
         por_pagina = 10
 
         periodos = periodo_postulacion_service.listar_periodos_postulacion(fecha_desde, fecha_hasta, pagina, por_pagina, orden)
-
-
-
     return render_template('postulaciones/toggle_inscripciones.html', periodos=periodos)
+
+@postulacion_bp.get('/repostulacion')
+#@check("alumno")
+def repostulacion():
+    form = PostulacionForm()
+    return render_template('postulaciones/repostulacion.html', form=form)
+
+@postulacion_bp.get('/ingresar_datos_estadia/<int:id_postulacion>')
+#@check("alumno")
+def ingresar_datos_estadia(id_postulacion):
+    form = PostulacionEstadiaForm()
+    return render_template('postulaciones/postulacion_estadia.html', form=form, id_postulacion=id_postulacion)
+
+@postulacion_bp.post('/ingresar_datos_estadia_post/<int:id_postulacion>')
+#@check("alumno")
+def guardar_datos_estadia(id_postulacion):
+    form = PostulacionEstadiaForm()
+    if not form.validate_on_submit():
+        flash('Error al cargar los datos', 'danger')
+        return render_template('postulaciones/postulacion_estadia.html', form=form)
+    
+    if not form.psicofisico.data:
+        flash('El archivo psicofisico es obligatorio', 'danger')
+        return render_template('postulaciones/postulacion_estadia.html', form=form)
+    
+    if not form.politicas_institucionales.data:
+        flash('El archivo de politicas institucionales es obligatorio', 'danger')
+        return render_template('postulaciones/postulacion_estadia.html', form=form)
+    
+    if not form.fecha_ingreso.data:
+        flash('La fecha de ingreso es obligatoria', 'danger')
+        return render_template('postulaciones/postulacion_estadia.html', form=form)
+    
+    if not form.duracion_estadia.data:
+        flash('La duracion de la estadia es obligatoria', 'danger')
+        return render_template('postulaciones/postulacion_estadia.html', form=form)
+    
+    postulacion = postulacion_service.get_postulacion_by_id(id_postulacion)
+    alumno = postulacion.alumno 
+    psicofisico = form.psicofisico.data
+    archivo_psicofisico = {
+       " titulo": psicofisico.filename,
+        "path": f"{id_postulacion}_{alumno.id}_psicofisico_{psicofisico}"
+    }
+
+    try:
+        archivo_psicofisico = archivo_schema.load(archivo_psicofisico)
+    except Exception as err:
+        flash('Error al cargar el archivo psicofisico', 'danger')
+        return render_template('postulaciones/postulacion_estadia.html', form=form)
+    
+    politicas_institucionales = form.politicas_institucionales.data
+    archivo_politicas = {
+        "titulo": politicas_institucionales.filename,
+        "path": f"{id_postulacion}_{alumno.id}_politicasInstitucionales_{politicas_institucionales}"
+    }
+
+    try:
+        archivo_politicas = archivo_schema.load(archivo_politicas)
+    except Exception as err:
+        flash('Error al cargar el archivo de politicas institucionales', 'danger')
+        return render_template('postulaciones/postulacion_estadia.html', form=form)
+    
+    alumno.discapacidad = form.discapacidad.data
+    if form.discapacidad.data == True and form.certificado_discapacidad.data:
+        certificado_discapacidad = form.certificado_discapacidad.data
+        archivo_certificado_discapacidad = {
+            "titulo": certificado_discapacidad.filename,
+            "path": f"{id_postulacion}_{alumno.id}_certificadoDiscapacidad_{certificado_discapacidad}"
+        }
+        try:
+            archivo_certificado_discapacidad = archivo_schema.load(archivo_certificado_discapacidad)
+        except Exception as err:
+            flash('Error al cargar el archivo de certificado de discapacidad', 'danger')
+            return render_template('postulaciones/postulacion_estadia.html', form=form)
+
+    postulacion.fecha_ingreso = form.fecha_ingreso.data
+    postulacion.duracion_estadia = form.duracion_estadia.data
+
+    if form.consulado_visacion.data:
+        postulacion.consulado_visacion = form.consulado_visacion.data
+    db.session.commit()
+    archivo_service.crear_archivo(**archivo_psicofisico)
+    archivo_service.crear_archivo(**archivo_politicas)
+    if form.discapacidad.data == True and form.certificado_discapacidad.data:
+        archivo_service.crear_archivo(**archivo_certificado_discapacidad)
+        archivo_service.save_file_minio(request.files['certificado_discapacidad'], archivo_certificado_discapacidad['path'])
+    
+    archivo_service.save_file_minio(request.files['psicofisico'], archivo_psicofisico['path'])
+    archivo_service.save_file_minio(request.files['politicas_institucionales'], archivo_politicas['path'])
+    print(f"El archivo se sube así: {psicofisico}")
+    return render_template('postulaciones/postulacion_estadia.html', form=form)
