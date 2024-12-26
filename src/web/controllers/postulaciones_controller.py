@@ -20,8 +20,6 @@ postulacion_bp = Blueprint('postulacion', __name__, url_prefix='/postulaciones')
 
 @postulacion_bp.get('/')
 @check("postulaciones_listar")
-@check("gestor")
-@check("admin")
 def listar_postulaciones():
 
     nombre = request.args.get("nombre")

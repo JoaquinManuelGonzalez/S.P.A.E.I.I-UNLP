@@ -286,18 +286,14 @@ def actualizar_alumno(id_alumno):
         if archivo.filename == "":
             archivos_nuevos[nombre_archivo] = None
 
-    print(archivos_nuevos)
-
     if form_pasaporte.validate_on_submit():
         numero_pasaporte = form_pasaporte.numero.data
         pais_emision_pasaporte = paises_service.get_pais_by_id(
             form_pasaporte.id_pais.data
         )
 
-        print(numero_pasaporte, pais_emision_pasaporte, archivos_nuevos["foto_pasaporte"])
-
         if (numero_pasaporte or pais_emision_pasaporte or archivos_nuevos["foto_pasaporte"] or (archivos_originales["Pasaporte"] != "No posee información asociada.")) and not (
-            numero_pasaporte and pais_emision_pasaporte and archivos_nuevos["foto_pasaporte"]
+            numero_pasaporte and pais_emision_pasaporte and (archivos_nuevos["foto_pasaporte"] or (archivos_originales["Pasaporte"] != "No posee información asociada."))
         ):
             flash(
                 "Un Pasaporte requiere de número, país de emisión y archivo asociado.",
@@ -333,15 +329,68 @@ def actualizar_alumno(id_alumno):
                     alumno.pasaporte, numero_pasaporte, pais_emision_pasaporte, archivos_nuevos["foto_pasaporte"], filename
                 )
             else:
-                pasaporte_service.actualizar_pasaporte(
+                pasaporte_service.actualizar_informacion_pasaporte(
                     alumno.pasaporte, numero_pasaporte, pais_emision_pasaporte
                 )
         else:
             filename = f"{alumno.id}_pasaporte_{archivos_nuevos['foto_pasaporte'].filename}"
-            nuevo_pasaporte = pasaporte_service.crear_pasaporte(
+            nuevo_pasaporte = pasaporte_service.crear_pasaporte_desde_edicion(
                 numero_pasaporte, pais_emision_pasaporte, archivos_nuevos["foto_pasaporte"], filename
             )
-            alumno_service.asignar_pasaporte_alumno(alumno, nuevo_pasaporte.id) 
+            alumno_service.asignar_pasaporte_alumno(alumno, nuevo_pasaporte.id)
+
+    if form_cedula.validate_on_submit():
+        numero_cedula = form_cedula.numero.data
+        pais_emision_cedula = paises_service.get_pais_by_id(
+            form_cedula.id_pais.data
+        )
+
+        if (numero_cedula or pais_emision_cedula or archivos_nuevos["cedula_identidad"] or (archivos_originales["Cédula de Identidad"] != "No posee información asociada.")) and not (
+            numero_cedula and pais_emision_cedula and (archivos_nuevos["cedula_identidad"] or (archivos_originales["Cédula de Identidad"] != "No posee información asociada."))
+        ):
+            flash(
+                "Una Cédula de Identidad requiere de número, país de emisión y archivo asociado.",
+                "danger",
+            )
+            return render_template(
+                "alumnos/editar_alumno.html",
+                form=form,
+                alumno=alumno,
+                form_pasaporte=form_pasaporte,
+                form_cedula=form_cedula,
+                archivos=archivos_originales,
+            )
+        
+        if (not alumno.cedula_de_identidad) or (alumno.cedula_de_identidad.numero != numero_cedula):
+            if cedula_de_identidad_service.check_numero(numero_cedula):
+                flash(
+                    "El número de cédula de identidad ingresado ya está registrado para otro Alumno Entrante.",
+                    "danger",
+                )
+                return render_template(
+                    "alumnos/editar_alumno.html",
+                    form=form,
+                    alumno=alumno,
+                    form_pasaporte=form_pasaporte,
+                    form_cedula=form_cedula,
+                    archivos=archivos_originales,
+                )
+        if alumno.cedula_de_identidad:
+            if archivos_nuevos["cedula_identidad"]:
+                filename = f"{alumno.id}_cedula_{archivos_nuevos['cedula_identidad'].filename}"
+                cedula_de_identidad_service.actualizar_cedula_con_archivo(
+                    alumno.cedula_de_identidad, numero_cedula, pais_emision_cedula, archivos_nuevos["cedula_identidad"], filename
+                )
+            else:
+                cedula_de_identidad_service.actualizar_informacion_cedula_de_identidad(
+                    alumno.cedula_de_identidad, numero_cedula, pais_emision_cedula
+                )
+        else:
+            filename = f"{alumno.id}_cedula_{archivos_nuevos['cedula_identidad'].filename}"
+            nueva_cedula = cedula_de_identidad_service.crear_cedula_desde_edicion(
+                numero_cedula, pais_emision_cedula, archivos_nuevos["cedula_identidad"], filename
+            )
+            alumno_service.asignar_cedula_alumno(alumno, nueva_cedula.id) 
 
     if form.validate_on_submit():
         nombre = form.nombre.data
@@ -417,4 +466,4 @@ def actualizar_alumno(id_alumno):
         "Los datos del Alumno Entrante han sido actualizados con éxito.",
         "success",
     )
-    return render_template("alumnos/ver-detalle-alumno.html", alumno=alumno)
+    return redirect(url_for("alumnos_bp.ver_detalle_alumno", id_alumno=alumno.id))

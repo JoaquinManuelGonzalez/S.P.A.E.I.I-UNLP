@@ -149,4 +149,7 @@ def actualizar_alumno(
 def asignar_pasaporte_alumno(alumno, id_pasaporte):
     alumno.id_pasaporte = id_pasaporte
     db.session.commit()
-    
+
+def asignar_cedula_alumno(alumno, id_cedula_de_identidad):
+    alumno.id_cedula_de_identidad = id_cedula_de_identidad
+    db.session.commit()
