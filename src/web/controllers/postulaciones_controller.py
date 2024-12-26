@@ -249,33 +249,34 @@ def repostulacion():
 #@check("alumno")
 def ingresar_datos_estadia(id_postulacion):
     form = PostulacionEstadiaForm()
-    return render_template('postulaciones/postulacion_estadia.html', form=form, id_postulacion=id_postulacion)
+    postulacion = postulacion_service.get_postulacion_by_id(id_postulacion)
+    return render_template('postulaciones/postulacion_estadia.html', form=form, id_postulacion=id_postulacion, consulado_dato=postulacion.consulado_visacion)
 
 @postulacion_bp.post('/guardar_datos_estadia/<int:id_postulacion>')
 #@check("alumno")
 def guardar_datos_estadia(id_postulacion):
     form = PostulacionEstadiaForm()
+    postulacion = postulacion_service.get_postulacion_by_id(id_postulacion)
     if not form.validate_on_submit():
         flash('Error al cargar los datos', 'danger')
-        return render_template('postulaciones/postulacion_estadia.html', form=form, id_postulacion=id_postulacion)
+        return render_template('postulaciones/postulacion_estadia.html', form=form, id_postulacion=id_postulacion, consulado_dato=postulacion.consulado_visacion)
     
     if not form.psicofisico.data:
         flash('El archivo psicofisico es obligatorio', 'danger')
-        return render_template('postulaciones/postulacion_estadia.html', form=form, id_postulacion=id_postulacion)
+        return render_template('postulaciones/postulacion_estadia.html', form=form, id_postulacion=id_postulacion, consulado_dato=postulacion.consulado_visacion)
     
     if not form.politicas_institucionales.data:
         flash('El archivo de politicas institucionales es obligatorio', 'danger')
-        return render_template('postulaciones/postulacion_estadia.html', form=form, id_postulacion=id_postulacion)
+        return render_template('postulaciones/postulacion_estadia.html', form=form, id_postulacion=id_postulacion, consulado_dato=postulacion.consulado_visacion)
     
     if not form.fecha_ingreso.data:
         flash('La fecha de ingreso es obligatoria', 'danger')
-        return render_template('postulaciones/postulacion_estadia.html', form=form, id_postulacion=id_postulacion)
+        return render_template('postulaciones/postulacion_estadia.html', form=form, id_postulacion=id_postulacion, consulado_dato=postulacion.consulado_visacion)
     
     if not form.duracion_estadia.data:
         flash('La duracion de la estadia es obligatoria', 'danger')
-        return render_template('postulaciones/postulacion_estadia.html', form=form, id_postulacion=id_postulacion)
+        return render_template('postulaciones/postulacion_estadia.html', form=form, id_postulacion=id_postulacion, consulado_dato=postulacion.consulado_visacion)
     
-    postulacion = postulacion_service.get_postulacion_by_id(id_postulacion)
     alumno = postulacion.informacion_alumno_entrante
     psicofisico = form.psicofisico.data
     print(f"El archivo psicofisico se sube así: {psicofisico.filename}")
@@ -292,7 +293,7 @@ def guardar_datos_estadia(id_postulacion):
     except Exception as err:
         print(err)
         flash('Error al cargar el archivo psicofisico', 'danger')
-        return render_template('postulaciones/postulacion_estadia.html', form=form, id_postulacion=id_postulacion)
+        return render_template('postulaciones/postulacion_estadia.html', form=form, id_postulacion=id_postulacion, consulado_dato=postulacion.consulado_visacion)
     
     politicas_institucionales = form.politicas_institucionales.data
     print(f"El archivo politicas institucionales se sube así: {politicas_institucionales}")
@@ -309,7 +310,7 @@ def guardar_datos_estadia(id_postulacion):
     except Exception as err:
         print(err)
         flash('Error al cargar el archivo de politicas institucionales', 'danger')
-        return render_template('postulaciones/postulacion_estadia.html', form=form, id_postulacion=id_postulacion)
+        return render_template('postulaciones/postulacion_estadia.html', form=form, id_postulacion=id_postulacion, consulado_dato=postulacion.consulado_visacion)
     
     alumno.discapacidad = form.discapacidad.data
     if form.discapacidad.data == True and form.certificado_discapacidad.data:
@@ -327,10 +328,13 @@ def guardar_datos_estadia(id_postulacion):
         except Exception as err:
             print(err)
             flash('Error al cargar el archivo de certificado de discapacidad', 'danger')
-            return render_template('postulaciones/postulacion_estadia.html', form=form, id_postulacion=id_postulacion)
+            return render_template('postulaciones/postulacion_estadia.html', form=form, id_postulacion=id_postulacion, consulado_dato=postulacion.consulado_visacion)
 
     postulacion.fecha_ingreso = form.fecha_ingreso.data
     postulacion.duracion_estadia = form.duracion_estadia.data
+    estado = estado_postulacion_service.get_estado_by_name("Postulacion en Espera de Aceptacion")
+    postulacion.estado = estado
+    postulacion.id_estado = estado.id
 
     if form.consulado_visacion.data != "":
         postulacion.consulado_visacion = form.consulado_visacion.data
