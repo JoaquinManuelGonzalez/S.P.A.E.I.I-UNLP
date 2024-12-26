@@ -7,83 +7,65 @@
 <div class="container mt-5">
     <div class="row align-items-center">
         <div class="col">
-            <h1 class="m-0 text-center">Seleccionar asignaturas</h1>
+            <h1 class="display-5 text-center mb-4">Seleccionar asignaturas</h1>
+            <hr class="mb-4">
+            <h5 class="m-0">El máximo de facultades a elegir es 3</h1>
         </div>
     </div>
-    <form action="{{ url_for('postulacion.guardar_asignaturas', id_postulacion=id_postulacion) }}" enctype="multipart/form-data" method="POST" class="container-fluid full-height d-flex justify-content-center align-items-center" style="max-width: 500px; max-height: 750px; overflow: hidden;">
+    <form action="#" enctype="multipart/form-data" method="POST" class="container-fluid full-height justify-content-center align-items-center" style="max-width: 100%; min-height: 750px; overflow-x: auto;">
         {{ form.csrf_token }}
         <div class="container my-5">
+                {% for i in range(0, cantidad_materias) %}
+                    <div class="row border" style="overflow-x: auto; white-space: nowrap; flex-wrap: nowrap; display: flex;">
+                        <!-- Columna para facultad -->
+                        <div class="col-auto mb-3 p-2" style="min-width: 300px; max-width: 33%;">  
+                            <label for="facultad_{{ i }}" class="form-label">Buscar por facultad a la que corresponde:</label>
+                            <select class="form-select" id="facultad_{{ i }}" name="facultad_{{ i }}">
+                                <option value="">Seleccione una facultad</option>
+                                {% for facultad in facultades %}
+                                    <option {{ (facultades_seleccionadas[i] and (facultades_seleccionadas[i].id == facultad.id)) and "selected" or "" }}
+                                            value="{{ facultad.id }}">{{ facultad.nombre }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
             
-            <div class="mb-3">
-                {{ form.asignatura_1.label }}{{ form.asignatura_1(class="form-control") }}
-                {% if form.errors %}
-                    {% for error in form.asignatura_1.errors %}
-                        <div class="text-danger">{{ form.errors[0] }}
-                            <span style="color: red;">{{ error }}</span>
+                        <!-- Columna para carrera -->
+                        <div class="col-auto mb-3 p-2" style="min-width: 300px; max-width: 33%;">  
+                            <label for="carrera_{{ i }}" class="form-label">Buscar por carrera a la que corresponde:</label>
+                            <select class="form-select" id="carrera_{{ i }}" name="carrera_{{ i }}">
+                                <option value="">Seleccione una carrera</option>
+                                {% if facultades_seleccionadas[i] %}
+                                    {% for carrera in facultades_seleccionadas[i].carreras %}
+                                        <option {{ (carreras_seleccionadas[i] and (carreras_seleccionadas[i].id == carrera.id)) and "selected" or "" }}
+                                                value="{{ carrera.id }}">{{ carrera.nombre }}</option>
+                                    {% endfor %}
+                                {% endif %}
+                            </select>
                         </div>
-                    {% endfor %}
-                {% endif %}
-            </div>
-            <div class="mb-3">
-                {{ form.asignatura_2.label }}{{ form.asignatura_2(class="form-control") }}
-                {% if form.errors %}
-                    {% for error in form.asignatura_2.errors %}
-                        <div class="text-danger">{{ form.errors[0] }}
-                            <span style="color: red;">{{ error }}</span>
+            
+                        <!-- Columna para asignatura -->
+                        <div class="col-auto mb-3 p-2" style="min-width: 300px; max-width: 33%;">  
+                            <label for="asignatura_{{ i }}" class="form-label">{{ form['asignatura_' ~ i].label }}</label>
+                            {{ form['asignatura_' ~ i](class="form-select") }}
                         </div>
-                    {% endfor %}
-                {% endif %}
-            </div>
-            <div class="mb-3">
-                <label for="facultad_3" class="form-label">Buscar por facultad a la que corresponde:</label>
-                <select class="form-select" id="facultad3" name="facultad3">
-                    <option value="">Seleccione una facultad</option>
-                    {% for facultad in facultades %}
-                        <option {{ facultad_id == facultad.id and "selected" or "" }}
-                                value="{{ facultad.id }}">{{ facultad.nombre }}</option>
-                    {% endfor %}
-                </select>
-                <label for="search" class="form-label">Buscar por facultad a la que corresponde:</label>
-                <select class="form-select" id="carrera3" name="carrera3">
-                    <option value="">Seleccione una facultad</option>
-                    {% if facultad[2] %}
-                        {% for carrera in facultad[2].carreras %}
-                            <option {{ carrera_id[2] == carrera.id and "selected" or "" }}
-                                    value="{{ facultad.id }}">{{ facultad.nombre }}</option>
-                        {% endfor %}
-                    {% endif %}
-                </select>
-                {{ form.asignatura_3.label }}{{ form.asignatura_3(class="form-control") }}
-                {% if form.errors %}
-                    {% for error in form.asignatura_3.errors %}
-                        <div class="text-danger">{{ form.errors[0] }}
-                            <span style="color: red;">{{ error }}</span>
-                        </div>
-                    {% endfor %}
-                {% endif %}
-            </div>
-            <div class="mb-3">
-                {{ form.asignatura_4.label }}{{ form.asignatura_4(class="form-control") }}
-                {% if form.errors %}
-                    {% for error in form.asignatura_4.errors %}
-                        <div class="text-danger">{{ form.errors[0] }}
-                            <span style="color: red;">{{ error }}</span>
-                        </div>
-                    {% endfor %}
-                {% endif %}
-            </div>
-            <div class="mb-3">
-                {{ form.asignatura_5.label }}{{ form.asignatura_5(class="form-control") }}
-                {% if form.errors %}
-                    {% for error in form.asignatura_5.errors %}
-                        <div class="text-danger">{{ form.errors[0] }}
-                            <span style="color: red;">{{ error }}</span>
-                        </div>
-                    {% endfor %}
-                {% endif %}
-            </div>
+            
+                        {% if form.errors %}
+                            {% for error in form['asignatura_' ~ i].errors %}
+                                <div class="text-danger">
+                                    <span style="color: red;">{{ error }}</span>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    <br>
+                {% endfor %}
         </div>
-    </form>
+
+        <!-- Contenedor para el botón de envío -->
+        <div class="d-flex justify-content-center my-4">
+            <button type="submit" class="btn btn-primary">Enviar</button>
+        </div>
+    </form>      
 </div>
 
 <script>

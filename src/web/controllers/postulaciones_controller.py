@@ -3,8 +3,11 @@ from src.core.models.postulacion import Postulacion
 from src.core.services import (postulacion_service, alumno_service, estado_postulacion_service,
 paises_service, genero_service, estado_civil_service, pasaporte_service, cedula_de_identidad_service,
 programa_service, archivo_service, usuario_service, email_service, periodo_postulacion_service)
+from src.core.services import facultades as facultades_service
+from src.core.services import carreras as carreras_service
 from src.core.database import db
 from flask import current_app as app
+from src.web.forms.asignaturas_form import AsignaturasForm
 from src.web.handlers.permisos import check
 import os
 import io
@@ -349,3 +352,34 @@ def guardar_datos_estadia(id_postulacion):
     print(f"El archivo se sube así: {psicofisico}")
     flash('Datos guardados exitosamente', 'success')
     return redirect(url_for('postulacion.mis_postulaciones'))
+
+@postulacion_bp.get('/<int:postulacion_id>/seleccionar_materias')
+#@check("alumno")
+def seleccionar_materias(postulacion_id):
+
+    facultades = facultades_service.get_all_facultades()
+
+    formulario = AsignaturasForm()
+
+    cantidad_materias = 5
+
+    facultades_seleccionadas = []
+    for i in range(0,cantidad_materias):
+        f_id = request.args.get(f"facultad_{i}", None)
+        if f_id and f_id != "":
+            facultades_seleccionadas.append(facultades_service.get_facultad_by_id(f_id))
+        else:
+            facultades_seleccionadas.append(None)
+    
+    carreras_seleccionadas = []
+    for i in range(0,cantidad_materias):
+        f_id = request.args.get(f"carrera_{i}", None)
+        asignatura_field = getattr(formulario, f"asignatura_{i}")
+        if f_id and f_id != "":
+            carreras_seleccionadas.append(carreras_service.get_carrera_by_id(f_id))
+            asignatura_field.choices =  [("Asignatura", "Seleccione una asingatura")] + [(asignatura.id, asignatura.nombre) for asignatura in carreras_seleccionadas[i].asignaturas]
+        else:
+            carreras_seleccionadas.append(None)
+            asignatura_field.choices =  [("Asignatura", "Seleccione una asingatura")]
+
+    return render_template('postulaciones/elegir_materias.html', cantidad_materias=cantidad_materias, form=formulario, facultades=facultades, facultades_seleccionadas=facultades_seleccionadas, carreras_seleccionadas=carreras_seleccionadas)

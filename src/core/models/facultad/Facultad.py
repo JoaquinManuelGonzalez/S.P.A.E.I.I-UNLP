@@ -14,6 +14,8 @@ class Facultad(db.Model):
         lazy='select'
     )
 
+    carreras = db.relationship("Carrera", back_populates="facultad")
+
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
 
