@@ -49,8 +49,10 @@ def primer_formulario():
     mercosur = data["mercosur"]
     convenio_programa = data["convenioPrograma"]
     data_titulos = data["titulos"]
+    id_periodo_postulacion = periodo_postulacion_service.periodo_actual().id
     
-
+    if not id_periodo_postulacion:
+        return jsonify({"error": "Actualmente no hay un periodo de inscripción abierto"}), 400
     if not data_postulacion:
         return jsonify({"error": "No se encontraron datos de la postulación"}), 400
     if not data_alumno:
@@ -312,7 +314,7 @@ def primer_formulario_get():
         "generos": data_generos,
         "estados_civiles": data_estados_civiles,
         "csrf_token": token,
-        "programas": data_programas
+        "programas": data_programas,
     }
 
     #response = make_response(jsonify(data_response), 200)

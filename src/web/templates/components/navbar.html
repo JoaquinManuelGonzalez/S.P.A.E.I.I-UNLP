@@ -23,10 +23,7 @@
             <a class="nav-link" href="/facultades">Repostulación</a>
           </li>
           <li class="nav-item active">
-            <a class="nav-link" href="/facultades">Elección de Asignaturas</a>
-          </li>
-          <li class="nav-item active">
-            <a class="nav-link" href="{{ url_for('alumnos_bp.ver_documentacion', id_alumno=get_id_alumno_sesion(session)) }}">Mis Archivos</a>
+            <a class="nav-link" href="{{ url_for('postulacion.seleccionar_materias', postulacion_id=1)}}">Elección de Asignaturas</a>
           </li>
           <li class="nav-item active">
             <a class="nav-link" href="{{ url_for('postulacion.mis_postulaciones')}}">Mis Postulaciones</a>

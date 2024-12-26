@@ -198,6 +198,11 @@
         <li class="nav-item" role="presentation">
             <a class="nav-link" id="documentos-tab" data-bs-toggle="tab" href="#documentos" role="tab" aria-controls="documentos" aria-selected="false">Documentos Asociados</a>
         </li>
+        {% if check_permiso(session, 'archivo_listar') %}
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="archivos-tab" data-bs-toggle="tab" href="#archivos" role="tab" aria-controls="archivos" aria-selected="false">Fotos y/o Archivos Asociados</a>
+            </li>
+        {% endif %}
         {% if check_permiso(session, 'admin') %}
             <li class="nav-item" role="presentation">
                 <a class="nav-link" id="historial-tab" data-bs-toggle="tab" href="#historial" role="tab" aria-controls="historial" aria-selected="false">Historial</a>
@@ -246,12 +251,105 @@
                     <h5 class="mb-0">Documentación</h5>
                 </div>
                 <div class="card-body">
-                    <p><strong>Pasaporte:</strong> 
+                    <p><strong>Número de Pasaporte:</strong> 
                         {{ alumno.pasaporte.numero if alumno.pasaporte else "No posee información asociada." }}
+                    </p>
+                    <p><strong>País de Emisión de Pasaporte:</strong> 
+                        {{ alumno.pasaporte.pais.nombre_es if alumno.pasaporte else "No posee información asociada." }}
                     </p>
                     <p><strong>Cédula de Identidad:</strong> 
                         {{ alumno.cedula_de_identidad.numero if alumno.cedula_de_identidad else "No posee información asociada." }}
                     </p>
+                    <p><strong>País de Emisión de Cédula de Identidad:</strong> 
+                        {{ alumno.cedula_de_identidad.pais.nombre_es if alumno.cedula_de_identidad else "No posee información asociada." }}
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-pane fade" id="archivos" role="tabpanel" aria-labelledby="archivos-tab">
+            <div class="card shadow-sm border-0 mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Fotos y/o Archivos Asociados</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Archivo de Pasaporte -->
+                        <div class="col-12 mb-3">
+                            <div class="d-flex align-items-center justify-content-between">
+                            <span><strong>Foto o Archivo de Pasaporte:</strong></span>
+                            <span class="text-muted text-center">
+                              {% if archivos["Pasaporte"] != "No posee información asociada." %}
+                              {{ archivos['Pasaporte'].titulo }}
+                              {% else %}
+                                {{ archivos["Pasaporte"] }}
+                              {% endif %}
+                            </span>
+                            <div>
+                                {% if archivos["Pasaporte"] != "No posee información asociada." %}
+                                <a href="{{ url_for('alumnos_bp.ver_archivo', id_archivo=archivos["Pasaporte"].id) }}" class="btn btn-secondary btn-sm">Descargar Archivo</a>
+                              {% endif %}
+                            </div>
+                          </div>
+                        </div>
+              
+                        <!-- Archivo de Cédula de Identidad -->
+                        <div class="col-12 mb-3">
+                          <div class="d-flex align-items-center justify-content-between">
+                              <span><strong>Foto o Archivo de Cédula de Identidad:</strong></span>
+                            <span class="text-muted text-center">
+                              {% if archivos["Cédula de Identidad"] != "No posee información asociada." %}
+                                {{ archivos['Cédula de Identidad'].titulo }}
+                              {% else %}
+                              {{ archivos["Cédula de Identidad"] }}
+                              {% endif %}
+                            </span>
+                            <div>
+                                {% if archivos["Cédula de Identidad"] != "No posee información asociada." %}
+                                <a href="{{ url_for('alumnos_bp.ver_archivo', id_archivo=archivos["Cédula de Identidad"].id) }}" class="btn btn-secondary btn-sm">Descargar Archivo</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Archivo de Certificado B1 o superior de Español -->
+                    <div class="col-12 mb-3">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <span><strong>Foto o Archivo de Certificado B1 o superior de Español:</strong></span>
+                            <span class="text-muted text-center">
+                                {% if archivos["Certificado B1"] != "No posee información asociada." %}
+                                {{ archivos['Certificado B1'].titulo }}
+                                {% else %}
+                                {{ archivos["Certificado B1"] }}
+                                {% endif %}
+                            </span>
+                            <div>
+                                {% if archivos["Certificado B1"] != "No posee información asociada." %}
+                                <a href="{{ url_for('alumnos_bp.ver_archivo', id_archivo=archivos["Certificado B1"].id) }}" class="btn btn-secondary btn-sm">Descargar Archivo</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        </div>
+              
+                        <!-- Archivo de Certificado de Discapacidad -->
+                        <div class="col-12 mb-3">
+                          <div class="d-flex align-items-center justify-content-between">
+                            <span><strong>Foto o Archivo de Certificado de Discapacidad:</strong></span>
+                            <span class="text-muted text-center">
+                                {% if archivos["Certificado de Discapacidad"] != "No posee información asociada." %}
+                                {{ archivos['Certificado de Discapacidad'].titulo }}
+                              {% else %}
+                              {{ archivos["Certificado de Discapacidad"] }}
+                              {% endif %}
+                            </span>
+                            <div>
+                              {% if archivos["Certificado de Discapacidad"] != "No posee información asociada." %}
+                                <a href="{{ url_for('alumnos_bp.ver_archivo', id_archivo=archivos["Certificado de Discapacidad"].id) }}" class="btn btn-secondary btn-sm">Descargar Archivo</a>
+                                {% endif %}
+                            </div>
+                          </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -266,6 +364,7 @@
             </div>
         </div>
     </div>
+</div>
 
     <!-- Botones de acción -->
     <div class="d-flex justify-content-center mt-4">

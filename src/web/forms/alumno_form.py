@@ -137,23 +137,6 @@ class AlumnoForm(FlaskForm):
         validators=[DataRequired(message="Este campo es requerido")],
     )
 
-    # Pasaporte
-    numero_pasaporte = StringField(
-        "Número de Pasaporte",
-        validators=[Optional(), validate_only_letters_and_numbers],
-    )
-    id_pais_emision_pasaporte = SelectField(
-        "País de Emisión del Pasaporte", choices=[], validators=[Optional()]
-    )
-
-    # Cédula de identidad
-    numero_cedula = StringField(
-        "Número de Cédula de Identidad", validators=[Optional(), validate_only_numbers]
-    )
-    id_pais_emision_cedula = SelectField(
-        "País de Emisión de la Cédula", choices=[], validators=[Optional()]
-    )
-
     # Botón de envío
     submit = SubmitField("Guardar Cambios")
 
@@ -167,5 +150,77 @@ class AlumnoForm(FlaskForm):
         self.id_pais_de_nacimiento.choices = obtener_paises_choices()
         self.id_pais_de_residencia.choices = obtener_paises_choices()
         self.id_pais_nacionalidad.choices = obtener_paises_choices()
-        self.id_pais_emision_pasaporte.choices = obtener_paises_choices()
-        self.id_pais_emision_cedula.choices = obtener_paises_choices()
+
+
+class PasaporteForm(FlaskForm):
+
+    def validate_only_letters_and_numbers(self, field):
+        """
+        Validates that the field contains only letters and numbers.
+
+        Args:
+            field (Field): The field to validate.
+
+        Raises:
+            ValidationError: If the field contains characters other than letters and numbers.
+        """
+
+        if not re.match(r"^[A-Za-z0-9ÁÉÍÓÚáéíóúÑñ\s]+$", field.data):
+            raise ValidationError("El campo solo puede contener letras y números.")
+
+    numero = StringField(
+        "Número de Pasaporte",
+        validators=[
+            Optional(),
+            validate_only_letters_and_numbers,
+        ],
+    )
+    id_pais = SelectField(
+        "País de Emisión del Pasaporte",
+        choices=[],
+        validators=[Optional()],
+    )
+    submit = SubmitField("Guardar Cambios")
+
+    def __init__(self, *args, **kwargs):
+        super(PasaporteForm, self).__init__(*args, **kwargs)
+
+        # Poblar las opciones para los SelectFields
+        self.id_pais.choices = obtener_paises_choices()
+
+
+class CedulaForm(FlaskForm):
+
+    def validate_only_letters_and_numbers(self, field):
+        """
+        Validates that the field contains only letters and numbers.
+
+        Args:
+            field (Field): The field to validate.
+
+        Raises:
+            ValidationError: If the field contains characters other than letters and numbers.
+        """
+
+        if not re.match(r"^[A-Za-z0-9ÁÉÍÓÚáéíóúÑñ\s]+$", field.data):
+            raise ValidationError("El campo solo puede contener letras y números.")
+
+    numero = StringField(
+        "Número de Cédula de Identidad",
+        validators=[
+            Optional(),
+            validate_only_letters_and_numbers,
+        ],
+    )
+    id_pais = SelectField(
+        "País de Emisión de la Cédula de Identidad",
+        choices=[],
+        validators=[Optional()],
+    )
+    submit = SubmitField("Guardar Cambios")
+
+    def __init__(self, *args, **kwargs):
+        super(CedulaForm, self).__init__(*args, **kwargs)
+
+        # Poblar las opciones para los SelectFields
+        self.id_pais.choices = obtener_paises_choices()
