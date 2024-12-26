@@ -19,12 +19,13 @@ def crear_pasaporte(
         id_pais=pais.id,
         id_archivo=nuevo_archivo.id
     )
-    nuevo_archivo.id_pasaporte = pasaporte.id
 
     archivo_codificado = base64.b64encode(archivo.read())
     archivo_service.save_file_minio(archivo_codificado, filename)
 
     db.session.add(pasaporte)
+    db.session.commit()
+    nuevo_archivo.id_pasaporte = pasaporte.id
     db.session.commit()
 
     return pasaporte
