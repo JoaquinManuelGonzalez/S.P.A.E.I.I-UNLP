@@ -10,7 +10,7 @@
         <h1 class="m-0 text-center">Postulación</h1>
     </div>
 </div>
-<form action="{{ url_for('postulacion.guardar_datos_estadia') }}" method="POST" class="container-fluid full-height d-flex justify-content-center align-items-center" style="max-width: 500px; max-height: 750px; overflow: hidden;">
+<form action="{{ url_for('postulacion.guardar_datos_estadia', id_postulacion=id_postulacion) }}" enctype="multipart/form-data" method="POST" class="container-fluid full-height d-flex justify-content-center align-items-center" style="max-width: 500px; max-height: 750px; overflow: hidden;">
     {{ form.csrf_token }}
     <div class="container my-5">
         
@@ -35,7 +35,7 @@
             {% endif %}
         </div>
         <div class="mb-3">
-            {{ form.discapacidad.label}}{{ form.discapacidad(class="form-radio") }}
+            {{ form.discapacidad.label}}{{ form.discapacidad(id="discapacidad", class="form-radio") }}
             {% if form.errors %}
                 {% for error in form.discapacidad.errors %}
                     <div class="text-danger">{{ form.errors[0] }}
@@ -44,8 +44,8 @@
                 {% endfor %}
             {% endif %}
         </div>
-        <div class="mb-3">
-            {{ form.certificado_discapacidad.label }}{{ form.certificado_discapacidad(class="form-control") }}
+        <div class="mb-3" id="certificado-container" style="display: none;">
+            {{ form.certificado_discapacidad.label }}{{ form.certificado_discapacidad(id="certificado_discapacidad", class="form-control") }}
             {% if form.errors %}
                 {% for error in form.certificado_discapacidad.errors %}
                     <div class="text-danger">{{ form.errors[0] }}
@@ -90,4 +90,19 @@
     </div>
 </form>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const discapacidadCheckbox = document.getElementById('discapacidad');
+        const certificadoContainer = document.getElementById('certificado-container');
+
+        discapacidadCheckbox.addEventListener('change', function () {
+            if (discapacidadCheckbox.checked) {
+                certificadoContainer.style.display = 'block';
+            } else {
+                certificadoContainer.style.display = 'none';
+            }
+        });
+    });
+</script>
 {% endblock %}

@@ -252,17 +252,19 @@
 
     </div>
     {% if postulacion.estado.nombre == "Solicitud de Postulacion" %}
-        <!-- Botones de acción -->
-        <div class="d-flex justify-content-center mt-4">
-            <!-- Botón para aceptar -->
-            <button type="button" class="btn btn-primary btn-custom mx-2" data-bs-toggle="modal" data-bs-target="#acceptModal">
-                Aceptar Solicitud de Postulación
-            </button>
-            <!-- Botón para rechazar -->
-            <button type="button" class="btn btn-danger btn-custom mx-2" data-bs-toggle="modal" data-bs-target="#rejectModal">
-                Rechazar Solicitud de Postulación
-            </button>
-        </div>
+        {% if presidencia %}
+            <!-- Botones de acción -->
+            <div class="d-flex justify-content-center mt-4">
+                <!-- Botón para aceptar -->
+                <button type="button" class="btn btn-primary btn-custom mx-2" data-bs-toggle="modal" data-bs-target="#acceptModal">
+                    Aceptar Solicitud de Postulación
+                </button>
+                <!-- Botón para rechazar -->
+                <button type="button" class="btn btn-danger btn-custom mx-2" data-bs-toggle="modal" data-bs-target="#rejectModal">
+                    Rechazar Solicitud de Postulación
+                </button>
+            </div>
+        {% endif %}
     {% endif %}
 
     <!-- Modal de Aceptar -->
@@ -313,6 +315,15 @@
                 </form>
             </div>
         </div>
+    </div>
+    <div>
+        {% if postulacion.estado.nombre == "Postulacion Validada por Facultad" %}
+        <a href="{{ url_for('postulacion.ingresar_datos_estadia', id_postulacion=postulacion.id) }}" type="button" class="btn btn-primary btn-custom mx-2">
+            Siguiente Formulario
+        </a>
+
+
+        {% endif %}
     </div>
 
 </div>

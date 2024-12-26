@@ -28,8 +28,7 @@ class PostulacionEstadiaForm(FlaskForm):
     certificado_discapacidad = FileField(
         "Certificado de discapacidad",
         validators=[
-            FileAllowed(["pdf"], "Solo se permiten archivos .pdf"),
-            Optional()]
+            FileAllowed(["pdf"], "Solo se permiten archivos .pdf")]
     )
     fecha_ingreso = DateField(
         "Fecha de ingreso al país",
@@ -41,7 +40,7 @@ class PostulacionEstadiaForm(FlaskForm):
     )
     consulado_visacion = StringField(
         "Consulado de visación",
-        validators=[Length(min=2, max=50)]
+        validators=[Length(max=50)]
     )
 
     def values(self):
