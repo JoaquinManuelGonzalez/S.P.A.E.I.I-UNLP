@@ -11,6 +11,9 @@ import io
 from src.web.handlers.auth import get_rol_sesion, get_id_sesion
 from src.web.handlers.permisos import check
 import time
+from src.web.forms.postulacion_form import PostulacionForm
+from src.web.forms.postulacion_estadia_form import PostulacionEstadiaForm
+from src.web.schemas.archivo_schema import archivo_schema
 
 postulacion_bp = Blueprint('postulacion', __name__, url_prefix='/postulaciones')
 
@@ -92,7 +95,10 @@ def ver_postulacion(id_postulacion):
             tutor_academico = tutor
 
     archivos = archivo_service.get_archivos_by_postulacion(postulacion.id)
-    
+    presidencia = False
+    if get_rol_sesion(session) == "jefe" or "admin":
+        presidencia = True
+        
     data = {
         "postulacion": postulacion,
         "alumno": alumno,
@@ -108,7 +114,8 @@ def ver_postulacion(id_postulacion):
         "pais_cedula_de_identidad": pais_cedula_de_identidad,
         "tutor_institucional": tutor_institucional,
         "tutor_academico": tutor_academico,
-        "archivos": archivos
+        "archivos": archivos,
+        "presidencia": presidencia
     }
     return render_template('postulaciones/ver_postulacion.html', **data)
 
@@ -229,7 +236,114 @@ def periodo_postulacion_toggle():
         por_pagina = 10
 
         periodos = periodo_postulacion_service.listar_periodos_postulacion(fecha_desde, fecha_hasta, pagina, por_pagina, orden)
-
-
-
     return render_template('postulaciones/toggle_inscripciones.html', periodos=periodos)
+
+@postulacion_bp.get('/repostulacion')
+#@check("alumno")
+def repostulacion():
+    form = PostulacionForm()
+    return render_template('postulaciones/repostulacion.html', form=form)
+
+@postulacion_bp.get('/ingresar_datos_estadia/<int:id_postulacion>')
+#@check("alumno")
+def ingresar_datos_estadia(id_postulacion):
+    form = PostulacionEstadiaForm()
+    return render_template('postulaciones/postulacion_estadia.html', form=form, id_postulacion=id_postulacion)
+
+@postulacion_bp.post('/guardar_datos_estadia/<int:id_postulacion>')
+#@check("alumno")
+def guardar_datos_estadia(id_postulacion):
+    form = PostulacionEstadiaForm()
+    if not form.validate_on_submit():
+        flash('Error al cargar los datos', 'danger')
+        return render_template('postulaciones/postulacion_estadia.html', form=form, id_postulacion=id_postulacion)
+    
+    if not form.psicofisico.data:
+        flash('El archivo psicofisico es obligatorio', 'danger')
+        return render_template('postulaciones/postulacion_estadia.html', form=form, id_postulacion=id_postulacion)
+    
+    if not form.politicas_institucionales.data:
+        flash('El archivo de politicas institucionales es obligatorio', 'danger')
+        return render_template('postulaciones/postulacion_estadia.html', form=form, id_postulacion=id_postulacion)
+    
+    if not form.fecha_ingreso.data:
+        flash('La fecha de ingreso es obligatoria', 'danger')
+        return render_template('postulaciones/postulacion_estadia.html', form=form, id_postulacion=id_postulacion)
+    
+    if not form.duracion_estadia.data:
+        flash('La duracion de la estadia es obligatoria', 'danger')
+        return render_template('postulaciones/postulacion_estadia.html', form=form, id_postulacion=id_postulacion)
+    
+    postulacion = postulacion_service.get_postulacion_by_id(id_postulacion)
+    alumno = postulacion.informacion_alumno_entrante
+    psicofisico = form.psicofisico.data
+    print(f"El archivo psicofisico se sube así: {psicofisico.filename}")
+    path_psicofisico = f"{id_postulacion}_{alumno.id}_psicofisico_{psicofisico.filename}"
+    archivo_psicofisico = {
+        "titulo": psicofisico.filename,
+        "path": path_psicofisico,
+        "id_postulacion": id_postulacion,
+        "id_informacion_alumno_entrante": alumno.id
+    }
+
+    try:
+        archivo_psicofisico = archivo_schema.load(archivo_psicofisico)
+    except Exception as err:
+        print(err)
+        flash('Error al cargar el archivo psicofisico', 'danger')
+        return render_template('postulaciones/postulacion_estadia.html', form=form, id_postulacion=id_postulacion)
+    
+    politicas_institucionales = form.politicas_institucionales.data
+    print(f"El archivo politicas institucionales se sube así: {politicas_institucionales}")
+    path_politicas_institucionales = f"{id_postulacion}_{alumno.id}_politicasI_{politicas_institucionales.filename}"
+    archivo_politicas = {
+        "titulo": politicas_institucionales.filename,
+        "path": path_politicas_institucionales,
+        "id_postulacion": id_postulacion,
+        "id_informacion_alumno_entrante": alumno.id
+    }
+
+    try:
+        archivo_politicas = archivo_schema.load(archivo_politicas)
+    except Exception as err:
+        print(err)
+        flash('Error al cargar el archivo de politicas institucionales', 'danger')
+        return render_template('postulaciones/postulacion_estadia.html', form=form, id_postulacion=id_postulacion)
+    
+    alumno.discapacidad = form.discapacidad.data
+    if form.discapacidad.data == True and form.certificado_discapacidad.data:
+        certificado_discapacidad = form.certificado_discapacidad.data
+        print(f"El archivo certificado de discapacidad se sube así: {certificado_discapacidad.filename}")
+        path_certificado_discapacidad = f"{id_postulacion}_{alumno.id}_certificadoDiscapacidad_{certificado_discapacidad.filename}"
+        archivo_certificado_discapacidad = {
+            "titulo": certificado_discapacidad.filename,
+            "path": path_certificado_discapacidad,
+            "id_postulacion": id_postulacion,
+            "id_informacion_alumno_entrante": alumno.id
+        }
+        try:
+            archivo_certificado_discapacidad = archivo_schema.load(archivo_certificado_discapacidad)
+        except Exception as err:
+            print(err)
+            flash('Error al cargar el archivo de certificado de discapacidad', 'danger')
+            return render_template('postulaciones/postulacion_estadia.html', form=form, id_postulacion=id_postulacion)
+
+    postulacion.fecha_ingreso = form.fecha_ingreso.data
+    postulacion.duracion_estadia = form.duracion_estadia.data
+
+    if form.consulado_visacion.data != "":
+        postulacion.consulado_visacion = form.consulado_visacion.data
+   
+    db.session.commit()
+    archivo_service.crear_archivo(**archivo_psicofisico)
+    archivo_service.crear_archivo(**archivo_politicas)
+
+    if form.discapacidad.data == True and form.certificado_discapacidad.data:
+        archivo_service.crear_archivo(**archivo_certificado_discapacidad)
+        archivo_service.save_file_minio(request.files['certificado_discapacidad'].read(), archivo_certificado_discapacidad['path'])
+    
+    archivo_service.save_file_minio(request.files['psicofisico'].read(), archivo_psicofisico['path'])
+    archivo_service.save_file_minio(request.files['politicas_institucionales'].read(), archivo_politicas['path'])
+    print(f"El archivo se sube así: {psicofisico}")
+    flash('Datos guardados exitosamente', 'success')
+    return redirect(url_for('postulacion.mis_postulaciones'))

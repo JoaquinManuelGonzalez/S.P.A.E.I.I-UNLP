@@ -17,3 +17,4 @@ flask-jwt-extended
 Flask-Mail
 flask-cors==5.0.0
 email-validator
+wtforms-sqlalchemy==0.4.1

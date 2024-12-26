@@ -1,0 +1,419 @@
+{% extends "layout.html" %}
+{% block title %}Postulaciones{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}
+
+    <section class="p-4 bg-light rounded shadow-lg mx-auto" style="max-width: 800px;">
+        <h2 class="text-center mb-4">Formulario de Postulación</h2>
+        <form method="post" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+        <div class="row">
+            <!-- Datos Personales -->
+            <div class="col-md-6">
+            <h3 class="h5 mb-3">Datos Personales</h3>
+    
+            <!-- Apellido -->
+            <div class="mb-3">
+                {{ form.apellido.label }}{{ form.apellido(class="form-control") }}
+                {% if form.errors %}
+                    {% for error in form.apellido.errors %}
+                        <div class="text-danger">{{ form.errors[0] }}
+                            <span style="color: red;">{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+    
+            <!-- Nombre -->
+            <div class="mb-3">
+                {{ form.nombre.label }}{{ form.nombre(class="form-control") }}
+                {% if form.errors %}
+                    {% for error in form.nombre.errors %}
+                        <div class="text-danger">{{ form.errors[0] }}
+                            <span style="color: red;">{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+    
+            <!-- Email -->
+            <div class="mb-3">
+                {{ form.email.label }}{{ form.email(class="form-control") }}
+                {% if form.errors %}
+                    {% for error in form.email.errors %}
+                        <div class="text-danger">{{ form.errors[0] }}
+                            <span style="color: red;">{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+    
+            <!-- Género -->
+            <div class="mb-3">
+                {{ form.genero.label }}{{ form.genero(class="form-select") }}
+                {% if form.errors %}
+                    {% for error in form.genero.errors %}
+                        <div class="text-danger">{{ form.errors[0] }}
+                            <span style="color: red;">{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                </select>
+            </div>
+    
+            <!-- Fecha de Nacimiento -->
+            <div class="mb-3">
+                {{ form.fecha_nacimiento.label }}{{ form.fecha_nacimiento(class="form-control") }}
+                {% if form.errors %}
+                    {% for error in form.fecha_nacimiento.errors %}
+                        <div class="text-danger">{{ form.errors[0] }}
+                            <span style="color: red;">{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+    
+            <!-- País de Nacimiento -->
+            <div class="mb-3">
+                {{ form.pais_nacimiento.label }}{{ form.pais_nacimiento(class="form-select") }}
+                {% if form.errors %}
+                    {% for error in form.pais_nacimiento.errors %}
+                        <div class="text-danger">{{ form.errors[0] }}
+                            <span style="color: red;">{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+    
+            <!-- País de Residencia -->
+            <div class="mb-3">
+                {{ form.pais_residencia.label }}{{ form.pais_residencia(class="form-select") }}
+                {% if form.errors %}
+                    {% for error in form.pais_residencia.errors %}
+                        <div class="text-danger">{{ form.errors[0] }}
+                            <span style="color: red;">{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                {{ form.domicilio.label }}{{ form.domicilio(class="form-control") }}
+                {% if form.errors %}
+                    {% for error in form.domicilio.errors %}
+                        <div class="text-danger">{{ form.errors[0] }}
+                            <span style="color: red;">{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+            </div>
+
+            <div class="mb-3">
+                {{ form.nacionalidad.label }}{{ form.nacionalidad(class="form-select") }}
+                {% if form.errors %}
+                    {% for error in form.nacionalidad.errors %}
+                        <div class="text-danger">{{ form.errors[0] }}
+                            <span style="color: red;">{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                {{ form.numero_pasaporte.label }}{{ form.numero_pasaporte(class="form-control") }}
+                {% if form.errors %}
+                    {% for error in form.numero_pasaporte.errors %}
+                        <div class="text-danger">{{ form.errors[0] }}
+                            <span style="color: red;">{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                {{ form.pais_emision_pasaporte.label }}{{ form.pais_emision_pasaporte(class="form-select") }}
+                {% if form.errors %}
+                    {% for error in form.pais_emision_pasaporte.errors %}
+                        <div class="text-danger">{{ form.errors[0] }}
+                            <span style="color: red;">{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                {{ form.foto_pasaporte.label }}{{ form.foto_pasaporte(class="form-control") }}
+                {% if form.errors %}
+                    {% for error in form.foto_pasaporte.errors %}
+                        <div class="text-danger">{{ form.errors[0] }}
+                            <span style="color: red;">{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                {{ form.numero_cedula_identidad.label }}{{ form.numero_cedula_identidad(class="form-control") }}
+                {% if form.errors %}
+                    {% for error in form.numero_cedula_identidad.errors %}
+                        <div class="text-danger">{{ form.errors[0] }}
+                            <span style="color: red;">{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                {{ form.pais_emision_cedula_identidad.label }}{{ form.pais_emision_cedula_identidad(class="form-select") }}
+                {% if form.errors %}
+                    {% for error in form.pais_emision_cedula_identidad.errors %}
+                        <div class="text-danger">{{ form.errors[0] }}
+                            <span style="color: red;">{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                {{ form.foto_cedula_identidad.label }}{{ form.foto_cedula_identidad(class="form-control") }}
+                {% if form.errors %}
+                    {% for error in form.foto_cedula_identidad.errors %}
+                        <div class="text-danger">{{ form.errors[0] }}
+                            <span style="color: red;">{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <!-- Estado Civil -->
+            <div class="mb-3">
+                {{ form.estado_civil.label }}{{ form.estado_civil(class="form-select") }}
+                {% if form.errors %}
+                    {% for error in form.estado_civil.errors %}
+                        <div class="text-danger">{{ form.errors[0] }}
+                            <span style="color: red;">{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                {{ form.certificado_b1.label }}{{ form.certificado_b1(class="form-control", id="certificado_b1") }}
+                {% if form.errors %}
+                    {% for error in form.certificado_b1.errors %}
+                        <div class="text-danger">{{ form.errors[0] }}
+                            <span style="color: red;">{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            </div>
+    
+            <!-- Datos Académicos -->
+            <div class="col-md-6">
+            <h3 class="h5 mb-3">Datos Académicos</h3>
+    
+            <!-- Universidad de Origen -->
+            <div class="mb-3">
+                {{ form.universidad_origen.label }}{{ form.universidad_origen(class="form-control") }}
+                {% if form.errors %}
+                    {% for error in form.universidad_origen.errors %}
+                        <div class="text-danger">{{ form.errors[0] }}
+                            <span style="color: red;">{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+    
+            <div class="mb-3">
+                <label class="form-label">Nivel de estudio</label>
+                <div class="form-check">
+                    {{ form.de_grado(class="form-check-input", type="radio", id="convenio") }}
+                    <label class="form-check-label" for="de_grado">Estudiante de grado</label>
+                </div>
+                <div class="form-check">
+                    {{ form.de_posgrado(class="form-check-input", type="radio", id="programa") }}
+                    <label class="form-check-label" for="de_posgrado">Estudiante de posgrado</label>
+                </div>
+            </div>
+
+
+            <div class="mb-3">
+                {{ form.plan_trabajo.label }}{{ form.plan_trabajo(class="form-control") }}
+                {% if form.errors %}
+                    {% for error in form.plan_trabajo.errors %}
+                        <div class="text-danger">{{ form.errors[0] }}
+                            <span style="color: red;">{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                {{ form.consulado_visacion.label }}{{ form.consulado_visacion(class="form-control") }}
+                {% if form.errors %}
+                    {% for error in form.consulado_visacion.errors %}
+                        <div class="text-danger">{{ form.errors[0] }}
+                            <span style="color: red;">{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Desea postularse por</label>
+                <div class="form-check">
+                    {{ form.por_convenio(class="form-check-input", type="radio", id="convenio") }}
+                    <label class="form-check-label" for="convenio">Convenio universitario</label>
+                </div>
+                <div class="form-check">
+                    {{ form.por_programa(class="form-check-input", type="radio", id="programa") }}
+                    <label class="form-check-label" for="programa">Programa estudiantil</label>
+                </div>
+                <p class="mt-2 text-muted">
+                    Puede ver los Convenios que posee la Universidad Nacional de La Plata visitando haciendo click 
+                    <a href="https://www.unlp.edu.ar" target="_blank">aquí</a>.
+                </p>
+            </div>
+
+            <div class="mb-3">
+                {{ form.convenio.label }}{{ form.convenio(class="form-control") }}
+                {% if form.errors %}
+                    {% for error in form.convenio.errors %}
+                        <div class="text-danger">{{ form.errors[0] }}
+                            <span style="color: red;">{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div>
+                {{ form.programa.label }}{{ form.programa(class="form-control") }}
+                {% if form.errors %}
+                    {% for error in form.programa.errors %}
+                        <div class="text-danger">{{ form.errors[0] }}
+                            <span style="color: red;">{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                {{ form.carta_recomendacion.label }}{{ form.carta_recomendacion(class="form-control") }}
+                {% if form.errors %}
+                    {% for error in form.carta_recomendacion.errors %}
+                        <div class="text-danger">{{ form.errors[0] }}
+                            <span style="color: red;">{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <h3 class="h5 mb-3">Datos de Tutores</h3>
+
+            <div class="mb-3">
+                {{ form.apellido_tutor_institucional.label }}{{ form.apellido_tutor_institucional(class="form-control") }}
+                {% if form.errors %}
+                    {% for error in form.apellido_tutor_institucional.errors %}
+                        <div class="text-danger">{{ form.errors[0] }}
+                            <span style="color: red;">{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                {{ form.nombre_tutor_institucional.label }}{{ form.nombre_tutor_institucional(class="form-control") }}
+                {% if form.errors %}
+                    {% for error in form.nombre_tutor_institucional.errors %}
+                        <div class="text-danger">{{ form.errors[0] }}
+                            <span style="color: red;">{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                {{ form.email_tutor_institucional.label }}{{ form.email_tutor_institucional(class="form-control") }}
+                {% if form.errors %}
+                    {% for error in form.email_tutor_institucional.errors %}
+                        <div class="text-danger">{{ form.errors[0] }}
+                            <span style="color: red;">{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                {{ form.apellido_tutor_academico.label }}{{ form.apellido_tutor_academico(class="form-control") }}
+                {% if form.errors %}
+                    {% for error in form.apellido_tutor_academico.errors %}
+                        <div class="text-danger">{{ form.errors[0] }}
+                            <span style="color: red;">{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                {{ form.nombre_tutor_academico.label }}{{ form.nombre_tutor_academico(class="form-control") }}
+                {% if form.errors %}
+                    {% for error in form.nombre_tutor_academico.errors %}
+                        <div class="text-danger">{{ form.errors[0] }}
+                            <span style="color: red;">{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                {{ form.email_tutor_academico.label }}{{ form.email_tutor_academico(class="form-control") }}
+                {% if form.errors %}
+                    {% for error in form.email_tutor_academico.errors %}
+                        <div class="text-danger">{{ form.errors[0] }}
+                            <span style="color: red;">{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            </div>
+        </div>
+    
+        <!-- Submit Button -->
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary mt-3">Enviar</button>
+        </div>
+        </form>
+    </section>
+
+
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const nacionalidad = document.getElementById('nacionalidad');
+            const certificadoB1 = document.getElementById('certificado_b1');
+            const certificadoB1Error = document.getElementById('certificado_b1_error');
+            console.log(nacionalidad)
+            nacionalidad.addEventListener('change', function () {
+                const selectedOption = nacionalidad.options[nacionalidad.selectedIndex];
+                console.log(selectedOption)
+                // Comprueba si el país es no hispanoparlante
+                console.log("es hispanoparlante: "+selectedOption.dataset.hispanoparlante)
+                const esHispanoparlante = selectedOption.dataset.hispanoparlante === "true";
+    
+                if (esHispanoparlante) {
+                    certificadoB1.removeAttribute('required');
+                    certificadoB1Error.classList.add('hidden');
+                } else {
+                    certificadoB1.setAttribute('required', 'required');
+                    certificadoB1Error.classList.remove('hidden');
+                }
+            });
+        });
+    </script>
+{% endblock %}   

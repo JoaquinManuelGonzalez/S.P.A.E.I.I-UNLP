@@ -4,8 +4,8 @@ from src.core.database import db
 def listar_programas():
     return Programa.query.all()
 
-def crear_programa(**data):
-    programa = Programa(**data)
+def crear_programa(nombre):
+    programa = Programa(nombre=nombre)
     db.session.add(programa)
     db.session.commit()
     return programa

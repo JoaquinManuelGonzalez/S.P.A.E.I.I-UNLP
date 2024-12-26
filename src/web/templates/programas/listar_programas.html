@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+{% block title %}Listar Programas{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}
+<div class="container py-5"> <!-- Agregué un contenedor con padding adicional -->
+    <h1 class="display-5 text-center mb-4" >Programas</h1>
+    <hr class="mb-4">
+    <div class="d-flex justify-content-center mb-3">
+        <a href="{{ url_for('programa.crear_programa') }}" class="btn btn-primary btn-sm">Crear Programa</a>
+    </div>
+    
+    <div class="table-responsive shadow-sm">
+        <table class="table table-bordered table-hover table-striped align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Nombre</th>
+                    <th>Fecha de carga</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if not programas %}
+                    <tr>
+                        <td class="text-center font-medium" colspan="2">No se encontraron programas</td>
+                    </tr>
+                {% endif %}
+                {% for programa in programas %}
+                <tr class="border-b border-gray-200 py-2">
+                    <td>{{ programa.nombre }}</td>
+                    <td>{{ programa.creacion.strftime("%d-%m-%Y") }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
