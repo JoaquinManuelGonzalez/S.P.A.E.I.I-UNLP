@@ -75,7 +75,7 @@ def create_app(env="development", static_folder="../../static", template_folders
     app.jinja_env.globals.update(periodo_actual= periodo_actual)
     
     app.register_error_handler(404, error.error_not_found)
-    app.register_error_handler(403, error.sin_permisos)    
+    app.register_error_handler(403, error.sin_permisos)   
 
     @app.cli.command(name="reset-db")
     def reset_db():
