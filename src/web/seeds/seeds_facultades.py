@@ -115,6 +115,12 @@ def crear_estados():
     estados.append(Estado(
         nombre='Postulacion Cancelada o Interrumpida' #estado para cuando no se llegó al estado 'Aceptada' antes de que comience un nuevo periodo de inscripcion
     ))
+    estados.append(Estado(
+        nombre='Postulacion en Espera de Aceptacion' #estado de la postulacion al finalizar el paso 5 del diagrama de flujo
+    ))
+    estados.append(Estado(
+        nombre='Postulacion en Espera de ser Completada' #estado de la postulacion al finalizar el paso 7 del diagrama de flujo
+    ))
 
     for i in range (len(estados)):
         db.session.add(estados[i])

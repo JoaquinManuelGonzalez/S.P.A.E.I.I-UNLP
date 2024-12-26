@@ -65,7 +65,7 @@
             {% endif %}
         </div>
         <div class="mb-3">
-            {{ form.duracion_estadia.label }}{{ form.duracion_estadia(class="form-control") }}
+            {{ form.duracion_estadia.label }}{{ form.duracion_estadia(id="duracion_estadia", class="form-control") }}
             {% if form.errors %}
                 {% for error in form.duracion_estadia.errors %}
                     <div class="text-danger">{{ form.errors[0] }}
@@ -74,8 +74,8 @@
                 {% endfor %}
             {% endif %}
         </div>
-        <div class="mb-3">
-            {{ form.consulado_visacion.label }}{{ form.consulado_visacion(class="form-control") }}
+        <div class="mb-3" id="consulado-container" style="display: {% if consulado_dato %}none{% else %}block{% endif %};">
+            {{ form.consulado_visacion.label }}{{ form.consulado_visacion(id="consulado_visacion", class="form-control") }}
             {% if form.errors %}
                 {% for error in form.consulado_visacion.errors %}
                     <div class="text-danger">{{ form.errors[0] }}
@@ -103,6 +103,38 @@
                 certificadoContainer.style.display = 'none';
             }
         });
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const duracionEstadia = document.getElementById('duracion_estadia');
+        const consuladoContainer = document.getElementById('consulado-container');
+        const consuladoVisacion = document.getElementById('consulado_visacion');
+
+        // Verificar si consulado_dato ya tiene un valor
+        const consuladoDato = {{ 'true' if consulado_dato else 'false' }};
+        
+        if (consuladoDato === true) {
+            // Si ya tiene un dato, siempre mantener oculto y no requerido
+            consuladoContainer.style.display = 'none';
+            consuladoVisacion.removeAttribute('required');
+        } else {
+            // Inicialmente ocultar el campo si no está cargado
+            consuladoContainer.style.display = 'none';
+            consuladoVisacion.removeAttribute('required');
+
+            // Mostrar u ocultar basado en la duración de la estadía
+            duracionEstadia.addEventListener('input', function () {
+                const duracionValue = parseInt(duracionEstadia.value, 10);
+                if (duracionValue >= 3) {
+                    consuladoContainer.style.display = 'block';
+                    consuladoVisacion.setAttribute('required', 'required'); // Se hace obligatorio
+                } else {
+                    consuladoContainer.style.display = 'none';
+                    consuladoVisacion.removeAttribute('required'); // Deja de ser obligatorio
+                }
+            });
+        }
     });
 </script>
 {% endblock %}
