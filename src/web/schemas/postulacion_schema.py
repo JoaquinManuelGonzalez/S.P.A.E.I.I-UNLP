@@ -5,7 +5,7 @@ class PostulacionSchema(Schema):
     id = fields.Int(dump_only=True)
     de_posgrado = fields.Bool(required=True)
     universidad_origen = fields.Str(required=True, validate=validate.Length(min=2, max=50))
-    consulado_visacion = fields.Str(required=True, validate=validate.Length(min=2, max=50))
+    consulado_visacion = fields.Str(validate=validate.Length(min=2, max=50))
     convenio = fields.Str(validate=validate.Length(min=2, max=50))
     id_estado = fields.Int(required=True)
     id_informacion_alumno_entrante = fields.Int(required=True)

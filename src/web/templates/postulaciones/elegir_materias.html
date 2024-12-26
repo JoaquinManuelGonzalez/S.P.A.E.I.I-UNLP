@@ -1,0 +1,132 @@
+{% extends "layout.html" %}
+{% block title %}Postulaciones{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <div class="row align-items-center">
+        <div class="col">
+            <h1 class="m-0 text-center">Seleccionar asignaturas</h1>
+        </div>
+    </div>
+    <form action="{{ url_for('postulacion.guardar_asignaturas', id_postulacion=id_postulacion) }}" enctype="multipart/form-data" method="POST" class="container-fluid full-height d-flex justify-content-center align-items-center" style="max-width: 500px; max-height: 750px; overflow: hidden;">
+        {{ form.csrf_token }}
+        <div class="container my-5">
+            
+            <div class="mb-3">
+                {{ form.asignatura_1.label }}{{ form.asignatura_1(class="form-control") }}
+                {% if form.errors %}
+                    {% for error in form.asignatura_1.errors %}
+                        <div class="text-danger">{{ form.errors[0] }}
+                            <span style="color: red;">{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div class="mb-3">
+                {{ form.asignatura_2.label }}{{ form.asignatura_2(class="form-control") }}
+                {% if form.errors %}
+                    {% for error in form.asignatura_2.errors %}
+                        <div class="text-danger">{{ form.errors[0] }}
+                            <span style="color: red;">{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div class="mb-3">
+                <label for="facultad_3" class="form-label">Buscar por facultad a la que corresponde:</label>
+                <select class="form-select" id="facultad3" name="facultad3">
+                    <option value="">Seleccione una facultad</option>
+                    {% for facultad in facultades %}
+                        <option {{ facultad_id == facultad.id and "selected" or "" }}
+                                value="{{ facultad.id }}">{{ facultad.nombre }}</option>
+                    {% endfor %}
+                </select>
+                <label for="search" class="form-label">Buscar por facultad a la que corresponde:</label>
+                <select class="form-select" id="carrera3" name="carrera3">
+                    <option value="">Seleccione una facultad</option>
+                    {% if facultad[2] %}
+                        {% for carrera in facultad[2].carreras %}
+                            <option {{ carrera_id[2] == carrera.id and "selected" or "" }}
+                                    value="{{ facultad.id }}">{{ facultad.nombre }}</option>
+                        {% endfor %}
+                    {% endif %}
+                </select>
+                {{ form.asignatura_3.label }}{{ form.asignatura_3(class="form-control") }}
+                {% if form.errors %}
+                    {% for error in form.asignatura_3.errors %}
+                        <div class="text-danger">{{ form.errors[0] }}
+                            <span style="color: red;">{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div class="mb-3">
+                {{ form.asignatura_4.label }}{{ form.asignatura_4(class="form-control") }}
+                {% if form.errors %}
+                    {% for error in form.asignatura_4.errors %}
+                        <div class="text-danger">{{ form.errors[0] }}
+                            <span style="color: red;">{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div class="mb-3">
+                {{ form.asignatura_5.label }}{{ form.asignatura_5(class="form-control") }}
+                {% if form.errors %}
+                    {% for error in form.asignatura_5.errors %}
+                        <div class="text-danger">{{ form.errors[0] }}
+                            <span style="color: red;">{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        // Inicializa tooltips
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+
+        // Selecciona los elementos con ids que comiencen con carrera_ y facultad_
+        const carreraElements = [...document.querySelectorAll('[id^="carrera_"]')];
+        const facultadElements = [...document.querySelectorAll('[id^="facultad_"]')];
+
+        // Función para manejar el cambio de filtros
+        const changeFilters = () => {
+            const url = new URL(window.location.href);
+            const currentUrl = url.toString();
+            const params = url.searchParams;
+
+            // Actualiza los parámetros de carrera_i
+            carreraElements.forEach((carrera, index) => {
+                const paramKey = `carrera_${index}`;
+                if (!params.has(paramKey) || params.get(paramKey) !== carrera.value) {
+                    params.set(paramKey, carrera.value);
+                }
+            });
+
+            // Actualiza los parámetros de facultad_i
+            facultadElements.forEach((facultad, index) => {
+                const paramKey = `facultad_${index}`;
+                if (!params.has(paramKey) || params.get(paramKey) !== facultad.value) {
+                    params.set(paramKey, facultad.value);
+                }
+            });
+
+            // Redirige solo si la URL cambió
+            if (currentUrl !== url.toString()) {
+                window.location.href = url.toString();
+            }
+        };
+
+        // Asigna el event listener a cada elemento
+        carreraElements.forEach(carrera => carrera.addEventListener("change", changeFilters));
+        facultadElements.forEach(facultad => facultad.addEventListener("change", changeFilters));
+    });
+</script>
+{% endblock %}

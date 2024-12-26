@@ -9,7 +9,7 @@ class Carrera(db.Model):
     nombre = db.Column(db.String(100), nullable=False)
     facultad_id = db.Column(db.Integer, db.ForeignKey("facultades.id"), nullable=False)
     facultad = db.relationship("Facultad")
-    asignaturas = db.relationship("Asignatura", secondary=asignaturas_carreras)
+    asignaturas = db.relationship("Asignatura", secondary=asignaturas_carreras, back_populates="carreras")
 
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)

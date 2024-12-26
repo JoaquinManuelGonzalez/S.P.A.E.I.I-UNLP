@@ -34,9 +34,10 @@
             </div>
             <div class="mb-4">
               <label for="pais_de_nacimiento" class="block text-sm font-medium text-gray-700">País de nacimiento</label>
+              <input type="text" v-model="searchQuery" id="search_pais" class="mt-1 p-2 border border-gray-300 rounded-md w-full" placeholder="Escriba para buscar su país"/>
               <select v-model="formData.alumno.id_pais_de_nacimiento" id="pais_de_nacimiento" class="mt-1 p-2 border border-gray-300 rounded-md w-full" required>
                 <option value="">Seleccione su país de nacimiento</option>
-                <option v-for="pais in filteredPaises" :key="pais.id" :value="pais.id">
+                <option v-for="pais in filteredAndSearchedPaises" :key="pais.id" :value="pais.id">
                   {{ pais.name }}
                 </option>
               </select>
@@ -136,7 +137,7 @@
             </div>
             <div class="mb-4">
               <label for="consulado_visacion" class="block text-sm font-medium text-gray-700">Consulado de visación</label>
-              <input v-model="formData.postulacion.consulado_visacion" id="consulado_visacion" type="text" class="mt-1 p-2 border border-gray-300 rounded-md w-full" required placeholder="Ingrese su consulado de visación">
+              <input v-model="formData.postulacion.consulado_visacion" id="consulado_visacion" type="text" class="mt-1 p-2 border border-gray-300 rounded-md w-full" placeholder="Ingrese su consulado de visación" :required="nivelEstudio === 'grado'">
             </div>
             <div class="mb-4">
               <p class="block text-sm font-medium text-gray-700">Desea postularse por</p>
@@ -209,7 +210,7 @@
 
   const store = usePrimerFormularioStore();
   const { formData, errors, loading, paises, estados_civiles, programas, generos, nivelEstudio, convenioPrograma, es_hispanohablante, mercosur } = storeToRefs(store);
-  
+  let searchQuery = ref('');
   // Accedemos al idioma actual a través de i18n
   const { locale } = useI18n();
 
@@ -242,6 +243,11 @@
       id: genero.id,
       name: genero[`nombre_${currentLocale}`], // Usamos el nombre en el idioma actual
     }));
+  });
+
+  const filteredAndSearchedPaises = computed(() => {
+    const query = searchQuery.value.toLowerCase();
+    return filteredPaises.value.filter(pais => pais.name.toLowerCase().includes(query));
   });
 
   // Cargar los datos cuando el componente se monta
@@ -396,8 +402,8 @@
       alert("La universidad de origen debe tener al menos 3 caracteres y como máximo 50 caracteres");
       return false;
     }
-    if(formData.value.postulacion.consulado_visacion.length < 3 || formData.value.postulacion.consulado_visacion.length > 50){
-      errors["consulado_visacion"] = "El consulado de visación debe tener al menos 3 caracteres y como máximo 50 caracteres";
+    if(formData.value.postulacion.consulado_visacion.length > 50){
+      errors["consulado_visacion"] = "El consulado de visación debe tener como máximo 50 caracteres";
       alert(errors["consulado_visacion"]);
       return false;
     }
