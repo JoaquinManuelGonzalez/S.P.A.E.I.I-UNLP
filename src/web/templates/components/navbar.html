@@ -51,7 +51,7 @@
               <a class="nav-link" href="/facultades">Archivos Base</a>
             </li>
             <li class="nav-item active">
-              <a class="nav-link" href="{{ url_for('postulacion.listar_solicitudes_de_postulacion') }}">Solicitudes de Postulación</a>
+              <a class="nav-link" href="{{ url_for('postulacion.acciones_pendientes_presidencia') }}">Acciones Pendientes ({{len(postulaciones_pendientes_presidencia())}})</a>
             </li>
           {% endif %}
           {% if check_permiso(session, 'habilitar_periodo_postulacion') %}

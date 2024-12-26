@@ -5,7 +5,7 @@
 {% endblock %}
 {% block content %}
 <div class="container py-5"> <!-- Añadido contenedor para el padding -->
-    <h1 class="display-5 text-center mb-4" >Solicitudes de Postulación</h1>
+    <h1 class="display-5 text-center mb-4" >Acciones Pendientes sobre Postulaciones</h1>
     <hr class="mb-4">
     <form method="get" class="mb-4">
         <div class="row g-3">
@@ -51,6 +51,8 @@
                     <th>Apellido</th>
                     <th>Email</th>
                     <th>Fecha de Postulación</th>
+                    <th>Ultima actualización</th>
+                    <th>Estado</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -66,6 +68,8 @@
                     <td>{{ postulacion.informacion_alumno_entrante.apellido }}</td>
                     <td>{{ postulacion.informacion_alumno_entrante.email }}</td>
                     <td>{{ postulacion.creacion.strftime("%d-%m-%Y") }}</td>
+                    <td>{{ postulacion.actualizacion.strftime("%d-%m-%Y") }}</td>
+                    <td>{{ postulacion.estado.nombre }}</td>
                     <td class="text-center">
                         <a href="{{ url_for('postulacion.ver_postulacion', id_postulacion=postulacion.id)  }}" class="btn btn-secondary btn-sm">
                             Ver

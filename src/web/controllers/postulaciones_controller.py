@@ -125,11 +125,19 @@ def ver_postulacion(id_postulacion):
 @check("solicitud_postulacion_aceptar")
 def aceptar_solicitud(id_postulacion):
     postulacion = postulacion_service.get_postulacion_by_id(id_postulacion)
-    postulacion_service.actualizar_estado_postulacion(postulacion, "Postulacion Iniciada")
     alumno = alumno_service.get_alumno_by_id(postulacion.id_informacion_alumno_entrante)
-    usuario_service.crear_usuario_solicitud_aprobada(alumno.nombre, alumno.apellido, alumno.email, alumno.id)
-    flash('Solicitud de postulacion aprobada', 'success')
-    return redirect(url_for('postulacion.listar_solicitudes_de_postulacion'))
+    if postulacion.estado.nombre == "Solicitud de Postulacion":
+        postulacion_service.actualizar_estado_postulacion(postulacion, "Postulacion Iniciada")
+        usuario_service.crear_usuario_solicitud_aprobada(alumno.nombre, alumno.apellido, alumno.email, alumno.id)
+        flash('Solicitud de postulacion aprobada', 'success')
+    elif postulacion.estado.nombre == "Postulacion en Espera de Aceptacion":
+        postulacion_service.actualizar_estado_postulacion(postulacion, "Postulacion Aceptada")
+        titulo = "Archivos firmados aceptados"
+        cuerpo = f"Se han aceptado los archivos firmados que ha subido recientemente."
+        destino = alumno.email
+        email_service.send_email(titulo, cuerpo, [destino])
+        flash('Archivos aprobados', 'success')
+    return redirect(url_for('postulacion.acciones_pendientes_presidencia'))
     
 
 @postulacion_bp.post('rechazar_solicitud_de_postulacion/<int:id_postulacion>')
@@ -142,42 +150,48 @@ def rechazar_solicitud(id_postulacion):
         flash('El motivo de rechazo es obligatorio.', 'danger')
         return redirect(url_for('postulacion.ver_postulacion', id_postulacion=postulacion.id))
     else:
-        postulacion_service.actualizar_estado_postulacion(postulacion, "Solicitud Rechazada")
-        titulo = "Solicitud de Postulacion Rechazada"
-        cuerpo = f"Su solicitud de postulacion ha sido rechazada. El motivo de rechazo es: {motivo}"
+        if postulacion.estado.nombre == "Solicitud de Postulacion":
+            postulacion_service.actualizar_estado_postulacion(postulacion, "Solicitud Rechazada")
+            titulo = "Solicitud de Postulacion Rechazada"
+            cuerpo = f"Su solicitud de postulacion ha sido rechazada. El motivo de rechazo es: {motivo}"
+            
+        elif postulacion.estado.nombre == "Postulacion en Espera de Aceptacion":
+            postulacion_service.actualizar_estado_postulacion(postulacion, "Postulacion Validada por Facultad")
+            titulo = "Archivos firmados rechazados"
+            cuerpo = f"Alguno de los archivos firmados subidos en el ultimo paso fue rechazado. Por favor intente devuelta. El motivo de rechazo es: {motivo}"
+        else:
+            print("error en postulacion.rechazar_solicitud: Estado no cubierto")
         destino = alumno.email
         email_service.send_email(titulo, cuerpo, [destino])
         flash('Solicitud de postulacion rechazada', 'danger')
-        return redirect(url_for('postulacion.listar_solicitudes_de_postulacion'))
+        return redirect(url_for('postulacion.acciones_pendientes_presidencia'))
 
 
-@postulacion_bp.get('/listar_solicitudes_de_postulacion')
+@postulacion_bp.get('/acciones_pendientes_presidencia')
 @check("solicitud_postulacion_listar")
-def listar_solicitudes_de_postulacion():
+def acciones_pendientes_presidencia():
     nombre = request.args.get("nombre")
     apellido = request.args.get("apellido")
     email = request.args.get("email")
-    estado = "Solicitud de Postulacion"
     pagina = request.args.get("pagina", 1, type=int)
     ordenado_por = request.args.get("ordenado_por", "nombre")
     orden = request.args.get("orden", "asc")
     por_pagina = 10
 
-    postulaciones = postulacion_service.filtrar_postulaciones(
-        nombre,
-        apellido,
-        email,
-        estado,
-        pagina,
-        ordenado_por,
-        orden,
-        por_pagina
+    postulaciones = postulacion_service.postulaciones_pendientes_presidencia(
+        nombre = nombre,
+        apellido = apellido,
+        email = email,
+        pagina = pagina,
+        ordenado_por = ordenado_por,
+        orden = orden,
+        por_pagina = por_pagina
     )
 
     estados = estado_postulacion_service.listar_estados()
 
     #postulaciones = postulacion_service.listar_postulaciones()
-    return render_template('postulaciones/listar_solicitudes_de_postulacion.html', postulaciones=postulaciones, estados=estados)
+    return render_template('postulaciones/acciones_pendientes_presidencia.html', postulaciones=postulaciones, estados=estados)
 
 @postulacion_bp.get('/descargar_archivo/<filename>')
 @check("archivo_descargar")
