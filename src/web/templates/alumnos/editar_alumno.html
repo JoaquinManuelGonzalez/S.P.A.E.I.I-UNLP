@@ -9,95 +9,167 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.rtl.min.css" />
   {{ super() }}
   <style>
-    /* Asegura que los íconos estén a la derecha */
+    /* Íconos a la derecha */
     .select2-container--bootstrap-5 .select2-selection__arrow,
     .select2-container--bootstrap-5 .select2-selection__clear {
-      right: 10px !important;
-      left: auto !important;
+        right: 1rem !important;
+        left: auto !important;
     }
 
-    /* Ajusta el padding para evitar que el texto se solape con los íconos */
+    /* Padding para evitar solapamiento */
     .select2-container--bootstrap-5 .select2-selection--single .select2-selection__rendered {
-      padding-right: 30px !important;
+        padding-right: 2rem !important;
     }
 
-    /* Ajusta el padding para el multi-select si lo usas */
     .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__rendered {
-      padding-right: 30px !important;
+        padding-right: 2rem !important;
     }
 
-    /* Estilos para los botones */
+    /* Botones personalizados */
     .btn-custom {
-      font-size: 1rem;
-      padding: 0.75rem 1.5rem;
-      border-radius: 18px;
-      font-weight: 600;
-      text-transform: uppercase;
-      transition: background-color 0.3s, transform 0.3s;
+        font-size: 1rem;
+        padding: 0.75rem 1.5rem;
+        border-radius: 1.125rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        transition: background-color 0.3s, transform 0.3s;
     }
 
     .btn-primary {
-      background-color: #007bff;
-      border-color: #007bff;
+        background-color: #007bff;
+        border-color: #007bff;
     }
 
     .btn-primary:hover {
-      background-color: #0056b3;
-      border-color: #004085;
-      transform: translateY(-2px);
+        background-color: #0056b3;
+        border-color: #004085;
+        transform: translateY(-2px);
     }
 
     .btn-secondary {
-      background-color: #6c757d;
-      border-color: #6c757d;
+        background-color: #6c757d;
+        border-color: #6c757d;
     }
 
     .btn-secondary:hover {
-      background-color: #5a6268;
-      border-color: #545b62;
-      transform: translateY(-2px);
+        background-color: #5a6268;
+        border-color: #545b62;
+        transform: translateY(-2px);
     }
 
+    /* Checkboxes personalizados */
     .custom-checkbox .form-check-input {
-      width: 20px;
-      height: 20px;
-      border-radius: 4px;
-      border: 2px solid #ccc;
-      transition: all 0.3s ease;
-      margin-left: 0.1rem;
+        width: 1.25rem;
+        height: 1.25rem;
+        border-radius: 4px;
+        border: 2px solid #ccc;
+        transition: all 0.3s ease;
+        margin-left: 0.25rem;
     }
-  
-    .custom-checkbox .form-check-input:checked {
-      background-color: #28a745;
-      border-color: #28a745;
-    }
-  
-    .custom-checkbox .form-check-input:focus {
-      box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.5);
-    }
-  
-    .custom-checkbox .form-check-label {
-      padding-left: 10px;
-      font-size: 1rem;
-    }
-  
-    .custom-checkbox .form-check-input:checked + .form-check-label {
-      color: #28a745;
-    }
-  
-    .text-danger p {
-      margin: 0;
-      font-size: 0.9rem;
-    }
-  </style>
-{% endblock head %}
 
+    .custom-checkbox .form-check-input:checked {
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+
+    .custom-checkbox .form-check-input:focus {
+        box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.5);
+    }
+
+    .custom-checkbox .form-check-label {
+        padding-left: 0.625rem;
+        font-size: 1rem;
+    }
+
+    .custom-checkbox .form-check-input:checked + .form-check-label {
+        color: #28a745;
+    }
+
+    /* Mensajes de error */
+    .text-danger p {
+        margin: 0;
+        font-size: 0.9rem;
+    }
+
+    /* Inputs de archivo */
+    .file-input-group {
+        display: flex;
+        align-items: center;
+        gap: 0.625rem; /* Espaciado entre botones e input */
+        flex-wrap: wrap; /* Permite que los elementos se ajusten en pantallas pequeñas */
+    }
+
+    .file-input {
+        width: 100%;
+        max-width: 20rem; /* Limita el ancho máximo */
+        padding: 0.375rem;
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+        background-color: #f8f9fa;
+        font-size: 0.875rem;
+        color: #495057;
+    }
+
+    .file-input:hover,
+    .file-input:focus {
+        border-color: #80bdff;
+        outline: none;
+        background-color: #e9ecef;
+    }
+
+    .file-input::file-selector-button {
+        padding: 0.375rem 0.5rem;
+        font-size: 0.875rem;
+        color: #495057;
+        background-color: #e9ecef;
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+        margin-right: 0.5rem;
+        cursor: pointer;
+    }
+
+    .file-input::file-selector-button:hover {
+        background-color: #d6d8db;
+    }
+
+    /* Estilos responsive */
+    @media (max-width: 768px) {
+        .btn-custom {
+            font-size: 0.875rem;
+            padding: 0.5rem 1rem;
+        }
+
+        .file-input {
+            max-width: 100%; /* Ajusta a todo el ancho disponible */
+        }
+
+        .file-input-group {
+            gap: 0.5rem; /* Reduce el espacio en pantallas pequeñas */
+        }
+
+        .custom-checkbox .form-check-label {
+            font-size: 0.875rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .btn-custom {
+            font-size: 0.75rem;
+            padding: 0.375rem 0.75rem;
+        }
+
+        .custom-checkbox .form-check-label {
+            font-size: 0.8rem;
+        }
+    }
+</style>
+{% endblock head %}
 
 {% block content %}
 
   <div class="container mt-5">
     <h1 class="display-4 mb-4 text-center text-dark">Editar Información del Alumno</h1>
-    <form method="POST" action="{{ url_for('alumnos_bp.editar_alumno', id_alumno=alumno.id) }}">
+    <form method="POST" action="{{ url_for('alumnos_bp.actualizar_alumno', id_alumno=alumno.id) }}" enctype="multipart/form-data">
       {{ form.hidden_tag() }}
 
       <div class="card p-5 shadow-lg rounded">
@@ -108,14 +180,14 @@
         <div class="row mb-4">
           <div class="col-md-6">
             <div class="form-group">
-              {{ form.nombre.label(class="form-label font-weight-semibold text-dark") }}
+              <strong>{{ form.nombre.label(class="form-label font-weight-semibold text-dark") }}</strong>
               {{ form.nombre(class="form-control", placeholder="Ingrese el nombre del alumno", value=form.nombre.data or alumno.nombre) }}
             </div>
           </div>
 
           <div class="col-md-6">
             <div class="form-group">
-              {{ form.apellido.label(class="form-label font-weight-semibold") }}
+              <strong>{{ form.apellido.label(class="form-label font-weight-semibold") }}</strong>
               {{ form.apellido(class="form-control", placeholder="Ingrese el apellido del alumno", value=form.apellido.data or alumno.apellido) }}
             </div>
           </div>
@@ -124,14 +196,14 @@
         <div class="row mb-4">
           <div class="col-md-6">
             <div class="form-group">
-              {{ form.email.label(class="form-label font-weight-semibold") }}
+              <strong>{{ form.email.label(class="form-label font-weight-semibold") }}</strong>
               {{ form.email(class="form-control", placeholder="Ingrese el correo electrónico", value=form.email.data or alumno.email) }}
             </div>
           </div>
 
           <div class="col-md-6">
             <div class="form-group">
-              {{ form.fecha_de_nacimiento.label(class="form-label font-weight-semibold") }}
+              <strong>{{ form.fecha_de_nacimiento.label(class="form-label font-weight-semibold") }}</strong>
               {{ form.fecha_de_nacimiento(class="form-control", placeholder="Seleccione la fecha de nacimiento", value=form.fecha_de_nacimiento.data or alumno.fecha_de_nacimiento.strftime('%Y-%m-%d')) }}
             </div>
           </div>
@@ -140,14 +212,14 @@
         <div class="row mb-4">
           <div class="col-md-6">
             <div class="form-group">
-              {{ form.id_genero.label(class="form-label font-weight-semibold") }}
+              <strong>{{ form.id_genero.label(class="form-label font-weight-semibold") }}</strong>
               {{ form.id_genero(class="form-select") }}
             </div>
           </div>
 
           <div class="col-md-6">
             <div class="form-group">
-              {{ form.id_estado_civil.label(class="form-label font-weight-semibold") }}
+              <strong>{{ form.id_estado_civil.label(class="form-label font-weight-semibold") }}</strong>
               {{ form.id_estado_civil(class="form-select") }}
             </div>
           </div>
@@ -156,7 +228,7 @@
         <div class="row mb-4">
           <div class="col-md-6">
             <div class="form-group d-flex align-items-center">
-              <label class="font-weight-bold mr-3" for="{{ form.discapacitado.id }}">{{ form.discapacitado.label.text }}</label>
+              <label class="font-weight-bold mr-3" for="{{ form.discapacitado.id }}"><strong>{{ form.discapacitado.label.text }}</strong></label>
               <div class="form-check custom-checkbox">
                 <input type="checkbox" class="form-check-input" id="{{ form.discapacitado.id }}" name="{{ form.discapacitado.name }}"
                   {% if form.discapacitado.data or alumno.discapacitado %}checked{% endif %}>
@@ -172,7 +244,7 @@
         <div class="row mb-4">
           <div class="col-md-6">
             <div class="form-group">
-              {{ form.id_pais_de_nacimiento.label(class="form-label font-weight-semibold") }}
+              <strong>{{ form.id_pais_de_nacimiento.label(class="form-label font-weight-semibold") }}</strong>
               <!-- Select con clase select2 -->
               {{ form.id_pais_de_nacimiento(class="form-select select2", value=form.id_pais_de_nacimiento.data or alumno.id_pais_de_nacimiento) }}
             </div>
@@ -180,7 +252,7 @@
 
           <div class="col-md-6">
             <div class="form-group">
-              {{ form.id_pais_de_residencia.label(class="form-label font-weight-semibold") }}
+              <strong>{{ form.id_pais_de_residencia.label(class="form-label font-weight-semibold") }}</strong>
               {{ form.id_pais_de_residencia(class="form-select select2", value=form.id_pais_de_residencia.data or alumno.id_pais_de_residencia) }}
             </div>
           </div>
@@ -189,14 +261,14 @@
         <div class="row mb-4">
           <div class="col-md-6">
             <div class="form-group">
-              {{ form.id_pais_nacionalidad.label(class="form-label font-weight-semibold") }}
+              <strong>{{ form.id_pais_nacionalidad.label(class="form-label font-weight-semibold") }}</strong>
               {{ form.id_pais_nacionalidad(class="form-select select2", value=form.id_pais_nacionalidad.data or alumno.id_pais_nacionalidad) }}
             </div>
           </div>
 
           <div class="col-md-6">
             <div class="form-group">
-              {{ form.domicilio_pais_de_residencia.label(class="form-label font-weight-semibold") }}
+              <strong>{{ form.domicilio_pais_de_residencia.label(class="form-label font-weight-semibold") }}</strong>
               {{ form.domicilio_pais_de_residencia(class="form-control", placeholder="Ingrese el país de residencia", value=form.domicilio_pais_de_residencia.data or alumno.domicilio_pais_de_residencia) }}
             </div>
           </div>
@@ -208,14 +280,14 @@
         <div class="row mb-4">
           <div class="col-md-6">
             <div class="form-group">
-              {{ form_pasaporte.numero.label(class="form-label font-weight-semibold") }}
+              <strong>{{ form_pasaporte.numero.label(class="form-label font-weight-semibold") }}</strong>
               {{ form_pasaporte.numero(class="form-control", placeholder="Ingrese el número de pasaporte", value=form_pasaporte.numero.data or alumno.numero_pasaporte) }}
             </div>
           </div>
 
           <div class="col-md-6">
             <div class="form-group">
-              {{ form_cedula.numero.label(class="form-label font-weight-semibold") }}
+              <strong>{{ form_cedula.numero.label(class="form-label font-weight-semibold") }}</strong>
               {{ form_cedula.numero(class="form-control", placeholder="Ingrese el número de cédula", value=form_cedula.numero.data or alumno.numero_cedula) }}
             </div>
           </div>
@@ -224,26 +296,26 @@
         <div class="row mb-4">
           <div class="col-md-6">
             <div class="form-group">
-                {{ form_pasaporte.id_pais.label(class="form-label font-weight-semibold") }}
+                <strong>{{ form_pasaporte.id_pais.label(class="form-label font-weight-semibold") }}</strong>
                 {{ form_pasaporte.id_pais(id="id_pasaporte", class="form-select select2", value=form_pasaporte.id_pais.data) }}
             </div>
           </div>
           
           <div class="col-md-6">
             <div class="form-group">
-              {{ form_cedula.id_pais.label(class="form-label font-weight-semibold") }}
+              <strong>{{ form_cedula.id_pais.label(class="form-label font-weight-semibold") }}</strong>
               {{ form_cedula.id_pais(class="form-select select2", value=form_cedula.id_pais.data) }}
             </div>
           </div>
         </div>
 
-        <h4 class="font-weight-semibold mt-4">Archivos Asociados a la Información Personal</h4>
+        <h4 class="font-weight-semibold mt-4">Fotos y/o Archivos Asociados</h4>
         <hr>
         <div class="row">
           <!-- Archivo de Pasaporte -->
           <div class="col-12 mb-3">
             <div class="d-flex align-items-center justify-content-between">
-              <span>Foto o Archivo de Pasaporte:</span>
+              <span><strong>Foto o Archivo actual de Pasaporte:</strong></span>
               <span class="text-muted text-center">
                 {% if archivos["Pasaporte"] != "No posee información asociada." %}
                   {{ archivos['Pasaporte'].titulo }}
@@ -253,9 +325,9 @@
               </span>
               <div>
                 {% if archivos["Pasaporte"] != "No posee información asociada." %}
-                  <a href="{{ url_for('alumnos_bp.ver_archivo', id_archivo=archivos["Pasaporte"].id) }}" class="btn btn-secondary btn-sm">Ver Archivo</a>
+                  <a href="{{ url_for('alumnos_bp.ver_archivo', id_archivo=archivos["Pasaporte"].id) }}" class="btn btn-secondary btn-sm">Descargar Archivo</a>
                 {% endif %}
-                <button type="button" class="btn btn-primary btn-sm">Subir Archivo</button>
+                <input type="file" id="filePasaporte" name="filePasaporte" accept=".pdf,.jpeg,.jpg,.png" class="file-input">
               </div>
             </div>
           </div>
@@ -263,7 +335,7 @@
           <!-- Archivo de Cédula de Identidad -->
           <div class="col-12 mb-3">
             <div class="d-flex align-items-center justify-content-between">
-              <span>Foto o Archivo de Cédula de Identidad:</span>
+              <span><strong>Foto o Archivo actual de Cédula de Identidad:</strong></span>
               <span class="text-muted text-center">
                 {% if archivos["Cédula de Identidad"] != "No posee información asociada." %}
                   {{ archivos['Cédula de Identidad'].titulo }}
@@ -273,9 +345,9 @@
               </span>
               <div>
                 {% if archivos["Cédula de Identidad"] != "No posee información asociada." %}
-                  <a href="{{ url_for('alumnos_bp.ver_archivo', id_archivo=archivos["Cédula de Identidad"].id) }}" class="btn btn-secondary btn-sm">Ver Archivo</a>
+                  <a href="{{ url_for('alumnos_bp.ver_archivo', id_archivo=archivos["Cédula de Identidad"].id) }}" class="btn btn-secondary btn-sm">Descargar Archivo</a>
                 {% endif %}
-                <button type="button" class="btn btn-primary btn-sm">Subir Archivo</button>
+                <input type="file" id="fileCedula" name="fileCedula" accept=".pdf,.jpeg,.jpg,.png" class="file-input">
               </div>
             </div>
           </div>
@@ -283,7 +355,7 @@
           <!-- Archivo de Certificado B1 o superior de Español -->
           <div class="col-12 mb-3">
             <div class="d-flex align-items-center justify-content-between">
-              <span>Foto o Archivo de Certificado B1 o superior de Español:</span>
+              <span><strong>Foto o Archivo actual de Certificado B1 o superior de Español:</strong></span>
               <span class="text-muted text-center">
                 {% if archivos["Certificado B1"] != "No posee información asociada." %}
                   {{ archivos['Certificado B1'].titulo }}
@@ -293,9 +365,9 @@
               </span>
               <div>
                 {% if archivos["Certificado B1"] != "No posee información asociada." %}
-                  <a href="{{ url_for('alumnos_bp.ver_archivo', id_archivo=archivos["Certificado B1"].id) }}" class="btn btn-secondary btn-sm">Ver Archivo</a>
+                  <a href="{{ url_for('alumnos_bp.ver_archivo', id_archivo=archivos["Certificado B1"].id) }}" class="btn btn-secondary btn-sm">Descargar Archivo</a>
                 {% endif %}
-                <button type="button" class="btn btn-primary btn-sm">Subir Archivo</button>
+                <input type="file" id="fileCertificadoB1" name="fileCertificadoB1" accept=".pdf,.jpeg,.jpg,.png" class="file-input">
               </div>
             </div>
           </div>
@@ -303,7 +375,7 @@
           <!-- Archivo de Certificado de Discapacidad -->
           <div class="col-12 mb-3">
             <div class="d-flex align-items-center justify-content-between">
-              <span>Foto o Archivo de Certificado de Discapacidad:</span>
+              <span><strong>Foto o Archivo actual de Certificado de Discapacidad:</strong></span>
               <span class="text-muted text-center">
                 {% if archivos["Certificado de Discapacidad"] != "No posee información asociada." %}
                   {{ archivos['Certificado de Discapacidad'].titulo }}
@@ -313,9 +385,9 @@
               </span>
               <div>
                 {% if archivos["Certificado de Discapacidad"] != "No posee información asociada." %}
-                  <a href="{{ url_for('alumnos_bp.ver_archivo', id_archivo=archivos["Certificado de Discapacidad"].id) }}" class="btn btn-secondary btn-sm">Ver Archivo</a>
+                  <a href="{{ url_for('alumnos_bp.ver_archivo', id_archivo=archivos["Certificado de Discapacidad"].id) }}" class="btn btn-secondary btn-sm">Descargar Archivo</a>
                 {% endif %}
-                <button type="button" class="btn btn-primary btn-sm">Subir Archivo</button>
+                <input type="file" id="fileCertificadoDiscapacidad" name="fileCertificadoDiscapacidad" accept=".pdf,.jpeg,.jpg,.png" class="file-input">
               </div>
             </div>
           </div>

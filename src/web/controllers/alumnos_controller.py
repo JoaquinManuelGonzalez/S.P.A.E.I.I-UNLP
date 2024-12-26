@@ -49,7 +49,28 @@ def listar_alumnos():
 def ver_detalle_alumno(id_alumno):
 
     alumno = alumno_service.get_alumno_by_id(id_alumno)
-    return render_template("alumnos/ver-detalle-alumno.html", alumno=alumno)
+    archivos = {
+        "Pasaporte": (
+            archivo_service.obtener_archivo_por_id(alumno.pasaporte.id_archivo)
+            if alumno.pasaporte
+            else "No posee información asociada."
+        ),
+        "Cédula de Identidad": (
+            archivo_service.obtener_archivo_por_id(
+                alumno.cedula_de_identidad.id_archivo
+            )
+            if alumno.cedula_de_identidad
+            else "No posee información asociada."
+        ),
+        "Certificado B1": archivo_service.obtener_archivo_por_palabra_clave(
+            (alumno.archivos), "certificadoB1"
+        ),
+        "Certificado de Discapacidad": archivo_service.obtener_archivo_por_palabra_clave(
+            (alumno.archivos), "certificadoDiscapacidad"
+        ),
+    }
+
+    return render_template("alumnos/ver-detalle-alumno.html", alumno=alumno, archivos=archivos)
 
 
 @alumnos_bp.get("solicitar-edicion/<int:id_alumno>")
@@ -177,6 +198,10 @@ def editar_alumno(id_alumno):
 
     alumno = alumno_service.get_alumno_by_id(id_alumno)
 
+    if not alumno:
+        flash("El Alumno Entrante no existe.", "danger")
+        return redirect(url_for("alumnos_bp.listar_alumnos"))
+
     archivos = {
         "Pasaporte": (
             archivo_service.obtener_archivo_por_id(alumno.pasaporte.id_archivo)
@@ -213,10 +238,10 @@ def editar_alumno(id_alumno):
 
 
 @alumnos_bp.get("editar-alumno/ver-archivo/<int:id_archivo>")
+@check("archivo_descargar")
 def ver_archivo(id_archivo):
     archivo = archivo_service.obtener_archivo_por_id(id_archivo)
-    url = archivo_service.generar_url_firmada(archivo)
-    return redirect(url)
+    return archivo_service.descargar_archivo(archivo.path)
 
 
 @alumnos_bp.post("editar-alumno/<int:id_alumno>")
@@ -229,13 +254,65 @@ def actualizar_alumno(id_alumno):
     form_pasaporte = PasaporteForm(obj=alumno.pasaporte)
     form_cedula = CedulaForm(obj=alumno.cedula_de_identidad)
     usuario = usuario_service.buscar_usuario_email(alumno.email)
+    archivos_originales = {
+                "Pasaporte": (
+                    archivo_service.obtener_archivo_por_id(alumno.pasaporte.id_archivo)
+                    if alumno.pasaporte
+                    else "No posee información asociada."
+                ),
+                "Cédula de Identidad": (
+                    archivo_service.obtener_archivo_por_id(
+                        alumno.cedula_de_identidad.id_archivo
+                    )
+                    if alumno.cedula_de_identidad
+                    else "No posee información asociada."
+                ),
+                "Certificado B1": archivo_service.obtener_archivo_por_palabra_clave(
+                    (alumno.archivos), "certificadoB1"
+                ),
+                "Certificado de Discapacidad": archivo_service.obtener_archivo_por_palabra_clave(
+                    (alumno.archivos), "certificadoDiscapacidad"
+                ),
+            }
+    archivos_nuevos = {
+        "foto_pasaporte": request.files.get("filePasaporte"),
+        "cedula_identidad": request.files.get("fileCedula"),
+        "certificado_espanol": request.files.get("fileCertificadoB1"),
+        "certificado_discapacidad": request.files.get("fileCertificadoDiscapacidad"),
+    }
+
+    # Si no se selecciona ningún archivo, asignarles None
+    for nombre_archivo, archivo in archivos_nuevos.items():
+        if archivo.filename == "":
+            archivos_nuevos[nombre_archivo] = None
+
+    print(archivos_nuevos)
 
     if form_pasaporte.validate_on_submit():
         numero_pasaporte = form_pasaporte.numero.data
         pais_emision_pasaporte = paises_service.get_pais_by_id(
-            form_pasaporte.id_pais_emision.data
+            form_pasaporte.id_pais.data
         )
-        if (alumno.pasaporte.numero != numero_pasaporte) or (not alumno.pasaporte):
+
+        print(numero_pasaporte, pais_emision_pasaporte, archivos_nuevos["foto_pasaporte"])
+
+        if (numero_pasaporte or pais_emision_pasaporte or archivos_nuevos["foto_pasaporte"] or (archivos_originales["Pasaporte"] != "No posee información asociada.")) and not (
+            numero_pasaporte and pais_emision_pasaporte and archivos_nuevos["foto_pasaporte"]
+        ):
+            flash(
+                "Un Pasaporte requiere de número, país de emisión y archivo asociado.",
+                "danger",
+            )
+            return render_template(
+                "alumnos/editar_alumno.html",
+                form=form,
+                alumno=alumno,
+                form_pasaporte=form_pasaporte,
+                form_cedula=form_cedula,
+                archivos=archivos_originales,
+            )
+        
+        if (not alumno.pasaporte) or (alumno.pasaporte.numero != numero_pasaporte):
             if pasaporte_service.check_numero(numero_pasaporte):
                 flash(
                     "El número de pasaporte ingresado ya está registrado para otro Alumno Entrante.",
@@ -247,15 +324,24 @@ def actualizar_alumno(id_alumno):
                     alumno=alumno,
                     form_pasaporte=form_pasaporte,
                     form_cedula=form_cedula,
+                    archivos=archivos_originales,
                 )
         if alumno.pasaporte:
-            pasaporte_service.actualizar_pasaporte(
-                alumno.pasaporte, numero_pasaporte, pais_emision_pasaporte
-            )
+            if archivos_nuevos["foto_pasaporte"]:
+                filename = f"{alumno.id}_pasaporte_{archivos_nuevos['foto_pasaporte'].filename}"
+                pasaporte_service.actualizar_pasaporte_con_archivo(
+                    alumno.pasaporte, numero_pasaporte, pais_emision_pasaporte, archivos_nuevos["foto_pasaporte"], filename
+                )
+            else:
+                pasaporte_service.actualizar_pasaporte(
+                    alumno.pasaporte, numero_pasaporte, pais_emision_pasaporte
+                )
         else:
-            pasaporte_service.crear_pasaporte(
-                alumno, numero_pasaporte, pais_emision_pasaporte
+            filename = f"{alumno.id}_pasaporte_{archivos_nuevos['foto_pasaporte'].filename}"
+            nuevo_pasaporte = pasaporte_service.crear_pasaporte(
+                numero_pasaporte, pais_emision_pasaporte, archivos_nuevos["foto_pasaporte"], filename
             )
+            alumno_service.asignar_pasaporte_alumno(alumno, nuevo_pasaporte.id) 
 
     if form.validate_on_submit():
         nombre = form.nombre.data
@@ -277,20 +363,6 @@ def actualizar_alumno(id_alumno):
             form.id_pais_nacionalidad.data
         )
         domicilio_pais_de_residencia = form.domicilio_pais_de_residencia.data
-        numero_pasaporte = (
-            form.numero_pasaporte.data if form.numero_pasaporte.data else None
-        )
-        numero_cedula = form.numero_cedula.data if form.numero_cedula.data else None
-        pais_emision_pasaporte = (
-            paises_service.get_pais_by_id(form.id_pais_emision_pasaporte.data)
-            if form.id_pais_emision_pasaporte.data
-            else None
-        )
-        pais_emision_cedula = (
-            paises_service.get_pais_by_id(form.id_pais_emision_cedula.data)
-            if form.id_pais_emision_cedula.data
-            else None
-        )
 
         if alumno.email != email:
             if alumno_service.check_email(email):
@@ -301,26 +373,6 @@ def actualizar_alumno(id_alumno):
                 return render_template(
                     "alumnos/editar_alumno.html", form=form, alumno=alumno
                 )
-        if alumno.pasaporte:
-            if alumno.pasaporte.numero != numero_pasaporte:
-                if pasaporte_service.check_numero(numero_pasaporte):
-                    flash(
-                        "El número de pasaporte ingresado ya está registrado para otro Alumno Entrante.",
-                        "danger",
-                    )
-                    return render_template(
-                        "alumnos/editar_alumno.html", form=form, alumno=alumno
-                    )
-        if alumno.cedula_de_identidad:
-            if alumno.cedula_de_identidad.numero != numero_cedula:
-                if cedula_de_identidad_service.check_numero(numero_cedula):
-                    flash(
-                        "El número de cédula de identidad ingresado ya está registrado para otro Alumno Entrante.",
-                        "danger",
-                    )
-                    return render_template(
-                        "alumnos/editar_alumno.html", form=form, alumno=alumno
-                    )
 
         alumno = alumno_service.actualizar_informacion_alumno(
             alumno,
@@ -340,12 +392,14 @@ def actualizar_alumno(id_alumno):
         usuario_service.actualizar_informacion_usuario_alumno(
             usuario, alumno.nombre, alumno.apellido, alumno.email
         )
+
         titulo = (
             f"Actualización de datos para el alumno {alumno.nombre} {alumno.apellido}"
         )
         mensaje = f"Se han actualizado sus datos personales en el sistema de acuerdo a las modificaciones solicitadas. Si desea realizar más cambios, por favor, realice una nueva Solicitud de Edición de Datos Personales."
         destinatario = [alumno.email]
         email_service.send_email(titulo, mensaje, destinatario)
+
     else:
         # Obtener el primer campo con error
         first_error_field = next(iter(form.errors))
@@ -364,13 +418,3 @@ def actualizar_alumno(id_alumno):
         "success",
     )
     return render_template("alumnos/ver-detalle-alumno.html", alumno=alumno)
-
-
-@alumnos_bp.post("alumnos/eliminar-alumno/<int:id_alumno>")
-def eliminar_alumno(id_alumno):
-    pass
-
-
-@alumnos_bp.get("alumnos/ver-documentacion/<int:id_alumno>")
-def ver_documentacion(id_alumno):
-    pass

@@ -171,14 +171,14 @@ class PasaporteForm(FlaskForm):
     numero = StringField(
         "Número de Pasaporte",
         validators=[
-            DataRequired(message="Este campo es requerido"),
+            Optional(),
             validate_only_letters_and_numbers,
         ],
     )
     id_pais = SelectField(
         "País de Emisión del Pasaporte",
         choices=[],
-        validators=[DataRequired(message="Este campo es requerido")],
+        validators=[Optional()],
     )
     submit = SubmitField("Guardar Cambios")
 
@@ -208,14 +208,14 @@ class CedulaForm(FlaskForm):
     numero = StringField(
         "Número de Cédula de Identidad",
         validators=[
-            DataRequired(message="Este campo es requerido"),
+            Optional(),
             validate_only_letters_and_numbers,
         ],
     )
     id_pais = SelectField(
         "País de Emisión de la Cédula de Identidad",
         choices=[],
-        validators=[DataRequired(message="Este campo es requerido")],
+        validators=[Optional()],
     )
     submit = SubmitField("Guardar Cambios")
 

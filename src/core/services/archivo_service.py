@@ -79,4 +79,4 @@ def descargar_archivo(filename):
 
         return send_file(file_data, download_name=filename, as_attachment=True)
     except Exception:
-        return + "Error al descargar el archivo", 500
+        return "Error al descargar el archivo", 500

@@ -144,3 +144,9 @@ def actualizar_alumno(
     db.session.commit()
 
     return alumno
+
+
+def asignar_pasaporte_alumno(alumno, id_pasaporte):
+    alumno.id_pasaporte = id_pasaporte
+    db.session.commit()
+    
