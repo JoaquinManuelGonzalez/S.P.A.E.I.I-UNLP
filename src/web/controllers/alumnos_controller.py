@@ -48,7 +48,7 @@ def listar_alumnos():
     pagina = request.args.get("pagina", 1, type=int)
     ordenado_por = request.args.get("ordenado_por", "nombre")
     orden = request.args.get("orden", "asc")
-    por_pagina = 5
+    por_pagina = 25
 
     alumnos = alumno_service.filtrar_alumnos(
         nombre, apellido, email, pagina, ordenado_por, orden, por_pagina, facultad
