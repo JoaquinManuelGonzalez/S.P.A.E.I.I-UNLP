@@ -8,7 +8,6 @@ from src.core.models.asignatura import Asignatura
 from src.core.models.postulacion.estado import Estado
 from src.core.models.postulacion.postulacion import Postulacion
 from src.core.database import db
-from sqlalchemy.sql import exists
 
 
 def ordenar_alumnos(
