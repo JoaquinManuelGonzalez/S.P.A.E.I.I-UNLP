@@ -186,3 +186,20 @@ def desrelacionar_asignatura_carrera(asignatura_id, carrera_id):
         return True
     else:
         return False
+    
+def get_asignatura_by_nombre(nombre):
+    """Obtiene una asignatura por su nombre.
+
+    Args:
+        nombre (str): El nombre de la asignatura.
+
+    Returns:
+        Asignatura: El objeto Asignatura con el nombre especificado, o None si no se encuentra.
+    """
+
+    return Asignatura.query.filter(
+        and_(
+            func.binary(Asignatura.nombre) == nombre,
+            Asignatura.deleted_at == None
+        )
+    ).first()
