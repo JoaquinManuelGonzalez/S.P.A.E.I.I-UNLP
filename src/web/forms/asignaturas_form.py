@@ -17,3 +17,12 @@ class AsignaturasForm(FlaskForm):
     asignatura_2 = SelectField('Asignatura', choices=[], validators=[])
     asignatura_3 = SelectField('Asignatura', choices=[], validators=[])
     asignatura_4 = SelectField('Asignatura', choices=[], validators=[])
+
+    def values(self):
+        return {
+            "asignatura_0": self.asignatura_0.data,
+            "asignatura_0": self.asignatura_1.data,
+            "asignatura_0": self.asignatura_2.data,
+            "asignatura_0": self.asignatura_3.data,
+            "asignatura_0": self.asignatura_4.data,
+        }

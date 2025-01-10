@@ -188,3 +188,15 @@ def postulaciones_pendientes_focal(
     if not pagina:
         return query.all()
     return query.paginate(page=pagina, per_page=por_pagina, error_out=False)
+def asociar_asignaturas_a_postulacion(postulacion_id, asignaturas):
+    """
+    Asocia asignaturas a una postulación.
+    """
+    postulacion = get_postulacion_by_id(postulacion_id)
+    if not postulacion:
+        return False
+    for asignatura in asignaturas:
+        a = Asignatura.query.get(asignatura)
+        postulacion.asignaturas.append(a)
+    db.session.commit()
+    return True
