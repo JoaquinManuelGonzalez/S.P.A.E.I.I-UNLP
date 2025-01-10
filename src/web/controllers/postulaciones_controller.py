@@ -169,7 +169,7 @@ def aceptar_solicitud(id_postulacion):
         destino = alumno.email
         email_service.send_email(titulo, cuerpo, [destino])
         flash('Archivos aprobados', 'success')
-    elif postulacion.estado.nombre == "Postulacion en Espera de Aceptacion":
+    elif postulacion.estado.nombre == "Postulacion en Espera de ser Completada":
         postulacion_service.actualizar_estado_postulacion(postulacion, "Postulacion Completada")
         titulo = "Postulacion completada"
         cuerpo = f"Se han aceptado los últimos archivos subidos y todos los pasos de la postulación han sido completados."
@@ -198,6 +198,10 @@ def rechazar_solicitud(id_postulacion):
             postulacion_service.actualizar_estado_postulacion(postulacion, "Postulacion Validada por Facultad")
             titulo = "Archivos firmados rechazados"
             cuerpo = f"Alguno de los archivos firmados subidos en el ultimo paso fue rechazado. Por favor intente devuelta. El motivo de rechazo es: {motivo}"
+        elif postulacion.estado.nombre == "Postulacion en Espera de ser Completada":
+            postulacion_service.actualizar_estado_postulacion(postulacion, "Postulacion Aceptada")
+            titulo = "Archivos nuevos rechazados"
+            cuerpo = f"Alguno de los archivos subidos en el ultimo paso fue rechazado. Por favor intente devuelta. El motivo de rechazo es: {motivo}"
         else:
             print("error en postulacion.rechazar_solicitud: Estado no cubierto")
         destino = alumno.email
@@ -231,6 +235,34 @@ def acciones_pendientes_presidencia():
 
     #postulaciones = postulacion_service.listar_postulaciones()
     return render_template('postulaciones/acciones_pendientes_presidencia.html', postulaciones=postulaciones, estados=estados)
+
+@postulacion_bp.get('/acciones_pendientes_focal')
+@check("punto_focal")
+def acciones_pendientes_focal():
+    nombre = request.args.get("nombre")
+    apellido = request.args.get("apellido")
+    email = request.args.get("email")
+    pagina = request.args.get("pagina", 1, type=int)
+    ordenado_por = request.args.get("ordenado_por", "nombre")
+    orden = request.args.get("orden", "asc")
+    por_pagina = 10
+    idPuntoFocal = session["user_id"]
+
+    postulaciones = postulacion_service.postulaciones_pendientes_focal(
+        idPuntoFocal = idPuntoFocal,
+        nombre = nombre,
+        apellido = apellido,
+        email = email,
+        pagina = pagina,
+        ordenado_por = ordenado_por,
+        orden = orden,
+        por_pagina = por_pagina
+    )
+
+    estados = estado_postulacion_service.listar_estados()
+
+    #postulaciones = postulacion_service.listar_postulaciones()
+    return render_template('postulaciones/acciones_pendientes_focal.html', postulaciones=postulaciones, estados=estados)
 
 @postulacion_bp.get('/descargar_archivo/<filename>')
 @check("archivo_descargar")
