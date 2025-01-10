@@ -252,7 +252,7 @@
                 {% endfor %}
             </div>
             {% if ( (postulacion.estado.nombre == "Postulacion en Espera de Aceptacion") or (postulacion.estado.nombre == "Postulacion en Espera de ser Completada") ) %}
-                {% if presidencia %}
+                {% if check_permiso(session, "solicitud_postulacion_aceptar") %}
                     <!-- Botones de acción -->
                     <div class="d-flex justify-content-center mt-4">
                         <!-- Botón para aceptar -->
@@ -271,7 +271,7 @@
 
     </div>
     {% if postulacion.estado.nombre == "Solicitud de Postulacion" %}
-        {% if rol == "presidencia" or rol == "admin" %}
+        {% if check_permiso(session, "solicitud_postulacion_aceptar") %}
             <!-- Botones de acción -->
             <div class="d-flex justify-content-center mt-4">
                 <!-- Botón para aceptar -->
