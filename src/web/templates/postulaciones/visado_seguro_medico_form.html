@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+{% block title %}Postulaciones{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <div class="row align-items-center">
+        <div class="col">
+            <h1 class="m-0 text-center">Postulación</h1>
+        </div>
+    </div>
+    <form action="{{ url_for('postulacion.visado_seguro_medico_post', id_postulacion=id_postulacion) }}" enctype="multipart/form-data" method="POST" class="container-fluid full-height d-flex justify-content-center align-items-center" style="max-width: 500px; max-height: 750px; overflow: hidden;">
+        {{ form.csrf_token }}
+        <div class="container my-5">
+            <div class="mb-3">
+                {{ form.visado.label }}{{ form.visado(class="form-control") }}
+                {% if form.errors %}
+                    {% for error in form.visado.errors %}
+                        <div class="text-danger">{{ form.errors[0] }}
+                            <span style="color: red;">{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div class="mb-3">
+                {{ form.seguro_medico.label }}{{ form.seguro_medico(class="form-control") }}
+                {% if form.errors %}
+                    {% for error in form.seguro_medico.errors %}
+                        <div class="text-danger">{{ form.errors[0] }}
+                            <span style="color: red;">{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            
+            <button type="submit" class="btn btn-primary my-3">Enviar</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

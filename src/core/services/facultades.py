@@ -2,6 +2,7 @@ from sqlalchemy import and_, exists, func, or_, select, union_all
 from src.core.database import db
 from datetime import datetime
 from src.core.models.facultad import Facultad
+from src.core.models.usuario import Usuario
 
 def create_facultad(nombre, acronimo):
     """
@@ -122,3 +123,7 @@ def delete_facultad(facultad_id):
         return True
     else:
         return False
+    
+def get_puntos_focales_by_facultades(facultad_ids):
+    # Devuelve una lista de puntos focales únicos por facultades
+    return db.session.query(Usuario).filter(Usuario.facultad_id.in_(facultad_ids)).all()
