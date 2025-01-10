@@ -86,40 +86,64 @@ def enlazar_puntos_focales(usuarios):
 
 def crear_estados():
     estados.append(Estado(
-        nombre='Solicitud de Postulacion'
+        nombre='Solicitud de Postulacion',
+        requiere_accion_presidencia = True,
+        requiere_accion_focal = False
     ))
     estados.append(Estado(
-        nombre='Solicitud Rechazada'
+        nombre='Solicitud Rechazada',
+        requiere_accion_presidencia = False,
+        requiere_accion_focal = False
     ))
     estados.append(Estado(
-        nombre='Postulacion Iniciada'
+        nombre='Postulacion Iniciada',
+        requiere_accion_presidencia = False,
+        requiere_accion_focal = False
     ))
     estados.append(Estado(
-        nombre='Postulacion en Proceso'
+        nombre='Postulacion en Proceso',
+        requiere_accion_presidencia = False,
+        requiere_accion_focal = True
     ))
     estados.append(Estado(
-        nombre='Postulacion Invalidada por Facultad'
+        nombre='Postulacion Invalidada por Facultad',
+        requiere_accion_presidencia = False,
+        requiere_accion_focal = False
     ))
     estados.append(Estado(
-        nombre='Postulacion Validada por Facultad'
+        nombre='Postulacion Validada por Facultad',
+        requiere_accion_presidencia = False,
+        requiere_accion_focal = False
     ))
     estados.append(Estado(
-        nombre='Postulacion Aceptada'
+        nombre='Postulacion Aceptada',
+        requiere_accion_presidencia = False,
+        requiere_accion_focal = False
     ))
     estados.append(Estado(
-        nombre='Postulacion Completada'
+        nombre='Postulacion Completada',
+        requiere_accion_presidencia = False,
+        requiere_accion_focal = False
     ))
     estados.append(Estado(
-        nombre='Postulacion Finalizada'
+        nombre='Postulacion Finalizada',
+        requiere_accion_presidencia = False,
+        requiere_accion_focal = False
     ))
     estados.append(Estado(
-        nombre='Postulacion Cancelada o Interrumpida' #estado para cuando no se llegó al estado 'Aceptada' antes de que comience un nuevo periodo de inscripcion
+        nombre='Postulacion Cancelada o Interrumpida', #estado para cuando no se llegó al estado 'Aceptada' antes de que comience un nuevo periodo de inscripcion
+        requiere_accion_presidencia = False,
+        requiere_accion_focal = False
     ))
     estados.append(Estado(
-        nombre='Postulacion en Espera de Aceptacion' #estado de la postulacion al finalizar el paso 5 del diagrama de flujo
+        nombre='Postulacion en Espera de Aceptacion', #estado de la postulacion al finalizar el paso 5 del diagrama de flujo
+        requiere_accion_presidencia = True,
+        requiere_accion_focal = False
     ))
     estados.append(Estado(
-        nombre='Postulacion en Espera de ser Completada' #estado de la postulacion al finalizar el paso 7 del diagrama de flujo
+        nombre='Postulacion en Espera de ser Completada', #estado de la postulacion al finalizar el paso 7 del diagrama de flujo
+        requiere_accion_presidencia = True,
+        requiere_accion_focal = False
     ))
 
     for i in range (len(estados)):

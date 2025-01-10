@@ -6,6 +6,8 @@ class Estado(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(50), nullable=False)
+    requiere_accion_presidencia = db.Column(db.Boolean, nullable=False)
+    requiere_accion_focal = db.Column(db.Boolean, nullable=False)
     
     creacion = db.Column(db.DateTime, default=datetime.now)
     actualizacion = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)

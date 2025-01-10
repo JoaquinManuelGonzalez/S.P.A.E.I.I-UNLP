@@ -24,6 +24,7 @@ from flask_mail import Mail
 from src.web.handlers import error
 
 from src.core.services.periodo_postulacion_service import periodo_actual
+from src.core.services.postulacion_service import postulaciones_pendientes_presidencia, postulaciones_pendientes_focal
   
 session = Session()
 def create_app(env="development", static_folder="../../static", template_folders=""):
@@ -73,6 +74,9 @@ def create_app(env="development", static_folder="../../static", template_folders
     app.jinja_env.globals.update(check_permiso= check_permiso)
     app.jinja_env.globals.update(get_id_alumno_sesion= get_id_alumno_sesion)
     app.jinja_env.globals.update(periodo_actual= periodo_actual)
+    app.jinja_env.globals.update(postulaciones_pendientes_presidencia = postulaciones_pendientes_presidencia)
+    app.jinja_env.globals.update(postulaciones_pendientes_focal = postulaciones_pendientes_focal)
+    app.jinja_env.globals.update(len = len)
     
     app.register_error_handler(404, error.error_not_found)
     app.register_error_handler(403, error.sin_permisos)   
