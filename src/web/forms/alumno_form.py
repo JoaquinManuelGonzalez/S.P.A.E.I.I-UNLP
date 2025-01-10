@@ -186,7 +186,7 @@ class PasaporteForm(FlaskForm):
         super(PasaporteForm, self).__init__(*args, **kwargs)
 
         # Poblar las opciones para los SelectFields
-        self.id_pais.choices = [("", "Seleccione un país")] + obtener_paises_choices()
+        self.id_pais.choices = obtener_paises_choices()
 
 
 class CedulaForm(FlaskForm):
@@ -223,4 +223,4 @@ class CedulaForm(FlaskForm):
         super(CedulaForm, self).__init__(*args, **kwargs)
 
         # Poblar las opciones para los SelectFields
-        self.id_pais.choices = [("", "Seleccione un país")] + obtener_paises_choices()
+        self.id_pais.choices = obtener_paises_choices()
