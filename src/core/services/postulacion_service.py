@@ -2,6 +2,7 @@ from src.core.models.postulacion.postulacion import Postulacion
 from src.core.database import db
 from src.core.models.alumno.informacion_alumno_entrante import InformacionAlumnoEntrante
 from src.core.models.postulacion.estado import Estado
+from src.core.models.asignatura import Asignatura
 
 def crear_postulacion(**data):
     """
@@ -116,3 +117,16 @@ def filtrar_postulaciones_por_alumno(
         query = query.filter(Postulacion.id_informacion_alumno_entrante == id_alumno)
 
     return query.paginate(page=pagina, per_page=por_pagina, error_out=False)
+
+def asociar_asignaturas_a_postulacion(postulacion_id, asignaturas):
+    """
+    Asocia asignaturas a una postulación.
+    """
+    postulacion = get_postulacion_by_id(postulacion_id)
+    if not postulacion:
+        return False
+    for asignatura in asignaturas:
+        a = Asignatura.query.get(asignatura)
+        postulacion.asignaturas.append(a)
+    db.session.commit()
+    return True

@@ -252,7 +252,7 @@
 
     </div>
     {% if postulacion.estado.nombre == "Solicitud de Postulacion" %}
-        {% if presidencia %}
+        {% if rol == "presidencia" or rol == "admin" %}
             <!-- Botones de acción -->
             <div class="d-flex justify-content-center mt-4">
                 <!-- Botón para aceptar -->
@@ -317,12 +317,26 @@
         </div>
     </div>
     <div>
-        {% if postulacion.estado.nombre == "Postulacion Validada por Facultad" %}
+        {% if postulacion.estado.nombre == "Postulacion Validada por Facultad" and rol == "alumno" %}
         <a href="{{ url_for('postulacion.ingresar_datos_estadia', id_postulacion=postulacion.id) }}" type="button" class="btn btn-primary btn-custom mx-2">
             Siguiente Formulario
         </a>
 
 
+        {% endif %}
+    </div>
+    <div>
+        {% if postulacion.estado.nombre == "Postulacion Aceptada" and rol == "alumno" %}
+            <a href="{{ url_for('postulacion.visado_seguro_medico', id_postulacion=postulacion.id) }}" type="button" class="btn btn-primary btn-custom mx-2">
+                Siguiente Formulario
+            </a>
+        {% endif %}
+    </div>
+    <div>
+        {% if postulacion.estado.nombre == "Postulacion Iniciada" and rol == "alumno" %}
+            <a href="{{ url_for('postulacion.seleccionar_materias', postulacion_id=postulacion.id) }}" type="button" class="btn btn-primary btn-custom mx-2">
+                Seleccionar Materias
+            </a>
         {% endif %}
     </div>
 
