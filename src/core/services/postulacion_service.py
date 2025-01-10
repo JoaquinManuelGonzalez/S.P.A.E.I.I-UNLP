@@ -142,17 +142,10 @@ def postulaciones_pendientes_presidencia(
     if id_periodo:
         query = query.filter(Postulacion.id_periodo_postulacion == id_periodo)
     
-    query = query.filter(
-        or_(
-            Postulacion.estado.has(Estado.requiere_accion_presidencia),
-            Postulacion.estado.has(Estado.requiere_accion_presidencia),
-            Postulacion.estado.has(Estado.requiere_accion_presidencia)
-        )
-    )
+    query = query.filter(Postulacion.estado.has(Estado.requiere_accion_presidencia))
 
     if ordenado_por:
         query = ordenar_postulaciones(query, ordenado_por, orden)
-
 
     if not pagina:
         return query.all()

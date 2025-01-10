@@ -16,6 +16,7 @@ from src.web.handlers.permisos import check
 import time
 from src.web.forms.postulacion_form import PostulacionForm
 from src.web.forms.postulacion_estadia_form import PostulacionEstadiaForm
+from src.web.forms.presidencia_subir_precarga_form import PresidenciaPrecarga
 from src.web.schemas.archivo_schema import archivo_schema
 
 postulacion_bp = Blueprint('postulacion', __name__, url_prefix='/postulaciones')
@@ -69,6 +70,7 @@ def ver_postulacion(id_postulacion):
     pais_nacimiento = paises_service.get_pais_by_id(alumno.id_pais_de_nacimiento)
     genero = genero_service.get_genero_by_id(alumno.id_genero)
     estado_civil = estado_civil_service.get_estado_civil_by_id(alumno.id_estado_civil)
+    form = None
     if alumno.id_pasaporte is not None:
         pasaporte = pasaporte_service.get_pasaporte_by_id(alumno.id_pasaporte)
         pais_pasaporte = paises_service.get_pais_by_id(pasaporte.id_pais)
@@ -99,6 +101,9 @@ def ver_postulacion(id_postulacion):
     presidencia = False
     if get_rol_sesion(session) == "jefe" or "admin":
         presidencia = True
+
+        if postulacion.estado.nombre == "Postulacion en Espera de Aceptacion":
+            form = PresidenciaPrecarga()
         
     data = {
         "postulacion": postulacion,
@@ -116,7 +121,8 @@ def ver_postulacion(id_postulacion):
         "tutor_institucional": tutor_institucional,
         "tutor_academico": tutor_academico,
         "archivos": archivos,
-        "presidencia": presidencia
+        "presidencia": presidencia,
+        "form": form
     }
     return render_template('postulaciones/ver_postulacion.html', **data)
 
@@ -131,9 +137,42 @@ def aceptar_solicitud(id_postulacion):
         usuario_service.crear_usuario_solicitud_aprobada(alumno.nombre, alumno.apellido, alumno.email, alumno.id)
         flash('Solicitud de postulacion aprobada', 'success')
     elif postulacion.estado.nombre == "Postulacion en Espera de Aceptacion":
+        form = PresidenciaPrecarga()
+        if not form.validate_on_submit():
+            flash('Error al cargar el archivo', 'danger')
+            return redirect(url_for('postulacion.ver_postulacion', id_postulacion=id_postulacion))
+        if not form.precarga.data:
+            flash('Falta subir la precarga electronica antes de aprobar al alumno.', 'danger')
+            return redirect(url_for('postulacion.ver_postulacion', id_postulacion=id_postulacion))
+        precarga = form.precarga.data
+        print(f"El archivo precarga se sube así: {precarga.filename}")
+        path_precarga = f"{id_postulacion}_{alumno.id}_precarga_{precarga.filename}"
+        archivo_precarga = {
+            "titulo": "Precarga electronica",
+            "path": path_precarga,
+            "id_postulacion": id_postulacion,
+            "id_informacion_alumno_entrante": alumno.id
+        }
+
+        try:
+            archivo_precarga = archivo_schema.load(archivo_precarga)
+        except Exception as err:
+            print(err)
+            flash('Error al cargar el archivo precarga', 'danger')
+            return redirect(url_for('postulacion.ver_postulacion', id_postulacion=id_postulacion))
+        archivo_service.crear_archivo(**archivo_precarga)
+        archivo_service.save_file_minio(request.files['precarga'].read(), archivo_precarga['path'])
+
         postulacion_service.actualizar_estado_postulacion(postulacion, "Postulacion Aceptada")
         titulo = "Archivos firmados aceptados"
         cuerpo = f"Se han aceptado los archivos firmados que ha subido recientemente."
+        destino = alumno.email
+        email_service.send_email(titulo, cuerpo, [destino])
+        flash('Archivos aprobados', 'success')
+    elif postulacion.estado.nombre == "Postulacion en Espera de Aceptacion":
+        postulacion_service.actualizar_estado_postulacion(postulacion, "Postulacion Completada")
+        titulo = "Postulacion completada"
+        cuerpo = f"Se han aceptado los últimos archivos subidos y todos los pasos de la postulación han sido completados."
         destino = alumno.email
         email_service.send_email(titulo, cuerpo, [destino])
         flash('Archivos aprobados', 'success')
@@ -296,7 +335,7 @@ def guardar_datos_estadia(id_postulacion):
     print(f"El archivo psicofisico se sube así: {psicofisico.filename}")
     path_psicofisico = f"{id_postulacion}_{alumno.id}_psicofisico_{psicofisico.filename}"
     archivo_psicofisico = {
-        "titulo": psicofisico.filename,
+        "titulo": "Psicofisico firmado",
         "path": path_psicofisico,
         "id_postulacion": id_postulacion,
         "id_informacion_alumno_entrante": alumno.id
@@ -313,7 +352,7 @@ def guardar_datos_estadia(id_postulacion):
     print(f"El archivo politicas institucionales se sube así: {politicas_institucionales}")
     path_politicas_institucionales = f"{id_postulacion}_{alumno.id}_politicasI_{politicas_institucionales.filename}"
     archivo_politicas = {
-        "titulo": politicas_institucionales.filename,
+        "titulo": "Politicas institucionales firmadas",
         "path": path_politicas_institucionales,
         "id_postulacion": id_postulacion,
         "id_informacion_alumno_entrante": alumno.id
@@ -332,7 +371,7 @@ def guardar_datos_estadia(id_postulacion):
         print(f"El archivo certificado de discapacidad se sube así: {certificado_discapacidad.filename}")
         path_certificado_discapacidad = f"{id_postulacion}_{alumno.id}_certificadoDiscapacidad_{certificado_discapacidad.filename}"
         archivo_certificado_discapacidad = {
-            "titulo": certificado_discapacidad.filename,
+            "titulo": "Certificado de discapacidad",
             "path": path_certificado_discapacidad,
             "id_postulacion": id_postulacion,
             "id_informacion_alumno_entrante": alumno.id
