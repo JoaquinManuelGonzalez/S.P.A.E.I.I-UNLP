@@ -2,6 +2,7 @@ from src.core.models.postulacion.postulacion import Postulacion
 from src.core.database import db
 from src.core.models.alumno.informacion_alumno_entrante import InformacionAlumnoEntrante
 from src.core.models.postulacion.estado import Estado
+from src.core.models.asignatura import Asignatura
 
 def crear_postulacion(**data):
     """
@@ -125,6 +126,7 @@ def asociar_asignaturas_a_postulacion(postulacion_id, asignaturas):
     if not postulacion:
         return False
     for asignatura in asignaturas:
-        postulacion.asignaturas.append(asignatura)
+        a = Asignatura.query.get(asignatura)
+        postulacion.asignaturas.append(a)
     db.session.commit()
     return True

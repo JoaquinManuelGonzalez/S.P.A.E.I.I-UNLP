@@ -13,7 +13,8 @@
         </div>
     </div>
     <form action="{{ url_for('postulacion.guardar_materias', postulacion_id=postulacion_id) }}" enctype="multipart/form-data" method="POST" class="container-fluid full-height justify-content-center align-items-center" style="max-width: 100%; min-height: 750px; overflow-x: auto;">
-        {{ form.csrf_token }}
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
         <div class="container my-5">
                 {% for i in range(0, cantidad_materias) %}
                     <div class="row border" style="overflow-x: auto; white-space: nowrap; flex-wrap: nowrap; display: flex;">
@@ -45,17 +46,17 @@
             
                         <!-- Columna para asignatura -->
                         <div class="col-auto mb-3 p-2" style="min-width: 300px; max-width: 33%;">  
-                            <label for="asignatura_{{ i }}" class="form-label">{{ form['asignatura_' ~ i].label }}</label>
-                            {{ form['asignatura_' ~ i](class="form-select") }}
+                            <label for="asignatura_{{ i }}" class="form-label">Asignatura:</label>
+                            <select class="form-select" id="asignatura_{{ i }}" name="asignatura_{{ i }}">
+                                <option value="">Seleccione una asignatura</option>
+                                {% if carreras_seleccionadas[i] %}
+                                    {% for asignatura in carreras_seleccionadas[i].asignaturas %}
+                                        <option {{ (asignaturas_seleccionadas[i] and (asignaturas_seleccionadas[i].id == asignatura.id)) and "selected" or "" }}
+                                                value="{{ asignatura.id }}">{{ asignatura.nombre }}</option>
+                                    {% endfor %}
+                                {% endif %}
+                            </select>
                         </div>
-            
-                        {% if form.errors %}
-                            {% for error in form['asignatura_' ~ i].errors %}
-                                <div class="text-danger">
-                                    <span style="color: red;">{{ error }}</span>
-                                </div>
-                            {% endfor %}
-                        {% endif %}
                     </div>
                     <br>
                 {% endfor %}
@@ -77,6 +78,7 @@
         // Selecciona los elementos con ids que comiencen con carrera_ y facultad_
         const carreraElements = [...document.querySelectorAll('[id^="carrera_"]')];
         const facultadElements = [...document.querySelectorAll('[id^="facultad_"]')];
+        const asignaturaElements = [...document.querySelectorAll('[id^="asignatura_"]')];
 
         // Función para manejar el cambio de filtros
         const changeFilters = () => {
@@ -100,6 +102,14 @@
                 }
             });
 
+            // Actualiza los parámetros de asignatura_i
+            asignaturaElements.forEach((asignatura, index) => {
+                const paramKey = `asignatura_${index}`;
+                if (!params.has(paramKey) || params.get(paramKey) !== asignatura.value) {
+                    params.set(paramKey, asignatura.value);
+                }
+            });
+
             // Redirige solo si la URL cambió
             if (currentUrl !== url.toString()) {
                 window.location.href = url.toString();
@@ -109,48 +119,50 @@
         // Asigna el event listener a cada elemento
         carreraElements.forEach(carrera => carrera.addEventListener("change", changeFilters));
         facultadElements.forEach(facultad => facultad.addEventListener("change", changeFilters));
+        asignaturaElements.forEach(asignatura => asignatura.addEventListener("change", changeFilters));
     });
 </script>
+
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-    const facultadElements = [...document.querySelectorAll('[id^="facultad_"]')];
-
-    // Función para actualizar facultades disponibles
-    const updateFacultadesDisponibles = () => {
-        const seleccionadas = new Set(
-            facultadElements
-                .filter(select => select.value) // Facultades seleccionadas
-                .map(select => select.value)
-        );
-
-        // Si hay más de 3 facultades seleccionadas, deshabilitar otras opciones
-        if (seleccionadas.size >= 3) {
-            facultadElements.forEach(select => {
-                [...select.options].forEach(option => {
-                    if (!seleccionadas.has(option.value) && option.value) {
-                        option.disabled = true; // Deshabilitar facultades no seleccionadas
-                    } else {
-                        option.disabled = false; // Habilitar facultades seleccionadas
-                    }
+    document.addEventListener("DOMContentLoaded", () => {
+        const facultadElements = [...document.querySelectorAll('[id^="facultad_"]')];
+    
+        // Función para actualizar facultades disponibles
+        const updateFacultadesDisponibles = () => {
+            const seleccionadas = new Set(
+                facultadElements
+                    .filter(select => select.value) // Facultades seleccionadas
+                    .map(select => select.value)
+            );
+    
+            // Si hay más de 3 facultades seleccionadas, deshabilitar otras opciones
+            if (seleccionadas.size >= 3) {
+                facultadElements.forEach(select => {
+                    [...select.options].forEach(option => {
+                        if (!seleccionadas.has(option.value) && option.value) {
+                            option.disabled = true; // Deshabilitar facultades no seleccionadas
+                        } else {
+                            option.disabled = false; // Habilitar facultades seleccionadas
+                        }
+                    });
                 });
-            });
-        } else {
-            // Habilitar todas las opciones si no se han seleccionado 3 facultades
-            facultadElements.forEach(select => {
-                [...select.options].forEach(option => {
-                    option.disabled = false;
+            } else {
+                // Habilitar todas las opciones si no se han seleccionado 3 facultades
+                facultadElements.forEach(select => {
+                    [...select.options].forEach(option => {
+                        option.disabled = false;
+                    });
                 });
-            });
-        }
-    };
-
-    // Asigna event listener a cada select de facultades
-    facultadElements.forEach(select => {
-        select.addEventListener("change", updateFacultadesDisponibles);
+            }
+        };
+    
+        // Asigna event listener a cada select de facultades
+        facultadElements.forEach(select => {
+            select.addEventListener("change", updateFacultadesDisponibles);
+        });
+    
+        // Actualiza al cargar la página
+        updateFacultadesDisponibles();
     });
-
-    // Actualiza al cargar la página
-    updateFacultadesDisponibles();
-});
 </script>
 {% endblock %}

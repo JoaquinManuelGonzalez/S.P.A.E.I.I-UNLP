@@ -359,15 +359,21 @@ def guardar_datos_estadia(id_postulacion):
     flash('Datos guardados exitosamente', 'success')
     return redirect(url_for('postulacion.mis_postulaciones'))
 
-@postulacion_bp.get('/seleccionar_materias/<int:postulacion_id>')
+@postulacion_bp.get('/<int:postulacion_id>/seleccionar_materias')
 #@check("alumno")
 def seleccionar_materias(postulacion_id):
 
     facultades = facultades_service.get_all_facultades()
 
-    formulario = AsignaturasForm()
-
     cantidad_materias = 5
+
+    asignaturas_seleccionadas = []
+    for i in range(0,cantidad_materias):
+        f_id = request.args.get(f"asignatura_{i}", None)
+        if f_id and f_id != "":
+            asignaturas_seleccionadas.append(asignaturas_service.get_asignatura_by_id(f_id))
+        else:
+            asignaturas_seleccionadas.append(None)
 
     facultades_seleccionadas = []
     for i in range(0,cantidad_materias):
@@ -380,55 +386,65 @@ def seleccionar_materias(postulacion_id):
     carreras_seleccionadas = []
     for i in range(0,cantidad_materias):
         f_id = request.args.get(f"carrera_{i}", None)
-        asignatura_field = getattr(formulario, f"asignatura_{i}")
         if f_id and f_id != "":
             carreras_seleccionadas.append(carreras_service.get_carrera_by_id(f_id))
-            asignatura_field.choices =  [("Asignatura", "Seleccione una asingatura")] + [(asignatura.id, asignatura.nombre) for asignatura in carreras_seleccionadas[i].asignaturas]
         else:
             carreras_seleccionadas.append(None)
-            asignatura_field.choices =  [("Asignatura", "Seleccione una asingatura")]
 
-    return render_template('postulaciones/elegir_materias.html', cantidad_materias=cantidad_materias, form=formulario, facultades=facultades, facultades_seleccionadas=facultades_seleccionadas, carreras_seleccionadas=carreras_seleccionadas, postulacion_id=postulacion_id)
+    return render_template('postulaciones/elegir_materias.html', cantidad_materias=cantidad_materias, facultades=facultades, facultades_seleccionadas=facultades_seleccionadas, carreras_seleccionadas=carreras_seleccionadas, asignaturas_seleccionadas=asignaturas_seleccionadas, postulacion_id=postulacion_id)
 
 @postulacion_bp.post('/guardar_materias/<int:postulacion_id>')
 #@check("alumno")
 def guardar_materias(postulacion_id):
-    form = AsignaturasForm()
-    postulacion = postulacion_service.get_postulacion_by_id(postulacion_id)
-    if not postulacion:
-        flash('Postulacion no encontrada', 'danger')
-        return redirect(url_for('postulacion.mis_postulaciones'))
+    cantidad_materias = 5  
+    asignaturas_ids = []
+    facultades_ids = set()
 
-    if not form.validate_on_submit():
-        flash('Error al cargar los datos', 'danger')
+    postulacion = postulacion_service.get_postulacion_by_id(postulacion_id)
+
+    # Procesar los inputs enviados
+    for i in range(cantidad_materias):
+        asignatura_id = request.form.get(f"asignatura_{i}")
+        facultad_id = request.form.get(f"facultad_{i}")
+
+        if asignatura_id and asignatura_id.strip() and facultad_id and facultad_id.strip():
+            asignaturas_ids.append(int(asignatura_id))  # Convertir a entero si es necesario
+            facultades_ids.add(int(facultad_id))
+
+    if len(asignaturas_ids) > 5:
+        flash('No puede seleccionar más de 5 asignaturas', 'danger')
         return redirect(url_for('postulacion.seleccionar_materias', postulacion_id=postulacion_id))
     
-    asignaturas = []
+    if len(facultades_ids) > 3:
+        flash('No puede seleccionar más de 3 facultades', 'danger')
+        return redirect(url_for('postulacion.seleccionar_materias', postulacion_id=postulacion_id))
 
-    if form.asignatura_0.data:
-        asignatura_0 = asignaturas_service.get_asignatura_by_nombre(form.asignatura_0.data)
-        asignaturas.append(asignatura_0)
+    if not asignaturas_ids and not facultades_ids:
+        if not postulacion.de_posgrado:
+            flash('Debe seleccionar al menos una asignatura', 'danger')
+            return redirect(url_for('postulacion.seleccionar_materias', postulacion_id=postulacion_id))
+        else:
+            postulacion.estado = estado_postulacion_service.get_estado_by_name("Postulacion Validada por Facultad")
+            db.session.commit()
+            flash('Datos guardados exitosamente', 'success')
+            return redirect(url_for('postulacion.mis_postulaciones'))
 
-    if form.asignatura_1.data:
-        asignatura_1 = asignaturas_service.get_asignatura_by_nombre(form.asignatura_1.data)
-        asignaturas.append(asignatura_1)
-    
-    if form.asignatura_2.data:
-        asignatura_2 = asignaturas_service.get_asignatura_by_nombre(form.asignatura_2.data)
-        asignaturas.append(asignatura_2)
-        
-    if form.asignatura_3.data:
-        asignatura_3 = asignaturas_service.get_asignatura_by_nombre(form.asignatura_3.data)
-        asignaturas.append(asignatura_3)
+    # Relacionar asignaturas con la postulación
+    postulacion_service.asociar_asignaturas_a_postulacion(postulacion_id, asignaturas_ids)
 
-    if form.asignatura_4.data:
-        asignatura_4 = asignaturas_service.get_asignatura_by_nombre(form.asignatura_4.data)
-        asignaturas.append(asignatura_4)
-        
-    postulacion_service.asociar_asignaturas_a_postulacion(postulacion_id, asignaturas)
+    # Obtener puntos focales de las facultades seleccionadas
+    # Obtener los puntos focales únicos de las facultades seleccionadas
+    puntos_focales = facultades_service.get_puntos_focales_by_facultades(list(facultades_ids))
+
+    # Enviar mensajes a los puntos focales
+    enviados = set()
+    for punto_focal in puntos_focales:
+        if punto_focal.email not in enviados:  # Evitar duplicados por email
+            enviados.add(punto_focal.email)
+    email_service.send_email("Nueva postulación", "Se ha realizado una nueva postulación", list(enviados))
 
     postulacion.estado = estado_postulacion_service.get_estado_by_name("Postulacion en Proceso")
-
+    db.session.commit()
     flash('Datos guardados exitosamente', 'success')
     return redirect(url_for('postulacion.mis_postulaciones'))
 

@@ -333,7 +333,7 @@
         {% endif %}
     </div>
     <div>
-        {% if postulacion.estado.nombre == "Postulacion en Proceso" and rol == "alumno" %}
+        {% if postulacion.estado.nombre == "Postulacion Iniciada" and rol == "alumno" %}
             <a href="{{ url_for('postulacion.seleccionar_materias', postulacion_id=postulacion.id) }}" type="button" class="btn btn-primary btn-custom mx-2">
                 Seleccionar Materias
             </a>
