@@ -1,9 +1,9 @@
-from flask import Blueprint, jsonify, request, make_response
+from flask import Blueprint, jsonify, request, make_response, session
 from flask_wtf.csrf import generate_csrf
 import base64
 from src.core.database import db
 
-from src.core.services import (paises_service, genero_service, 
+from src.core.services import (paises_service, genero_service, usuario_service,
 estado_civil_service, archivo_service, alumno_service, pasaporte_service, 
 cedula_de_identidad_service, postulacion_service, tutor_service, programa_service,
 estado_postulacion_service, email_service, periodo_postulacion_service)
@@ -17,6 +17,8 @@ from src.web.schemas.genero_schema import generos_schema
 from src.web.schemas.pais_schema import paises_schema
 from src.web.schemas.informacion_alumno_entrante_schema import informacion_alumno_entrante_schema
 from src.web.schemas.programa_schema import programas_schema
+from src.web.handlers.auth import get_rol_sesion, get_id_sesion
+
 
 
 
@@ -37,7 +39,6 @@ def primer_formulario():
     periodo = periodo_postulacion_service.periodo_actual().id
     if not periodo:
         return jsonify({"error": "No hay un periodo de postulación activo"}), 400
-    print(f"id de periodo: {periodo}" )
     data_postulacion = data["postulacion"]
     data_alumno = data["alumno"]
     id_programa = data["id_programa"]
@@ -72,36 +73,27 @@ def primer_formulario():
     
     data_alumno["discapacitado"] = False
     try:
-        print(data_alumno)
         alumno = informacion_alumno_entrante_schema.load(data_alumno)
     except Exception as err:
         return jsonify({"error": f"Error al cargar los datos del alumno: {err}"}), 400
     alumno = alumno_service.crear_informacion_alumno_entrante(**alumno)
 
     estado_postulacion = estado_postulacion_service.get_estado_by_name("Solicitud de Postulacion")
-    print(f"Estado de la postulacion: {estado_postulacion}")
     data_postulacion["id_estado"] = estado_postulacion.id
     data_postulacion["id_periodo_postulacion"] = periodo
     data_postulacion["id_informacion_alumno_entrante"] = alumno.id
     if convenio_programa == "programa":
-        print("entra al if de convenio programa")
         data_postulacion["id_programa"] = id_programa
         del data_postulacion["convenio"]
-    print("sale del if de convenio programa")
     if data_postulacion["consulado_visacion"] == "":
         del data_postulacion["consulado_visacion"]
     try:
-        print(f"Postulacion antes del load: {data_postulacion}")
         postulacion = postulacion_schema.load(data_postulacion)
-        print(f"Postulacion despues del load: {postulacion}")
     except Exception as err:
-        print(err)
         return jsonify({"error": f"Error al cargar los datos de la postulación: {err}"}), 400
     try:
         postulacion = postulacion_service.crear_postulacion(**postulacion)
-        print(f"Postulacion creada en la base de datos: {postulacion}")
     except Exception as err:
-        print(err)
         return jsonify({"error": f"Error al crear la postulación: {err}"}), 400
     postulacion.informacion_alumno_entrante = alumno
     postulacion.estado = estado_postulacion
@@ -271,13 +263,11 @@ def primer_formulario():
     except:
         return jsonify({"error": "Error al cargar los datos del tutor institucional"}), 400
     tutor_institucional = tutor_service.crear_obtener_tutor(**tutor_institucional)
-    print(f"tutor institucional: {tutor_institucional}")
     try:
         tutor_academico = tutor_schema.load(data_tutor_academico)
     except:
         return jsonify({"error": "Error al cargar los datos del tutor académico"}), 400
     tutor_academico = tutor_service.crear_obtener_tutor(**tutor_academico)
-    print(f"tutor academico: {tutor_academico}")
 
     carta_recomendacion.informacion_alumno_entrante = alumno
     carta_recomendacion.postulacion = postulacion
@@ -299,6 +289,46 @@ def primer_formulario_get():
     """
     
     """
+
+    usuario = None
+    rol = get_rol_sesion(session)
+    if rol == "alumno":
+        id = get_id_sesion(session)
+        usuario = usuario_service.buscar_usuario(id)
+
+    if not usuario:
+        data_alumno = {
+            "apellido": "",
+            "nombre": "",
+            "email": "",
+            "domicilio_pais_de_residencia": "",
+            "fecha_de_nacimiento": "",
+            "discapacitado": "",
+            "id_genero": "",
+            "id_estado_civil": "",
+            "id_pais_de_nacimiento": "",
+            "id_pais_de_residencia": "",
+            "id_pais_nacionalidad": "",
+        }
+        repostulacion = False
+    else:
+        alumno = alumno_service.get_alumno_by_id(usuario.id_alumno)
+        repostulacion = True
+        data = {
+            "apellido": alumno.apellido,
+            "nombre": alumno.nombre,
+            "email": alumno.email,
+            "domicilio_pais_de_residencia": alumno.domicilio_pais_de_residencia,
+            "fecha_de_nacimiento": alumno.fecha_de_nacimiento,
+            "discapacitado": alumno.discapacitado,
+            "id_genero": alumno.id_genero,
+            "id_estado_civil": alumno.id_estado_civil,
+            "id_pais_de_nacimiento": alumno.id_pais_de_nacimiento,
+            "id_pais_de_residencia": alumno.id_pais_de_residencia,
+            "id_pais_nacionalidad": alumno.id_pais_nacionalidad,
+        }
+        data_alumno = informacion_alumno_entrante_schema.dump(data)
+
     paises = paises_service.listar_paises()
     generos = genero_service.listar_generos()
     estados_civiles = estado_civil_service.listar_estados_civiles()
@@ -315,6 +345,8 @@ def primer_formulario_get():
         "estados_civiles": data_estados_civiles,
         "csrf_token": token,
         "programas": data_programas,
+        "alumno": data_alumno,
+        "repostulacion": repostulacion
     }
 
     #response = make_response(jsonify(data_response), 200)

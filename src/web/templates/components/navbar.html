@@ -20,7 +20,7 @@
       {% if is_authenticated(session) %}
         {% if check_permiso(session, 'alumno') %}
           <li class="nav-item active">
-            <a class="nav-link" href="/facultades">Repostulación</a>
+            <a class="nav-link" href="http://localhost:5173/primer-formulario">Repostulación</a>
           </li>
           <li class="nav-item active">
             <a class="nav-link" href="{{ url_for('postulacion.seleccionar_materias', postulacion_id=1)}}">Elección de Asignaturas</a>

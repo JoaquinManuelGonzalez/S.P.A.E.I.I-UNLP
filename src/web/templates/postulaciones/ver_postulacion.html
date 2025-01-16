@@ -148,6 +148,9 @@
         <li class="nav-item" role="presentation">
             <a class="nav-link" id="archivos-tab" data-bs-toggle="tab" href="#archivos" role="tab" aria-controls="archivos" aria-selected="false">Datos de Archivos</a>
         </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" id="asignaturas-tab" data-bs-toggle="tab" href="#asignaturas" role="tab" aria-controls="asignaturas" aria-selected="false">Datos de Materias</a>
+        </li>
     </ul>
 
     <div class="tab-content" id="postulacionTabsContent">
@@ -182,6 +185,9 @@
                         <p><strong>País de emisión de cédula de identidad:</strong> No posee información asociada.</p>
                     {% endif %}
                     <p><strong>Estado civil:</strong> {{ estado_civil.nombre_es }}</p>
+                    {% if alumno.discapacitado %}
+                        <p><strong>¿Tiene alguna discapacidad?: </strong>Sí</p>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -243,13 +249,73 @@
                 <h5 class="mb-0">Datos de Archivos</h5>
             </div>
             <div class="card-body">
-                {% for archivo in archivos %}
-                    <p><strong>Nombre del archivo:</strong> {{ archivo.titulo }} <a href="{{ url_for('postulacion.descargar_archivo', filename=archivo.path) }}" class="btn btn-primary btn-sm">Descargar</a></p>
-                {% endfor %}
-            </div>
+                <p><strong>Pasaporte:</strong> {{ archivos.pasaporte.titulo }} 
+                    {% if archivos.pasaporte.path != "sin filename" %}
+                        <a href="{{ url_for('postulacion.descargar_archivo', filename=archivos.pasaporte.path) }}" class="btn btn-primary btn-sm">Descargar</a>
+                    {% endif %}
+                </p>
+                <p><strong>Cédula de identidad:</strong> {{ archivos.cedula_de_identidad.titulo }} 
+                    {% if archivos.cedula_de_identidad.path != "sin filename" %}
+                        <a href="{{ url_for('postulacion.descargar_archivo', filename=archivos.cedula_de_identidad.path) }}" class="btn btn-primary btn-sm">Descargar</a>
+                    {% endif %}
+                </p>
+                <p><strong>Carta de recomendación:</strong> {{ archivos.carta_recomendacion.titulo }} 
+                    {% if archivos.carta_recomendacion.path != "sin filename" %}
+                        <a href="{{ url_for('postulacion.descargar_archivo', filename=archivos.carta_recomendacion.path) }}" class="btn btn-primary btn-sm">Descargar</a>
+                    {% endif %}
+                </p>
+                <p><strong>Certificado B1 de español:</strong> {{ archivos.certificado_b1.titulo }} 
+                    {% if archivos.certificado_b1.path != "sin filename" %}
+                        <a href="{{ url_for('postulacion.descargar_archivo', filename=archivos.certificado_b1.path) }}" class="btn btn-primary btn-sm">Descargar</a>
+                    {% endif %}
+                </p>
+                <p><strong>Plan de trabajo:</strong> {{ archivos.plan_trabajo.titulo }} 
+                    {% if archivos.plan_trabajo.path != "sin filename" %}
+                        <a href="{{ url_for('postulacion.descargar_archivo', filename=archivos.plan_trabajo.path) }}" class="btn btn-primary btn-sm">Descargar</a>
+                    {% endif %}
+                </p>
+                <p><strong>Psicofísico:</strong> {{ archivos.psicofisico.titulo }} 
+                    {% if archivos.psicofisico.path != "sin filename" %}
+                        <a href="{{ url_for('postulacion.descargar_archivo', filename=archivos.psicofisico.path) }}" class="btn btn-primary btn-sm">Descargar</a>
+                    {% endif %}
+                </p>
+                <p><strong>Políticas institucionales:</strong> {{ archivos.politicas_institucionales.titulo }} 
+                    {% if archivos.politicas_institucionales.path != "sin filename" %}
+                        <a href="{{ url_for('postulacion.descargar_archivo', filename=archivos.politicas_institucionales.path) }}" class="btn btn-primary btn-sm">Descargar</a>
+                    {% endif %}
+                </p>
+                <p><strong>Certificado de discapacidad:</strong> {{ archivos.certificado_discapacidad.titulo }} 
+                    {% if archivos.certificado_discapacidad.path != "sin filename" %}
+                        <a href="{{ url_for('postulacion.descargar_archivo', filename=archivos.certificado_discapacidad.path) }}" class="btn btn-primary btn-sm">Descargar</a>
+                    {% endif %}
+                </p>
+                <p><strong>Visado:</strong> {{ archivos.visado.titulo }} 
+                    {% if archivos.visado.path != "sin filename" %}
+                        <a href="{{ url_for('postulacion.descargar_archivo', filename=archivos.visado.path) }}" class="btn btn-primary btn-sm">Descargar</a>
+                    {% endif %}
+                </p>
+                <p><strong>Seguro médico:</strong> {{ archivos.seguro_medico.titulo }} 
+                    {% if archivos.seguro_medico.path != "sin filename" %}
+                        <a href="{{ url_for('postulacion.descargar_archivo', filename=archivos.seguro_medico.path) }}" class="btn btn-primary btn-sm">Descargar</a>
+                    {% endif %}
+                </p>
+          </div>
         </div>
 
-
+        <div class="tab-pane fade" id="asignaturas" role="tabpanel" aria-labelledby="asignaturas-tab">
+            <div class="card shadow-sm border-0 mt-4">
+                <h5 class="mb-0">Datos de Materias</h5>
+            </div>
+            <div class="card-body">
+                {% if not asignaturas %}
+                    <p>No se seleccionaron asignaturas</p>
+                {% else %}
+                    {% for asignatura in asignaturas %}
+                        <p><strong>Asignatura:</strong> {{ asignatura.nombre }}</p>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
     </div>
     {% if postulacion.estado.nombre == "Solicitud de Postulacion" %}
         {% if rol == "presidencia" or rol == "admin" %}

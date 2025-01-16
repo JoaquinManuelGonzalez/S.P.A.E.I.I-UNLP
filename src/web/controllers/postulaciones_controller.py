@@ -97,8 +97,23 @@ def ver_postulacion(id_postulacion):
         else:
             tutor_academico = tutor
 
-    archivos = archivo_service.get_archivos_by_postulacion(postulacion.id)
+    archivos = {
+        "pasaporte": archivo_service.get_archivo_by_postulacion_and_tipo("pasaporte", alumno.id),
+        "cedula_de_identidad": archivo_service.get_archivo_by_postulacion_and_tipo("cedula", alumno.id),
+        "carta_recomendacion": archivo_service.get_archivo_by_postulacion_and_tipo("cartaRecomendacion", alumno.id, id_postulacion),
+        "plan_trabajo": archivo_service.get_archivo_by_postulacion_and_tipo("planDeTrabajo", alumno.id, id_postulacion),
+        "certificado_b1": archivo_service.get_archivo_by_postulacion_and_tipo("certificadoB1", alumno.id, id_postulacion),
+        "psicofisico": archivo_service.get_archivo_by_postulacion_and_tipo("psicofisico", alumno.id, id_postulacion),
+        "politicas_institucionales": archivo_service.get_archivo_by_postulacion_and_tipo("politicasI", alumno.id, id_postulacion),
+        "certificado_discapacidad": archivo_service.get_archivo_by_postulacion_and_tipo("certificadoDiscapacidad", alumno.id, id_postulacion),
+        "visado": archivo_service.get_archivo_by_postulacion_and_tipo("visado", alumno.id, id_postulacion),
+        "seguro_medico": archivo_service.get_archivo_by_postulacion_and_tipo("seguroMedico", alumno.id, id_postulacion)
+    }
+    #archivo_service.get_archivos_by_postulacion(postulacion.id)
     rol = get_rol_sesion(session)
+
+
+    asignaturas = postulacion.asignaturas
 
     if not rol:
         rol = "anonimo"
@@ -119,7 +134,8 @@ def ver_postulacion(id_postulacion):
         "tutor_institucional": tutor_institucional,
         "tutor_academico": tutor_academico,
         "archivos": archivos,
-        "rol": rol
+        "rol": rol,
+        "asignaturas": asignaturas
     }
     return render_template('postulaciones/ver_postulacion.html', **data)
 
@@ -221,7 +237,6 @@ def mis_postulaciones():
 def periodo_postulacion_toggle():
 
     periodos = None
-    print(request.method)
     if request.method == 'POST':
         periodo_actual = periodo_postulacion_service.periodo_actual()
         if periodo_actual:
@@ -282,7 +297,6 @@ def guardar_datos_estadia(id_postulacion):
     
     alumno = postulacion.informacion_alumno_entrante
     psicofisico = form.psicofisico.data
-    print(f"El archivo psicofisico se sube así: {psicofisico.filename}")
     path_psicofisico = f"{id_postulacion}_{alumno.id}_psicofisico_{psicofisico.filename}"
     archivo_psicofisico = {
         "titulo": psicofisico.filename,
@@ -294,12 +308,10 @@ def guardar_datos_estadia(id_postulacion):
     try:
         archivo_psicofisico = archivo_schema.load(archivo_psicofisico)
     except Exception as err:
-        print(err)
         flash('Error al cargar el archivo psicofisico', 'danger')
         return render_template('postulaciones/postulacion_estadia.html', form=form, id_postulacion=id_postulacion, consulado_dato=postulacion.consulado_visacion)
     
     politicas_institucionales = form.politicas_institucionales.data
-    print(f"El archivo politicas institucionales se sube así: {politicas_institucionales}")
     path_politicas_institucionales = f"{id_postulacion}_{alumno.id}_politicasI_{politicas_institucionales.filename}"
     archivo_politicas = {
         "titulo": politicas_institucionales.filename,
@@ -311,14 +323,12 @@ def guardar_datos_estadia(id_postulacion):
     try:
         archivo_politicas = archivo_schema.load(archivo_politicas)
     except Exception as err:
-        print(err)
         flash('Error al cargar el archivo de politicas institucionales', 'danger')
         return render_template('postulaciones/postulacion_estadia.html', form=form, id_postulacion=id_postulacion, consulado_dato=postulacion.consulado_visacion)
     
     alumno.discapacidad = form.discapacidad.data
     if form.discapacidad.data == True and form.certificado_discapacidad.data:
         certificado_discapacidad = form.certificado_discapacidad.data
-        print(f"El archivo certificado de discapacidad se sube así: {certificado_discapacidad.filename}")
         path_certificado_discapacidad = f"{id_postulacion}_{alumno.id}_certificadoDiscapacidad_{certificado_discapacidad.filename}"
         archivo_certificado_discapacidad = {
             "titulo": certificado_discapacidad.filename,
@@ -329,7 +339,6 @@ def guardar_datos_estadia(id_postulacion):
         try:
             archivo_certificado_discapacidad = archivo_schema.load(archivo_certificado_discapacidad)
         except Exception as err:
-            print(err)
             flash('Error al cargar el archivo de certificado de discapacidad', 'danger')
             return render_template('postulaciones/postulacion_estadia.html', form=form, id_postulacion=id_postulacion, consulado_dato=postulacion.consulado_visacion)
 
@@ -355,7 +364,6 @@ def guardar_datos_estadia(id_postulacion):
     
     archivo_service.save_file_minio(request.files['psicofisico'].read(), archivo_psicofisico['path'])
     archivo_service.save_file_minio(request.files['politicas_institucionales'].read(), archivo_politicas['path'])
-    print(f"El archivo se sube así: {psicofisico}")
     flash('Datos guardados exitosamente', 'success')
     return redirect(url_for('postulacion.mis_postulaciones'))
 
@@ -474,7 +482,6 @@ def visado_seguro_medico_post(id_postulacion):
 
     alumno = postulacion.informacion_alumno_entrante
     visado = form.visado.data
-    print(f"El archivo visado se sube así: {visado.filename}")
     path_visado = f"{id_postulacion}_{alumno.id}_visado_{visado.filename}"
     archivo_visado = {
         "titulo": visado.filename,
@@ -486,12 +493,10 @@ def visado_seguro_medico_post(id_postulacion):
     try:
         archivo_visado_load = archivo_schema.load(archivo_visado)
     except Exception as err:
-        print(err)
         flash('Error al cargar el archivo visado', 'danger')
         return render_template('postulaciones/visado_seguro_medico.html', form=form, id_postulacion=id_postulacion)
     
     seguro_medico = form.seguro_medico.data
-    print(f"El archivo seguro medico se sube así: {seguro_medico.filename}")
     path_seguro_medico = f"{id_postulacion}_{alumno.id}_seguroMedico_{seguro_medico.filename}"
     archivo_seguro_medico = {
         "titulo": seguro_medico.filename,
@@ -503,7 +508,6 @@ def visado_seguro_medico_post(id_postulacion):
     try:
         archivo_seguro_medico_load = archivo_schema.load(archivo_seguro_medico)
     except Exception as err:
-        print(err)
         flash('Error al cargar el archivo de seguro medico', 'danger')
         return render_template('postulaciones/visado_seguro_medico.html', form=form, id_postulacion=id_postulacion)
     
