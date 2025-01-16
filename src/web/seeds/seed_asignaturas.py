@@ -5,6 +5,9 @@ def seed_asignaturas():
     # FCAG (Facultad de Ciencias Astronómicas y Geofísicas)
     asignaturas_service.create_asignatura("Análisis matemático 1", 1, [1,2,3])
     asignaturas_service.create_asignatura("Análisis matemático 2", 1, [1,2,3])
+    asignaturas_service.create_asignatura("Física General 1", 1, [1,2,3])
+    asignaturas_service.create_asignatura("Física General 2", 1, [1,2,3])
+    asignaturas_service.create_asignatura("Física General 3", 1, [1,2,3])
     asignaturas_service.create_asignatura("Álgebra", 1, [1,2,3])
     asignaturas_service.create_asignatura("Astronomía general", 3, [1])
 

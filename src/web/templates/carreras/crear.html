@@ -32,6 +32,13 @@
                 {% endif %}
             </div>
 
+            <div class="mb-3">
+                {{ formulario.tipo_carrera_id.label }}{{ formulario.tipo_carrera_id(class="form-select") }}
+                {% if formulario.tipo_carrera_id.errors %}
+                    <div class="text-danger">{{ formulario.tipo_carrera_id.errors[0] }}</div>
+                {% endif %}
+            </div>
+
             <button type="submit" class="btn btn-primary my-3">Crear</button>
         </div>
     </form>
