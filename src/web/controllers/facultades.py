@@ -10,7 +10,7 @@ facultades_bp = Blueprint("facultades", __name__, url_prefix="/facultades")
 
 #-----Listar-----
 @facultades_bp.get('/')
-@check("facultades")
+@check("facultades_listar")
 def listar():
     """Lista todas las facultades.
 
@@ -27,7 +27,7 @@ def listar():
 
 #-----Visualizar-----
 @facultades_bp.get('/<int:facultad_id>')
-@check("facultades")
+@check("facultades_listar")
 def visualizar(facultad_id):
     """Detalle de la facultad con id facultad_id.
 
