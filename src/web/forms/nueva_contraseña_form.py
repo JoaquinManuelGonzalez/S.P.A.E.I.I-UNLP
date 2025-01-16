@@ -14,7 +14,7 @@ class Nueva_Contraseña_Form(FlaskForm):
             if (not re.search("[a-z]", password) or
                 not re.search("[A-Z]", password) or
                 not re.search("[0-9]", password) or
-                not re.search("[!@#$%^&*(),.?\":{}|<>]", password)):
+                not re.search("[!@#$%^&*(),.?\":{}|<>_]", password)):
                 raise ValidationError(
                     'La contraseña debe tener al menos una letra minúscula, una letra mayúscula, un número, '
                     'un carácter especial y un mínimo de 8 caracteres.'

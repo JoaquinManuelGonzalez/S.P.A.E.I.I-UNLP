@@ -101,7 +101,8 @@ def editar_usuario(usuario:Usuario, contraseña_nueva:str) -> None:
     db.session.add(usuario)
     db.session.commit()
     alumno = alumno_service.get_alumno_by_id(usuario.id_alumno)
-    alumno_service.actualizar_alumno(alumno, usuario.nombre, usuario.apellido, usuario.email)
+    if alumno:
+        alumno_service.actualizar_alumno(alumno, usuario.nombre, usuario.apellido, usuario.email)
     flash('El usuario se ha editado correctamente', 'success')
     
 def eliminar_usuario(id_usuario:int) -> None:
