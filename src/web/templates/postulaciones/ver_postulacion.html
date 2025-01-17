@@ -146,7 +146,11 @@
             <a class="nav-link" id="tutores-tab" data-bs-toggle="tab" href="#tutores" role="tab" aria-controls="tutores" aria-selected="false">Datos de Tutores</a>
         </li>
         <li class="nav-item" role="presentation">
+            {% if ( (postulacion.estado.nombre == "Postulacion en Espera de Aceptacion") or (postulacion.estado.nombre == "Postulacion en Espera de ser Completada") ) %}
+            <a class="nav-link bg-warning" id="archivos-tab" data-bs-toggle="tab" href="#archivos" role="tab" aria-controls="archivos" aria-selected="false">Datos de Archivos</a>
+            {% else %}
             <a class="nav-link" id="archivos-tab" data-bs-toggle="tab" href="#archivos" role="tab" aria-controls="archivos" aria-selected="false">Datos de Archivos</a>
+            {% endif %}
         </li>
         <li class="nav-item" role="presentation">
             <a class="nav-link" id="asignaturas-tab" data-bs-toggle="tab" href="#asignaturas" role="tab" aria-controls="asignaturas" aria-selected="false">Datos de Materias</a>
@@ -301,6 +305,23 @@
                 </p>
           </div>
         </div>
+        <div>
+            {% if ( (postulacion.estado.nombre == "Postulacion en Espera de Aceptacion") or (postulacion.estado.nombre == "Postulacion en Espera de ser Completada") ) %}
+                {% if check_permiso(session, "solicitud_postulacion_aceptar") %}
+                    <!-- Botones de acción -->
+                    <div class="d-flex justify-content-center mt-4">
+                        <!-- Botón para aceptar -->
+                        <button type="button" class="btn btn-primary btn-custom mx-2" data-bs-toggle="modal" data-bs-target="#acceptModal">
+                            Aceptar archivos nuevos
+                        </button>
+                        <!-- Botón para rechazar -->
+                        <button type="button" class="btn btn-danger btn-custom mx-2" data-bs-toggle="modal" data-bs-target="#rejectModal">
+                            Rechazar archivos nuevos
+                        </button>
+                    </div>
+                {% endif %}
+            {% endif %}
+        </div>
 
         <div class="tab-pane fade" id="asignaturas" role="tabpanel" aria-labelledby="asignaturas-tab">
             <div class="card shadow-sm border-0 mt-4">
@@ -318,7 +339,7 @@
         </div>
     </div>
     {% if postulacion.estado.nombre == "Solicitud de Postulacion" %}
-        {% if rol == "presidencia" or rol == "admin" %}
+        {% if check_permiso(session, "solicitud_postulacion_aceptar") %}
             <!-- Botones de acción -->
             <div class="d-flex justify-content-center mt-4">
                 <!-- Botón para aceptar -->
@@ -337,19 +358,45 @@
     <div class="modal fade" id="acceptModal" tabindex="-1" aria-labelledby="acceptModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <form action="{{ url_for('postulacion.aceptar_solicitud', id_postulacion=postulacion.id) }}" method="POST">
+                <form action="{{ url_for('postulacion.aceptar_solicitud', id_postulacion=postulacion.id) }}" enctype="multipart/form-data" method="POST" >
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <div class="modal-header">
+                        {% if postulacion.estado.nombre == "Solicitud de Postulacion" %}
                         <h5 class="modal-title" id="acceptModalLabel">Aceptar Solicitud de Postulación</h5>
+                        {% elif ( (postulacion.estado.nombre == "Postulacion en Espera de Aceptacion") or (postulacion.estado.nombre == "Postulacion en Espera de ser Completada") ) %}
+                        <h5 class="modal-title" id="acceptModalLabel">Aceptar archivos nuevos</h5>
+                        {% else %}
+                        <h5 class="modal-title" id="acceptModalLabel">Error, estado no cubierto</h5>
+                        {% endif %}
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
+                        {% if postulacion.estado.nombre == "Solicitud de Postulacion" %}
                         ¿Estás seguro de que deseas aceptar esta solicitud de postulación? <br>
                         Esta acción no se podrá deshacer, se creará un nuevo usuario en el sistema correspondiente al alumno entrante y se le notificará vía mail.
+                        {% elif postulacion.estado.nombre == "Postulacion en Espera de Aceptacion" %}
+                        <div class="mb-3">
+                            {{ form.precarga.label }}{{ form.precarga(class="form-control") }}
+                            {% if form.errors %}
+                                {% for error in form.precarga.errors %}
+                                    <div class="text-danger">{{ form.errors[0] }}
+                                        <span style="color: red;">{{ error }}</span>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        ¿Estás seguro de que deseas aceptar los archivos subidos por el alumno? <br>
+                        Archivos a verificar: Psicofisico firmado, Politicas institucionales firmadas.
+                        {% elif postulacion.estado.nombre == "Postulacion en Espera de ser Completada" %}
+                        ¿Estás seguro de que deseas aceptar los archivos subidos por el alumno? <br>
+                        Archivos a verificar: Visado, seguro medico.
+                        {% else %}
+                        Error, estado no cubierto
+                        {% endif %}
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                         <button type="submit" class="btn btn-primary">Aceptar</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                     </div>
                 </form>
             </div>
@@ -369,7 +416,14 @@
                     </div>
                     <div class="modal-body">
                         <div class="mb-3">
+                            {% if postulacion.estado.nombre == "Solicitud de Postulacion" %}
                             ¿Estás seguro de que deseas rechazar esta solicitud de postulación? <br> Esta acción no se podrá deshacer. Por favor, ingresa el motivo de rechazo, el cual será enviado al alumno entrante vía mail. <br>
+                            {% elif postulacion.estado.nombre == "Postulacion en Espera de Aceptacion" %}
+                            ¿Estás seguro de que deseas rechazar los archivos subidos por el alumno? <br>
+                            Archivos a verificar: Psicofisico firmado, Politicas institucionales firmadas. <br>
+                            {% else %}
+                            Error, estado no cubierto
+                            {% endif %}
                             <label for="rejectReason" class="form-label"><strong>Motivo de Rechazo:</strong></label>
                             <textarea class="form-control" id="rejectReason" name="reject_reason" rows="4" required></textarea>
                         </div>

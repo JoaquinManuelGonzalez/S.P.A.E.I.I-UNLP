@@ -2,7 +2,9 @@ from src.core.models.postulacion.postulacion import Postulacion
 from src.core.database import db
 from src.core.models.alumno.informacion_alumno_entrante import InformacionAlumnoEntrante
 from src.core.models.postulacion.estado import Estado
+from src.core.models.usuario import Usuario
 from src.core.models.asignatura import Asignatura
+from sqlalchemy import or_, and_
 
 def crear_postulacion(**data):
     """
@@ -40,7 +42,6 @@ def filtrar_postulaciones(
 ):
     
     query = Postulacion.query
-    print(id_periodo)
     if nombre:
         query = query.filter(Postulacion.informacion_alumno_entrante.has(InformacionAlumnoEntrante.nombre.ilike(f"%{nombre}%")))
     if apellido:
@@ -118,6 +119,75 @@ def filtrar_postulaciones_por_alumno(
 
     return query.paginate(page=pagina, per_page=por_pagina, error_out=False)
 
+def postulaciones_pendientes_presidencia(
+        nombre = None,
+        apellido = None,
+        email = None,
+        ordenado_por = None,
+        orden = None,
+        fecha_desde=None,
+        fecha_hasta=None,
+        id_periodo=None,
+        pagina = None, 
+        por_pagina = None):
+    query = Postulacion.query
+    query = query.filter(Postulacion.estado.has(Estado.requiere_accion_presidencia))
+    if nombre:
+        query = query.filter(Postulacion.informacion_alumno_entrante.has(InformacionAlumnoEntrante.nombre.ilike(f"%{nombre}%")))
+    if apellido:
+        query = query.filter(Postulacion.informacion_alumno_entrante.has(InformacionAlumnoEntrante.apellido.ilike(f"%{apellido}%")))
+    if email:
+        query = query.filter(Postulacion.informacion_alumno_entrante.has(InformacionAlumnoEntrante.email.ilike(f"%{email}%")))
+    if fecha_desde:
+        query = query.filter(Postulacion.creacion >= fecha_desde)
+    if fecha_hasta:
+        query = query.filter(Postulacion.creacion <= fecha_hasta)
+    if id_periodo:
+        query = query.filter(Postulacion.id_periodo_postulacion == id_periodo) 
+
+    if ordenado_por:
+        query = ordenar_postulaciones(query, ordenado_por, orden)
+
+    if not pagina:
+        return query.all()
+    return query.paginate(page=pagina, per_page=por_pagina, error_out=False)
+
+def postulaciones_pendientes_focal(
+        idPuntoFocal,
+        nombre = None,
+        apellido = None,
+        email = None,
+        ordenado_por = None,
+        orden = None,
+        fecha_desde=None,
+        fecha_hasta=None,
+        id_periodo=None,
+        pagina = None, 
+        por_pagina = None):
+    
+    punto_focal = Usuario.query.get(idPuntoFocal)
+    query = Postulacion.query
+    query = query.filter(Postulacion.estado.has(Estado.requiere_accion_focal))
+    query = query.filter(Postulacion.asignaturas.any(Asignatura.facultad_id == punto_focal.facultad_id))
+    if nombre:
+        query = query.filter(Postulacion.informacion_alumno_entrante.has(InformacionAlumnoEntrante.nombre.ilike(f"%{nombre}%")))
+    if apellido:
+        query = query.filter(Postulacion.informacion_alumno_entrante.has(InformacionAlumnoEntrante.apellido.ilike(f"%{apellido}%")))
+    if email:
+        query = query.filter(Postulacion.informacion_alumno_entrante.has(InformacionAlumnoEntrante.email.ilike(f"%{email}%")))
+    if fecha_desde:
+        query = query.filter(Postulacion.creacion >= fecha_desde)
+    if fecha_hasta:
+        query = query.filter(Postulacion.creacion <= fecha_hasta)
+    if id_periodo:
+        query = query.filter(Postulacion.id_periodo_postulacion == id_periodo)
+    
+    if ordenado_por:
+        query = ordenar_postulaciones(query, ordenado_por, orden)
+
+    if not pagina:
+        return query.all()
+    return query.paginate(page=pagina, per_page=por_pagina, error_out=False)
 def asociar_asignaturas_a_postulacion(postulacion_id, asignaturas):
     """
     Asocia asignaturas a una postulación.
