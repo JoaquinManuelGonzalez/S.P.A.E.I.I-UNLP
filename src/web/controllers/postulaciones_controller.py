@@ -452,6 +452,10 @@ def guardar_datos_estadia(id_postulacion):
     
     archivo_service.save_file_minio(request.files['psicofisico'].read(), archivo_psicofisico['path'])
     archivo_service.save_file_minio(request.files['politicas_institucionales'].read(), archivo_politicas['path'])
+
+    emails = usuario_service.get_email_admin_presidencia()
+    email_service.send_email("Se subieron los archivos psicofíisico y políticas institucionales", f"Se han subido los archivos psicofísico y políticas institucionales por parte del alumno {alumno.nombre} {alumno.apellido}", emails)
+
     flash('Datos guardados exitosamente', 'success')
     return redirect(url_for('postulacion.mis_postulaciones'))
 
@@ -609,6 +613,9 @@ def visado_seguro_medico_post(id_postulacion):
     file_seguro_medico.postulacion = postulacion
     archivo_service.save_file_minio(request.files['visado'].read(), archivo_visado['path'])
     archivo_service.save_file_minio(request.files['seguro_medico'].read(), archivo_seguro_medico['path'])
+
+    emails = usuario_service.get_email_admin_presidencia()
+    email_service.send_email("Se han subidos los archivos visado y seguro médico", f"Se han recibido los archivos visado y seguro médico del alumno {alumno.nombre} {alumno.apellido}", emails)
 
     flash('Datos guardados exitosamente', 'success')
     return redirect(url_for('postulacion.mis_postulaciones'))

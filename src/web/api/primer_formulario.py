@@ -278,7 +278,8 @@ def primer_formulario():
     postulacion.tutores.append(tutor_academico)
     db.session.commit()
 
-    email_service.send_email("Solicitud de Postulación", "Se ha recibido una solicitud de postulación", ["algunmail@gmail.com"])
+    emails = usuario_service.get_email_admin_presidencia()
+    email_service.send_email("Solicitud de Postulación", "Se ha recibido una solicitud de postulación", emails)
     return jsonify(data), 201
     
     
@@ -289,46 +290,6 @@ def primer_formulario_get():
     """
     
     """
-
-    usuario = None
-    rol = get_rol_sesion(session)
-    if rol == "alumno":
-        id = get_id_sesion(session)
-        usuario = usuario_service.buscar_usuario(id)
-
-    if not usuario:
-        data_alumno = {
-            "apellido": "",
-            "nombre": "",
-            "email": "",
-            "domicilio_pais_de_residencia": "",
-            "fecha_de_nacimiento": "",
-            "discapacitado": "",
-            "id_genero": "",
-            "id_estado_civil": "",
-            "id_pais_de_nacimiento": "",
-            "id_pais_de_residencia": "",
-            "id_pais_nacionalidad": "",
-        }
-        repostulacion = False
-    else:
-        alumno = alumno_service.get_alumno_by_id(usuario.id_alumno)
-        repostulacion = True
-        data = {
-            "apellido": alumno.apellido,
-            "nombre": alumno.nombre,
-            "email": alumno.email,
-            "domicilio_pais_de_residencia": alumno.domicilio_pais_de_residencia,
-            "fecha_de_nacimiento": alumno.fecha_de_nacimiento,
-            "discapacitado": alumno.discapacitado,
-            "id_genero": alumno.id_genero,
-            "id_estado_civil": alumno.id_estado_civil,
-            "id_pais_de_nacimiento": alumno.id_pais_de_nacimiento,
-            "id_pais_de_residencia": alumno.id_pais_de_residencia,
-            "id_pais_nacionalidad": alumno.id_pais_nacionalidad,
-        }
-        data_alumno = informacion_alumno_entrante_schema.dump(data)
-
     paises = paises_service.listar_paises()
     generos = genero_service.listar_generos()
     estados_civiles = estado_civil_service.listar_estados_civiles()
@@ -345,11 +306,7 @@ def primer_formulario_get():
         "estados_civiles": data_estados_civiles,
         "csrf_token": token,
         "programas": data_programas,
-        "alumno": data_alumno,
-        "repostulacion": repostulacion
     }
 
-    #response = make_response(jsonify(data_response), 200)
-    #.headers['Access-Control-Allow-Origin'] = 'http://localhost:5173/primer-formulario'
     return jsonify(data_response), 200
 
