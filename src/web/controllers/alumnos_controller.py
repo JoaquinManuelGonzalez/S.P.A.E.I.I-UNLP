@@ -9,6 +9,7 @@ from src.core.services import (
     cedula_de_identidad_service,
     genero_service,
     estado_civil_service,
+    postulacion_service,
 )
 from src.web.handlers.auth import get_rol_sesion, get_id_sesion
 from src.web.handlers.permisos import check
@@ -73,6 +74,7 @@ def ver_detalle_alumno(id_alumno):
     """
 
     alumno = alumno_service.get_alumno_by_id(id_alumno)
+    tutor_academico = None
     archivos = {
         "Pasaporte": (
             archivo_service.obtener_archivo_por_id(alumno.pasaporte.id_archivo)
@@ -93,9 +95,13 @@ def ver_detalle_alumno(id_alumno):
             (alumno.archivos), "certificadoDiscapacidad"
         ),
     }
+    
+    if get_rol_sesion(session) == "punto_focal":
+        postulacion = postulacion_service.obtener_postulacion_actual_de_alumno(id_alumno)
+        tutor_academico = postulacion_service.obtener_tutor_academico_de_postulacion(postulacion.id)
 
     return render_template(
-        "alumnos/ver-detalle-alumno.html", alumno=alumno, archivos=archivos
+        "alumnos/ver-detalle-alumno.html", alumno=alumno, archivos=archivos, tutor_academico=tutor_academico
     )
 
 

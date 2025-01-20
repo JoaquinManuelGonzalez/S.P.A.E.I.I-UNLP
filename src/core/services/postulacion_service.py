@@ -4,7 +4,8 @@ from src.core.models.alumno.informacion_alumno_entrante import InformacionAlumno
 from src.core.models.postulacion.estado import Estado
 from src.core.models.usuario import Usuario
 from src.core.models.asignatura import Asignatura
-from sqlalchemy import or_, and_
+from src.core.models.postulacion.tutor import Tutor
+from sqlalchemy import or_, and_, desc
 
 def crear_postulacion(**data):
     """
@@ -200,3 +201,19 @@ def asociar_asignaturas_a_postulacion(postulacion_id, asignaturas):
         postulacion.asignaturas.append(a)
     db.session.commit()
     return True
+
+def obtener_postulacion_actual_de_alumno(alumno_id):
+    return (
+        db.session.query(Postulacion)
+        .filter(Postulacion.id_informacion_alumno_entrante == alumno_id)
+        .order_by(desc(Postulacion.creacion))
+        .first()
+    )
+
+def obtener_tutor_academico_de_postulacion(postulacion_id):
+    return (
+        db.session.query(Tutor)
+        .join(Postulacion.tutores)
+        .filter(Postulacion.id == postulacion_id, Tutor.es_institucional == False)
+        .first()
+    )
