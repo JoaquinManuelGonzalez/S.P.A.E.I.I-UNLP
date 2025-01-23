@@ -211,6 +211,7 @@
   const { formData, errors, loading, paises, estados_civiles, programas, generos, nivelEstudio, convenioPrograma, es_hispanohablante, mercosur } = storeToRefs(store);
   // Accedemos al idioma actual a través de i18n
   const { locale } = useI18n();
+  const { t } = useI18n();
 
   // Computed properties para filtrar las opciones según el idioma actual
   const filteredPaises = computed(() => {
@@ -324,44 +325,53 @@
 
   const numerosLetras = (value) => /^[a-zA-Z0-9]+$/.test(value);
 
+  const validarFecha = (fecha) => {
+    const fechaSeleccionada = new Date(fecha); 
+    const fechaActual = new Date(); 
+    fechaActual.setHours(0, 0, 0, 0);
+    fechaSeleccionada.setHours(0, 0, 0, 0);
+
+    return fechaSeleccionada <= fechaActual;
+  };
+
   const validar = () => {
     errors.value = [];
     if(formData.value.alumno.apellido.length < 2 || formData.value.alumno.apellido.length > 50 || !soloLetras(formData.value.alumno.apellido)){
-      errors["apellido"] = "El apellido debe contener solo letras. Como mínimo 2 y como máximo 50 caracteres";
+      errors["apellido"] = t("formulario.errors.apellido");
       alert(errors["apellido"]);
       return false;
     }
     if(formData.value.alumno.nombre.length < 2 || formData.value.alumno.nombre.length > 50 || !soloLetras(formData.value.alumno.nombre)){
-      errors["nombre"] = "El nombre debe contener solo letras. Como mínimo 2 y como máximo 50 caracteres";
+      errors["nombre"] = t("formulario.errors.nombre");
       alert(errors["nombre"]);
       return false;
     }
     if(formData.value.alumno.email.length < 3 || formData.value.alumno.email.length > 50){
-      errors["email"] = "El email debe tener al menos 3 caracteres y como máximo 50 caracteres";
+      errors["email"] = t("formulario.errors.email");
       alert(errors["email"]);
       return false;
     }
     if(formData.value.pasaporte.numero != "" && !numerosLetras(formData.value.pasaporte.numero)){
-      errors["numero_pasaporte"] = "El pasaporte solo debe contener números y letras";
+      errors["numero_pasaporte"] = t("formulario.errors.numero_pasaporte");
       alert(errors["numero_pasaporte"]);
       return false;
     }
     if(formData.value.archivo.pasaporte != null){
       if(!validarArchivo(formData.value.archivo.pasaporte)){
-        errors["archivo_pasaporte"] = "Formato de archivo no válido. Solo se permiten archivos .pdf, .jpg, .jpeg, .png";
+        errors["archivo_pasaporte"] = t("formulario.errors.archivo_pasaporte");
         alert(errors["archivo_pasaporte"]);
         return false;
       }
     }
     if(mercosur.value){
       if(formData.value.cedula_de_identidad.numero != "" && !soloNumeros(formData.value.cedula_de_identidad.numero)){
-        errors["numero_cedula_de_identidad"] = "La cédula de identidad solo debe contener números";
+        errors["numero_cedula_de_identidad"] = t("formulario.errors.numero_cedula_de_identidad");
         alert(errors["numero_cedula_de_identidad"]);
         return false;
       }
       if(formData.value.archivo.cedula_de_identidad != null){
         if(!validarArchivo(formData.value.archivo.cedula_de_identidad)){
-          errors["archivo_cedula_de_identidad"] = "Formato de archivo no válido. Solo se permiten archivos .pdf, .jpg, .jpeg, .png";
+          errors["archivo_cedula_de_identidad"] = t("formulario.errors.archivo_cedula");
           alert(errors["archivo_cedula_de_identidad"]);
           return false;
         }
@@ -369,7 +379,7 @@
     }
     if(formData.value.archivo.certificado_b1 != null){
       if(!validarArchivo(formData.value.archivo.certificado_b1)){
-        errors["archivo_certificado_b1"] = "Formato de archivo no válido. Solo se permiten archivos .pdf, .jpg, .jpeg, .png";
+        errors["archivo_certificado_b1"] = t("formulario.errors.certificado_b1");
         alert(errors["archivo_certificado_b1"]);
         return false;
       }
@@ -377,7 +387,7 @@
     if(nivelEstudio === 'posgrado'){
       if(formData.value.archivo.plan_trabajo != null){
         if(!validarArchivo(formData.value.archivo.plan_trabajo)){
-          errors["archivo_plan_trabajo"] = "Formato de archivo no válido. Solo se permiten archivos .pdf, .jpg, .jpeg, .png";
+          errors["archivo_plan_trabajo"] = t("formulario.errors.plan_trabajo");
           alert(errors["archivo_plan_trabajo"]);
           return false;
         }
@@ -385,49 +395,54 @@
     }
     if(formData.value.archivo.carta_recomendacion != null){
       if(!validarArchivo(formData.value.archivo.carta_recomendacion)){
-        errors["archivo_carta_recomendacion"] = "Formato de archivo no válido. Solo se permiten archivos .pdf, .jpg, .jpeg, .png";
+        errors["archivo_carta_recomendacion"] = t("formulario.errors.carta_recomendacion");
         alert(errors["archivo_carta_recomendacion"]);
         return false;
       }
     }
     if(formData.value.postulacion.universidad_origen.length < 3 || formData.value.postulacion.universidad_origen.length > 50){
-      errors["universidad_origen"] = "La universidad de origen debe tener al menos 3 caracteres y como máximo 50 caracteres";
-      alert("La universidad de origen debe tener al menos 3 caracteres y como máximo 50 caracteres");
+      errors["universidad_origen"] = t("formulario.errors.universidad_origen");
+      alert(errors["universidad_origen"]);
       return false;
     }
     if(formData.value.postulacion.consulado_visacion.length > 50){
-      errors["consulado_visacion"] = "El consulado de visación debe tener como máximo 50 caracteres";
+      errors["consulado_visacion"] = t("formulario.errors.consulado_visacion");
       alert(errors["consulado_visacion"]);
       return false;
     }
     if(formData.value.tutorInstitucional.apellido.length < 2 || formData.value.tutorInstitucional.apellido.length > 50 || !soloLetras(formData.value.tutorInstitucional.apellido)){
-      errors["apellido_tutor_institucional"] = "El apellido del tutor institucional debe contener solo letras. Como mínimo 2 y como máximo 50 caracteres";
+      errors["apellido_tutor_institucional"] = t("formulario.errors.apellido_tutor_institucional");
       alert(errors["apellido_tutor_institucional"]);
       return false;
     }
     if(formData.value.tutorInstitucional.nombre.length < 2 || formData.value.tutorInstitucional.nombre.length > 50 || !soloLetras(formData.value.tutorInstitucional.nombre)){
-      errors["nombre_tutor_institucional"] = "El nombre del tutor institucional debe contener solo letras. Como mínimo 2 y como máximo 50 caracteres";
+      errors["nombre_tutor_institucional"] = t("formulario.errors.nombre_tutor_institucional");
       alert(errors["nombre_tutor_institucional"]);
       return false;
     }
     if(formData.value.tutorInstitucional.email.length < 3 || formData.value.tutorInstitucional.email.length > 50){
-      errors["email_tutor_institucional"] = "El email del tutor institucional debe tener al menos 3 caracteres y como máximo 50 caracteres";
+      errors["email_tutor_institucional"] = t("formulario.errors.email_tutor_institucional");
       alert(errors["email_tutor_institucional"]);
       return false;
     }
     if(formData.value.tutorAcademico.apellido.length < 2 || formData.value.tutorAcademico.apellido.length > 50 || !soloLetras(formData.value.tutorAcademico.apellido)){
-      errors["apellido_tutor_academico"] = "El apellido del tutor académico debe contener solo letras. Como mínimo 2 y como máximo 50 caracteres";
+      errors["apellido_tutor_academico"] = t("formulario.errors.apellido_tutor_academico");
       alert(errors["apellido_tutor_academico"]);
       return false;
     }
     if(formData.value.tutorAcademico.nombre.length < 2 || formData.value.tutorAcademico.nombre.length > 50 || !soloLetras(formData.value.tutorAcademico.nombre)){
-      errors["nombre_tutor_academico"] = "El nombre del tutor académico debe contener solo letras. Como mínimo 2 y como máximo 50 caracteres";
+      errors["nombre_tutor_academico"] = t("formulario.errors.nombre_tutor_academico");
       alert(errors["nombre_tutor_academico"]);
       return false;
     }
     if(formData.value.tutorAcademico.email.length < 3 || formData.value.tutorAcademico.email.length > 50){
-      errors["email_tutor_academico"] = "El email del tutor académico debe tener al menos 3 caracteres y como máximo 50 caracteres";
+      errors["email_tutor_academico"] = t("formulario.errors.email_tutor_academico");
       alert(errors["email_tutor_academico"]);
+      return false;
+    }
+    if(formData.value.alumno.fecha_de_nacimiento === "" || !validarFecha(formData.value.alumno.fecha_de_nacimiento)){
+      errors["fecha_de_nacimiento"] = t("formulario.errors.fecha_de_nacimiento");
+      alert(errors["fecha_de_nacimiento"]);
       return false;
     }
     console.log(errors);

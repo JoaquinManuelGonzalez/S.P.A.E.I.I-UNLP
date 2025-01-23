@@ -179,6 +179,27 @@
             "mensaje": "Puede ver los Convenios que posee la Universidad Nacional de La Plata haciendo",
             "clickAqui": "click aquí",
             "boton": "Postularme"
+        },
+        "errors": {
+            "apellido": "El apellido debe contener solo letras. Como mínimo 2 y como máximo 50 caracteres",
+            "nombre": "El nombre debe contener solo letras. Como mínimo 2 y como máximo 50 caracteres",
+            "email": "El email debe tener al menos 3 caracteres y como máximo 50 caracteres",
+            "numero_pasaporte": "El pasaporte solo debe contener números y letras",
+            "numero_cedula_de_identidad": "La cédula de identidad solo debe contener números",
+            "universidad_origen": "La universidad de origen debe tener al menos 3 caracteres y como máximo 50 caracteres",
+            "consulado_visacion": "El consulado de visación debe tener como máximo 50 caracteres",
+            "apellido_tutor_institucional": "El apellido del tutor institucional debe contener solo letras. Como mínimo 2 y como máximo 50 caracteres",
+            "nombre_tutor_institucional": "El nombre del tutor institucional debe contener solo letras. Como mínimo 2 y como máximo 50 caracteres",
+            "email_tutor_institucional": "El email del tutor institucional debe tener al menos 3 caracteres y como máximo 50 caracteres",
+            "apellido_tutor_academico": "El apellido del tutor académico debe contener solo letras. Como mínimo 2 y como máximo 50 caracteres",
+            "nombre_tutor_academico": "El nombre del tutor académico debe contener solo letras. Como mínimo 2 y como máximo 50 caracteres",
+            "email_tutor_academico": "El email del tutor académico debe tener al menos 3 caracteres y como máximo 50 caracteres",
+            "archivo_pasaporte": "El pasaporte tiene un formato de archivo no válido. Solo se permiten archivos .pdf, .jpg, .jpeg, .png",
+            "archivo_cedula": "La cédula de identidad tiene un formato de archivo no válido. Solo se permiten archivos .pdf, .jpg, .jpeg, .png",
+            "plan_trabajo": "El plan de trabajo tiene un formato de archivo no válido. Solo se permiten archivos .pdf, .jpg, .jpeg, .png",
+            "carta_recomendacion": "La carta de recomendación tiene un formato de archivo no válido. Solo se permiten archivos .pdf, .jpg, .jpeg, .png",
+            "certificado_b1": "El certificado B1 tiene un formato de archivo no válido. Solo se permiten archivos .pdf, .jpg, .jpeg, .png",
+            "fecha_de_nacimiento": "La fecha de nacimiento no puede ser mayor a la fecha actual"
         }
     }
 }

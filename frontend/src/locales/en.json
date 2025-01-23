@@ -179,6 +179,27 @@
             "mensaje": "You can view the Agreements held by the National University of La Plata by doing",
             "clickAqui": "click here",
             "boton": "Apply"
+        },
+        "errors": {
+            "apellido": "The last name must contain only letters. Minimum 2 and maximum 50 characters",
+            "nombre": "The first name must contain only letters. Minimum 2 and maximum 50 characters",
+            "email": "The email must be at least 3 characters long and no more than 50 characters",
+            "numero_pasaporte": "The passport must contain only numbers and letters",
+            "numero_cedula_de_identidad": "The identity card must contain only numbers",
+            "universidad_origen": "The home university must be at least 3 characters long and no more than 50 characters",
+            "consulado_visacion": "The visa consulate must be no more than 50 characters long",
+            "apellido_tutor_institucional": "The institutional tutor's last name must contain only letters. Minimum 2 and maximum 50 characters",
+            "nombre_tutor_institucional": "The institutional tutor's first name must contain only letters. Minimum 2 and maximum 50 characters",
+            "email_tutor_institucional": "The institutional tutor's email must be at least 3 characters long and no more than 50 characters",
+            "apellido_tutor_academico": "The academic tutor's last name must contain only letters. Minimum 2 and maximum 50 characters",
+            "nombre_tutor_academico": "The academic tutor's first name must contain only letters. Minimum 2 and maximum 50 characters",
+            "email_tutor_academico": "The academic tutor's email must be at least 3 characters long and no more than 50 characters",
+            "archivo_pasaporte": "The passport has an invalid file format. Only .pdf, .jpg, .jpeg, and .png files are allowed",
+            "archivo_cedula": "The identity card has an invalid file format. Only .pdf, .jpg, .jpeg, and .png files are allowed",
+            "plan_trabajo": "The work plan has an invalid file format. Only .pdf, .jpg, .jpeg, and .png files are allowed",
+            "carta_recomendacion": "The letter of recommendation has an invalid file format. Only .pdf, .jpg, .jpeg, and .png files are allowed",
+            "certificado_b1": "The B1 certificate has an invalid file format. Only .pdf, .jpg, .jpeg, and .png files are allowed",
+            "fecha_de_nacimiento": "The birth date cannot be later than the current date"
         }
     }
 }

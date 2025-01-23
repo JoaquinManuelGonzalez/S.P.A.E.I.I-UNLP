@@ -179,6 +179,27 @@
             "mensaje": "Você pode ver os Convênios da Universidade Nacional de La Plata fazendo",
             "clickAqui": "clique aqui",
             "boton": "Candidatar-me"
-}
+        },
+        "errors": {
+            "apellido": "O sobrenome deve conter apenas letras. No mínimo 2 e no máximo 50 caracteres",
+            "nombre": "O nome deve conter apenas letras. No mínimo 2 e no máximo 50 caracteres",
+            "email": "O email deve ter pelo menos 3 caracteres e no máximo 50 caracteres",
+            "numero_pasaporte": "O passaporte deve conter apenas números e letras",
+            "numero_cedula_de_identidad": "A cédula de identidade deve conter apenas números",
+            "universidad_origen": "A universidade de origem deve ter pelo menos 3 caracteres e no máximo 50 caracteres",
+            "consulado_visacion": "O consulado de visto deve ter no máximo 50 caracteres",
+            "apellido_tutor_institucional": "O sobrenome do tutor institucional deve conter apenas letras. No mínimo 2 e no máximo 50 caracteres",
+            "nombre_tutor_institucional": "O nome do tutor institucional deve conter apenas letras. No mínimo 2 e no máximo 50 caracteres",
+            "email_tutor_institucional": "O email do tutor institucional deve ter pelo menos 3 caracteres e no máximo 50 caracteres",
+            "apellido_tutor_academico": "O sobrenome do tutor acadêmico deve conter apenas letras. No mínimo 2 e no máximo 50 caracteres",
+            "nombre_tutor_academico": "O nome do tutor acadêmico deve conter apenas letras. No mínimo 2 e no máximo 50 caracteres",
+            "email_tutor_academico": "O email do tutor acadêmico deve ter pelo menos 3 caracteres e no máximo 50 caracteres",
+            "archivo_pasaporte": "O passaporte possui um formato de arquivo inválido. Apenas arquivos .pdf, .jpg, .jpeg e .png são permitidos",
+            "archivo_cedula": "A cédula de identidade possui um formato de arquivo inválido. Apenas arquivos .pdf, .jpg, .jpeg e .png são permitidos",
+            "plan_trabajo": "O plano de trabalho possui um formato de arquivo inválido. Apenas arquivos .pdf, .jpg, .jpeg e .png são permitidos",
+            "carta_recomendacion": "A carta de recomendação possui um formato de arquivo inválido. Apenas arquivos .pdf, .jpg, .jpeg e .png são permitidos",
+            "certificado_b1": "O certificado B1 possui um formato de arquivo inválido. Apenas arquivos .pdf, .jpg, .jpeg e .png são permitidos",
+            "fecha_de_nacimiento": "A data de nascimento não pode ser maior que a data atual"
+        }
     }
 }
