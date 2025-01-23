@@ -8,6 +8,7 @@ from datetime import datetime
 import string, secrets, random, string
 from flask import session
 from src.core.services import email_service, alumno_service
+from sqlalchemy.orm import joinedload
 
 
 def listar_usuarios(pagina:int):
@@ -211,3 +212,11 @@ def actualizar_informacion_usuario_alumno(
     usuario.email = email
 
     db.session.commit()
+
+def get_email_admin_presidencia():
+    emails = Usuario.query.join(Rol).filter(Rol.nombre.in_(["admin", "presidencia"])).with_entities(Usuario.email).all()
+    lista = []
+    for email in emails:
+        lista.append(email[0])
+
+    return lista

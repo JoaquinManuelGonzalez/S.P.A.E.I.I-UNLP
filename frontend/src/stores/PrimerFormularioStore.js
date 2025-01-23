@@ -72,6 +72,7 @@ export const usePrimerFormularioStore = defineStore('primer_formulario_store', {
         es_hispanohablante: false,
         mercosur: false,
         csrf_token: "",
+        repostulacion: false,
     }),
     actions: {
         async submitForm() {
@@ -124,6 +125,18 @@ export const usePrimerFormularioStore = defineStore('primer_formulario_store', {
                 this.paises = response.data.paises;
                 this.csrf_token = response.data.csrf_token;
                 this.programas = response.data.programas;
+                this.repostulacion = response.data.repostulacion;
+                this.formData.alumno.nombre = "José";
+                this.formData.alumno.nombre = response.data.alumno.nombre;
+                this.formData.alumno.apellido = response.data.alumno.apellido;
+                this.formData.alumno.email = response.data.alumno.email;
+                this.formData.alumno.domicilio_pais_de_residencia = response.data.alumno.domicilio_pais_de_residencia;
+                this.formData.alumno.fecha_de_nacimiento = response.data.alumno.fecha_de_nacimiento;
+                this.formData.alumno.id_genero = response.data.alumno.id_genero;
+                this.formData.alumno.id_estado_civil = response.data.alumno.id_estado_civil;
+                this.formData.alumno.id_pais_de_nacimiento = response.data.alumno.id_pais_de_nacimiento;
+                this.formData.alumno.id_pais_de_residencia = response.data.alumno.id_pais_de_residencia;
+                this.formData.alumno.id_pais_nacionalidad = response.data.alumno.id_pais_nacionalidad;
                 console.log("estos son los paises");
                 console.log(this.paises[1]);
             } catch (error) {

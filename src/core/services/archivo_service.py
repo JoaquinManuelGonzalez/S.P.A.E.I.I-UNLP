@@ -3,6 +3,7 @@ from src.core.database import db
 from flask import current_app as app
 import io
 from flask import send_file
+from sqlalchemy import select
 
 def crear_archivo(**data):
     """
@@ -80,3 +81,25 @@ def descargar_archivo(filename):
         return send_file(file_data, download_name=filename, as_attachment=True)
     except Exception:
         return "Error al descargar el archivo", 500
+    
+
+def get_archivo_by_postulacion_and_tipo(tipo, id_alumno, id_postulacion = None):
+    """
+    Obtiene un archivo de una postulación por su tipo.
+    """
+    if id_postulacion is None:
+        prefijo = f"{id_alumno}_{tipo}_"
+    else:
+        prefijo = f"{id_postulacion}_{id_alumno}_{tipo}_"
+
+    # Consulta para obtener el archivo específico
+    archivo = db.session.execute(
+        select(Archivo).filter(Archivo.path.like(f"{prefijo}%"))
+    ).scalars().first()
+
+    if archivo is None:
+        return {
+            "titulo": "Información no asociada",
+            "path": "sin filename"
+        }
+    return archivo
