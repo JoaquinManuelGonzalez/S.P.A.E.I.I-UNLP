@@ -63,7 +63,7 @@ def listar_postulaciones():
 
 
 @postulacion_bp.get('/ver_postulacion/<int:id_postulacion>')
-#@check("postulaciones_detalle")
+@check("postulaciones_detalle")
 def ver_postulacion(id_postulacion):
     postulacion = postulacion_service.get_postulacion_by_id(id_postulacion)
     alumno = alumno_service.get_alumno_by_id(postulacion.id_informacion_alumno_entrante)

@@ -38,6 +38,9 @@ def crear():
 
     facultades = facultades_service.get_all_facultades()
     formulario.facultad_id.choices =  [("", "Seleccione una facultad")] + [(facultad.id, facultad.nombre) for facultad in facultades]
+
+    tipos_carrera = carreras_service.get_tipos_carrera()
+    formulario.tipo_carrera_id.choices = [("", "Seleccione un tipo de carrera")] + [(tipo_carrera.id, tipo_carrera.nombre) for tipo_carrera in tipos_carrera]
     
     if formulario.validate_on_submit():
         carrera = carreras_service.crear_carrera_web(formulario)
@@ -58,9 +61,13 @@ def editar(carrera_id):
 
     facultades = facultades_service.get_all_facultades()
     formulario.facultad_id.choices =  [("", "Seleccione una facultad")] + [(facultad.id, facultad.nombre) for facultad in facultades]
+
+    tipos_carrera = carreras_service.get_tipos_carrera()
+    formulario.tipo_carrera_id.choices = [("", "Seleccione un tipo de carrera")] + [(tipo_carrera.id, tipo_carrera.nombre) for tipo_carrera in tipos_carrera]
+    
     if formulario.validate_on_submit():
         carrera = carreras_service.editar_carrera_web(carrera_id,formulario)
-        return redirect(url_for("carreras.visualizar", carrera = carrera.id))
+        return redirect(url_for("carreras.visualizar", carrera_id = carrera.id))
     return render_template("carreras/editar.html", formulario=formulario, carrera=carrera)
 
 #-----Eliminar-----

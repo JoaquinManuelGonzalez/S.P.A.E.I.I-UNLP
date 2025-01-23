@@ -180,7 +180,7 @@
 
 {% block content %}
 <div class="container py-5">
-    {% if check_permiso(session, 'admin') %}
+    {% if check_permiso(session, 'admin') or check_permiso(session, 'punto_focal') %}
         <h1 class="display-4 mb-4 text-center text-dark">Detalle del Alumno Entrante</h1>
     {% else %}
         <h1 class="display-4 mb-4 text-center text-dark">Información Personal</h1>
@@ -189,180 +189,221 @@
 
     <!-- Tabs de navegación -->
     <ul class="nav nav-tabs" id="alumnoTabs" role="tablist">
-        <li class="nav-item" role="presentation">
-            <a class="nav-link active" id="personal-tab" data-bs-toggle="tab" href="#personal" role="tab" aria-controls="personal" aria-selected="true">Información Personal</a>
-        </li>
-        <li class="nav-item" role="presentation">
-            <a class="nav-link" id="ubicacion-tab" data-bs-toggle="tab" href="#ubicacion" role="tab" aria-controls="ubicacion" aria-selected="false">Información de Ubicación</a>
-        </li>
-        <li class="nav-item" role="presentation">
-            <a class="nav-link" id="documentos-tab" data-bs-toggle="tab" href="#documentos" role="tab" aria-controls="documentos" aria-selected="false">Documentos Asociados</a>
-        </li>
-        {% if check_permiso(session, 'archivo_listar') %}
+        {% if check_permiso(session, 'punto_focal') %}
             <li class="nav-item" role="presentation">
-                <a class="nav-link" id="archivos-tab" data-bs-toggle="tab" href="#archivos" role="tab" aria-controls="archivos" aria-selected="false">Fotos y/o Archivos Asociados</a>
+                <a class="nav-link active" id="personal-focal-tab" data-bs-toggle="tab" href="#personal-focal" role="tab" aria-controls="personal-focal" aria-selected="true">Información del Alumno</a>
             </li>
-        {% endif %}
-        {% if check_permiso(session, 'admin') %}
             <li class="nav-item" role="presentation">
-                <a class="nav-link" id="historial-tab" data-bs-toggle="tab" href="#historial" role="tab" aria-controls="historial" aria-selected="false">Historial</a>
+                <a class="nav-link" id="tutor-tab" data-bs-toggle="tab" href="#tutor" role="tab" aria-controls="tutor" aria-selected="false">Información del Tutor Académico</a>
             </li>
+        {% else %}
+            <li class="nav-item" role="presentation">
+                <a class="nav-link active" id="personal-tab" data-bs-toggle="tab" href="#personal" role="tab" aria-controls="personal" aria-selected="true">Información Personal</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="ubicacion-tab" data-bs-toggle="tab" href="#ubicacion" role="tab" aria-controls="ubicacion" aria-selected="false">Información de Ubicación</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" id="documentos-tab" data-bs-toggle="tab" href="#documentos" role="tab" aria-controls="documentos" aria-selected="false">Documentos Asociados</a>
+            </li>
+            {% if check_permiso(session, 'archivo_listar') %}
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="archivos-tab" data-bs-toggle="tab" href="#archivos" role="tab" aria-controls="archivos" aria-selected="false">Fotos y/o Archivos Asociados</a>
+                </li>
+            {% endif %}
+            {% if check_permiso(session, 'admin') %}
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="historial-tab" data-bs-toggle="tab" href="#historial" role="tab" aria-controls="historial" aria-selected="false">Historial</a>
+                </li>
+            {% endif %}
         {% endif %}
     </ul>
 
     <div class="tab-content" id="alumnoTabsContent">
-        <!-- Información Personal -->
-        <div class="tab-pane fade show active" id="personal" role="tabpanel" aria-labelledby="personal-tab">
-            <div class="card shadow-sm border-0 mt-4">
-                <div class="card-header">
-                    <h5 class="mb-0">Información Personal</h5>
-                </div>
-                <div class="card-body">
-                    <p><strong>Nombre:</strong> {{ alumno.nombre }}</p>
-                    <p><strong>Apellido:</strong> {{ alumno.apellido }}</p>
-                    <p><strong>Email:</strong> {{ alumno.email }}</p>
-                    <p><strong>Fecha de Nacimiento:</strong> {{ alumno.fecha_de_nacimiento.strftime('%d/%m/%Y') }}</p>
-                    <p><strong>Género:</strong> {{ alumno.genero.nombre_es }}</p>
-                    <p><strong>Estado Civil:</strong> {{ alumno.estado_civil.nombre_es }}</p>
-                    <p><strong>Discapacitado:</strong> {{ 'Sí' if alumno.discapacitado else 'No' }}</p>
-                </div>
-            </div>
-        </div>
 
-        <!-- Información de Ubicación -->
-        <div class="tab-pane fade" id="ubicacion" role="tabpanel" aria-labelledby="ubicacion-tab">
-            <div class="card shadow-sm border-0 mt-4">
-                <div class="card-header">
-                    <h5 class="mb-0">Información de Ubicación</h5>
-                </div>
-                <div class="card-body">
-                    <p><strong>País de Nacimiento:</strong> {{ alumno.pais_de_nacimiento.nombre_es }}</p>
-                    <p><strong>País de Residencia:</strong> {{ alumno.pais_de_residencia.nombre_es }}</p>
-                    <p><strong>Nacionalidad:</strong> {{ alumno.pais_nacionalidad.nombre_es }}</p>
-                    <p><strong>Domicilio del País de Residencia:</strong> {{ alumno.domicilio_pais_de_residencia }}</p>
+        {% if check_permiso(session, 'punto_focal') %}
+            <!-- Información Personal para Punto Focal -->
+            <div class="tab-pane fade show active" id="personal-focal" role="tabpanel" aria-labelledby="personal-focal">
+                <div class="card shadow-sm border-0 mt-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Información del Alumno</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Nombre:</strong> {{ alumno.nombre }}</p>
+                        <p><strong>Apellido:</strong> {{ alumno.apellido }}</p>
+                        <p><strong>Email:</strong> {{ alumno.email }}</p>
+                        <p><strong>País de Origen:</strong> {{ alumno.pais_de_nacimiento.nombre_es }}</p>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Documentos Asociados -->
-        <div class="tab-pane fade" id="documentos" role="tabpanel" aria-labelledby="documentos-tab">
-            <div class="card shadow-sm border-0 mt-4">
-                <div class="card-header">
-                    <h5 class="mb-0">Documentación</h5>
-                </div>
-                <div class="card-body">
-                    <p><strong>Número de Pasaporte:</strong> 
-                        {{ alumno.pasaporte.numero if alumno.pasaporte else "No posee información asociada." }}
-                    </p>
-                    <p><strong>País de Emisión de Pasaporte:</strong> 
-                        {{ alumno.pasaporte.pais.nombre_es if alumno.pasaporte else "No posee información asociada." }}
-                    </p>
-                    <p><strong>Cédula de Identidad:</strong> 
-                        {{ alumno.cedula_de_identidad.numero if alumno.cedula_de_identidad else "No posee información asociada." }}
-                    </p>
-                    <p><strong>País de Emisión de Cédula de Identidad:</strong> 
-                        {{ alumno.cedula_de_identidad.pais.nombre_es if alumno.cedula_de_identidad else "No posee información asociada." }}
-                    </p>
+            <!-- Información del Tutor Académico -->
+            <div class="tab-pane fade" id="tutor" role="tabpanel" aria-labelledby="tutor-tab">
+                <div class="card shadow-sm border-0 mt-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Información del Tutor Académico</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Nombre:</strong> {{ tutor_academico.nombre }}</p>
+                        <p><strong>Apellido:</strong> {{ tutor_academico.apellido }}</p>
+                        <p><strong>Email:</strong> {{ tutor_academico.email }}</p>
+                    </div>
                 </div>
             </div>
-        </div>
-        
-        <div class="tab-pane fade" id="archivos" role="tabpanel" aria-labelledby="archivos-tab">
-            <div class="card shadow-sm border-0 mt-4">
-                <div class="card-header">
-                    <h5 class="mb-0">Fotos y/o Archivos Asociados</h5>
+        {% else %}
+            <!-- Información Personal -->
+            <div class="tab-pane fade show active" id="personal" role="tabpanel" aria-labelledby="personal-tab">
+                <div class="card shadow-sm border-0 mt-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Información Personal</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Nombre:</strong> {{ alumno.nombre }}</p>
+                        <p><strong>Apellido:</strong> {{ alumno.apellido }}</p>
+                        <p><strong>Email:</strong> {{ alumno.email }}</p>
+                        <p><strong>Fecha de Nacimiento:</strong> {{ alumno.pais_de_nacimiento.nombre_es }}</p>
+                        <p><strong>Género:</strong> {{ alumno.genero.nombre_es }}</p>
+                        <p><strong>Estado Civil:</strong> {{ alumno.estado_civil.nombre_es }}</p>
+                        <p><strong>Discapacitado:</strong> {{ 'Sí' if alumno.discapacitado else 'No' }}</p>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <div class="row">
-                        <!-- Archivo de Pasaporte -->
+            </div>
+
+            <!-- Información de Ubicación -->
+            <div class="tab-pane fade" id="ubicacion" role="tabpanel" aria-labelledby="ubicacion-tab">
+                <div class="card shadow-sm border-0 mt-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Información de Ubicación</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>País de Nacimiento:</strong> {{ alumno.pais_de_nacimiento.nombre_es }}</p>
+                        <p><strong>País de Residencia:</strong> {{ alumno.pais_de_residencia.nombre_es }}</p>
+                        <p><strong>Nacionalidad:</strong> {{ alumno.pais_nacionalidad.nombre_es }}</p>
+                        <p><strong>Domicilio del País de Residencia:</strong> {{ alumno.domicilio_pais_de_residencia }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Documentos Asociados -->
+            <div class="tab-pane fade" id="documentos" role="tabpanel" aria-labelledby="documentos-tab">
+                <div class="card shadow-sm border-0 mt-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Documentación</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Número de Pasaporte:</strong> 
+                            {{ alumno.pasaporte.numero if alumno.pasaporte else "No posee información asociada." }}
+                        </p>
+                        <p><strong>País de Emisión de Pasaporte:</strong> 
+                            {{ alumno.pasaporte.pais.nombre_es if alumno.pasaporte else "No posee información asociada." }}
+                        </p>
+                        <p><strong>Cédula de Identidad:</strong> 
+                            {{ alumno.cedula_de_identidad.numero if alumno.cedula_de_identidad else "No posee información asociada." }}
+                        </p>
+                        <p><strong>País de Emisión de Cédula de Identidad:</strong> 
+                            {{ alumno.cedula_de_identidad.pais.nombre_es if alumno.cedula_de_identidad else "No posee información asociada." }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-pane fade" id="archivos" role="tabpanel" aria-labelledby="archivos-tab">
+                <div class="card shadow-sm border-0 mt-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Fotos y/o Archivos Asociados</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <!-- Archivo de Pasaporte -->
+                            <div class="col-12 mb-3">
+                                <div class="d-flex align-items-center justify-content-between">
+                                <span><strong>Foto o Archivo de Pasaporte:</strong></span>
+                                <span class="text-muted text-center">
+                                {% if archivos["Pasaporte"] != "No posee información asociada." %}
+                                {{ archivos['Pasaporte'].titulo }}
+                                {% else %}
+                                    {{ archivos["Pasaporte"] }}
+                                {% endif %}
+                                </span>
+                                <div>
+                                    {% if archivos["Pasaporte"] != "No posee información asociada." %}
+                                    <a href="{{ url_for('alumnos_bp.ver_archivo', id_archivo=archivos["Pasaporte"].id) }}" class="btn btn-secondary btn-sm">Descargar Archivo</a>
+                                {% endif %}
+                                </div>
+                            </div>
+                            </div>
+                
+                            <!-- Archivo de Cédula de Identidad -->
+                            <div class="col-12 mb-3">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <span><strong>Foto o Archivo de Cédula de Identidad:</strong></span>
+                                <span class="text-muted text-center">
+                                {% if archivos["Cédula de Identidad"] != "No posee información asociada." %}
+                                    {{ archivos['Cédula de Identidad'].titulo }}
+                                {% else %}
+                                {{ archivos["Cédula de Identidad"] }}
+                                {% endif %}
+                                </span>
+                                <div>
+                                    {% if archivos["Cédula de Identidad"] != "No posee información asociada." %}
+                                    <a href="{{ url_for('alumnos_bp.ver_archivo', id_archivo=archivos["Cédula de Identidad"].id) }}" class="btn btn-secondary btn-sm">Descargar Archivo</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Archivo de Certificado B1 o superior de Español -->
                         <div class="col-12 mb-3">
                             <div class="d-flex align-items-center justify-content-between">
-                            <span><strong>Foto o Archivo de Pasaporte:</strong></span>
-                            <span class="text-muted text-center">
-                              {% if archivos["Pasaporte"] != "No posee información asociada." %}
-                              {{ archivos['Pasaporte'].titulo }}
-                              {% else %}
-                                {{ archivos["Pasaporte"] }}
-                              {% endif %}
-                            </span>
-                            <div>
-                                {% if archivos["Pasaporte"] != "No posee información asociada." %}
-                                <a href="{{ url_for('alumnos_bp.ver_archivo', id_archivo=archivos["Pasaporte"].id) }}" class="btn btn-secondary btn-sm">Descargar Archivo</a>
-                              {% endif %}
+                                <span><strong>Foto o Archivo de Certificado B1 o superior de Español:</strong></span>
+                                <span class="text-muted text-center">
+                                    {% if archivos["Certificado B1"] != "No posee información asociada." %}
+                                    {{ archivos['Certificado B1'].titulo }}
+                                    {% else %}
+                                    {{ archivos["Certificado B1"] }}
+                                    {% endif %}
+                                </span>
+                                <div>
+                                    {% if archivos["Certificado B1"] != "No posee información asociada." %}
+                                    <a href="{{ url_for('alumnos_bp.ver_archivo', id_archivo=archivos["Certificado B1"].id) }}" class="btn btn-secondary btn-sm">Descargar Archivo</a>
+                                    {% endif %}
+                                </div>
                             </div>
-                          </div>
-                        </div>
-              
-                        <!-- Archivo de Cédula de Identidad -->
-                        <div class="col-12 mb-3">
-                          <div class="d-flex align-items-center justify-content-between">
-                              <span><strong>Foto o Archivo de Cédula de Identidad:</strong></span>
-                            <span class="text-muted text-center">
-                              {% if archivos["Cédula de Identidad"] != "No posee información asociada." %}
-                                {{ archivos['Cédula de Identidad'].titulo }}
-                              {% else %}
-                              {{ archivos["Cédula de Identidad"] }}
-                              {% endif %}
-                            </span>
-                            <div>
-                                {% if archivos["Cédula de Identidad"] != "No posee información asociada." %}
-                                <a href="{{ url_for('alumnos_bp.ver_archivo', id_archivo=archivos["Cédula de Identidad"].id) }}" class="btn btn-secondary btn-sm">Descargar Archivo</a>
-                                {% endif %}
                             </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Archivo de Certificado B1 o superior de Español -->
-                    <div class="col-12 mb-3">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <span><strong>Foto o Archivo de Certificado B1 o superior de Español:</strong></span>
-                            <span class="text-muted text-center">
-                                {% if archivos["Certificado B1"] != "No posee información asociada." %}
-                                {{ archivos['Certificado B1'].titulo }}
+                
+                            <!-- Archivo de Certificado de Discapacidad -->
+                            <div class="col-12 mb-3">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <span><strong>Foto o Archivo de Certificado de Discapacidad:</strong></span>
+                                <span class="text-muted text-center">
+                                    {% if archivos["Certificado de Discapacidad"] != "No posee información asociada." %}
+                                    {{ archivos['Certificado de Discapacidad'].titulo }}
                                 {% else %}
-                                {{ archivos["Certificado B1"] }}
+                                {{ archivos["Certificado de Discapacidad"] }}
                                 {% endif %}
-                            </span>
-                            <div>
-                                {% if archivos["Certificado B1"] != "No posee información asociada." %}
-                                <a href="{{ url_for('alumnos_bp.ver_archivo', id_archivo=archivos["Certificado B1"].id) }}" class="btn btn-secondary btn-sm">Descargar Archivo</a>
-                                {% endif %}
-                            </div>
-                        </div>
-                        </div>
-              
-                        <!-- Archivo de Certificado de Discapacidad -->
-                        <div class="col-12 mb-3">
-                          <div class="d-flex align-items-center justify-content-between">
-                            <span><strong>Foto o Archivo de Certificado de Discapacidad:</strong></span>
-                            <span class="text-muted text-center">
+                                </span>
+                                <div>
                                 {% if archivos["Certificado de Discapacidad"] != "No posee información asociada." %}
-                                {{ archivos['Certificado de Discapacidad'].titulo }}
-                              {% else %}
-                              {{ archivos["Certificado de Discapacidad"] }}
-                              {% endif %}
-                            </span>
-                            <div>
-                              {% if archivos["Certificado de Discapacidad"] != "No posee información asociada." %}
-                                <a href="{{ url_for('alumnos_bp.ver_archivo', id_archivo=archivos["Certificado de Discapacidad"].id) }}" class="btn btn-secondary btn-sm">Descargar Archivo</a>
-                                {% endif %}
+                                    <a href="{{ url_for('alumnos_bp.ver_archivo', id_archivo=archivos["Certificado de Discapacidad"].id) }}" class="btn btn-secondary btn-sm">Descargar Archivo</a>
+                                    {% endif %}
+                                </div>
                             </div>
-                          </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Historial de Creación y Actualización -->
-        <div class="tab-pane fade" id="historial" role="tabpanel" aria-labelledby="historial-tab">
-            <div class="card shadow-sm border-0 mt-4">
-                <div class="card-footer text-muted">
-                    <small>Creado el: {{ alumno.creacion.strftime('%d/%m/%Y') }}</small><br>
-                    <small>Última actualización: {{ alumno.actualizacion.strftime('%d/%m/%Y') }}</small>
+            <!-- Historial de Creación y Actualización -->
+            <div class="tab-pane fade" id="historial" role="tabpanel" aria-labelledby="historial-tab">
+                <div class="card shadow-sm border-0 mt-4">
+                    <div class="card-footer text-muted">
+                        <small>Creado el: {{ alumno.creacion.strftime('%d/%m/%Y') }}</small><br>
+                        <small>Última actualización: {{ alumno.actualizacion.strftime('%d/%m/%Y') }}</small>
+                    </div>
                 </div>
             </div>
-        </div>
+        {% endif %}
     </div>
 </div>
 

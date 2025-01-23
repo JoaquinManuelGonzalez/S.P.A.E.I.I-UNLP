@@ -18,6 +18,10 @@
                         <td class="text-start">{{ carrera.nombre }}</td>
                     </tr>
                     <tr>
+                        <th scope="row" class="text-end">Tipo de carrera:</th>
+                        <td class="text-start">{{ carrera.tipo_carrera.nombre }}</td>
+                    </tr>
+                    <tr>
                         <th scope="row" class="text-end">Facultad de la que depende:</th>
                         <td class="text-start">{{ carrera.facultad.nombre }}</td>
                     </tr>
@@ -30,7 +34,7 @@
     <div class="container-lg">
         <div class="row align-items-center border-bottom">
             <div class="col">
-                <h2 class="m-0">Asingaturas</h2>
+                <h2 class="m-0">Asignaturas</h2>
             </div>
             <div class="col text-end">
                 <a href="{{ url_for("carreras.listado_asignar_asignaturas", carrera_id = carrera.id) }}" type="button" class="btn btn-success">Asignar asignaturas</a>

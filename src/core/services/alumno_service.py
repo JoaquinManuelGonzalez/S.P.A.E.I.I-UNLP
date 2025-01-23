@@ -37,6 +37,8 @@ def get_alumnos_con_postulaciones_activas(facultad_id):
     estados_excluir = [
         'Solicitud de Postulacion',
         'Solicitud Rechazada',
+        'Postulacion Cancelada o Interrumpida',
+        'Postulacion Finalizada',
     ]
 
     # Subconsulta para verificar si existe una postulación válida asociada al alumno
