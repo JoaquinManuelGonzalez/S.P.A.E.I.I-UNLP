@@ -8,7 +8,7 @@
     <h1 class="display-5 text-center mb-4" >Programas</h1>
     <hr class="mb-4">
     <div class="d-flex justify-content-center mb-3">
-        <a href="{{ url_for('programa.crear_programa') }}" class="btn btn-primary btn-sm">Crear Programa</a>
+        <a href="{{ url_for('programa.crear_programa') }}" class="btn btn-success btn-custom">Crear Programa</a>
     </div>
     
     <div class="table-responsive shadow-sm">
@@ -17,19 +17,48 @@
                 <tr>
                     <th>Nombre</th>
                     <th>Fecha de carga</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 {% if not programas %}
                     <tr>
-                        <td class="text-center font-medium" colspan="2">No se encontraron programas</td>
+                        <td class="text-center font-medium" colspan="3">No se encontraron programas</td>
                     </tr>
                 {% endif %}
                 {% for programa in programas %}
                 <tr class="border-b border-gray-200 py-2">
                     <td>{{ programa.nombre }}</td>
                     <td>{{ programa.creacion.strftime("%d-%m-%Y") }}</td>
+                    <td>
+                        <a href="{{ url_for('programa.editar_programa', id=programa.id) }}" class="btn btn-primary btn-sm">Editar</a>
+                        <!-- Botón para rechazar -->
+                        <button type="button" class="btn btn-danger btn-sm" data-id="{{ programa.id }}" data-bs-toggle="modal" data-bs-target="#rejectModal-{{ programa.id }}">
+                            Eliminar
+                        </button>
+                    </td>
                 </tr>
+                <!-- Modal de Rechazar -->
+                <div class="modal fade" id="rejectModal-{{ programa.id }}" tabindex="-1" aria-labelledby="rejectModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <form action="{{ url_for('programa.eliminar_programa', id=programa.id) }}" method="POST">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <div class="modal-header">
+                                    <h5 class="modal-title text-danger" id="rejectModalLabel">Eliminar programa</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body text-center">
+                                    <p class="mb-0">¿Está seguro que desea eliminar este programa?</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+                                    <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
                 {% endfor %}
             </tbody>
         </table>
