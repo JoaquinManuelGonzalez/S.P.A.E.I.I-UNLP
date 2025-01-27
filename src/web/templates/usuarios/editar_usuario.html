@@ -46,27 +46,29 @@
                 </div>
             {% endif %}
 
-            <div class="mb-3">
-                {{ formulario_contraseña.nueva_contraseña.label }}{{ formulario_contraseña.nueva_contraseña(class="form-control") }}
-                {% if formulario_contraseña.errors %}
-                    {% for error in formulario_contraseña.nueva_contraseña.errors %}
-                        <div class="text-danger">{{ formulario_contraseña.errors[0] }}
-                            <span style="color: red;">{{ error }}</span>
-                        </div>
-                    {% endfor %}
-                {% endif %}
-            </div>
-            
-            <div class="mb-3">
-                {{ formulario_contraseña.confirmar_contraseña.label }}{{ formulario_contraseña.confirmar_contraseña(class="form-control") }}
-                {% if formulario_contraseña.errors %}
-                    {% for error in formulario_contraseña.confirmar_contraseña.errors %}
-                        <div class="text-danger">{{ formulario_contraseña.errors[0] }}
-                            <span style="color: red;">{{ error }}</span>
-                        </div>
-                    {% endfor %}
-                {% endif %}
-            </div>
+            {% if usuario.id == get_id_sesion(session) %}
+                <div class="mb-3">
+                    {{ formulario_contraseña.nueva_contraseña.label }}{{ formulario_contraseña.nueva_contraseña(class="form-control") }}
+                    {% if formulario_contraseña.errors %}
+                        {% for error in formulario_contraseña.nueva_contraseña.errors %}
+                            <div class="text-danger">{{ formulario_contraseña.errors[0] }}
+                                <span style="color: red;">{{ error }}</span>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                
+                <div class="mb-3">
+                    {{ formulario_contraseña.confirmar_contraseña.label }}{{ formulario_contraseña.confirmar_contraseña(class="form-control") }}
+                    {% if formulario_contraseña.errors %}
+                        {% for error in formulario_contraseña.confirmar_contraseña.errors %}
+                            <div class="text-danger">{{ formulario_contraseña.errors[0] }}
+                                <span style="color: red;">{{ error }}</span>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            {% endif %}
 
             <button type="submit" class="btn btn-primary">Guardar</button>
         </div>
