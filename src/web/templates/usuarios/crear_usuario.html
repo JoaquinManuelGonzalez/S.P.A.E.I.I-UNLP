@@ -54,14 +54,44 @@
             </div>
 
             <div class="mb-3">
-                {{ formulario.id_rol.label }}{{ formulario.id_rol(class="form-select") }}
+                {{ formulario.id_rol.label }}{{ formulario.id_rol(class="form-select", id="id_rol") }}
                 {% if formulario.id_rol.errors %}
                     <div class="text-danger">{{ formulario.id_rol.errors[0] }}</div>
                 {% endif %}
+            </div>
+
+            <div class="mb-3" id="grado-container" style="display: none;">
+                <label for="grado-checkbox" class="form-label">¿Es de grado?</label>
+                <input type="checkbox" id="grado-checkbox" name="grado" value="true" class="form-check-input">
+            </div>
+            <div class="mb-3" id="posgrado-container" style="display: none;">
+                <label for="posgrado-checkbox" class="form-label">¿Es de posgrado?</label>
+                <input type="checkbox" id="posgrado-checkbox" name="posgrado" value="true" class="form-check-input">
             </div>
 
             <button type="submit" class="btn btn-primary my-3">Crear</button>
         </div>
     </form>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const rolSelector = document.getElementById("id_rol");
+        const posgradoContainer = document.getElementById("posgrado-container");
+        const gradoContainer = document.getElementById("grado-container");
+
+        // Escuchar cambios en el selector de roles
+        rolSelector.addEventListener("change", function() {
+            if (rolSelector.value == 3) {
+                // Mostrar el checkbox si el rol es "punto_focal"
+                posgradoContainer.style.display = "block";
+                gradoContainer.style.display = "block";
+            } else {
+                // Ocultar el checkbox para otros roles
+                posgradoContainer.style.display = "none";
+                gradoContainer.style.display = "none";
+            }
+        });
+    });
+</script>
 {% endblock %}

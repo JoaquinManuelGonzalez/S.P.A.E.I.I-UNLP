@@ -40,9 +40,10 @@ def check_permiso(session, permiso):
     #si se busca ver detalle o edicion, se verifica que sea el mismo usuario
     if permiso.endswith('detalle') or permiso.endswith('editar'):
         id_buscado = int(request.path.split('/')[-1])
-        if ("admin" in permisos) or ("gestor" in permisos) or ("punto_focal" in permisos):
+        if ("admin" in permisos) or ("gestor" in permisos):
             return True
-        #SI ES PUNTO FOCAL ME VA A INTERESAR VER QUE PASA CON LOS ALUMNOS QUE ME PERTENECEN SOLAMENTE
+        elif ("punto_focal" in permisos) and (id_buscado == id_usuario_sesion):
+            return True
         if "alumno" in request.path:
             if (id_buscado != usuario_sesion.id_alumno):
                 return False
