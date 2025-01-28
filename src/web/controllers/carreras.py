@@ -10,7 +10,7 @@ carreras_bp = Blueprint("carreras", __name__, url_prefix="/carreras")
 
 #-----Visualizar-----
 @carreras_bp.get('/<int:carrera_id>')
-@check("carreras_crud")
+@check("carreras_detalle")
 def visualizar(carrera_id):
     """Detalle de la carrera con id carrera_id.
 
@@ -26,7 +26,7 @@ def visualizar(carrera_id):
 
 #-----Crear-----
 @carreras_bp.route("/crear", methods=['GET', 'POST'])
-@check("carreras_crud")
+@check("carreras_crear")
 def crear():
     """Crea una Carrera.
 
@@ -49,7 +49,7 @@ def crear():
 
 #-----Editar-----
 @carreras_bp.route("/<int:carrera_id>/editar", methods=['GET', 'POST'])
-@check("carreras_crud")
+@check("carreras_editar")
 def editar(carrera_id):
     """Edita una Asignatura.
 
@@ -72,7 +72,7 @@ def editar(carrera_id):
 
 #-----Eliminar-----
 @carreras_bp.post("/<int:carrera_id>/eliminar")
-@check("carreras_crud")
+@check("carreras_eliminar")
 def eliminar(carrera_id):
     """Elimina una Carrera.
 
@@ -93,7 +93,7 @@ def eliminar(carrera_id):
 
 #-----Asignar asignatura a carreras-----
 @carreras_bp.get("/<int:carrera_id>/asignar_asignaturas")
-@check("carreras_crud")
+@check("carreras_editar")
 def listado_asignar_asignaturas(carrera_id):
     """Renderiza el listado de asignaturas para asignar.
 
@@ -118,7 +118,7 @@ def listado_asignar_asignaturas(carrera_id):
     return render_template("carreras/asignatura_carrera.html", facultades=facultades, asignaturas=asignaturas, search=search, facultad_id=facultad_id, carrera=carrera)
 
 @carreras_bp.get("/<int:carrera_id>/asignar_carreras/<int:asignatura_id>")
-@check("carreras_crud")
+@check("carreras_editar")
 def asignar_asignatura(carrera_id, asignatura_id):
     """Relaciona una carrera con una materia.
 
@@ -137,7 +137,7 @@ def asignar_asignatura(carrera_id, asignatura_id):
     return redirect(previous_url or url_for("carreras.listado_asignar_asignaturas", carrera_id=carrera_id))
 
 @carreras_bp.post("/<int:carrera_id>/desasignar_carreras/<int:asignatura_id>")
-@check("carreras_crud")
+@check("carreras_editar")
 def desasignar_asignatura(carrera_id, asignatura_id):
     """Desrelaciona una carrera con una materia.
 

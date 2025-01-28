@@ -9,7 +9,7 @@ asignaturas_bp = Blueprint("asignaturas", __name__, url_prefix="/asignaturas")
 
 #-----Visualizar-----
 @asignaturas_bp.get('/<int:asignatura_id>')
-@check("asignaturas_crud")
+@check("asignaturas_detalle")
 def visualizar(asignatura_id):
     """Detalle de la asignatura con id asignatura_id.
 
@@ -25,7 +25,7 @@ def visualizar(asignatura_id):
 
 #-----Crear-----
 @asignaturas_bp.route("/crear", methods=['GET', 'POST'])
-@check("asignaturas_crud")
+@check("asignaturas_crear")
 def crear():
     """Crea una Asignatura.
 
@@ -45,7 +45,7 @@ def crear():
 
 #-----Editar-----
 @asignaturas_bp.route("/<int:asignatura_id>/editar", methods=['GET', 'POST'])
-@check("asignaturas_crud")
+@check("asignaturas_editar")
 def editar(asignatura_id):
     """Edita una Asignatura.
 
@@ -64,7 +64,7 @@ def editar(asignatura_id):
 
 #-----Eliminar-----
 @asignaturas_bp.post("/<int:asignatura_id>/eliminar/<int:facultad_id>")
-@check("asignaturas_crud")
+@check("asignaturas_eliminar")
 def eliminar(asignatura_id, facultad_id):
     """Elimina una Asignatura.
 
@@ -84,7 +84,7 @@ def eliminar(asignatura_id, facultad_id):
 
 #-----Asignar asignatura a carreras-----
 @asignaturas_bp.get("/<int:asignatura_id>/asignar_carreras")
-@check("asignaturas_crud")
+@check("asignaturas_editar")
 def listado_asignar_carreras(asignatura_id):
     """Renderiza el listado de carreras para asignar.
 
@@ -109,7 +109,7 @@ def listado_asignar_carreras(asignatura_id):
     return render_template("asignaturas/asignatura_carrera.html", facultades=facultades, carreras=carreras, search=search, facultad_id=facultad_id, asignatura=asignatura)
 
 @asignaturas_bp.get("/<int:asignatura_id>/asignar_carreras/<int:carrera_id>")
-@check("asignaturas_crud")
+@check("asignaturas_editar")
 def asignar_carrera(asignatura_id, carrera_id):
     """Relaciona una carrera con una materia.
 
@@ -128,7 +128,7 @@ def asignar_carrera(asignatura_id, carrera_id):
     return redirect(previous_url or url_for("asignaturas.listado_asignar_carreras", asignatura_id = asignatura_id))
 
 @asignaturas_bp.post("/<int:asignatura_id>/desasignar_carreras/<int:carrera_id>")
-@check("asignaturas_crud")
+@check("asignaturas_editar")
 def desasignar_carrera(asignatura_id, carrera_id):
     """Relaciona una carrera con una materia.
 
