@@ -104,7 +104,7 @@ def ver_postulacion(id_postulacion):
         "cedula_de_identidad": archivo_service.get_archivo_by_postulacion_and_tipo("cedula", alumno.id),
         "carta_recomendacion": archivo_service.get_archivo_by_postulacion_and_tipo("cartaRecomendacion", alumno.id, id_postulacion),
         "plan_trabajo": archivo_service.get_archivo_by_postulacion_and_tipo("planDeTrabajo", alumno.id, id_postulacion),
-        "certificado_b1": archivo_service.get_archivo_by_postulacion_and_tipo("certificadoB1", alumno.id, id_postulacion),
+        "certificado_b1": archivo_service.get_archivo_by_postulacion_and_tipo("certificadoB1", alumno.id),
         "psicofisico": archivo_service.get_archivo_by_postulacion_and_tipo("psicofisico", alumno.id, id_postulacion),
         "politicas_institucionales": archivo_service.get_archivo_by_postulacion_and_tipo("politicasI", alumno.id, id_postulacion),
         "certificado_discapacidad": archivo_service.get_archivo_by_postulacion_and_tipo("certificadoDiscapacidad", alumno.id, id_postulacion),

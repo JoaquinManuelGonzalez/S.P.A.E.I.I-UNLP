@@ -214,7 +214,7 @@ def actualizar_informacion_usuario_alumno(
     db.session.commit()
 
 def get_email_admin_presidencia():
-    emails = Usuario.query.join(Rol).filter(Rol.nombre.in_(["admin", "presidencia"])).with_entities(Usuario.email).all()
+    emails = Usuario.query.join(Rol).filter(Rol.nombre.in_(["presidencia_jefe", "presidencia_gestor"])).with_entities(Usuario.email).all()
     lista = []
     for email in emails:
         lista.append(email[0])
