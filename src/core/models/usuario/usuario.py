@@ -25,6 +25,9 @@ class Usuario(db.Model):
     #relacion opcional para puntos focales
     facultad_id = db.Column(db.Integer, db.ForeignKey('facultades.id'), nullable=True)
     facultad = db.relationship('Facultad', back_populates='puntos_focales')
+    #atributo para saber si un punto focal atiende grado, posgrado u ambos
+    posgrado = db.Column(db.Boolean, default=False)
+    grado = db.Column(db.Boolean, default=False)
 
     def __repr__(self):
         return f"<Usuario {self.id} {self.nombre} {self.apellido} {self.email} {self.rol.nombre}>"
