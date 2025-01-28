@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+{% block title %}Crear Facultad{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <div class="row align-items-center">
+        <div class="col">
+            <h1 class="m-0">Nueva facultad</h1>
+        </div>
+    </div>
+    <form method="POST" class="container-fluid full-height d-flex justify-content-center align-items-center" style="max-width: 500px; max-height: 750px; overflow: hidden;">
+        {{ formulario.csrf_token }}
+        <div class="container my-5">
+            
+            <div class="mb-3">
+                {{ formulario.nombre.label }}{{ formulario.nombre(class="form-control") }}
+                {% if formulario.errors %}
+                        <div class="text-danger">{{ formulario.nombre.errors[0] }}
+                            <span style="color: red;">{{ error }}</span>
+                        </div>
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                {{ formulario.acronimo.label }}{{ formulario.acronimo(class="form-control") }}
+                {% if formulario.errors %}
+                        <div class="text-danger">{{ formulario.acronimo.errors[0] }}
+                            <span style="color: red;">{{ error }}</span>
+                        </div>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="btn btn-primary my-3">Crear</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -59,6 +59,7 @@ def crear_permisos():
     permiso_31 = crear_permiso(nombre='carreras_crud')
     permiso_32 = crear_permiso(nombre='asignaturas_crud')
     permiso_33 = crear_permiso(nombre='habilitar_periodo_postulacion')
+    permiso_34 = crear_permiso(nombre='facultades_crear')
 
 
     permisos_presidencia_jefe.append(permiso_0)
@@ -91,6 +92,7 @@ def crear_permisos():
     permisos_presidencia_jefe.append(permiso_31)
     permisos_presidencia_jefe.append(permiso_32)
     permisos_presidencia_jefe.append(permiso_33)
+    permisos_presidencia_jefe.append(permiso_34)
 
     permisos_presidencia_gestor.append(permiso_2)
     permisos_presidencia_gestor.append(permiso_3)
@@ -112,6 +114,7 @@ def crear_permisos():
     permisos_presidencia_gestor.append(permiso_27)
     permisos_presidencia_gestor.append(permiso_31)
     permisos_presidencia_gestor.append(permiso_32)
+    permisos_presidencia_gestor.append(permiso_34)
 
     permisos_punto_focal.append(permiso_4)
     permisos_punto_focal.append(permiso_5)

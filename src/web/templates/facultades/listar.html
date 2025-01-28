@@ -6,6 +6,9 @@
     <div class="container py-5">
         <h1 class="display-5 text-center mb-4">Facultades</h1>
         <hr class="mb-4">
+        <div class="col text-end">
+            <a href="{{ url_for('facultades.crear') }}" type="button" class="btn btn-success">Nueva Facultad</a>
+        </div>
 
         <div class="table-responsive shadow-sm">
             <table class="table table-bordered table-hover table-striped align-middle">
@@ -24,7 +27,35 @@
                         <td class="text-center align-middle">
                             <div class="btn-group">
                                 <a href="{{ url_for('facultades.visualizar', facultad_id=facultad.id) }}" class="btn btn-primary" data-bs-toggle="tooltip"
-                                   data-bs-title="Ver"><i class="bi bi-eye-fill"></i></a>
+                                   data-bs-title="Ver"><i class="bi bi-eye-fill"></i>
+                                </a>
+                                <a href="{{ url_for("facultades.editar", facultad_id=facultad.id) }}" class="btn btn-warning" data-bs-toggle="tooltip"
+                                   data-bs-title="Editar"><i class="bi bi-pencil-fill"></i></a>
+                                <button type="button" class="btn btn-danger" data-bs-title="Eliminar" data-bs-toggle="modal" data-bs-target="#confirmDeleteModalFacultad-{{ facultad.id }}" data-facultad-id="{{ facultad.id }}" data-bs-title="Eliminar">
+                                   <i class="bi bi-trash-fill"></i>
+                                </button>
+                                <div class="modal fade" id="confirmDeleteModalFacultad-{{ facultad.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Confirmar eliminación</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                ¿Estás seguro que deseas eliminar {{ facultad.nombre }}?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">Cancelar</button>
+                                                <form method="POST" action="{{ url_for("facultades.eliminar", facultad_id = facultad.id) }}">
+                                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </td>
                     </tr>
