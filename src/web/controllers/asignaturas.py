@@ -44,7 +44,7 @@ def crear():
     return render_template("asignaturas/crear.html", formulario=formulario)
 
 #-----Editar-----
-@asignaturas_bp.route("/<int:asignatura_id>/editar", methods=['GET', 'POST'])
+@asignaturas_bp.route("/editar/<int:asignatura_id>", methods=['GET', 'POST'])
 @check("asignaturas_editar")
 def editar(asignatura_id):
     """Edita una Asignatura.
