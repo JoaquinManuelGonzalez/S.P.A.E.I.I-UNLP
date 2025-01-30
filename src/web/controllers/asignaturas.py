@@ -83,7 +83,7 @@ def eliminar(asignatura_id, facultad_id):
     return redirect(previous_url or url_for("facultades.visualizar", facultad_id = facultad_id))
 
 #-----Asignar asignatura a carreras-----
-@asignaturas_bp.get("/<int:asignatura_id>/asignar_carreras")
+@asignaturas_bp.get("/asignar_carreras/<int:asignatura_id>")
 @check("asignaturas_editar")
 def listado_asignar_carreras(asignatura_id):
     """Renderiza el listado de carreras para asignar.
@@ -108,7 +108,7 @@ def listado_asignar_carreras(asignatura_id):
     facultades = facultades_service.get_all_facultades()
     return render_template("asignaturas/asignatura_carrera.html", facultades=facultades, carreras=carreras, search=search, facultad_id=facultad_id, asignatura=asignatura)
 
-@asignaturas_bp.get("/<int:asignatura_id>/asignar_carreras/<int:carrera_id>")
+@asignaturas_bp.get("/asignar_carreras/<int:asignatura_id>/<int:carrera_id>")
 @check("asignaturas_editar")
 def asignar_carrera(asignatura_id, carrera_id):
     """Relaciona una carrera con una materia.
@@ -127,7 +127,7 @@ def asignar_carrera(asignatura_id, carrera_id):
 
     return redirect(previous_url or url_for("asignaturas.listado_asignar_carreras", asignatura_id = asignatura_id))
 
-@asignaturas_bp.post("/<int:asignatura_id>/desasignar_carreras/<int:carrera_id>")
+@asignaturas_bp.post("/desasignar_carreras/<int:asignatura_id>/<int:carrera_id>")
 @check("asignaturas_editar")
 def desasignar_carrera(asignatura_id, carrera_id):
     """Relaciona una carrera con una materia.
