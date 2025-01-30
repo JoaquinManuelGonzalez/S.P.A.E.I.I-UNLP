@@ -60,6 +60,13 @@
                 {% endif %}
             </div>
 
+            <div class="mb-3" id="facultad_id" style="display: none;">
+                {{ formulario.facultad_id.label }}{{ formulario.facultad_id(class="form-select", id="facultad_id") }}
+                {% if formulario.id_rol.errors %}
+                    <div class="text-danger">{{ formulario.id_rol.errors[0] }}</div>
+                {% endif %}
+            </div>
+            
             <div class="mb-3" id="grado-container" style="display: none;">
                 <label for="grado-checkbox" class="form-label">¿Es de grado?</label>
                 <input type="checkbox" id="grado-checkbox" name="grado" value="true" class="form-check-input">
@@ -69,6 +76,7 @@
                 <input type="checkbox" id="posgrado-checkbox" name="posgrado" value="true" class="form-check-input">
             </div>
 
+
             <button type="submit" class="btn btn-primary my-3">Crear</button>
         </div>
     </form>
@@ -77,6 +85,7 @@
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const rolSelector = document.getElementById("id_rol");
+        const facultadSelector = document.getElementById("facultad_id");
         const posgradoContainer = document.getElementById("posgrado-container");
         const gradoContainer = document.getElementById("grado-container");
 
@@ -86,10 +95,12 @@
                 // Mostrar el checkbox si el rol es "punto_focal"
                 posgradoContainer.style.display = "block";
                 gradoContainer.style.display = "block";
+                facultadSelector.style.display = "block";
             } else {
                 // Ocultar el checkbox para otros roles
                 posgradoContainer.style.display = "none";
                 gradoContainer.style.display = "none";
+                facultadSelector.style.display = "none";
             }
         });
     });
