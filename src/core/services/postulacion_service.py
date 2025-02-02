@@ -5,6 +5,7 @@ from src.core.models.postulacion.estado import Estado
 from src.core.models.usuario import Usuario
 from src.core.models.asignatura import Asignatura
 from src.core.models.postulacion.tutor import Tutor
+from src.core.models.postulacion import PostulacionAsignatura
 from sqlalchemy import or_, and_, desc
 
 def crear_postulacion(**data):
@@ -169,7 +170,7 @@ def postulaciones_pendientes_focal(
     punto_focal = Usuario.query.get(idPuntoFocal)
     query = Postulacion.query
     query = query.filter(Postulacion.estado.has(Estado.requiere_accion_focal))
-    query = query.filter(Postulacion.asignaturas.any(Asignatura.facultad_id == punto_focal.facultad_id))
+    query = query.filter(Postulacion.asignaturas.any(PostulacionAsignatura.asignatura.has(Asignatura.facultad_id == punto_focal.facultad_id)))
     if nombre:
         query = query.filter(Postulacion.informacion_alumno_entrante.has(InformacionAlumnoEntrante.nombre.ilike(f"%{nombre}%")))
     if apellido:
@@ -198,7 +199,13 @@ def asociar_asignaturas_a_postulacion(postulacion_id, asignaturas):
         return False
     for asignatura in asignaturas:
         a = Asignatura.query.get(asignatura)
-        postulacion.asignaturas.append(a)
+        print("Postulacion: "+str(postulacion))
+        print("Postulacion type: "+str(type(postulacion)))
+        print("Asignatura: "+str(a))
+        print("Asignatura type: "+str(type(a)))
+        relacion = PostulacionAsignatura(postulacion = postulacion, asignatura = a)
+        db.session.add(relacion)
+        #postulacion.asignaturas.append(a)
     db.session.commit()
     return True
 

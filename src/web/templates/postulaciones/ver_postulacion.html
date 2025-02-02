@@ -331,9 +331,35 @@
                 {% if not asignaturas %}
                     <p>No se seleccionaron asignaturas</p>
                 {% else %}
-                    {% for asignatura in asignaturas %}
-                        <p><strong>Asignatura:</strong> {{ asignatura.nombre }}</p>
-                    {% endfor %}
+                <!-- Tabla -->
+                    <div class="table-responsive shadow-sm">
+                        <table class="table table-bordered table-hover table-striped align-middle">
+                            <thead style="table-light">
+                                <tr>
+                                <th>Asignatura</th>
+                                <th>Aceptado por Punto Focal</th>
+                                <th>Nota</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for asignatura in asignaturas %}
+                                    <tr>
+                                        <td> <a href="{{ url_for('asignaturas.visualizar', asignatura_id = asignatura.asignatura_id) }}" class="btn btn-secondary btn-sm"> {{ asignatura.asignatura.nombre }}</a></td>
+                                        {% if asignatura.validado %}
+                                            <td> Si </td>
+                                        {% else %}
+                                            <td> No </td>
+                                        {% endif %}
+                                        {% if asignatura.aprobado == -1 %}
+                                            <td> Sin calificación </td>
+                                        {% else %}
+                                            <td> asignatura.aprobado </td>
+                                        {% endif %}
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 {% endif %}
             </div>
         </div>

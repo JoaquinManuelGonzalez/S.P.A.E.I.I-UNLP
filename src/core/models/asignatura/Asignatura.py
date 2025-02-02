@@ -15,7 +15,7 @@ class Asignatura(db.Model):
     facultad_id = db.Column(db.Integer, db.ForeignKey("facultades.id"), nullable=False)
     facultad = db.relationship("Facultad")
     carreras = db.relationship("Carrera", secondary=asignaturas_carreras, back_populates="asignaturas")
-    postulaciones = db.relationship('PostulacionAsignatura', back_populates='asignatura')
+    postulaciones = db.relationship('PostulacionAsignatura', back_populates='asignatura', passive_deletes=True)
 
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)

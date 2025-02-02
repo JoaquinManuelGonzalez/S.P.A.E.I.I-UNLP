@@ -7,12 +7,12 @@ from src.core.models.asignatura import Asignatura
 class PostulacionAsignatura(db.Model):
     __tablename__ ='postulacion_asignatura'
 
-    postulacion_id = db.Column(db.Integer, db.ForeignKey("postulacion.id"), nullable=False, primary_key=True)
-    asignatura_id = db.Column(db.Integer, db.ForeignKey("asignaturas.id"), nullable=False, primary_key=True)
+    postulacion_id = db.Column(db.Integer, db.ForeignKey("postulacion.id", ondelete='CASCADE'), nullable=False, primary_key=True)
+    asignatura_id = db.Column(db.Integer, db.ForeignKey("asignaturas.id", ondelete='CASCADE'), nullable=False, primary_key=True)
     postulacion = db.relationship('Postulacion', back_populates='asignaturas')
     asignatura = db.relationship('Asignatura', back_populates='postulaciones')
 
-    aprobado = db.Column('aprobado', db.Boolean, default=False)
+    aprobado = db.Column('aprobado', db.Integer, default=-1) #Setear el valor a la nota final cuando termina la cursada
     validado = db.Column('validado', db.Boolean, default=False)
     
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
