@@ -104,12 +104,12 @@ def crear_estados():
     estados.append(Estado(
         nombre='Postulacion en Proceso',
         requiere_accion_presidencia = False,
-        requiere_accion_focal = True
+        requiere_accion_focal = False
     ))
     estados.append(Estado(
-        nombre='Postulacion Invalidada por Facultad',
+        nombre='Postulacion Esperando Validacion por Facultad',
         requiere_accion_presidencia = False,
-        requiere_accion_focal = False
+        requiere_accion_focal = True
     ))
     estados.append(Estado(
         nombre='Postulacion Validada por Facultad',

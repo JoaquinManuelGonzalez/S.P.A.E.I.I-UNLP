@@ -1,5 +1,6 @@
 from flask import Blueprint, request, render_template, redirect, url_for, flash, session
-from src.core.models.postulacion import Postulacion
+from src.core.models.postulacion import Postulacion, postulacion_asignatura
+from src.core.models.asignatura import Asignatura
 from src.core.services import (postulacion_service, alumno_service, estado_postulacion_service,
 paises_service, genero_service, estado_civil_service, pasaporte_service, cedula_de_identidad_service,
 programa_service, archivo_service, usuario_service, email_service, periodo_postulacion_service)
@@ -122,8 +123,17 @@ def ver_postulacion(id_postulacion):
     if not rol:
         rol = "anonimo"
     
-
+    '''
     asignaturas = postulacion.asignaturas
+    estado_asignaturas = {}
+    for asignatura in asignaturas:
+        estado_asignaturas[asignatura.nombre] = (db.session.query(postulacion_asignatura).filter_by(
+            postulacion_id=postulacion.id,
+            asignatura_id=asignatura.id
+        ).first())
+    '''
+    asignaturas = db.session.query(Asignatura).join(postulacion_asignatura)
+    #asignaturas = db.session.query(postulacion_asignatura).join(Asignatura).filter_by(postulacion_id=postulacion.id)
 
     data = {
         "postulacion": postulacion,
@@ -143,6 +153,7 @@ def ver_postulacion(id_postulacion):
         "archivos": archivos,
         "rol": rol,
         "asignaturas": asignaturas,
+        #"estado_asignaturas": estado_asignaturas,
         "form": form,
         "rol": rol
     }
@@ -198,6 +209,16 @@ def aceptar_solicitud(id_postulacion):
         destino = alumno.email
         email_service.send_email(titulo, cuerpo, [destino])
         flash('Archivos aprobados', 'success')
+    elif postulacion.estado.nombre == "Postulacion Esperando Validacion por Facultad":
+        punto_focal = usuario_service.buscar_usuario(get_id_sesion(session)) #current user
+        asignaturas = postulacion.asignaturas
+        for asignatura in asignaturas:
+            if (asignatura.facultad_id == punto_focal.facultad_id): #TODO: AND asignatura.postgrado == punto_focal.postgrado
+                tabla_intermedia = (db.session.query(postulacion_asignatura).filter_by(
+                    postulacion_id=postulacion.id,
+                    asignatura_id=asignatura.id
+                ).first())
+                tabla_intermedia.aceptado = True
     return redirect(url_for('postulacion.acciones_pendientes_presidencia'))
     
 
@@ -543,7 +564,7 @@ def guardar_materias(postulacion_id):
             enviados.add(punto_focal.email)
     email_service.send_email("Nueva postulación", "Se ha realizado una nueva postulación", list(enviados))
 
-    postulacion.estado = estado_postulacion_service.get_estado_by_name("Postulacion en Proceso")
+    postulacion_service.actualizar_estado_postulacion(postulacion, "Postulacion Esperando Validacion por Facultad")
     db.session.commit()
     flash('Datos guardados exitosamente', 'success')
     return redirect(url_for('postulacion.mis_postulaciones'))

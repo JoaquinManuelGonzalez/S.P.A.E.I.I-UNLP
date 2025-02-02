@@ -202,7 +202,7 @@ def asociar_asignaturas_a_postulacion(postulacion_id, asignaturas):
     db.session.commit()
     return True
 
-def obtener_postulacion_actual_de_alumno(alumno_id):
+def obtener_postulacion_actual_de_alumno(alumno_id): #nota, esto requiere la ID del modelo informacion_alumno_entrante, NO la del usuario.
     return (
         db.session.query(Postulacion)
         .filter(Postulacion.id_informacion_alumno_entrante == alumno_id)
