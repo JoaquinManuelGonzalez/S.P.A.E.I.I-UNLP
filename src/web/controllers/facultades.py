@@ -3,6 +3,7 @@ from src.core.services import facultades as facultades_service
 from src.core.services import carreras as carreras_service
 from src.core.services import asignaturas as asignaturas_service
 from src.core.services import usuario_service as usuarios_service
+from src.web.forms.facultad_form import FacultadForm
 from src.web.handlers.permisos import check
 
 
@@ -64,3 +65,69 @@ def visualizar(facultad_id):
                            carreras=carreras, nombre_carrera=nombre_carrera, tipo_carrera_id=tipo_carrera_id, tipos_carrera=tipos_carrera,
                            asignaturas=asignaturas, nombre_asignatura=nombre_asignatura, pagina_asignatura=pagina_asignatura,
                            puntos_focales=puntos_focales)
+
+# -----Crear Facultad-----
+@facultades_bp.route("/crear", methods=['GET', 'POST'])
+@check("facultades_crear")
+def crear():
+    """Crea una Facultad.
+
+    Returns:
+        flask.templating.render_template: Plantilla para crear una Facultad.
+    """
+
+    formulario = FacultadForm()
+
+    if formulario.validate_on_submit():
+        facultad = facultades_service.crear_facultad_web(formulario)
+        return redirect(url_for("facultades.visualizar", facultad_id=facultad.id))
+
+    return render_template("facultades/crear.html", formulario=formulario)
+
+# ----- Editar -----
+@facultades_bp.route("/editar/<int:facultad_id>", methods=['GET', 'POST'])
+@check("facultades_editar")
+def editar(facultad_id):
+    """Edita una Facultad.
+
+    Returns:
+        flask.templating.render_template: Plantilla para editar una Facultad.
+    """
+    # Aquí `facultad_id` ya es un argumento entero validado por Flask
+    facultad = facultades_service.get_facultad_by_id(facultad_id)
+    if not facultad:
+        flash("La facultad solicitada no existe o ha sido eliminada.", "error")
+        return redirect(url_for("facultades.listar"))
+
+    formulario = FacultadForm(obj=facultad)
+
+    if formulario.validate_on_submit():
+        facultades_service.editar_facultad_web(facultad_id, formulario)
+        return redirect(url_for("facultades.visualizar", facultad_id=facultad_id))
+    
+    return render_template("facultades/editar.html", formulario=formulario, facultad=facultad)
+
+
+# ----- Eliminar -----
+@facultades_bp.post("/<int:facultad_id>/eliminar")
+@check("facultades_eliminar")
+def eliminar(facultad_id):
+    """Elimina una Facultad.
+
+    Returns:
+        flask.templating.render_template: Visualización del listado de facultades.
+    """
+    previous_url = request.referrer
+
+    facultad = facultades_service.get_facultad_by_id(facultad_id)
+    if not facultad:
+        flash("La facultad solicitada no existe o ha sido eliminada.", "error")
+        return redirect(url_for("facultades.listar"))
+    
+    pudo = facultades_service.delete_facultad(facultad_id)
+    if pudo:
+        flash('La facultad se ha eliminado correctamente', 'success')
+    else:
+        flash('No se pudo eliminar la facultad', 'error')
+
+    return redirect(previous_url or url_for("facultades.listar"))

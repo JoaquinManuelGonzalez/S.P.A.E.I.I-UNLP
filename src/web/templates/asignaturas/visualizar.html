@@ -32,9 +32,11 @@
             <div class="col">
                 <h2 class="m-0">Carreras</h2>
             </div>
-            <div class="col text-end">
-                <a href="{{ url_for("asignaturas.listado_asignar_carreras", asignatura_id = asignatura.id) }}" type="button" class="btn btn-success">Asignar carreras</a>
-            </div>
+            {% if check_permiso(session, 'asignaturas_editar') %}
+                <div class="col text-end">
+                    <a href="{{ url_for("asignaturas.listado_asignar_carreras", asignatura_id = asignatura.id) }}" type="button" class="btn btn-success">Asignar carreras</a>
+                </div>
+            {% endif %}
         </div>
         <div class="table-responsive">
             <div class="col">
@@ -54,31 +56,33 @@
                             <td class="text-center align-middle">
                                 <div class="btn-group">
                                     <a href="{{ url_for("carreras.visualizar", carrera_id = carrera.id) }}" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-title="Ver"><i class="bi bi-eye-fill"></i></a>
-                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal-{{ carrera.id }}" data-carrera-id="{{ carrera.id }}" data-bs-title="Eliminar">
-                                        <i class="bi bi-trash-fill"></i>
-                                    </button>
-                                    <div class="modal fade" id="confirmDeleteModal-{{ carrera.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="exampleModalLabel">Confirmar eliminación</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                        aria-label="Close"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    ¿Estás seguro que deseas desasignar la carrera {{ carrera.nombre }}?
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary"
-                                                        data-bs-dismiss="modal">Cancelar</button>
-                                                    <form method="POST" action="{{ url_for("asignaturas.desasignar_carrera", asignatura_id = asignatura.id, carrera_id = carrera.id) }}">
-                                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                                        <button type="submit" class="btn btn-danger">Eliminar</button>
-                                                    </form>
+                                    {% if check_permiso(session, 'carreras_editar') %}
+                                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal-{{ carrera.id }}" data-carrera-id="{{ carrera.id }}" data-bs-title="Eliminar">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </button>
+                                        <div class="modal fade" id="confirmDeleteModal-{{ carrera.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLabel">Confirmar eliminación</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                            aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        ¿Estás seguro que deseas desasignar la carrera {{ carrera.nombre }}?
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary"
+                                                            data-bs-dismiss="modal">Cancelar</button>
+                                                        <form method="POST" action="{{ url_for("asignaturas.desasignar_carrera", asignatura_id = asignatura.id, carrera_id = carrera.id) }}">
+                                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                            <button type="submit" class="btn btn-danger">Eliminar</button>
+                                                        </form>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    {% endif %}
                                 </div>
                             </td>
                         </tr>
@@ -93,7 +97,9 @@
         <div class="row">
             <div class="col text-center">
                 <a class="btn btn-secondary me-2" href="{{ url_for("facultades.visualizar", facultad_id = asignatura.facultad.id) }}" role="button">{{ asignatura.facultad.acronimo }}</a>
-                <a class="btn btn-primary me-2" href="{{ url_for("asignaturas.editar", asignatura_id = asignatura.id) }}" role="button">Editar</a>
+                {% if check_permiso(session, 'carreras_editar') %}
+                    <a class="btn btn-primary me-2" href="{{ url_for("asignaturas.editar", asignatura_id = asignatura.id) }}" role="button">Editar</a>
+                {% endif %}
             </div>
         </div>
     </div>

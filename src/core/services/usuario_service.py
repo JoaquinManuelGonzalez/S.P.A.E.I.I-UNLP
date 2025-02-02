@@ -45,12 +45,22 @@ def crear_usuario(formulario:Usuario_Form) -> None:
     contraseña_original = formulario.contraseña.data
     hash = bcrypt.generate_password_hash(formulario.contraseña.data.encode('utf-8'))
     formulario.contraseña.data = hash.decode('utf-8')
+    print(request.form.get('posgrado'))
+    es_de_posgrado = False
+    es_de_grado = False
+    if request.form.get('posgrado'):
+        es_de_posgrado = True
+    if request.form.get('grado'):
+        es_de_grado = True
     usuario = Usuario(
         nombre=formulario.nombre.data,
         apellido=formulario.apellido.data,
         email=formulario.email.data,
         contraseña=formulario.contraseña.data,
         id_rol=formulario.id_rol.data,
+        posgrado=es_de_posgrado,
+        grado=es_de_grado,
+        facultad_id=formulario.facultad_id.data,
     )
     db.session.add(usuario)
     db.session.commit()

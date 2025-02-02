@@ -25,9 +25,18 @@
                 {{ formulario.id_rol.label }}{{ formulario.id_rol(class="form-control", disabled=True) }}
             </div>
 
-            {% if check_permiso(session, 'admin') or usuario.id == get_id_sesion(session) %}
-                <button type="submit" class="btn btn-primary">Editar</button>
-            {% endif %} 
+            <div class="mb-3">
+                {{ formulario.facultad_id.label }}{{ formulario.facultad_id(class="form-control", disabled=True) }}
+            </div>
+
+
+
+
+            {% if usuario.id_alumno == None %}
+                {% if check_permiso(session, 'admin') or usuario.id == get_id_sesion(session) %}
+                    <button type="submit" class="btn btn-primary">Editar</button>
+                {% endif %} 
+            {% endif %}
                      
         </div>
     </form>

@@ -14,5 +14,5 @@ class AsignaturaForm(FlaskForm):
         from src.core.services import asignaturas as asignaturas_service
         facultad_id = self.facultad_id.data
         asignatura_repetida = asignaturas_service.get_asignatura_by_nombre_facultad(field.data, facultad_id)
-        if asignatura_repetida:
+        if asignatura_repetida and asignatura_repetida.id != self.id.data:
             raise ValidationError('Ya existe una asignatura con ese nombre en esta facultad.')

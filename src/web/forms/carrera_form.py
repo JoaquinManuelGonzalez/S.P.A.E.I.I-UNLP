@@ -16,5 +16,5 @@ class CarreraForm(FlaskForm):
         facultad_id = self.facultad_id.data
         tipo_carrera_id = self.tipo_carrera_id.data
         carrera_repetida = carreras_service.get_carrera_by_nombre_facultad(field.data, tipo_carrera_id, facultad_id)
-        if carrera_repetida:
+        if carrera_repetida and carrera_repetida.id != self.id.data:
             raise ValidationError('Esta carrera ya existe.')
