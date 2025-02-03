@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carta de Aceptación</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            padding: 20px;
+            border: 1px solid #000;
+            max-width: 800px;
+        }
+        .header {
+            text-align: right;
+        }
+        .content {
+            margin-top: 20px;
+            text-align: justify;
+        }
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+        }
+        .firma {
+            margin-top: 60px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <p>La Plata, {{ fecha }}</p>
+    </div>
+
+    <div class="content">
+        <p>
+            Tengo el agrado de dirigirme a usted a los efectos de informarle que la
+            estudiante <strong>{{ nombre_alumna }}</strong>, PAS Nº <strong>{{ pasaporte }}</strong>, de la Universidad <strong>{{ universidad_origen }}</strong>, 
+            ha sido aceptada en la Facultad <strong>{{ facultad_destino }}</strong> de la Universidad Nacional de La Plata, 
+            para realizar una estancia académica de intercambio durante el periodo comprendido entre 
+            <strong>{{ periodo }}</strong>, en el marco del Convenio suscripto entre ambas instituciones.
+        </p>
+        <p>
+            Los gastos de manutención, traslado, seguro de salud, vida y repatriación
+            durante su estadía en nuestra institución serán responsabilidad de la interesada. 
+            Asimismo, deberá acreditar nivel de Español B1 ó mayor.
+        </p>
+        <p>
+            Por último, se deja constancia que esta Casa de Altos Estudios no expide certificaciones
+            de estudios a alumnos con visa de turista.
+        </p>
+    </div>
+
+    <div class="firma">
+        <p>.....................................................................</p>
+        <p>Firma y aclaración</p>
+        <p>Sello</p>
+    </div>
+
+    <div class="footer">
+        <p>
+            AÑO DEL 40º ANIVERSARIO DEL RETORNO DE LA DEMOCRACIA <br>
+            AÑO GONZALEANO - CENTENARIO DEL FALLECIMIENTO DEL FUNDADOR DE LA UNLP, JOAQUÍN V GONZÁLEZ
+        </p>
+        <p>
+            Edificio de Presidencia | Avenida 7 nº 776 | C.P.1900 | La Plata | Buenos Aires | República Argentina <br>
+            Tel (54-0221)6447055 | alumnos.internacionales@presi.unlp.edu.ar | www.unlp.edu.ar
+        </p>
+    </div>
+</body>
+</html>

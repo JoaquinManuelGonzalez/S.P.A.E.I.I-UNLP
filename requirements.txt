@@ -18,3 +18,4 @@ Flask-Mail
 flask-cors==5.0.0
 email-validator
 wtforms-sqlalchemy==0.4.1
+weasyprint==60.2
