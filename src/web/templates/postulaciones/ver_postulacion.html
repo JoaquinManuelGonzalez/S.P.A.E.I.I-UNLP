@@ -145,6 +145,7 @@
         <li class="nav-item" role="presentation">
             <a class="nav-link" id="tutores-tab" data-bs-toggle="tab" href="#tutores" role="tab" aria-controls="tutores" aria-selected="false">Datos de Tutores</a>
         </li>
+        {% if rol != "punto_focal" %}
         <li class="nav-item" role="presentation">
             {% if ( (postulacion.estado.nombre == "Postulacion en Espera de Aceptacion") or (postulacion.estado.nombre == "Postulacion en Espera de ser Completada") ) %}
             <a class="nav-link bg-warning" id="archivos-tab" data-bs-toggle="tab" href="#archivos" role="tab" aria-controls="archivos" aria-selected="false">Datos de Archivos</a>
@@ -152,6 +153,7 @@
             <a class="nav-link" id="archivos-tab" data-bs-toggle="tab" href="#archivos" role="tab" aria-controls="archivos" aria-selected="false">Datos de Archivos</a>
             {% endif %}
         </li>
+        {% endif %}
         <li class="nav-item" role="presentation">
             <a class="nav-link" id="asignaturas-tab" data-bs-toggle="tab" href="#asignaturas" role="tab" aria-controls="asignaturas" aria-selected="false">Datos de Materias</a>
         </li>
@@ -174,21 +176,23 @@
                     <p><strong>País de residencia:</strong> {{ pais_residencia.nombre_es }}</p>
                     <p><strong>Domicilio de residencia:</strong> {{ alumno.domicilio_pais_de_residencia }}</p>
                     <p><strong>Nacionalidad:</strong> {{ nacionalidad.nombre_es }}</p>
-                    {% if pasaporte %}
-                        <p><strong>Número de pasaporte:</strong> {{ pasaporte.numero }}</p>
-                        <p><strong>País de emisión de pasaporte:</strong> {{ pais_pasaporte.nombre_es }}</p>
-                    {% else %}
-                        <p><strong>Número de pasaporte:</strong> No posee información asociada.</p>
-                        <p><strong>País de emisión de pasaporte:</strong> No posee información asociada.</p>
+                    {% if rol != "punto_focal" %}
+                        {% if pasaporte %}
+                            <p><strong>Número de pasaporte:</strong> {{ pasaporte.numero }}</p>
+                            <p><strong>País de emisión de pasaporte:</strong> {{ pais_pasaporte.nombre_es }}</p>
+                        {% else %}
+                            <p><strong>Número de pasaporte:</strong> No posee información asociada.</p>
+                            <p><strong>País de emisión de pasaporte:</strong> No posee información asociada.</p>
+                        {% endif %}
+                        {% if cedula_de_identidad %}
+                            <p><strong>Número de cédula de identidad:</strong> {{ cedula_de_identidad.numero }}</p>
+                            <p><strong>País de emisión de cédula de identidad:</strong> {{ pais_cedula_de_identidad.nombre_es }}</p>
+                        {% else %}
+                            <p><strong>Número de cédula de identidad:</strong> No posee información asociada.</p>
+                            <p><strong>País de emisión de cédula de identidad:</strong> No posee información asociada.</p>
+                        {% endif %}
+                        <p><strong>Estado civil:</strong> {{ estado_civil.nombre_es }}</p>
                     {% endif %}
-                    {% if cedula_de_identidad %}
-                        <p><strong>Número de cédula de identidad:</strong> {{ cedula_de_identidad.numero }}</p>
-                        <p><strong>País de emisión de cédula de identidad:</strong> {{ pais_cedula_de_identidad.nombre_es }}</p>
-                    {% else %}
-                        <p><strong>Número de cédula de identidad:</strong> No posee información asociada.</p>
-                        <p><strong>País de emisión de cédula de identidad:</strong> No posee información asociada.</p>
-                    {% endif %}
-                    <p><strong>Estado civil:</strong> {{ estado_civil.nombre_es }}</p>
                     {% if alumno.discapacitado %}
                         <p><strong>¿Tiene alguna discapacidad?: </strong>Sí</p>
                     {% endif %}
@@ -331,9 +335,68 @@
                 {% if not asignaturas %}
                     <p>No se seleccionaron asignaturas</p>
                 {% else %}
-                    {% for asignatura in asignaturas %}
-                        <p><strong>Asignatura:</strong> {{ asignatura.nombre }}</p>
-                    {% endfor %}
+                <!-- Tabla -->
+                    <div class="table-responsive shadow-sm">
+                        <table class="table table-bordered table-hover table-striped align-middle">
+                            <thead style="table-light">
+                                <tr>
+                                <th>Asignatura</th>
+                                <th>Aceptado por Punto Focal</th>
+                                <th>Nota</th>
+                                <th>Estado</th>
+                                {% if (rol == "punto_focal") and (postulacion.estado.nombre != "Postulacion Esperando Validacion por Facultad") %}
+                                    <th>Acciones</th>
+                                {% endif %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for asignatura in asignaturas %}
+                                    {% if (rol == "punto_focal") and (asignatura.asignatura.facultad_id == usuario_actual.facultad_id) %}
+                                        <tr class="table-active">
+                                    {% else %}
+                                        <tr>
+                                    {% endif %}
+                                    {% if (check_permiso(session, "asignaturas_detalle")) %}
+                                        <td> <a href="{{ url_for('asignaturas.visualizar', asignatura_id = asignatura.asignatura_id) }}" class="btn btn-secondary btn-sm"> {{ asignatura.asignatura.nombre }}</a></td>
+                                    {% else %}
+                                        <td>{{ asignatura.asignatura.nombre }}</td>
+                                    {% endif %}
+                                    {% if asignatura.validado %}
+                                        <td> Si </td>
+                                    {% else %}
+                                        <td> No </td>
+                                    {% endif %}
+                                    {% if asignatura.aprobado == -1 %}
+                                        <td> Sin calificación </td>
+                                    {% else %}
+                                        <td> {{ asignatura.aprobado }} </td>
+                                    {% endif %}
+                                    <td> {{ asignatura.estado }} </td>
+                                    {% if (rol == "punto_focal") and (asignatura.asignatura.facultad_id == usuario_actual.facultad_id) and (postulacion.estado.nombre != "Postulacion Esperando Validacion por Facultad") and (asignatura.validado) %}
+                                        <td> <a href="{{ url_for('postulacion.estado_cursada', id_postulacion = asignatura.postulacion_id, id_asignatura = asignatura.asignatura_id) }}" class="btn btn-secondary btn-sm"> Calificar o cambiar estado</a></td>
+                                    {% else %}
+                                        <td></td>
+                                    {% endif %}
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+            </div>
+            <div>
+                {% if require_punto_focal %}
+                        <!-- Botones de acción -->
+                        <div class="d-flex justify-content-center mt-4">
+                            <!-- Botón para aceptar -->
+                            <button type="button" class="btn btn-primary btn-custom mx-2" data-bs-toggle="modal" data-bs-target="#acceptAsignaturasModal">
+                                Aceptar postulacion a asignaturas
+                            </button>
+                            <!-- Botón para rechazar -->
+                            <button type="button" class="btn btn-danger btn-custom mx-2" data-bs-toggle="modal" data-bs-target="#rejectAsignaturasModal">
+                                Rechazar postulacion a asignaturas
+                            </button>
+                        </div>
                 {% endif %}
             </div>
         </div>
@@ -429,13 +492,74 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                         <button type="submit" class="btn btn-danger">Rechazar</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+    {% if rol == "punto_focal" %}
+    <!-- Modal de Aceptar asignaturas para Punto Focal -->
+    <div class="modal fade" id="acceptAsignaturasModal" tabindex="-1" aria-labelledby="acceptModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form action="{{ url_for('postulacion.aceptar_asignaturas', id_postulacion=postulacion.id) }}" enctype="multipart/form-data" method="POST" >
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="acceptModalLabel">Aceptar asignaturas</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        ¿Está seguro de que deseas aceptar las asignaturas a las que se postuló el alumno?<br>
+                        <ul class="list-group">
+                        {% for materia in asignaturas_relevantes %}
+                            <li class="list-group-item">{{materia.nombre}}</li>
+                        {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Aceptar</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Modal de Rechazar asignaturas para Punto Focal -->
+    <div class="modal fade" id="rejectAsignaturasModal" tabindex="-1" aria-labelledby="rejectModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form action="{{ url_for('postulacion.rechazar_asignaturas', id_postulacion=postulacion.id) }}" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="rejectModalLabel">Rechazar Solicitud</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            ¿Está seguro de que deseas rechazar las asignaturas a las que se postuló el alumno?<br>
+                            <ul class="list-group list-group-numbered">
+                            {% for materia in asignaturas_relevantes %}
+                                <li class="list-group-item">{{materia.nombre}}</li>
+                            {% endfor %}
+                            </ul>
+                            <label for="rejectReason" class="form-label"><strong>Motivo de Rechazo:</strong></label>
+                            <textarea class="form-control" id="rejectReason" name="reject_reason" rows="4" required></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-danger">Rechazar</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
     <div>
         {% if postulacion.estado.nombre == "Postulacion Validada por Facultad" and rol == "alumno" %}
         <a href="{{ url_for('postulacion.ingresar_datos_estadia', id_postulacion=postulacion.id) }}" type="button" class="btn btn-primary btn-custom mx-2">

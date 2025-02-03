@@ -59,7 +59,8 @@ def crear_usuario(formulario:Usuario_Form) -> None:
         contraseña=formulario.contraseña.data,
         id_rol=formulario.id_rol.data,
         posgrado=es_de_posgrado,
-        grado=es_de_grado
+        grado=es_de_grado,
+        facultad_id=formulario.facultad_id.data,
     )
     db.session.add(usuario)
     db.session.commit()

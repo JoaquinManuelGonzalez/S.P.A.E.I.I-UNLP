@@ -12,6 +12,7 @@ class Usuario_Form(FlaskForm):
     email = StringField('Email', validators=[DataRequired()])
     contraseña = PasswordField('Contraseña', validators=[DataRequired(), Length(min=8, max=100)])
     id_rol = SelectField('Rol', choices=[], validators=[DataRequired()])
+    facultad_id = SelectField('Facultad', choices=[])
     id_usuario_editado = HiddenField('id_usuario_editado')
     
 

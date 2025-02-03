@@ -23,10 +23,16 @@ class Postulacion(db.Model):
     estado = db.relationship('Estado', back_populates='postulaciones')
     informacion_alumno_entrante = db.relationship('InformacionAlumnoEntrante', back_populates='postulaciones')
     tutores = db.relationship('Tutor', secondary='postulacion_tutor', back_populates='postulaciones')
-    asignaturas = db.relationship('Asignatura', secondary='postulacion_asignatura', back_populates='postulaciones')
+    asignaturas = db.relationship('PostulacionAsignatura', back_populates='postulacion', passive_deletes=True)
     programa = db.relationship('Programa', back_populates='postulaciones')
     archivos = db.relationship('Archivo', back_populates='postulacion', foreign_keys='Archivo.id_postulacion')
     periodo_postulacion = db.relationship('PeriodoPostulacion', back_populates='postulaciones')
 
     def __repr__(self):
         return f'<Postulacion id-{self.id}, alumno-{self.informacion_alumno_entrante}, de_posgrado-{self.de_posgrado}, estado-{self.estado}>'
+    
+    def get_asignaturas(self):
+        materias = []
+        for asignatura in self.asignaturas:
+            materias.append(asignatura.asignatura)
+        return materias
