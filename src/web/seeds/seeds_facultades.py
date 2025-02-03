@@ -202,7 +202,7 @@ def crear_postulaciones(usuarios):
             universidad_origen="Universidad de Ejemplo",
             consulado_visacion="Consulado X",
             convenio=None,
-            estado=estados[5],
+            estado=estados[3],
             informacion_alumno_entrante= alumno,
             programa=programas[i],
             periodo_postulacion = periodos_inscripcion[1]

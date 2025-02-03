@@ -343,6 +343,10 @@
                                 <th>Asignatura</th>
                                 <th>Aceptado por Punto Focal</th>
                                 <th>Nota</th>
+                                <th>Estado</th>
+                                {% if (rol == "punto_focal") and (postulacion.estado.nombre != "Postulacion Esperando Validacion por Facultad") %}
+                                    <th>Acciones</th>
+                                {% endif %}
                                 </tr>
                             </thead>
                             <tbody>
@@ -363,14 +367,15 @@
                                         <td> No </td>
                                     {% endif %}
                                     {% if asignatura.aprobado == -1 %}
-                                        {# if (rol == "punto_focal") and (asignatura.asignatura.facultad_id == usuario_actual.facultad_id) and postulacion.estado.nombre == "Postulacion Completada" #}
-                                        {% if (rol == "punto_focal") and (asignatura.asignatura.facultad_id == usuario_actual.facultad_id) and postulacion.estado.nombre == "Postulacion Esperando Validacion por Facultad" %}<!-- Solo para testing. Version correcta es la linea de arriba-->
-                                        <td> <a href="{{ url_for('postulacion.calificar_asignatura', id_postulacion = asignatura.postulacion_id, id_asignatura = asignatura.asignatura_id) }}" class="btn btn-secondary btn-sm"> Calificar</a></td>
-                                        {% else %}
-                                            <td> Sin calificación </td>
-                                        {% endif %}
+                                        <td> Sin calificación </td>
                                     {% else %}
-                                        <td> asignatura.aprobado </td>
+                                        <td> {{ asignatura.aprobado }} </td>
+                                    {% endif %}
+                                    <td> {{ asignatura.estado }} </td>
+                                    {% if (rol == "punto_focal") and (asignatura.asignatura.facultad_id == usuario_actual.facultad_id) and (postulacion.estado.nombre != "Postulacion Esperando Validacion por Facultad") and (asignatura.validado) %}
+                                        <td> <a href="{{ url_for('postulacion.estado_cursada', id_postulacion = asignatura.postulacion_id, id_asignatura = asignatura.asignatura_id) }}" class="btn btn-secondary btn-sm"> Calificar o cambiar estado</a></td>
+                                    {% else %}
+                                        <td></td>
                                     {% endif %}
                                     </tr>
                                 {% endfor %}
@@ -380,7 +385,7 @@
                 {% endif %}
             </div>
             <div>
-                {% if ( (postulacion.estado.nombre == "Postulacion Esperando Validacion por Facultad") and (rol == "punto_focal") ) %}
+                {% if require_punto_focal %}
                         <!-- Botones de acción -->
                         <div class="d-flex justify-content-center mt-4">
                             <!-- Botón para aceptar -->

@@ -6,6 +6,7 @@ from src.core.models.usuario import Usuario
 from src.core.models.asignatura import Asignatura
 from src.core.models.postulacion.tutor import Tutor
 from src.core.models.postulacion import PostulacionAsignatura
+from src.core.services import alumno_service, email_service
 from sqlalchemy import or_, and_, desc
 
 def crear_postulacion(**data):
@@ -27,7 +28,7 @@ def get_postulacion_by_id(id_postulacion):
     """
     Obtiene una postulación por su id.
     """
-    return Postulacion.query.get(id_postulacion)
+    return Postulacion.query.get_or_404(id_postulacion)
 
 def filtrar_postulaciones(
         nombre,
@@ -229,6 +230,7 @@ def validar_asignaturas_de_postulacion(postulacion, facultad_id):
     for postulacion_asignatura in postulacion.asignaturas:
         if postulacion_asignatura.asignatura.facultad_id == facultad_id:
             postulacion_asignatura.validado = True
+            postulacion_asignatura.estado = "Cursando"
     
     db.session.commit()
     for postulacion_asignatura in postulacion.asignaturas:

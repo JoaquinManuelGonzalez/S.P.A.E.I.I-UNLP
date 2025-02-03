@@ -19,6 +19,7 @@ import time
 from src.web.forms.postulacion_form import PostulacionForm
 from src.web.forms.postulacion_estadia_form import PostulacionEstadiaForm
 from src.web.forms.presidencia_subir_precarga_form import PresidenciaPrecarga
+from src.web.forms.estado_cursada_form import EstadoCursadaForm
 from src.web.schemas.archivo_schema import archivo_schema
 from src.web.forms.visado_seguro_medico_form import VisadoSeguroMedicoForm
 
@@ -67,8 +68,6 @@ def listar_postulaciones():
 @check("postulaciones_detalle")
 def ver_postulacion(id_postulacion):
     postulacion = postulacion_service.get_postulacion_by_id(id_postulacion)
-    if not postulacion:
-        abort(404)
     alumno = alumno_service.get_alumno_by_id(postulacion.id_informacion_alumno_entrante)
     pais_residencia = paises_service.get_pais_by_id(alumno.id_pais_de_residencia)
     nacionalidad = paises_service.get_pais_by_id(alumno.id_pais_nacionalidad)
@@ -132,8 +131,13 @@ def ver_postulacion(id_postulacion):
         asignaturas_relevantes = postulacion_service.get_asignaturas_de_facultad(postulacion.id, usuario_actual.facultad_id )
         if not asignaturas_relevantes:
             abort(403)
+        if any((not asignatura.validado) and (asignatura.asignatura.facultad_id == usuario_actual.facultad_id) for asignatura in postulacion.asignaturas):
+            require_punto_focal = True
+        else:
+            require_punto_focal = False
     else:
         asignaturas_relevantes = None
+        require_punto_focal = False
 
     data = {
         "postulacion": postulacion,
@@ -154,6 +158,7 @@ def ver_postulacion(id_postulacion):
         "rol": rol,
         "asignaturas": asignaturas,
         "asignaturas_relevantes": asignaturas_relevantes,
+        "require_punto_focal": require_punto_focal,
         "form": form,
         "rol": rol,
         "usuario_actual": usuario_actual
@@ -342,25 +347,53 @@ def acciones_pendientes_focal():
     #postulaciones = postulacion_service.listar_postulaciones()
     return render_template('postulaciones/acciones_pendientes_focal.html', postulaciones=postulaciones, estados=estados)
 
-@postulacion_bp.get('/calificar/<int:id_postulacion>/<int:id_asignatura>') #TODO
+@postulacion_bp.get('/estado-cursada/<int:id_postulacion>/<int:id_asignatura>') #TODO
 @check("punto_focal")
-def calificar_asignatura(id_postulacion, id_asignatura):
-    return render_template('postulaciones/calificar_asignatura.html')
+def estado_cursada(id_postulacion, id_asignatura):
+    form = EstadoCursadaForm()
+    postulacion = postulacion_service.get_postulacion_by_id(id_postulacion)
 
-@postulacion_bp.post('/calificar/<int:id_postulacion>/<int:id_asignatura>') #TODO
-@check("punto_focal")
-def calificar_asignatura_post(id_postulacion, id_asignatura):
-    return render_template('postulaciones/calificar_asignatura.html')
+    postulacion_asignatura = PostulacionAsignatura.query.filter_by(postulacion_id = id_postulacion).filter_by(asignatura_id = id_asignatura).one_or_none()
 
-@postulacion_bp.get('/notificar/<int:id_postulacion>/') #TODO
-@check("punto_focal")
-def notificar_sobre_postulacion(id_postulacion, id_asignatura):
-    return render_template('postulaciones/notificar.html')
+    form.estado.data = postulacion_asignatura.estado
 
-@postulacion_bp.post('/notificar/<int:id_postulacion>/') #TODO
+    if postulacion_asignatura.estado == 'Cursada completada':
+        form.nota.data = postulacion_asignatura.aprobado
+
+    if not postulacion_asignatura:
+        abort(404)
+    return render_template('postulaciones/estado_cursada.html', postulacion=postulacion, form=form, postulacion_asignatura = postulacion_asignatura)
+
+@postulacion_bp.post('/estado-cursada/<int:id_postulacion>/<int:id_asignatura>') #TODO
 @check("punto_focal")
-def notificar_sobre_postulacion_post(id_postulacion, id_asignatura):
-    return render_template('postulaciones/notificar.html')
+def estado_cursada_post(id_postulacion, id_asignatura):
+    form = EstadoCursadaForm()
+
+    postulacion = postulacion_service.get_postulacion_by_id(id_postulacion)
+
+    postulacion_asignatura = PostulacionAsignatura.query.filter_by(postulacion_id = id_postulacion).filter_by(asignatura_id = id_asignatura).one_or_none()
+
+    if not form.validate_on_submit():
+        flash('Error al actualizar los datos', 'danger')
+        return render_template('postulaciones/estado_cursada.html', postulacion=postulacion, form=form, postulacion_asignatura = postulacion_asignatura)
+    
+    if not form.estado.data:
+        flash('Error al intentar leer el estado', 'danger')
+        return render_template('postulaciones/estado_cursada.html', postulacion=postulacion, form=form, postulacion_asignatura = postulacion_asignatura)
+    
+    if form.estado.data == 'Cursada completada' and not form.nota.data:
+        flash('Error al intentar leer la nota', 'danger')
+        return render_template('postulaciones/estado_cursada.html', postulacion=postulacion, form=form, postulacion_asignatura = postulacion_asignatura)
+    
+    postulacion_asignatura.estado = form.estado.data
+    if form.estado.data == 'Cursada completada':
+        postulacion_asignatura.aprobado = form.nota.data
+    else:
+        postulacion_asignatura.aprobado = -1
+    db.session.commit()
+
+
+    return redirect(url_for('postulacion.ver_postulacion', id_postulacion=id_postulacion))
 
 @postulacion_bp.get('/descargar_archivo/<filename>')
 @check("archivo_descargar")

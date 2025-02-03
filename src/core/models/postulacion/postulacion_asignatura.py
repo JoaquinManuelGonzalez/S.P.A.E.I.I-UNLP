@@ -12,8 +12,17 @@ class PostulacionAsignatura(db.Model):
     postulacion = db.relationship('Postulacion', back_populates='asignaturas')
     asignatura = db.relationship('Asignatura', back_populates='postulaciones')
 
-    aprobado = db.Column('aprobado', db.Integer, default=-1) #Setear el valor a la nota final cuando termina la cursada
-    validado = db.Column('validado', db.Boolean, default=False)
+    aprobado = db.Column('aprobado', db.Integer, default=-1, nullable=False) #Setear el valor a la nota final cuando termina la cursada
+    validado = db.Column('validado', db.Boolean, default=False, nullable=False)
+    estado = db.Column('estado_cursada', db.String(50), default="Esperando validacion", nullable=False)
+    '''
+    ESTADOS POSIBLES:
+        Esperando validacion -> solo cuando el punto focal todavía no la aceptó. Nunca debería volver a este estado
+        Cursando
+        Cursada abandonada
+        Cursada completada
+    '''
+
     
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
