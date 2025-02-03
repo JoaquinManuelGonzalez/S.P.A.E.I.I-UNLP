@@ -229,9 +229,6 @@
                 <div class="col">
                     <h3 class="m-0">Puntos focales</h3>
                 </div>
-                <div class="col text-end">
-                    <a href="#" type="button" class="btn btn-success">Nuevo Punto focal</a>
-                </div> 
 
             </div>
             <div class="table-responsive">
@@ -248,35 +245,8 @@
                             <th scope="row" class="align-middle">{{ punto_focal.nombre }}</th>
                             <td class="text-end align-middle">
                                 <div class="btn-group">
-                                    <a href="#" class="btn btn-primary" data-bs-toggle="tooltip"
+                                    <a href="{{ url_for('usuarios.ver_detalle_usuario', id_usuario=punto_focal.id) }}" class="btn btn-primary" data-bs-toggle="tooltip"
                                        data-bs-title="Ver"><i class="bi bi-eye-fill"></i></a>
-                                </div>
-                                <a href="#" class="btn btn-warning" data-bs-toggle="tooltip"
-                                   data-bs-title="Editar"><i class="bi bi-pencil-fill"></i></a>
-                                <button type="button" class="btn btn-danger" data-bs-title="Eliminar" data-bs-toggle="modal" data-bs-target="#confirmDeleteModalPuntoFocal-{{ punto_focal.id }}" data-punto_focal-id="{{ punto_focal.id }}" data-bs-title="Eliminar">
-                                   <i class="bi bi-trash-fill"></i>
-                                </button>
-                                <div class="modal fade" id="confirmDeleteModalPuntoFocal-{{ punto_focal.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="exampleModalLabel">Confirmar eliminación</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                ¿Estás seguro que deseas eliminar {{
-                                                punto_focal.nombre }}?
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary"
-                                                    data-bs-dismiss="modal">Cancelar</button>
-                                                <form method="POST" action="#">
-                                                    <button type="submit" class="btn btn-danger">Eliminar</button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
                             </td>
                         </tr>
