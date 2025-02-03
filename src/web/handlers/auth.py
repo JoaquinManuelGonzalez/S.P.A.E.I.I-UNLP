@@ -80,3 +80,6 @@ def get_id_alumno_sesion(session):
         if usuario.id_alumno:
             return usuario.id_alumno
         return -1
+
+def get_usuario_actual(session):
+    return Usuario.query.get(get_id_sesion(session))

@@ -1,4 +1,4 @@
-from flask import Blueprint, request, render_template, redirect, url_for, flash, session
+from flask import Blueprint, request, render_template, redirect, url_for, flash, session, abort
 from src.core.models.postulacion import Postulacion, PostulacionAsignatura
 from src.core.models.asignatura import Asignatura
 from src.core.services import (postulacion_service, alumno_service, estado_postulacion_service,
@@ -13,7 +13,7 @@ from src.web.forms.asignaturas_form import AsignaturasForm
 from src.web.handlers.permisos import check
 import os
 import io
-from src.web.handlers.auth import get_rol_sesion, get_id_sesion
+from src.web.handlers.auth import get_rol_sesion, get_id_sesion, get_usuario_actual
 from src.web.handlers.permisos import check
 import time
 from src.web.forms.postulacion_form import PostulacionForm
@@ -67,6 +67,8 @@ def listar_postulaciones():
 @check("postulaciones_detalle")
 def ver_postulacion(id_postulacion):
     postulacion = postulacion_service.get_postulacion_by_id(id_postulacion)
+    if not postulacion:
+        abort(404)
     alumno = alumno_service.get_alumno_by_id(postulacion.id_informacion_alumno_entrante)
     pais_residencia = paises_service.get_pais_by_id(alumno.id_pais_de_residencia)
     nacionalidad = paises_service.get_pais_by_id(alumno.id_pais_nacionalidad)
@@ -123,8 +125,15 @@ def ver_postulacion(id_postulacion):
     if not rol:
         rol = "anonimo"
     
-    
     asignaturas = postulacion.asignaturas
+
+    usuario_actual = get_usuario_actual(session)
+    if (rol == "punto_focal"):
+        asignaturas_relevantes = postulacion_service.get_asignaturas_de_facultad(postulacion.id, usuario_actual.facultad_id )
+        if not asignaturas_relevantes:
+            abort(403)
+    else:
+        asignaturas_relevantes = None
 
     data = {
         "postulacion": postulacion,
@@ -144,8 +153,10 @@ def ver_postulacion(id_postulacion):
         "archivos": archivos,
         "rol": rol,
         "asignaturas": asignaturas,
+        "asignaturas_relevantes": asignaturas_relevantes,
         "form": form,
-        "rol": rol
+        "rol": rol,
+        "usuario_actual": usuario_actual
     }
     return render_template('postulaciones/ver_postulacion.html', **data)
 
@@ -205,6 +216,8 @@ def aceptar_solicitud(id_postulacion):
         for postulacion_asignatura in postulacion_asignaturas:
             if (postulacion_asignatura.asignatura.facultad_id == punto_focal.facultad_id): #TODO: AND asignatura.postgrado == punto_focal.postgrado
                 postulacion_asignatura.aceptado = True
+        db.session.commit()
+        flash('Asignaturas aceptadas', 'success')
     return redirect(url_for('postulacion.acciones_pendientes_presidencia'))
     
 
@@ -231,12 +244,48 @@ def rechazar_solicitud(id_postulacion):
             postulacion_service.actualizar_estado_postulacion(postulacion, "Postulacion Aceptada")
             titulo = "Archivos nuevos rechazados"
             cuerpo = f"Alguno de los archivos subidos en el ultimo paso fue rechazado. Por favor intente devuelta. El motivo de rechazo es: {motivo}"
+        elif postulacion.estado.nombre == "Postulacion Esperando Validacion por Facultad":
+            postulacion_service.actualizar_estado_postulacion(postulacion, "Postulacion en Proceso")
+            titulo = "Asignaturas rechazadas"
+            facultad = get_facultad_by_id(get_usuario_actual().facultad_id).nombre #Éste rechazo solo lo hace un Punto Focal.
+            cuerpo = f"Alguna o algunas de las asignaturas a las que se ha postulado han sido rechazadas por el Punto Focal de la siguiente facultad: {facultad} Por favor intente devuelta. El motivo de rechazo es: {motivo}"
         else:
             print("error en postulacion.rechazar_solicitud: Estado no cubierto")
         destino = alumno.email
         email_service.send_email(titulo, cuerpo, [destino])
         flash('Solicitud de postulacion rechazada', 'danger')
         return redirect(url_for('postulacion.acciones_pendientes_presidencia'))
+
+#PUNTO FOCAL ACEPTAR/RECHAZAR ASIGNATURAS
+@postulacion_bp.post('aprobar_asignaturas/<int:id_postulacion>')
+@check("punto_focal")
+def aceptar_asignaturas(id_postulacion):
+    postulacion = postulacion_service.get_postulacion_by_id(id_postulacion)
+    alumno = alumno_service.get_alumno_by_id(postulacion.id_informacion_alumno_entrante)
+    punto_focal = usuario_service.buscar_usuario(get_id_sesion(session)) #current user
+    postulacion_service.validar_asignaturas_de_postulacion(postulacion, punto_focal.facultad_id)
+    flash('Asignaturas aceptadas', 'success')
+    return redirect(url_for('postulacion.acciones_pendientes_focal'))
+    
+#PUNTO FOCAL ACEPTAR/RECHAZAR ASIGNATURAS
+@postulacion_bp.post('rechazar_asignaturas/<int:id_postulacion>')
+@check("punto_focal")
+def rechazar_asignaturas(id_postulacion):
+    postulacion = postulacion_service.get_postulacion_by_id(id_postulacion)
+    alumno = alumno_service.get_alumno_by_id(postulacion.id_informacion_alumno_entrante)
+    motivo = request.form.get('reject_reason')
+    if not motivo:
+        flash('El motivo de rechazo es obligatorio.', 'danger')
+        return redirect(url_for('postulacion.ver_postulacion', id_postulacion=postulacion.id))
+    else:
+        postulacion_service.rechazar_asignaturas_de_postulacion(postulacion)
+        titulo = "Asignaturas rechazadas"
+        facultad = facultades_service.get_facultad_by_id(get_usuario_actual(session).facultad_id).nombre #Éste rechazo solo lo hace un Punto Focal.
+        cuerpo = f"Alguna o algunas de las asignaturas a las que se ha postulado han sido rechazadas por el Punto Focal de la siguiente facultad: {facultad} Por favor intente devuelta. El motivo de rechazo es: {motivo}"
+        destino = alumno.email
+        email_service.send_email(titulo, cuerpo, [destino])
+        flash('Solicitud de postulacion rechazada', 'danger')
+        return redirect(url_for('postulacion.acciones_pendientes_focal'))
 
 
 @postulacion_bp.get('/acciones_pendientes_presidencia')
@@ -292,6 +341,26 @@ def acciones_pendientes_focal():
 
     #postulaciones = postulacion_service.listar_postulaciones()
     return render_template('postulaciones/acciones_pendientes_focal.html', postulaciones=postulaciones, estados=estados)
+
+@postulacion_bp.get('/calificar/<int:id_postulacion>/<int:id_asignatura>') #TODO
+@check("punto_focal")
+def calificar_asignatura(id_postulacion, id_asignatura):
+    return render_template('postulaciones/calificar_asignatura.html')
+
+@postulacion_bp.post('/calificar/<int:id_postulacion>/<int:id_asignatura>') #TODO
+@check("punto_focal")
+def calificar_asignatura_post(id_postulacion, id_asignatura):
+    return render_template('postulaciones/calificar_asignatura.html')
+
+@postulacion_bp.get('/notificar/<int:id_postulacion>/') #TODO
+@check("punto_focal")
+def notificar_sobre_postulacion(id_postulacion, id_asignatura):
+    return render_template('postulaciones/notificar.html')
+
+@postulacion_bp.post('/notificar/<int:id_postulacion>/') #TODO
+@check("punto_focal")
+def notificar_sobre_postulacion_post(id_postulacion, id_asignatura):
+    return render_template('postulaciones/notificar.html')
 
 @postulacion_bp.get('/descargar_archivo/<filename>')
 @check("archivo_descargar")

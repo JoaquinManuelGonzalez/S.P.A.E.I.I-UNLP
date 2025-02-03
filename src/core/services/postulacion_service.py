@@ -170,7 +170,12 @@ def postulaciones_pendientes_focal(
     punto_focal = Usuario.query.get(idPuntoFocal)
     query = Postulacion.query
     query = query.filter(Postulacion.estado.has(Estado.requiere_accion_focal))
-    query = query.filter(Postulacion.asignaturas.any(PostulacionAsignatura.asignatura.has(Asignatura.facultad_id == punto_focal.facultad_id)))
+    query = query.filter(Postulacion.asignaturas.any(
+        and_(
+            (PostulacionAsignatura.asignatura.has(Asignatura.facultad_id == punto_focal.facultad_id)),
+            ~(PostulacionAsignatura.validado))
+        ))
+
     if nombre:
         query = query.filter(Postulacion.informacion_alumno_entrante.has(InformacionAlumnoEntrante.nombre.ilike(f"%{nombre}%")))
     if apellido:
@@ -199,13 +204,8 @@ def asociar_asignaturas_a_postulacion(postulacion_id, asignaturas):
         return False
     for asignatura in asignaturas:
         a = Asignatura.query.get(asignatura)
-        print("Postulacion: "+str(postulacion))
-        print("Postulacion type: "+str(type(postulacion)))
-        print("Asignatura: "+str(a))
-        print("Asignatura type: "+str(type(a)))
         relacion = PostulacionAsignatura(postulacion = postulacion, asignatura = a)
         db.session.add(relacion)
-        #postulacion.asignaturas.append(a)
     db.session.commit()
     return True
 
@@ -224,3 +224,35 @@ def obtener_tutor_academico_de_postulacion(postulacion_id):
         .filter(Postulacion.id == postulacion_id, Tutor.es_institucional == False)
         .first()
     )
+
+def validar_asignaturas_de_postulacion(postulacion, facultad_id):
+    for postulacion_asignatura in postulacion.asignaturas:
+        if postulacion_asignatura.asignatura.facultad_id == facultad_id:
+            postulacion_asignatura.validado = True
+    
+    db.session.commit()
+    for postulacion_asignatura in postulacion.asignaturas:
+        if (not postulacion_asignatura.validado):
+            return
+    
+    actualizar_estado_postulacion(postulacion, "Postulacion Validada por Facultad")
+    titulo = "Todas las asignaturas aceptadas."
+    cuerpo = f"Se han aceptado todas las asignaturas a las que se ha postulado."
+    destino = alumno_service.get_alumno_by_id(postulacion.id_informacion_alumno_entrante).email
+    email_service.send_email(titulo, cuerpo, [destino])
+    return
+
+def rechazar_asignaturas_de_postulacion(postulacion):
+    db.session.query(PostulacionAsignatura).filter_by(postulacion_id=postulacion.id).delete(synchronize_session=False)
+    db.session.commit()
+    actualizar_estado_postulacion(postulacion, "Postulacion en Proceso")
+    return
+
+def get_asignaturas_de_facultad(postulacion_id, facultad_id):
+    postulacion = get_postulacion_by_id(postulacion_id)
+
+    materias = []
+    for asignatura in postulacion.get_asignaturas():
+        if asignatura.facultad_id == facultad_id:
+            materias.append(asignatura)
+    return materias

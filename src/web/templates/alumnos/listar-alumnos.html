@@ -66,7 +66,11 @@
             <td>{{ alumno.email }}</td>
             <td>{{ alumno.pais_de_nacimiento.nombre_es }}</td>
             <td class="text-center">
+              {% if get_rol_sesion(session) == "punto_focal" %}
+              <a href="{{ url_for('postulacion.ver_postulacion', id_postulacion=obtener_postulacion_actual_de_alumno(alumno.id).id) }}" class="btn btn-secondary btn-sm">Ver Detalle</a>
+              {% else %}
               <a href="{{ url_for('alumnos_bp.ver_detalle_alumno', id_alumno=alumno.id) }}" class="btn btn-secondary btn-sm">Ver Detalle</a>
+              {% endif %}
             </td>
           </tr>
           {% endfor %}
