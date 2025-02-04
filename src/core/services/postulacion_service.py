@@ -264,3 +264,15 @@ def get_asignaturas_de_facultad(postulacion_id, facultad_id):
         if asignatura.facultad_id == facultad_id:
             materias.append(asignatura)
     return materias
+
+
+def puede_postularse(email):
+    id_alumno = alumno_service.get_alumno_by_email(email).id if alumno_service.get_alumno_by_email(email) else None
+    if id_alumno:
+        postulacion = obtener_postulacion_actual_de_alumno(id_alumno)
+        if postulacion.estado.nombre == "Postulacion Finalizada" or postulacion.estado.nombre == "Postulacion Cancelada o Interrumpida" or postulacion.estado.nombre == "Solicitud Rechazada":
+            return True
+        else:
+            return False
+    else:
+        return True

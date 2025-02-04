@@ -2,7 +2,7 @@ from src.core.models.postulacion.periodo_postulacion import PeriodoPostulacion
 from src.core.database import db
 from src.core.models.postulacion.estado import Estado
 from src.core.models.postulacion.postulacion import Postulacion
-from src.core.services.postulacion_service import actualizar_estado_postulacion
+from src.core.services import postulacion_service
 from sqlalchemy import or_, and_
 from datetime import datetime
 
@@ -52,7 +52,7 @@ def cancelar_postulaciones_pendientes():
         )
     )
     for postulacion in postulaciones:
-        actualizar_estado_postulacion(postulacion, "Postulacion Cancelada o Interrumpida")
+        postulacion_service.actualizar_estado_postulacion(postulacion, "Postulacion Cancelada o Interrumpida")
     return    
 
 def listar_periodos_postulacion(inicio=None, fin=None, pagina=1, por_pagina=10, orden=None):

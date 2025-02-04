@@ -9,6 +9,7 @@ from src.core.models.postulacion.estado import Estado
 from src.core.models.postulacion.postulacion import Postulacion
 from src.core.models.postulacion.postulacion_asignatura import PostulacionAsignatura
 from src.core.database import db
+from src.core.services import usuario_service, postulacion_service, genero_service, paises_service, estado_civil_service
 
 
 def ordenar_alumnos(
@@ -93,11 +94,44 @@ def filtrar_alumnos(
 def get_alumno_by_id(id_alumno):
     return InformacionAlumnoEntrante.query.get(id_alumno)
 
+def get_alumno_by_email(email):
+    return InformacionAlumnoEntrante.query.filter_by(email=email).first()
+
 def crear_informacion_alumno_entrante(**data):
-    alumno = InformacionAlumnoEntrante(**data)
-    db.session.add(alumno)
-    db.session.commit()
-    return alumno
+
+    alumno = None
+    usuario = usuario_service.buscar_usuario_email(data['email'])
+    if usuario:
+        return alumno
+    if postulacion_service.puede_postularse(data['email']):
+        alumno = get_alumno_by_email(data['email'])
+        if not alumno:
+            alumno = InformacionAlumnoEntrante(**data)
+            db.session.add(alumno)
+            db.session.commit()
+        else:
+            genero = genero_service.get_genero_by_id(data['id_genero'])
+            pais_de_nacimiento = paises_service.get_pais_by_id(data['id_pais_de_nacimiento'])
+            pais_de_residencia = paises_service.get_pais_by_id(data['id_pais_de_residencia'])
+            pais_nacionalidad = paises_service.get_pais_by_id(data['id_pais_nacionalidad'])
+            estado_civil = estado_civil_service.get_estado_civil_by_id(data['id_estado_civil'])
+            alumno = actualizar_informacion_alumno(
+                alumno,
+                data['nombre'],
+                data['apellido'],
+                data['email'],
+                data['fecha_de_nacimiento'],
+                genero,
+                estado_civil,
+                data['discapacitado'],
+                pais_de_nacimiento,
+                pais_de_residencia,
+                pais_nacionalidad,
+                data['domicilio_pais_de_residencia']
+            )
+        return alumno
+    else:
+        return alumno
 
 def check_email(email):
     return bool(InformacionAlumnoEntrante.query.filter_by(email=email).first())
