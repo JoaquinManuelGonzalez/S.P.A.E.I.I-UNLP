@@ -133,13 +133,16 @@ def ver_postulacion(id_postulacion):
 
     usuario_actual = get_usuario_actual(session)
     if (rol == "punto_focal"):
-        asignaturas_relevantes = postulacion_service.get_asignaturas_de_facultad(postulacion.id, usuario_actual.facultad_id )
-        if not asignaturas_relevantes:
-            abort(403)
-        if any((not asignatura.validado) and (asignatura.asignatura.facultad_id == usuario_actual.facultad_id) for asignatura in postulacion.asignaturas):
-            require_punto_focal = True
+        if ( (postulacion.de_posgrado == usuario_actual.posgrado) or (not postulacion.de_posgrado == usuario_actual.grado) ):
+            asignaturas_relevantes = postulacion_service.get_asignaturas_de_facultad(postulacion.id, usuario_actual.facultad_id )
+            if not asignaturas_relevantes:
+                abort(403)
+            if any((not asignatura.validado) and (asignatura.asignatura.facultad_id == usuario_actual.facultad_id) for asignatura in postulacion.asignaturas):
+                require_punto_focal = True
+            else:
+                require_punto_focal = False
         else:
-            require_punto_focal = False
+            abort(403)
     else:
         asignaturas_relevantes = None
         require_punto_focal = False

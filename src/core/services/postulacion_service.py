@@ -176,6 +176,12 @@ def postulaciones_pendientes_focal(
             (PostulacionAsignatura.asignatura.has(Asignatura.facultad_id == punto_focal.facultad_id)),
             ~(PostulacionAsignatura.validado))
         ))
+    query = query.filter(
+        or_(
+            Postulacion.de_posgrado == punto_focal.posgrado, #Si la postulacion es de posgrado y el punto focal tambien
+            ~Postulacion.de_posgrado == punto_focal.grado #Si la postulacion es de grado y el punto focal tambien
+        )
+    )
 
     if nombre:
         query = query.filter(Postulacion.informacion_alumno_entrante.has(InformacionAlumnoEntrante.nombre.ilike(f"%{nombre}%")))
