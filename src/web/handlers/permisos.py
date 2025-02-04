@@ -36,8 +36,7 @@ def check_permiso(session, permiso):
     if id_usuario_sesion is None:
         return False
     permisos = [permiso.permiso.nombre for permiso in buscar_permisos_usuario(usuario_sesion)]
-    print(permisos)
-    print(permiso)
+  
     #si se busca ver detalle o edicion, se verifica que sea el mismo usuario
     if permiso.endswith('detalle') or permiso.endswith('editar'):
         id_buscado = int(request.path.split('/')[-1])
