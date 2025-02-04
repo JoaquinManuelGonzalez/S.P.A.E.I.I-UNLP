@@ -20,8 +20,13 @@
       {% if is_authenticated(session) %}
         {% if check_permiso(session, 'alumno') %}
           <li class="nav-item active">
-            <a class="nav-link" href=" {{ url_for('postulacion.repostulacion') }} ">Repostulación</a>
+            <a class="nav-link" href=" {{ url_for('postulacion.repostulacion') }} ">Repostulación</a> <!-- TODO: deberia mostrarse solo si no tiene una postulacion activa-->
           </li>
+          {% if (obtener_postulacion_actual_de_alumno((buscar_usuario(session["user_id"])).id_alumno).estado.nombre == "Postulacion en Proceso") %} <!-- temporal. Deberia haber una forma de mostrar las asignaturas que elegiste si estas esperando validacion de facultad-->
+          <li class="nav-item active">
+            <a class="nav-link" href="{{ url_for('postulacion.seleccionar_materias', postulacion_id=1)}}">Elección de Asignaturas</a>
+          </li>
+          {% endif %}
           <li class="nav-item active">
             <a class="nav-link" href="{{ url_for('postulacion.mis_postulaciones')}}">Mis Postulaciones</a>
           </li>

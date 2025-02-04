@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% block title %}Crear Usuario{% endblock %}
+{% block title %}Detalle Usuario{% endblock %}
 {% block head %}
     {{ super() }}
 {% endblock %}
@@ -25,12 +25,23 @@
                 {{ formulario.id_rol.label }}{{ formulario.id_rol(class="form-control", disabled=True) }}
             </div>
 
-
-            {% if usuario.id_alumno == None %}
-                {% if check_permiso(session, 'admin') or usuario.id == get_id_sesion(session) %}
-                    <button type="submit" class="btn btn-primary">Editar</button>
-                {% endif %} 
+            {% if check_permiso(session, "punto_focal") %}
+                <div class="mb-3">
+                    {{ formulario.facultad_id.label }}{{ formulario.facultad_id(class="form-control", disabled=True) }}
+                </div>
+                <div class="mb-3">
+                    {{ formulario.posgrado.label }}{{ formulario.posgrado(class="checkbox", disabled=True) }}
+                </div>
+                <div class="mb-3">
+                    {{ formulario.grado.label }}{{ formulario.grado(class="checkbox", disabled=True) }}
+                </div>
             {% endif %}
+
+
+
+            {% if check_permiso(session, 'admin') or usuario.id == get_id_sesion(session) %}
+                <button type="submit" class="btn btn-primary">Editar</button>
+            {% endif %} 
                      
         </div>
     </form>

@@ -1,4 +1,4 @@
-from wtforms import StringField, PasswordField, SelectField, HiddenField
+from wtforms import StringField, PasswordField, SelectField, HiddenField, BooleanField
 from wtforms.validators import DataRequired, Length, ValidationError, EqualTo
 from src.core.services import usuario_service
 from flask_wtf import FlaskForm
@@ -12,6 +12,9 @@ class Usuario_Form(FlaskForm):
     email = StringField('Email', validators=[DataRequired()])
     contraseña = PasswordField('Contraseña', validators=[DataRequired(), Length(min=8, max=100)])
     id_rol = SelectField('Rol', choices=[], validators=[DataRequired()])
+    facultad_id = SelectField('Facultad', choices=[])
+    posgrado = BooleanField('Posgrado', default=False)
+    grado = BooleanField('Grado', default=False)
     id_usuario_editado = HiddenField('id_usuario_editado')
     
 

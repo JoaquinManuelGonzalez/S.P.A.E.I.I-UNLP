@@ -7,6 +7,7 @@ from src.core.models.alumno.informacion_alumno_entrante import InformacionAlumno
 from src.core.models.asignatura import Asignatura
 from src.core.models.postulacion.estado import Estado
 from src.core.models.postulacion.postulacion import Postulacion
+from src.core.models.postulacion.postulacion_asignatura import PostulacionAsignatura
 from src.core.database import db
 
 
@@ -44,7 +45,8 @@ def get_alumnos_con_postulaciones_activas(facultad_id):
     # Subconsulta para verificar si existe una postulación válida asociada al alumno
     subconsulta = (
         db.session.query(Postulacion.id)
-        .join(Postulacion.asignaturas)  # Unir con Asignatura
+        .join(Postulacion.asignaturas)  # Unir con PostulacionAsignatura
+        .join(PostulacionAsignatura.asignatura) # Unir con Asignatura
         .join(Asignatura.facultad)      # Unir con Facultad
         .join(Postulacion.estado)       # Unir con Estado
         .filter(

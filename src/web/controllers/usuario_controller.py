@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, flash, url_for
-from src.core.services import usuario_service
+from src.core.services import usuario_service, facultades as facultades_service
 from src.web.handlers.permisos import check
 from src.web.forms import Usuario_Form, Nueva_Contraseña_Form, RecuperarContraseñaForm
 
@@ -33,7 +33,9 @@ def crear_usuario():
     '''
     formulario = Usuario_Form()
     roles = usuario_service.listar_roles()
+    facultades = facultades_service.listar_facultades()
     formulario.id_rol.choices = [("", "Seleccione un rol")] + [(rol.id, rol.nombre) for rol in roles if rol.nombre != "alumno" and rol.nombre != "presidencia_jefe"]
+    formulario.facultad_id.choices = [("", "Seleccione una facultad")] + [(facultad.id, facultad.nombre) for facultad in facultades]
     if formulario.validate_on_submit():
         usuario_service.crear_usuario(formulario)
         return redirect("/usuarios")
@@ -44,8 +46,10 @@ def crear_usuario():
 def ver_detalle_usuario(id_usuario:int):
     usuario = usuario_service.buscar_usuario(id_usuario)
     roles = usuario_service.listar_roles()
+    facultades = facultades_service.listar_facultades()
     formulario = Usuario_Form(obj=usuario)
     formulario.id_rol.choices = [(rol.id, rol.nombre) for rol in roles]
+    formulario.facultad_id.choices = [(facultad.id, facultad.nombre) for facultad in facultades]
     return render_template("usuarios/detalle_usuario.html", formulario=formulario, usuario=usuario)
 
 
@@ -53,7 +57,11 @@ def ver_detalle_usuario(id_usuario:int):
 @check("usuarios_editar")   
 def editar_usuario(id_usuario:int):
     usuario = usuario_service.buscar_usuario(id_usuario)
+    facultades = facultades_service.listar_facultades()
     formulario_usuario = Usuario_Form(obj=usuario, id_usuario_editado=id_usuario)
+    formulario_usuario.facultad_id.choices = [(facultad.id, facultad.nombre) for facultad in facultades]
+    formulario_usuario.posgrado.data = usuario.posgrado
+    formulario_usuario.grado.data = usuario.grado
     formulario_contraseña = Nueva_Contraseña_Form()
     return render_template("usuarios/editar_usuario.html", formulario_usuario=formulario_usuario, formulario_contraseña=formulario_contraseña , usuario=usuario)
 
@@ -62,7 +70,9 @@ def editar_usuario(id_usuario:int):
 def actualizar_usuario(id_usuario:int):
     usuario = usuario_service.buscar_usuario(id_usuario)
     roles = usuario_service.listar_roles()
+    facultades = facultades_service.listar_facultades()
     formulario_usuario = Usuario_Form(obj=usuario, id_usuario_editado=id_usuario)
+    formulario_usuario.facultad_id.choices = [(facultad.id, facultad.nombre) for facultad in facultades]
     formulario_usuario.id_rol.choices = [(rol.id, rol.nombre) for rol in roles]
     formulario_contraseña = Nueva_Contraseña_Form(request.form)
     if formulario_usuario.validate_on_submit() and formulario_contraseña.validate_on_submit():

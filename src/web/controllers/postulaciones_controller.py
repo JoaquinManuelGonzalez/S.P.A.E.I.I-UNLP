@@ -1,5 +1,6 @@
-from flask import Blueprint, request, render_template, redirect, url_for, flash, session
-from src.core.models.postulacion import Postulacion
+from flask import Blueprint, request, render_template, redirect, url_for, flash, session, abort
+from src.core.models.postulacion import Postulacion, PostulacionAsignatura
+from src.core.models.asignatura import Asignatura
 from src.core.services import (postulacion_service, alumno_service, estado_postulacion_service,
 paises_service, genero_service, estado_civil_service, pasaporte_service, cedula_de_identidad_service,
 programa_service, archivo_service, usuario_service, email_service, periodo_postulacion_service, tutor_service)
@@ -12,12 +13,13 @@ from src.web.forms.asignaturas_form import AsignaturasForm
 from src.web.handlers.permisos import check
 import os
 import io
-from src.web.handlers.auth import get_rol_sesion, get_id_sesion
+from src.web.handlers.auth import get_rol_sesion, get_id_sesion, get_usuario_actual
 from src.web.handlers.permisos import check
 import time
 from src.web.forms.postulacion_form import PostulacionForm
 from src.web.forms.postulacion_estadia_form import PostulacionEstadiaForm
 from src.web.forms.presidencia_subir_precarga_form import PresidenciaPrecarga
+from src.web.forms.estado_cursada_form import EstadoCursadaForm
 from src.web.schemas.archivo_schema import archivo_schema
 from src.web.forms.visado_seguro_medico_form import VisadoSeguroMedicoForm
 from src.web.schemas.postulacion_schema import postulacion_schema
@@ -127,8 +129,20 @@ def ver_postulacion(id_postulacion):
     if not rol:
         rol = "anonimo"
     
-
     asignaturas = postulacion.asignaturas
+
+    usuario_actual = get_usuario_actual(session)
+    if (rol == "punto_focal"):
+        asignaturas_relevantes = postulacion_service.get_asignaturas_de_facultad(postulacion.id, usuario_actual.facultad_id )
+        if not asignaturas_relevantes:
+            abort(403)
+        if any((not asignatura.validado) and (asignatura.asignatura.facultad_id == usuario_actual.facultad_id) for asignatura in postulacion.asignaturas):
+            require_punto_focal = True
+        else:
+            require_punto_focal = False
+    else:
+        asignaturas_relevantes = None
+        require_punto_focal = False
 
     data = {
         "postulacion": postulacion,
@@ -148,8 +162,11 @@ def ver_postulacion(id_postulacion):
         "archivos": archivos,
         "rol": rol,
         "asignaturas": asignaturas,
+        "asignaturas_relevantes": asignaturas_relevantes,
+        "require_punto_focal": require_punto_focal,
         "form": form,
-        "rol": rol
+        "rol": rol,
+        "usuario_actual": usuario_actual
     }
     return render_template('postulaciones/ver_postulacion.html', **data)
 
@@ -203,6 +220,14 @@ def aceptar_solicitud(id_postulacion):
         destino = alumno.email
         email_service.send_email(titulo, cuerpo, [destino])
         flash('Archivos aprobados', 'success')
+    elif postulacion.estado.nombre == "Postulacion Esperando Validacion por Facultad":
+        punto_focal = usuario_service.buscar_usuario(get_id_sesion(session)) #current user
+        postulacion_asignaturas = postulacion.asignaturas
+        for postulacion_asignatura in postulacion_asignaturas:
+            if (postulacion_asignatura.asignatura.facultad_id == punto_focal.facultad_id): #TODO: AND asignatura.postgrado == punto_focal.postgrado
+                postulacion_asignatura.aceptado = True
+        db.session.commit()
+        flash('Asignaturas aceptadas', 'success')
     return redirect(url_for('postulacion.acciones_pendientes_presidencia'))
     
 
@@ -229,12 +254,48 @@ def rechazar_solicitud(id_postulacion):
             postulacion_service.actualizar_estado_postulacion(postulacion, "Postulacion Aceptada")
             titulo = "Archivos nuevos rechazados"
             cuerpo = f"Alguno de los archivos subidos en el ultimo paso fue rechazado. Por favor intente devuelta. El motivo de rechazo es: {motivo}"
+        elif postulacion.estado.nombre == "Postulacion Esperando Validacion por Facultad":
+            postulacion_service.actualizar_estado_postulacion(postulacion, "Postulacion en Proceso")
+            titulo = "Asignaturas rechazadas"
+            facultad = get_facultad_by_id(get_usuario_actual().facultad_id).nombre #Éste rechazo solo lo hace un Punto Focal.
+            cuerpo = f"Alguna o algunas de las asignaturas a las que se ha postulado han sido rechazadas por el Punto Focal de la siguiente facultad: {facultad} Por favor intente devuelta. El motivo de rechazo es: {motivo}"
         else:
             print("error en postulacion.rechazar_solicitud: Estado no cubierto")
         destino = alumno.email
         email_service.send_email(titulo, cuerpo, [destino])
         flash('Solicitud de postulacion rechazada', 'danger')
         return redirect(url_for('postulacion.acciones_pendientes_presidencia'))
+
+#PUNTO FOCAL ACEPTAR/RECHAZAR ASIGNATURAS
+@postulacion_bp.post('aprobar_asignaturas/<int:id_postulacion>')
+@check("punto_focal")
+def aceptar_asignaturas(id_postulacion):
+    postulacion = postulacion_service.get_postulacion_by_id(id_postulacion)
+    alumno = alumno_service.get_alumno_by_id(postulacion.id_informacion_alumno_entrante)
+    punto_focal = usuario_service.buscar_usuario(get_id_sesion(session)) #current user
+    postulacion_service.validar_asignaturas_de_postulacion(postulacion, punto_focal.facultad_id)
+    flash('Asignaturas aceptadas', 'success')
+    return redirect(url_for('postulacion.acciones_pendientes_focal'))
+    
+#PUNTO FOCAL ACEPTAR/RECHAZAR ASIGNATURAS
+@postulacion_bp.post('rechazar_asignaturas/<int:id_postulacion>')
+@check("punto_focal")
+def rechazar_asignaturas(id_postulacion):
+    postulacion = postulacion_service.get_postulacion_by_id(id_postulacion)
+    alumno = alumno_service.get_alumno_by_id(postulacion.id_informacion_alumno_entrante)
+    motivo = request.form.get('reject_reason')
+    if not motivo:
+        flash('El motivo de rechazo es obligatorio.', 'danger')
+        return redirect(url_for('postulacion.ver_postulacion', id_postulacion=postulacion.id))
+    else:
+        postulacion_service.rechazar_asignaturas_de_postulacion(postulacion)
+        titulo = "Asignaturas rechazadas"
+        facultad = facultades_service.get_facultad_by_id(get_usuario_actual(session).facultad_id).nombre #Éste rechazo solo lo hace un Punto Focal.
+        cuerpo = f"Alguna o algunas de las asignaturas a las que se ha postulado han sido rechazadas por el Punto Focal de la siguiente facultad: {facultad} Por favor intente devuelta. El motivo de rechazo es: {motivo}"
+        destino = alumno.email
+        email_service.send_email(titulo, cuerpo, [destino])
+        flash('Solicitud de postulacion rechazada', 'danger')
+        return redirect(url_for('postulacion.acciones_pendientes_focal'))
 
 
 @postulacion_bp.get('/acciones_pendientes_presidencia')
@@ -290,6 +351,54 @@ def acciones_pendientes_focal():
 
     #postulaciones = postulacion_service.listar_postulaciones()
     return render_template('postulaciones/acciones_pendientes_focal.html', postulaciones=postulaciones, estados=estados)
+
+@postulacion_bp.get('/estado-cursada/<int:id_postulacion>/<int:id_asignatura>') #TODO
+@check("punto_focal")
+def estado_cursada(id_postulacion, id_asignatura):
+    form = EstadoCursadaForm()
+    postulacion = postulacion_service.get_postulacion_by_id(id_postulacion)
+
+    postulacion_asignatura = PostulacionAsignatura.query.filter_by(postulacion_id = id_postulacion).filter_by(asignatura_id = id_asignatura).one_or_none()
+
+    form.estado.data = postulacion_asignatura.estado
+
+    if postulacion_asignatura.estado == 'Cursada completada':
+        form.nota.data = postulacion_asignatura.aprobado
+
+    if not postulacion_asignatura:
+        abort(404)
+    return render_template('postulaciones/estado_cursada.html', postulacion=postulacion, form=form, postulacion_asignatura = postulacion_asignatura)
+
+@postulacion_bp.post('/estado-cursada/<int:id_postulacion>/<int:id_asignatura>') #TODO
+@check("punto_focal")
+def estado_cursada_post(id_postulacion, id_asignatura):
+    form = EstadoCursadaForm()
+
+    postulacion = postulacion_service.get_postulacion_by_id(id_postulacion)
+
+    postulacion_asignatura = PostulacionAsignatura.query.filter_by(postulacion_id = id_postulacion).filter_by(asignatura_id = id_asignatura).one_or_none()
+
+    if not form.validate_on_submit():
+        flash('Error al actualizar los datos', 'danger')
+        return render_template('postulaciones/estado_cursada.html', postulacion=postulacion, form=form, postulacion_asignatura = postulacion_asignatura)
+    
+    if not form.estado.data:
+        flash('Error al intentar leer el estado', 'danger')
+        return render_template('postulaciones/estado_cursada.html', postulacion=postulacion, form=form, postulacion_asignatura = postulacion_asignatura)
+    
+    if form.estado.data == 'Cursada completada' and not form.nota.data:
+        flash('Error al intentar leer la nota', 'danger')
+        return render_template('postulaciones/estado_cursada.html', postulacion=postulacion, form=form, postulacion_asignatura = postulacion_asignatura)
+    
+    postulacion_asignatura.estado = form.estado.data
+    if form.estado.data == 'Cursada completada':
+        postulacion_asignatura.aprobado = form.nota.data
+    else:
+        postulacion_asignatura.aprobado = -1
+    db.session.commit()
+
+
+    return redirect(url_for('postulacion.ver_postulacion', id_postulacion=id_postulacion))
 
 @postulacion_bp.get('/descargar_archivo/<filename>')
 @check("archivo_descargar")
@@ -829,7 +938,7 @@ def guardar_materias(postulacion_id):
             enviados.add(punto_focal.email)
     email_service.send_email("Nueva postulación", "Se ha realizado una nueva postulación", list(enviados))
 
-    postulacion.estado = estado_postulacion_service.get_estado_by_name("Postulacion en Proceso")
+    postulacion_service.actualizar_estado_postulacion(postulacion, "Postulacion Esperando Validacion por Facultad")
     db.session.commit()
     flash('Datos guardados exitosamente', 'success')
     return redirect(url_for('postulacion.mis_postulaciones'))

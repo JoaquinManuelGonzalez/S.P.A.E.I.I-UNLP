@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% block title %}Crear Usuario{% endblock %}
+{% block title %}Editar Usuario{% endblock %}
 {% block head %}
     {{ super() }}
 {% endblock %}
@@ -11,7 +11,7 @@
         
         <div class="container my-5">
             
-            {% if check_permiso(session, "admin") %}
+            {% if check_permiso(session, "admin") or check_permiso(session, "gestor") or check_permiso(session, "punto_focal") %}
                 <div class="mb-3">
                     {{ formulario_usuario.nombre.label }}{{ formulario_usuario.nombre(class="form-control") }}
                     {% if formulario_usuario.errors %}
@@ -43,6 +43,24 @@
                             </div>
                         {% endfor %}
                     {% endif %}
+                </div>
+            {% endif %}
+            {% if check_permiso(session, "punto_focal") %}
+                <div class="mb-3">
+                    {{ formulario_usuario.facultad_id.label }}{{ formulario_usuario.facultad_id(class="form-control") }}
+                    {% if formulario_usuario.errors %}
+                        {% for error in formulario_usuario.facultad_id.errors %}
+                            <div class="text-danger">{{ formulario_usuario.errors[0] }}
+                                <span style="color: red;">{{ error }}</span>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                <div class="mb-3">
+                    {{ formulario_usuario.posgrado.label }}{{ formulario_usuario.posgrado(class="checkbox", checked=formulario_usuario.posgrado.data) }}
+                </div>
+                <div class="mb-3">
+                    {{ formulario_usuario.grado.label }}{{ formulario_usuario.grado(class="checkbox", checked=formulario_usuario.grado.data) }}
                 </div>
             {% endif %}
 

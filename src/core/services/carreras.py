@@ -125,7 +125,8 @@ def get_carreras_filtradas(nombre: str | None, facultad_id: int, tipo_carrera_id
         list: Una lista de objetos Carrera únicos.
     """
 
-    carreras = Carrera.query.filter(Carrera.facultad_id == facultad_id and Carrera.deleted_at == None)
+    carreras = Carrera.query.filter(Carrera.facultad_id == facultad_id)
+    carreras = carreras.filter(Carrera.deleted_at == None)
 
     if nombre and nombre != "":
         carreras = carreras.filter(Carrera.nombre.ilike(f"%{nombre}%"))

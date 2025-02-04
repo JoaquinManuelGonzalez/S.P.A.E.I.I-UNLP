@@ -3,6 +3,10 @@ from src.core.database import db
 from datetime import datetime
 from src.core.models.facultad import Facultad
 from src.core.models.usuario import Usuario
+from src.web.forms.facultad_form import FacultadForm
+
+def crear_facultad_web(formulario: FacultadForm):
+    return create_facultad(nombre=formulario.nombre.data, acronimo=formulario.acronimo.data)
 
 def create_facultad(nombre, acronimo):
     """
@@ -51,7 +55,11 @@ def get_facultad_by_acronimo(acronimo: str) -> Facultad:
         Facultad: The Facultad object with the specified ID, or None if not found.
     """
 
-    return Facultad.query.filter(Facultad.acronimo == acronimo).first()
+    resultado = Facultad.query.filter(Facultad.acronimo == acronimo)
+    return resultado.filter(Facultad.deleted_at == None).first()
+
+def get_facultad_by_nombre(nombre):
+    return Facultad.query.filter_by(nombre=nombre, deleted_at=None).first()
 
 def get_all_facultades():
     """
@@ -61,7 +69,7 @@ def get_all_facultades():
         list: A list of Facultad objects.
     """
 
-    return Facultad.query.all()
+    return Facultad.query.filter(Facultad.deleted_at == None).order_by(Facultad.nombre.asc()).all()
 
 def listar_facultades(nombre: str|None = None):
     """
@@ -71,17 +79,20 @@ def listar_facultades(nombre: str|None = None):
         list: A list of Facultad objects.
     """
     if nombre and nombre != "":
-        return Facultad.query.filter(or_(Facultad.nombre.ilike(f"%{nombre}%"), Facultad.acronimo.ilike(f"%{nombre}%"))).all()
+        return Facultad.query.filter(or_(Facultad.nombre.ilike(f"%{nombre}%"), Facultad.acronimo.ilike(f"%{nombre}%"))).order_by(Facultad.nombre.asc()).all()
     else:
         return get_all_facultades()
 
-def update_facultad(facultad_id, nombre):
+def editar_facultad_web(facultad_id: int, formulario: FacultadForm):
+    return update_facultad(facultad_id=facultad_id, nombre=formulario.nombre.data, acronimo=formulario.acronimo.data)
+def update_facultad(facultad_id, nombre, acronimo):
     """
     Updates a Facultad record in the database.
 
     Args:
         facultad_id (int): The ID of the Facultad to update.
         nombre (str): The updated name of the Facultad.
+        acronimo (str): The updated acronimo
 
     Returns:
         Facultad: The updated Facultad object, or None if not found.
@@ -94,6 +105,7 @@ def update_facultad(facultad_id, nombre):
         facultad_to_update = Facultad.query.get(facultad_id)
         if facultad_to_update:
             facultad_to_update.nombre = nombre
+            facultad_to_update.acronimo = acronimo
             db.session.commit()
             return facultad_to_update
         else:
@@ -117,7 +129,7 @@ def delete_facultad(facultad_id):
     """
 
     facultad_to_delete = Facultad.query.get(facultad_id)
-    if facultad_to_delete:
+    if facultad_to_delete and not facultad_to_delete.deleted_at:
         facultad_to_delete.deleted_at = datetime.now()
         db.session.commit()
         return True

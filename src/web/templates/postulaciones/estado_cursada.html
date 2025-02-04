@@ -1,0 +1,79 @@
+{% extends "layout.html" %}
+{% block title %}Cambiar estado de cursada{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <div class="row align-items-center">
+        <div class="col">
+            <h1 class="m-0">Actualizar estado de la cursada</h1>
+            <h2 class="m-0">Asignatura: {{ postulacion_asignatura.asignatura.nombre }}</h2>
+            <h2 class="m-0">Alumno: {{ postulacion.informacion_alumno_entrante.nombre }} {{ postulacion.informacion_alumno_entrante.apellido }}</h2>
+        </div>
+    </div>
+    <form action="{{ url_for('postulacion.estado_cursada_post', id_postulacion = postulacion.id, id_asignatura = postulacion_asignatura.asignatura_id) }}" method="POST" class="container-fluid full-height d-flex justify-content-center align-items-center" style="max-width: 500px; max-height: 750px; overflow: hidden;">
+        {{ form.csrf_token }}
+        <div class="container my-5">
+            
+            <div class="mb-3" id="estado_container">
+                {{ form.estado.label }}{{ form.estado(id="estado_field", class="form-radio") }}
+                {% if form.errors %}
+                    {% for error in form.estado.errors %}
+                        <div class="text-danger">{{ form.errors[0] }}
+                            <span style="color: red;">{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div class="mb-3" id="nota_container">
+                {{ form.nota.label }}{{ form.nota(id="nota_field", class="form-control") }}
+                {% if form.errors %}
+                    {% for error in form.nota.errors %}
+                        <div class="text-danger">{{ form.errors[0] }}
+                            <span style="color: red;">{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <button type="submit" class="btn btn-primary my-3">Actualizar estado</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    //const estadoField = document.querySelector('#estado-2');
+    const estadoFields = document.querySelectorAll('[name="estado"]');
+
+    function toggleNotaField() {
+        //const estadoField = document.getElementById('estado_field');
+        const selectedEstado = document.querySelector('[name="estado"]:checked');
+
+        if (selectedEstado.value === "Cursada completada") {
+            document.getElementById('nota_container').style.display = 'block';
+        } else {
+            document.getElementById('nota_container').style.display = 'none';
+        }
+    }
+    /*
+    document.addEventListener('DOMContentLoaded', toggleNotaField)
+    estadoField.addEventListener('change', toggleNotaField)
+    */
+    document.addEventListener('DOMContentLoaded', function () {
+        toggleNotaField();
+        
+        // Add event listeners to all radio buttons
+        estadoFields.forEach(function (radio) {
+            radio.addEventListener('change', toggleNotaField); // Ensure event listeners are applied to all radios
+        });
+    });
+
+    /*
+    document.addEventListener('DOMContentLoaded', function () {
+        toggleNotaField();
+        document.getElementById('estado_field').addEventListener('change', toggleNotaField());
+    });
+    */
+</script>
+{% endblock %}
