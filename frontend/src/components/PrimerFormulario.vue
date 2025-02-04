@@ -266,11 +266,10 @@
         await store.submitForm();
         console.log("abajo del submit");
         router.push("/");
-        alert("Formulario enviado con éxito");
       }
     } catch (error) {
-      console.log(error);
       alert("Error al enviar el formulario");
+      //errors.value.forEach(error => alert(error));
     }
   };
 

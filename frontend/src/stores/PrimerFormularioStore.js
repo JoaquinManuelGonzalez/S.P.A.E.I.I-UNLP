@@ -77,10 +77,12 @@ export const usePrimerFormularioStore = defineStore('primer_formulario_store', {
     actions: {
         async submitForm() {
             this.loading = true;
+            console.log("este es la fecha:");
+            
             try {
                 console.log("este es el form data:");
                 console.log("holaaaaaa");
-                
+                console.log(this.formData.alumno.fecha_de_nacimiento);
 
                 // Convertir archivos a Base64
                 const archivos = this.formData.archivo;
@@ -102,13 +104,17 @@ export const usePrimerFormularioStore = defineStore('primer_formulario_store', {
                         },
                     },
                 );
-                this.errors = [];
+                alert("Formulario enviado con éxito");
+                this.errors.push(response.data.error);
                 console.log("este es el response:");
                 console.log(response);
             } catch (error) {
-                this.errors = error;
-                console.log("este es el error:");
-                console.log(error);
+                if(error.response){
+                    this.errors = [error.response.data.error];
+                    alert(error.response.data.error);
+                } else{
+                    alert("Error al enviar el formulario");
+                }
             } finally {
                 this.loading = false;
                 this.limpiarFormulario();

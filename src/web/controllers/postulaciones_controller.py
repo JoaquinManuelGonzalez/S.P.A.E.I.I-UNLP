@@ -747,14 +747,14 @@ def guardar_repostulacion(id_alumno):
     
 
 @postulacion_bp.get('/ingresar_datos_estadia/<int:id_postulacion>')
-#@check("alumno")
+@check("alumno")
 def ingresar_datos_estadia(id_postulacion):
     form = PostulacionEstadiaForm()
     postulacion = postulacion_service.get_postulacion_by_id(id_postulacion)
     return render_template('postulaciones/postulacion_estadia.html', form=form, id_postulacion=id_postulacion, consulado_dato=postulacion.consulado_visacion)
 
 @postulacion_bp.post('/guardar_datos_estadia/<int:id_postulacion>')
-#@check("alumno")
+@check("alumno")
 def guardar_datos_estadia(id_postulacion):
     form = PostulacionEstadiaForm()
     postulacion = postulacion_service.get_postulacion_by_id(id_postulacion)
@@ -855,7 +855,7 @@ def guardar_datos_estadia(id_postulacion):
     return redirect(url_for('postulacion.mis_postulaciones'))
 
 @postulacion_bp.get('/<int:postulacion_id>/seleccionar_materias')
-#@check("alumno")
+@check("alumno")
 def seleccionar_materias(postulacion_id):
 
     facultades = facultades_service.get_all_facultades()
@@ -889,7 +889,7 @@ def seleccionar_materias(postulacion_id):
     return render_template('postulaciones/elegir_materias.html', cantidad_materias=cantidad_materias, facultades=facultades, facultades_seleccionadas=facultades_seleccionadas, carreras_seleccionadas=carreras_seleccionadas, asignaturas_seleccionadas=asignaturas_seleccionadas, postulacion_id=postulacion_id)
 
 @postulacion_bp.post('/guardar_materias/<int:postulacion_id>')
-#@check("alumno")
+@check("alumno")
 def guardar_materias(postulacion_id):
     cantidad_materias = 5  
     asignaturas_ids = []
@@ -944,13 +944,13 @@ def guardar_materias(postulacion_id):
     return redirect(url_for('postulacion.mis_postulaciones'))
 
 @postulacion_bp.get('/visado_seguro_medico/<int:id_postulacion>')
-#@check("alumno")
+@check("alumno")
 def visado_seguro_medico(id_postulacion):
     form = VisadoSeguroMedicoForm()
     return render_template('postulaciones/visado_seguro_medico_form.html', form=form, id_postulacion=id_postulacion)
 
 @postulacion_bp.post('/guardar_visado_seguro_medico/<int:id_postulacion>')
-#@check("alumno")
+@check("alumno")
 def visado_seguro_medico_post(id_postulacion):
     form = VisadoSeguroMedicoForm()
     postulacion = postulacion_service.get_postulacion_by_id(id_postulacion)

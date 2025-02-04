@@ -32,6 +32,7 @@ def primer_formulario():
     """
     Primer formulario de postulación.
     """
+    #return jsonify({"error": "Hola"}), 400
     data = request.get_json()
     if not data:
         return jsonify({"error": "No se encontraron datos en el request"}), 400
