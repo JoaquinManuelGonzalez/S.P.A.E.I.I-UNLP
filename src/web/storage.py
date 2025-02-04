@@ -15,10 +15,6 @@ class Storage:
         secret_key = app.config.get("MINIO_SECRET_KEY")
         secure = app.config.get("MINIO_SECURE", False)
 
-        print("minio_server", minio_server)
-        print("access_key", access_key)
-        print("secret_key", secret_key)
-        print("secure", secure)
 
         # Initialize the client
         self._client = Minio(

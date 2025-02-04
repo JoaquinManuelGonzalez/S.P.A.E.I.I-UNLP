@@ -70,11 +70,13 @@ def editar_usuario(id_usuario:int):
 def actualizar_usuario(id_usuario:int):
     usuario = usuario_service.buscar_usuario(id_usuario)
     roles = usuario_service.listar_roles()
-    facultades = facultades_service.listar_facultades()
     formulario_usuario = Usuario_Form(obj=usuario, id_usuario_editado=id_usuario)
-    formulario_usuario.facultad_id.choices = [(facultad.id, facultad.nombre) for facultad in facultades]
+    if usuario.facultad_id != None:
+        facultades = facultades_service.listar_facultades()
+        formulario_usuario.facultad_id.choices = [(facultad.id, facultad.nombre) for facultad in facultades]
     formulario_usuario.id_rol.choices = [(rol.id, rol.nombre) for rol in roles]
     formulario_contraseña = Nueva_Contraseña_Form(request.form)
+
     if formulario_usuario.validate_on_submit() and formulario_contraseña.validate_on_submit():
         formulario_usuario.populate_obj(usuario)
         usuario_service.editar_usuario(usuario, formulario_contraseña.nueva_contraseña.data)
