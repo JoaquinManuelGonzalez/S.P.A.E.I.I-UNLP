@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% block title %}Crear Usuario{% endblock %}
+{% block title %}Detalle Usuario{% endblock %}
 {% block head %}
     {{ super() }}
 {% endblock %}
@@ -26,9 +26,15 @@
             </div>
 
             {% if check_permiso(session, "punto_focal") %}
-            <div class="mb-3">
-                {{ formulario.facultad_id.label }}{{ formulario.facultad_id(class="form-control", disabled=True) }}
-            </div>
+                <div class="mb-3">
+                    {{ formulario.facultad_id.label }}{{ formulario.facultad_id(class="form-control", disabled=True) }}
+                </div>
+                <div class="mb-3">
+                    {{ formulario.posgrado.label }}{{ formulario.posgrado(class="checkbox", disabled=True) }}
+                </div>
+                <div class="mb-3">
+                    {{ formulario.grado.label }}{{ formulario.grado(class="checkbox", disabled=True) }}
+                </div>
             {% endif %}
 
 

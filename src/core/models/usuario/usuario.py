@@ -31,3 +31,15 @@ class Usuario(db.Model):
 
     def __repr__(self):
         return f"<Usuario {self.id} {self.nombre} {self.apellido} {self.email} {self.rol.nombre}>"
+    
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "nombre": self.nombre,
+            "apellido": self.apellido,
+            "email": self.email,
+            "rol": self.rol.nombre,
+            "facultad": self.facultad.nombre,
+            "posgrado": self.posgrado,
+            "grado": self.grado
+        }
