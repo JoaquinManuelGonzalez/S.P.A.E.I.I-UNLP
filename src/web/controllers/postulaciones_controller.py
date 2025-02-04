@@ -2,7 +2,7 @@ from flask import Blueprint, request, render_template, redirect, url_for, flash,
 from src.core.models.postulacion import Postulacion
 from src.core.services import (postulacion_service, alumno_service, estado_postulacion_service,
 paises_service, genero_service, estado_civil_service, pasaporte_service, cedula_de_identidad_service,
-programa_service, archivo_service, usuario_service, email_service, periodo_postulacion_service)
+programa_service, archivo_service, usuario_service, email_service, periodo_postulacion_service, tutor_service)
 from src.core.services import facultades as facultades_service
 from src.core.services import carreras as carreras_service
 from src.core.services import asignaturas as asignaturas_service
@@ -20,6 +20,11 @@ from src.web.forms.postulacion_estadia_form import PostulacionEstadiaForm
 from src.web.forms.presidencia_subir_precarga_form import PresidenciaPrecarga
 from src.web.schemas.archivo_schema import archivo_schema
 from src.web.forms.visado_seguro_medico_form import VisadoSeguroMedicoForm
+from src.web.schemas.postulacion_schema import postulacion_schema
+from src.web.schemas.archivo_schema import archivo_schema
+from src.web.schemas.pasaporte_schema import pasaporte_schema
+from src.web.schemas.cedula_de_identidad_schema import cedula_de_identidad_schema
+from src.web.schemas.tutor_schema import tutor_schema
 
 postulacion_bp = Blueprint('postulacion', __name__, url_prefix='/postulaciones')
 
@@ -346,10 +351,291 @@ def periodo_postulacion_toggle():
     return render_template('postulaciones/toggle_inscripciones.html', periodos=periodos)
 
 @postulacion_bp.get('/repostulacion')
-#@check("alumno")
+@check("alumno")
 def repostulacion():
+    id_alumno = None
+    if get_rol_sesion(session) == "alumno":
+        usuario = usuario_service.buscar_usuario(get_id_sesion(session))
+        id_alumno = usuario.id_alumno
+
+    alumno = alumno_service.get_alumno_by_id(id_alumno)
     form = PostulacionForm()
-    return render_template('postulaciones/repostulacion.html', form=form)
+
+    form.genero.data = alumno.genero
+    form.estado_civil.data = alumno.estado_civil
+    form.nacionalidad.data = alumno.pais_nacionalidad
+    form.pais_residencia.data = alumno.pais_de_residencia
+    form.domicilio.data = alumno.domicilio_pais_de_residencia
+    return render_template('postulaciones/repostulacion.html', form=form, id_alumno=id_alumno)
+
+
+@postulacion_bp.post('/guardar-repostulacion/<int:id_alumno>')
+@check("alumno")
+def guardar_repostulacion(id_alumno):
+    form = PostulacionForm()
+    if not form.validate_on_submit():
+        flash('Error al cargar los datos', 'danger')
+        return render_template('postulaciones/repostulacion.html', form=form, id_alumno=id_alumno)
+    
+    alumno = alumno_service.get_alumno_by_id(id_alumno)
+   
+    alumno_service.actualizar_informacion_alumno(
+        alumno,
+        alumno.nombre,
+        alumno.apellido,
+        alumno.email,
+        alumno.fecha_de_nacimiento,
+        form.genero.data,
+        form.estado_civil.data,
+        alumno.discapacitado,
+        alumno.pais_de_nacimiento,
+        form.pais_residencia.data,
+        form.nacionalidad.data,
+        form.domicilio.data,
+    )
+    estado_postulacion = estado_postulacion_service.get_estado_by_name("Solicitud de Postulacion")
+    periodo = periodo_postulacion_service.periodo_actual()
+    nivel_estudio = request.form.get('nivelEstudio')
+    data_postulacion = {
+        "de_posgrado": True if nivel_estudio == "posgrado" else False,
+        "universidad_origen": form.universidad_origen.data,
+        "id_estado": estado_postulacion.id,
+        "id_informacion_alumno_entrante": id_alumno,
+        "id_periodo_postulacion": periodo.id,
+    }
+   
+    if form.consulado_visacion.data is not None:
+        data_postulacion["consulado_visacion"] = form.consulado_visacion.data 
+    convenio_programa = request.form.get('convenioPrograma')
+    if convenio_programa == "programa":
+        data_postulacion["id_programa"] = form.programa.data.id
+    elif convenio_programa == "convenio":
+        data_postulacion["convenio"] = form.convenio.data
+    
+    try:
+        p = postulacion_schema.load(data_postulacion)
+    except Exception as err:
+        flash('Error al cargar los datos de la postulacion', 'danger')
+        return render_template('postulaciones/repostulacion.html', form=form, id_alumno=id_alumno)
+    
+    try:
+        postulacion = postulacion_service.crear_postulacion(**p)
+    except Exception as err:
+        flash('Error al guardar los datos de la postulacion', 'danger')
+        return render_template('postulaciones/repostulacion.html', form=form, id_alumno=id_alumno)
+    postulacion.informacion_alumno_entrante = alumno
+    postulacion.estado = estado_postulacion
+    postulacion.periodo_postulacion = periodo
+
+    paises_mercosur = [42, 62, 90, 125, 150, 166, 169, 202, 203, 210, 223, 228]
+
+    if form.nacionalidad.data.id in paises_mercosur:
+        if not form.numero_pasaporte.data and not form.numero_cedula_identidad.data:
+            flash('Es obligatorio ingresar datos del pasaporte o de la cedula', 'danger')
+            return render_template('postulaciones/repostulacion.html', form=form, id_alumno=id_alumno)
+        if form.numero_pasaporte.data:
+            path = f"{alumno.id}_pasaporte_{form.foto_pasaporte.data.filename}"
+            archivo_service.save_file_minio(form.foto_pasaporte.data.read(), path)
+            archivo_pasaporte = {
+                "titulo": form.foto_pasaporte.data.filename,
+                "path": path,
+            }
+            try:
+                archivo_pasaporte = archivo_schema.load(archivo_pasaporte)
+            except Exception as err:
+                flash('Error al cargar los datos del pasaporte', 'danger')
+                return render_template('postulaciones/repostulacion.html', form=form, id_alumno=id_alumno)
+            pasaporte_archivo = archivo_service.crear_archivo(**archivo_pasaporte)
+            data_pasaporte = {
+                "numero": form.numero_pasaporte.data,
+                "id_pais": form.pais_emision_pasaporte.data.id,
+                "id_archivo": pasaporte_archivo.id
+            }
+            try:
+                pasaporte = pasaporte_schema.load(data_pasaporte)
+            except Exception as err:
+                flash('Error al guardar los datos del pasaporte', 'danger')
+                return render_template('postulaciones/repostulacion.html', form=form, id_alumno=id_alumno)
+            pasaporte = pasaporte_service.crear_pasaporte(**pasaporte)
+            pasaporte_archivo.pasaporte = pasaporte
+            pasaporte_archivo.informacion_alumno_entrante = alumno
+            pasaporte_archivo.postulacion = postulacion
+            alumno.id_pasaporte = pasaporte.id
+
+        if form.numero_cedula_identidad.data:
+            path = f"{alumno.id}_cedula_{form.foto_cedula_identidad.data.filename}"
+            archivo_service.save_file_minio(form.foto_cedula_identidad.data.read(), path)
+            archivo_cedula = {
+                "titulo": form.foto_cedula_identidad.data.filename,
+                "path": path,
+            }
+            try:
+                archivo_cedula = archivo_schema.load(archivo_cedula)
+            except Exception as err:
+                flash('Error al cargar los datos de la cedula de identidad', 'danger')
+                return render_template('postulaciones/repostulacion.html', form=form, id_alumno=id_alumno)
+            cedula_archivo = archivo_service.crear_archivo(**archivo_cedula)
+            data_cedula = {
+                "numero": form.numero_cedula_identidad.data,
+                "id_pais": form.pais_emision_cedula_identidad.data.id,
+                "id_archivo": cedula_archivo.id
+            }
+            try:
+                cedula = cedula_de_identidad_schema.load(data_cedula)
+            except Exception as err:
+                flash('Error al guardar los datos de la cedula de identidad', 'danger')
+                return render_template('postulaciones/repostulacion.html', form=form, id_alumno=id_alumno)
+            cedula = cedula_de_identidad_service.crear_cedula_de_identidad(**cedula)
+            cedula_archivo.cedula_identidad = cedula
+            cedula_archivo.informacion_alumno_entrante = alumno
+            cedula_archivo.postulacion = postulacion
+            alumno.id_cedula_de_identidad = cedula.id
+    else:
+        if not form.numero_pasaporte.data:
+            flash('Es obligatorio ingresar datos del pasaporte', 'danger')
+            return render_template('postulaciones/repostulacion.html', form=form, id_alumno=id_alumno)
+        if form.numero_pasaporte.data:
+            path = f"{alumno.id}_pasaporte_{form.foto_pasaporte.data.filename}"
+            archivo_service.save_file_minio(form.foto_pasaporte.data.read(), path)
+            archivo_pasaporte = {
+                "titulo": form.foto_pasaporte.data.filename,
+                "path": path,
+            }
+            try:
+                archivo_pasaporte = archivo_schema.load(archivo_pasaporte)
+            except Exception as err:
+                flash('Error al cargar los datos del pasaporte', 'danger')
+                return render_template('postulaciones/repostulacion.html', form=form, id_alumno=id_alumno)
+            pasaporte_archivo = archivo_service.crear_archivo(**archivo_pasaporte)
+            data_pasaporte = {
+                "numero": form.numero_pasaporte.data,
+                "id_pais": form.pais_emision_pasaporte.data.id,
+                "id_archivo": pasaporte_archivo.id
+            }
+            try:
+                pasaporte = pasaporte_schema.load(data_pasaporte)
+            except Exception as err:
+                flash('Error al guardar los datos del pasaporte', 'danger')
+                return render_template('postulaciones/repostulacion.html', form=form, id_alumno=id_alumno)
+            pasaporte = pasaporte_service.crear_pasaporte(**pasaporte)
+            pasaporte_archivo.pasaporte = pasaporte
+            pasaporte_archivo.informacion_alumno_entrante = alumno
+            pasaporte_archivo.postulacion = postulacion
+            alumno.id_pasaporte = pasaporte.id
+
+    if not form.carta_recomendacion.data:
+        flash('El archivo de carta de recomendacion es obligatorio', 'danger')
+        return render_template('postulaciones/repostulacion.html', form=form, id_alumno=id_alumno)
+    path = f"{postulacion.id}_{alumno.id}_cartaRecomendacion_{form.carta_recomendacion.data.filename}"
+    archivo_service.save_file_minio(form.carta_recomendacion.data.read(), path)
+    titulo_carta_recomendacion = {
+        "titulo": form.carta_recomendacion.data.filename,
+        "path": path
+    }
+    try:
+        carta_recomendacion = archivo_schema.load(titulo_carta_recomendacion)
+    except Exception as err:
+        flash('Error al cargar los datos de la carta de recomendacion', 'danger')
+        return render_template('postulaciones/repostulacion.html', form=form, id_alumno=id_alumno)
+    carta_recomendacion = archivo_service.crear_archivo(**carta_recomendacion)
+
+
+    if postulacion.de_posgrado:
+        if not form.plan_trabajo.data:
+            flash('El archivo del plan de trabajo es obligatorio', 'danger')
+            return render_template('postulaciones/repostulacion.html', form=form, id_alumno=id_alumno)
+        else:
+            filename = f"{postulacion.id}_{alumno.id}_planDeTrabajo_{form.plan_trabajo.data.filename}"
+            archivo_service.save_file_minio(form.plan_trabajo.data.read(), filename)
+            titulo_plan_trabajo = {
+                "titulo": form.plan_trabajo.data.filename,
+                "path": filename
+            }
+            try:
+                plan_trabajo = archivo_schema.load(titulo_plan_trabajo)
+            except Exception as err:
+                flash('Error al cargar el archivo del plan de trabajo', 'danger')
+                return render_template('postulaciones/repostulacion.html', form=form, id_alumno=id_alumno)
+            plan_trabajo = archivo_service.crear_archivo(**plan_trabajo)
+            plan_trabajo.informacion_alumno_entrante = alumno
+            plan_trabajo.postulacion = postulacion
+
+    pais_nacionalidad = paises_service.get_pais_by_id(alumno.id_pais_nacionalidad)
+    if pais_nacionalidad.hispanohablante:
+        if form.certificado_b1.data:
+            filename = f"{alumno.id}_certificadoB1_{form.certificado_b1.data.filename}"
+            archivo_service.save_file_minio(form.certificado_b1.data.read(), filename)
+            titulo_certificado_b1 = {
+                "titulo": form.certificado_b1.data.filename,
+                "path": filename
+            }
+            try:
+                certificado_b1 = archivo_schema.load(titulo_certificado_b1)
+            except Exception as err:
+                flash('Error al cargar los datos del certificado B1', 'danger')
+                return render_template('postulaciones/repostulacion.html', form=form, id_alumno=id_alumno)
+            certificado_b1 = archivo_service.crear_archivo(**certificado_b1)
+            certificado_b1.informacion_alumno_entrante = alumno
+            certificado_b1.postulacion = postulacion
+    else:
+        if not form.certificado_b1.data:
+            flash('El archivo del certificado B1 es obligatorio', 'danger')
+            return render_template('postulaciones/repostulacion.html', form=form, id_alumno=id_alumno)
+        else:
+            filename = f"{alumno.id}_certificadoB1_{form.certificado_b1.data.filename}"
+            archivo_service.save_file_minio(form.certificado_b1.data.read(), filename)
+            titulo_certificado_b1 = {
+                "titulo": form.certificado_b1.data.filename,
+                "path": filename
+            }
+            try:
+                certificado_b1 = archivo_schema.load(titulo_certificado_b1)
+            except Exception as err:
+                flash('Error al cargar los datos del certificado B1', 'danger')
+                return render_template('postulaciones/repostulacion.html', form=form, id_alumno=id_alumno)
+            certificado_b1 = archivo_service.crear_archivo(**certificado_b1)
+            certificado_b1.informacion_alumno_entrante = alumno
+            certificado_b1.postulacion = postulacion
+
+    data_tutor_institucional = {
+        "nombre": form.nombre_tutor_institucional.data,
+        "apellido": form.apellido_tutor_institucional.data,
+        "email": form.email_tutor_institucional.data,
+        "es_institucional": True
+    }
+    data_tutor_academico = {
+        "nombre": form.nombre_tutor_academico.data,
+        "apellido": form.apellido_tutor_academico.data,
+        "email": form.email_tutor_academico.data,
+        "es_institucional": False
+    }
+    try:
+        tutor_institucional = tutor_schema.load(data_tutor_institucional)
+    except:
+        flash('Error al cargar los datos del tutor institucional', 'danger')
+        return render_template('postulaciones/repostulacion.html', form=form, id_alumno=id_alumno)
+    tutor_institucional = tutor_service.crear_obtener_tutor(**tutor_institucional)
+    try:
+        tutor_academico = tutor_schema.load(data_tutor_academico)
+    except:
+        flash('Error al cargar los datos del tutor academico', 'danger')
+        return render_template('postulaciones/repostulacion.html', form=form, id_alumno=id_alumno)
+    tutor_academico = tutor_service.crear_obtener_tutor(**tutor_academico)
+
+    carta_recomendacion.informacion_alumno_entrante = alumno
+    carta_recomendacion.postulacion = postulacion
+
+    postulacion.tutores.append(tutor_institucional)
+    postulacion.tutores.append(tutor_academico)
+    db.session.commit()
+
+    emails = usuario_service.get_email_admin_presidencia()
+    email_service.send_email("Solicitud de Postulación", "Se ha recibido una solicitud de postulación", emails)
+
+    flash('Datos guardados exitosamente', 'success')
+    return redirect(url_for('postulacion.mis_postulaciones'))
+    
+    
 
 @postulacion_bp.get('/ingresar_datos_estadia/<int:id_postulacion>')
 #@check("alumno")

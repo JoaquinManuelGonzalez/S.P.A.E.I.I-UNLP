@@ -305,7 +305,7 @@
 
   const esHispanohablante = () => {
     es_hispanohablante.value = paises.value[formData.value.alumno.id_pais_nacionalidad - 1].hispanohablante;
-    let paises_mercosur = [42 /*Perú*/, 62 /*Colombia*/, 90 /*Paraguay*/, 125 /*Argentina*/, 150 /*Surinam*/, 166 /*Guyana*/, 169 /*Uruguay*/, 176 /*Panama*/, 202 /*Bolivia*/, 203 /*Chile*/, 210 /*Ecuador*/, 223 /*Brasil*/, 228 /*Venexuela*/]
+    let paises_mercosur = [42 /*Perú*/, 62 /*Colombia*/, 90 /*Paraguay*/, 125 /*Argentina*/, 150 /*Surinam*/, 166 /*Guyana*/, 169 /*Uruguay*/, 202 /*Bolivia*/, 203 /*Chile*/, 210 /*Ecuador*/, 223 /*Brasil*/, 228 /*Venezuela*/]
     let nombres_mercosur = ["Perú", "Colombia", "Paraguay", "Argentina", "Surinam", "Guyana", "Uruguay", "Panamá", "Bolivia", "Chile", "Ecuador", "Brasil", "Venezuela"]
     let nombre = paises.value[formData.value.alumno.id_pais_nacionalidad - 1].nombre_es;
     mercosur.value = paises_mercosur.includes(formData.value.alumno.id_pais_nacionalidad);

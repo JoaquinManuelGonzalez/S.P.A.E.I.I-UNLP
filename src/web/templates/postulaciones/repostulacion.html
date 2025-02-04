@@ -6,49 +6,13 @@
 {% block content %}
 
     <section class="p-4 bg-light rounded shadow-lg mx-auto" style="max-width: 800px;">
-        <h2 class="text-center mb-4">Formulario de Postulación</h2>
-        <form method="post" enctype="multipart/form-data">
+        <h2 class="text-center mb-4">Formulario de Repostulación</h2>
+        <form method="POST" action="{{ url_for('postulacion.guardar_repostulacion', id_alumno=id_alumno) }}" enctype="multipart/form-data">
             {{ form.hidden_tag() }}
         <div class="row">
             <!-- Datos Personales -->
             <div class="col-md-6">
             <h3 class="h5 mb-3">Datos Personales</h3>
-    
-            <!-- Apellido -->
-            <div class="mb-3">
-                {{ form.apellido.label }}{{ form.apellido(class="form-control") }}
-                {% if form.errors %}
-                    {% for error in form.apellido.errors %}
-                        <div class="text-danger">{{ form.errors[0] }}
-                            <span style="color: red;">{{ error }}</span>
-                        </div>
-                    {% endfor %}
-                {% endif %}
-            </div>
-    
-            <!-- Nombre -->
-            <div class="mb-3">
-                {{ form.nombre.label }}{{ form.nombre(class="form-control") }}
-                {% if form.errors %}
-                    {% for error in form.nombre.errors %}
-                        <div class="text-danger">{{ form.errors[0] }}
-                            <span style="color: red;">{{ error }}</span>
-                        </div>
-                    {% endfor %}
-                {% endif %}
-            </div>
-    
-            <!-- Email -->
-            <div class="mb-3">
-                {{ form.email.label }}{{ form.email(class="form-control") }}
-                {% if form.errors %}
-                    {% for error in form.email.errors %}
-                        <div class="text-danger">{{ form.errors[0] }}
-                            <span style="color: red;">{{ error }}</span>
-                        </div>
-                    {% endfor %}
-                {% endif %}
-            </div>
     
             <!-- Género -->
             <div class="mb-3">
@@ -61,30 +25,6 @@
                     {% endfor %}
                 {% endif %}
                 </select>
-            </div>
-    
-            <!-- Fecha de Nacimiento -->
-            <div class="mb-3">
-                {{ form.fecha_nacimiento.label }}{{ form.fecha_nacimiento(class="form-control") }}
-                {% if form.errors %}
-                    {% for error in form.fecha_nacimiento.errors %}
-                        <div class="text-danger">{{ form.errors[0] }}
-                            <span style="color: red;">{{ error }}</span>
-                        </div>
-                    {% endfor %}
-                {% endif %}
-            </div>
-    
-            <!-- País de Nacimiento -->
-            <div class="mb-3">
-                {{ form.pais_nacimiento.label }}{{ form.pais_nacimiento(class="form-select") }}
-                {% if form.errors %}
-                    {% for error in form.pais_nacimiento.errors %}
-                        <div class="text-danger">{{ form.errors[0] }}
-                            <span style="color: red;">{{ error }}</span>
-                        </div>
-                    {% endfor %}
-                {% endif %}
             </div>
     
             <!-- País de Residencia -->
@@ -112,18 +52,30 @@
             </div>
 
             <div class="mb-3">
-                {{ form.nacionalidad.label }}{{ form.nacionalidad(class="form-select") }}
+                {{ form.nacionalidad.label }}
+                <select class="form-select" id="nacionalidad" name="{{ form.nacionalidad.name }}">
+                    <option value="">Selecciona un país</option>
+                    {% for pais in form.nacionalidad.query_factory() %}
+                        <option value="{{ pais.id }}" 
+                            data-hispanohablante="{{ 'true' if pais.hispanohablante else 'false' }}"
+                            {% if form.nacionalidad.data and form.nacionalidad.data.id == pais.id %} selected {% endif %}>
+                            {{ pais.nombre_es }}
+                        </option>
+                    {% endfor %}
+                </select>
+            
                 {% if form.errors %}
                     {% for error in form.nacionalidad.errors %}
-                        <div class="text-danger">{{ form.errors[0] }}
+                        <div class="text-danger">
                             <span style="color: red;">{{ error }}</span>
                         </div>
                     {% endfor %}
                 {% endif %}
             </div>
+            
 
             <div class="mb-3">
-                {{ form.numero_pasaporte.label }}{{ form.numero_pasaporte(class="form-control") }}
+                {{ form.numero_pasaporte.label }}{{ form.numero_pasaporte(class="form-control", id="pasaporte_numero") }}
                 {% if form.errors %}
                     {% for error in form.numero_pasaporte.errors %}
                         <div class="text-danger">{{ form.errors[0] }}
@@ -134,7 +86,7 @@
             </div>
 
             <div class="mb-3">
-                {{ form.pais_emision_pasaporte.label }}{{ form.pais_emision_pasaporte(class="form-select") }}
+                {{ form.pais_emision_pasaporte.label }}{{ form.pais_emision_pasaporte(class="form-select", id="pasaporte_pais") }}
                 {% if form.errors %}
                     {% for error in form.pais_emision_pasaporte.errors %}
                         <div class="text-danger">{{ form.errors[0] }}
@@ -145,7 +97,7 @@
             </div>
 
             <div class="mb-3">
-                {{ form.foto_pasaporte.label }}{{ form.foto_pasaporte(class="form-control") }}
+                {{ form.foto_pasaporte.label }}{{ form.foto_pasaporte(class="form-control", id="pasaporte_archivo") }}
                 {% if form.errors %}
                     {% for error in form.foto_pasaporte.errors %}
                         <div class="text-danger">{{ form.errors[0] }}
@@ -154,39 +106,43 @@
                     {% endfor %}
                 {% endif %}
             </div>
+            <div id="cedula-container" style="display: none;">
 
-            <div class="mb-3">
-                {{ form.numero_cedula_identidad.label }}{{ form.numero_cedula_identidad(class="form-control") }}
-                {% if form.errors %}
-                    {% for error in form.numero_cedula_identidad.errors %}
-                        <div class="text-danger">{{ form.errors[0] }}
-                            <span style="color: red;">{{ error }}</span>
-                        </div>
-                    {% endfor %}
-                {% endif %}
-            </div>
+                <div class="mb-3">
+                    {{ form.numero_cedula_identidad.label }}{{ form.numero_cedula_identidad(class="form-control", id="cedula_numero") }}
+                    {% if form.errors %}
+                        {% for error in form.numero_cedula_identidad.errors %}
+                            <div class="text-danger">{{ form.errors[0] }}
+                                <span style="color: red;">{{ error }}</span>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+    
+                <div class="mb-3">
+                    {{ form.pais_emision_cedula_identidad.label }}{{ form.pais_emision_cedula_identidad(class="form-select", id="cedula_pais") }}
+                    {% if form.errors %}
+                        {% for error in form.pais_emision_cedula_identidad.errors %}
+                            <div class="text-danger">{{ form.errors[0] }}
+                                <span style="color: red;">{{ error }}</span>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+    
+                <div class="mb-3">
+                    {{ form.foto_cedula_identidad.label }}{{ form.foto_cedula_identidad(class="form-control", id="cedula_archivo") }}
+                    {% if form.errors %}
+                        {% for error in form.foto_cedula_identidad.errors %}
+                            <div class="text-danger">{{ form.errors[0] }}
+                                <span style="color: red;">{{ error }}</span>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
 
-            <div class="mb-3">
-                {{ form.pais_emision_cedula_identidad.label }}{{ form.pais_emision_cedula_identidad(class="form-select") }}
-                {% if form.errors %}
-                    {% for error in form.pais_emision_cedula_identidad.errors %}
-                        <div class="text-danger">{{ form.errors[0] }}
-                            <span style="color: red;">{{ error }}</span>
-                        </div>
-                    {% endfor %}
-                {% endif %}
             </div>
-
-            <div class="mb-3">
-                {{ form.foto_cedula_identidad.label }}{{ form.foto_cedula_identidad(class="form-control") }}
-                {% if form.errors %}
-                    {% for error in form.foto_cedula_identidad.errors %}
-                        <div class="text-danger">{{ form.errors[0] }}
-                            <span style="color: red;">{{ error }}</span>
-                        </div>
-                    {% endfor %}
-                {% endif %}
-            </div>
+            
 
             <!-- Estado Civil -->
             <div class="mb-3">
@@ -201,7 +157,7 @@
             </div>
 
             <div class="mb-3">
-                {{ form.certificado_b1.label }}{{ form.certificado_b1(class="form-control", id="certificado_b1") }}
+                {{ form.certificado_b1.label }}{{ form.certificado_b1(class="form-control", id="certificado") }}
                 {% if form.errors %}
                     {% for error in form.certificado_b1.errors %}
                         <div class="text-danger">{{ form.errors[0] }}
@@ -231,18 +187,18 @@
             <div class="mb-3">
                 <label class="form-label">Nivel de estudio</label>
                 <div class="form-check">
-                    {{ form.de_grado(class="form-check-input", type="radio", id="convenio") }}
-                    <label class="form-check-label" for="de_grado">Estudiante de grado</label>
+                    <input class="form-check-input" type="radio" id="grado" value="grado" name="nivelEstudio" required>
+                    <label class="form-check-label" for="grado">Estudiante de grado</label>
                 </div>
                 <div class="form-check">
-                    {{ form.de_posgrado(class="form-check-input", type="radio", id="programa") }}
-                    <label class="form-check-label" for="de_posgrado">Estudiante de posgrado</label>
+                    <input class="form-check-input" type="radio" id="posgrado" value="posgrado" name="nivelEstudio">
+                    <label class="form-check-label" for="posgrado">Estudiante de posgrado</label>
                 </div>
             </div>
 
 
-            <div class="mb-3">
-                {{ form.plan_trabajo.label }}{{ form.plan_trabajo(class="form-control") }}
+            <div class="mb-3" id="plan-trabajo-container" style="display: none;">
+                {{ form.plan_trabajo.label }}{{ form.plan_trabajo(class="form-control", id="plan-trabajo") }}
                 {% if form.errors %}
                     {% for error in form.plan_trabajo.errors %}
                         <div class="text-danger">{{ form.errors[0] }}
@@ -253,7 +209,7 @@
             </div>
 
             <div class="mb-3">
-                {{ form.consulado_visacion.label }}{{ form.consulado_visacion(class="form-control") }}
+                {{ form.consulado_visacion.label }}{{ form.consulado_visacion(class="form-control", id="consulado_visacion") }}
                 {% if form.errors %}
                     {% for error in form.consulado_visacion.errors %}
                         <div class="text-danger">{{ form.errors[0] }}
@@ -266,21 +222,21 @@
             <div class="mb-3">
                 <label class="form-label">Desea postularse por</label>
                 <div class="form-check">
-                    {{ form.por_convenio(class="form-check-input", type="radio", id="convenio") }}
-                    <label class="form-check-label" for="convenio">Convenio universitario</label>
+                    <input class="form-check-input" type="radio" id="convenio" value="convenio" name="convenioPrograma" required>
+                    <label class="form-check-label" for="convenio">convenio</label>
                 </div>
                 <div class="form-check">
-                    {{ form.por_programa(class="form-check-input", type="radio", id="programa") }}
-                    <label class="form-check-label" for="programa">Programa estudiantil</label>
+                    <input class="form-check-input" type="radio" id="programa" value="programa" name="convenioPrograma">
+                    <label class="form-check-label" for="programa">Programa</label>
                 </div>
                 <p class="mt-2 text-muted">
-                    Puede ver los Convenios que posee la Universidad Nacional de La Plata visitando haciendo click 
-                    <a href="https://www.unlp.edu.ar" target="_blank">aquí</a>.
+                    Puede ver los Convenios que posee la Universidad Nacional de La Plata haciendo 
+                    <a href="https://conveniosunlp.presi.unlp.edu.ar/convenios" target="_blank">click aquí</a>.
                 </p>
             </div>
 
-            <div class="mb-3">
-                {{ form.convenio.label }}{{ form.convenio(class="form-control") }}
+            <div class="mb-3" id="convenio-container" style="display: none;">
+                {{ form.convenio.label }}{{ form.convenio(class="form-control", id="convenio-input") }}
                 {% if form.errors %}
                     {% for error in form.convenio.errors %}
                         <div class="text-danger">{{ form.errors[0] }}
@@ -290,8 +246,8 @@
                 {% endif %}
             </div>
 
-            <div>
-                {{ form.programa.label }}{{ form.programa(class="form-control") }}
+            <div class="mb-3" id="programa-container" style="display: none;">
+                {{ form.programa.label }}{{ form.programa(class="form-control", id="programa-input") }}
                 {% if form.errors %}
                     {% for error in form.programa.errors %}
                         <div class="text-danger">{{ form.errors[0] }}
@@ -390,30 +346,136 @@
         </form>
     </section>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const posgradoCheckbox = document.getElementById('posgrado');
+            const gradoCheckbox = document.getElementById('grado');
+            const planContainer = document.getElementById('plan-trabajo-container');
+            const planTrabajoInput = document.getElementById('plan-trabajo');
+            const consuladoVisacion = document.getElementById('consulado_visacion');
 
+            function togglePlanContainer() {
+                if (posgradoCheckbox.checked) {
+                    planContainer.style.display = 'block';
+                    planTrabajoInput.setAttribute('required', 'true');
+                    consuladoVisacion.removeAttribute('required');
+                    posgradoCheckbox.setAttribute('required', 'true');
+                    gradoCheckbox.removeAttribute('required');
+                } else {
+                    planContainer.style.display = 'none';
+                    planTrabajoInput.removeAttribute('required');
+                    consuladoVisacion.setAttribute('required', 'true');
+                    posgradoCheckbox.removeAttribute('required');
+                    gradoCheckbox.setAttribute('required', 'true');
+                }
+            }
 
+            posgradoCheckbox.addEventListener('change', togglePlanContainer);
+            gradoCheckbox.addEventListener('change', togglePlanContainer);
+        });
+    </script>
+    <script>
+        const convenioCheckbox = document.getElementById('convenio');
+        const programaCheckbox = document.getElementById('programa');
+        const convenioContainer = document.getElementById('convenio-container');
+        const programaContainer = document.getElementById('programa-container');
+        const convenioInput = document.getElementById('convenio-input');
+        const programaInput = document.getElementById('programa-input');
+
+        function toggleConvenioContainer() {
+            if (convenioCheckbox.checked) {
+                convenioContainer.style.display = 'block';
+                programaContainer.style.display = 'none';
+                convenioInput.setAttribute('required', 'true');
+                programaInput.removeAttribute('required');
+            } else {
+                convenioContainer.style.display = 'none';
+                convenioInput.removeAttribute('required');
+            }
+        }
+
+        function toggleProgramaContainer() {
+            if (programaCheckbox.checked) {
+                programaContainer.style.display = 'block';
+                convenioContainer.style.display = 'none';
+                programaInput.setAttribute('required', 'true');
+                convenioInput.removeAttribute('required');
+            } else {
+                programaContainer.style.display = 'none';
+                programaInput.removeAttribute('required');
+            }
+        }
+        convenioCheckbox.addEventListener('change', toggleConvenioContainer);
+        programaCheckbox.addEventListener('change', toggleProgramaContainer);
+    </script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const nacionalidad = document.getElementById('nacionalidad');
-            const certificadoB1 = document.getElementById('certificado_b1');
-            const certificadoB1Error = document.getElementById('certificado_b1_error');
-            console.log(nacionalidad)
-            nacionalidad.addEventListener('change', function () {
-                const selectedOption = nacionalidad.options[nacionalidad.selectedIndex];
-                console.log(selectedOption)
-                // Comprueba si el país es no hispanoparlante
-                console.log("es hispanoparlante: "+selectedOption.dataset.hispanoparlante)
-                const esHispanoparlante = selectedOption.dataset.hispanoparlante === "true";
+            const paisSelect = document.getElementById('nacionalidad');  
+            const cedulaContainer = document.getElementById('cedula-container');
+            const certificadoB1 = document.getElementById('certificado');
+            const pasaporteNumero = document.getElementById('pasaporte_numero');
+            const pasaportePais = document.getElementById('pasaporte_pais');
+            const pasaporteArchivo = document.getElementById('pasaporte_archivo');
+            const cedulaNumero = document.getElementById('cedula_numero');
+            const cedulaPais = document.getElementById('cedula_pais');
+            const cedulaArchivo = document.getElementById('cedula_archivo');
     
-                if (esHispanoparlante) {
-                    certificadoB1.removeAttribute('required');
-                    certificadoB1Error.classList.add('hidden');
+            // Lista de IDs de países del Mercosur (deben coincidir con los IDs en la BD)
+            const paises_mercosur = [42 /*Perú*/, 62 /*Colombia*/, 90 /*Paraguay*/, 125 /*Argentina*/, 150 /*Surinam*/, 166 /*Guyana*/, 169 /*Uruguay*/, 202 /*Bolivia*/, 203 /*Chile*/, 210 /*Ecuador*/, 223 /*Brasil*/, 228 /*Venezuela*/]
+    
+            function verificarMercosur() {
+                const selectedValue = paisSelect.value; // Obtiene el ID del país seleccionado
+                const selectedOption = paisSelect.options[paisSelect.selectedIndex];
+
+                pasaporteNumero.setAttribute('required', 'true');
+                pasaportePais.setAttribute('required', 'true');
+                pasaporteArchivo.setAttribute('required', 'true');
+
+
+                if (paises_mercosur.includes(parseInt(selectedValue))) { // Convertimos el valor a número
+                    cedulaContainer.style.display = 'block';
                 } else {
-                    certificadoB1.setAttribute('required', 'required');
-                    certificadoB1Error.classList.remove('hidden');
+                    cedulaContainer.style.display = 'none';
                 }
-            });
+                if (selectedOption.value) {
+                    const esHispanohablante = selectedOption.getAttribute('data-hispanohablante') === 'true';
+                    if (!esHispanohablante) {
+                        certificadoB1.setAttribute('required', 'true');
+                    } else {
+                        certificadoB1.removeAttribute('required');
+                    }
+                }
+            }
+
+            function cedulaEsRequerida(){
+                if(cedulaNumero.value !== "" || cedulaPais.value !== "" || cedulaArchivo.value !== ""){
+                    cedulaNumero.setAttribute('required', 'true');
+                    cedulaPais.setAttribute('required', 'true');
+                    cedulaArchivo.setAttribute('required', 'true');
+                    pasaporteNumero.removeAttribute('required');
+                    pasaportePais.removeAttribute('required');
+                    pasaporteArchivo.removeAttribute('required');
+                } else {
+                    cedulaNumero.removeAttribute('required');
+                    cedulaPais.removeAttribute('required');
+                    cedulaArchivo.removeAttribute('required');
+                    pasaporteNumero.setAttribute('required', 'true');
+                    pasaportePais.setAttribute('required', 'true');
+                    pasaporteArchivo.setAttribute('required', 'true');
+                }
+            }
+    
+            // Ejecutamos la función cuando la página carga (por datos precargados)
+            verificarMercosur();
+    
+            // También ejecutamos la función cuando el usuario cambia el select
+            paisSelect.addEventListener('change', verificarMercosur);
+            cedulaNumero.addEventListener('change', cedulaEsRequerida);
+            cedulaPais.addEventListener('change', cedulaEsRequerida);
+            cedulaArchivo.addEventListener('change', cedulaEsRequerida);
         });
     </script>
+    
+
 {% endblock %}   
