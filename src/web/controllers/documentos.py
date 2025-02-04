@@ -24,7 +24,7 @@ def certificado_calificaciones(postulacion_id):
 
     postulacion = postulacion_service.get_postulacion_by_id(postulacion_id)
 
-    """if postulacion is None:
+    if postulacion is None:
         flash("No existe la postulación.", "error")
         return redirect(previous_url)
     
@@ -41,7 +41,7 @@ def certificado_calificaciones(postulacion_id):
     
     if not notas_cerradas:
         flash("No se han cerrado las notas de todas las materias.", "error")
-        return redirect(previous_url)"""
+        return redirect(previous_url)
 
     periodo = ""
     if postulacion.periodo_postulacion.inicio.month < 7 and postulacion.periodo_postulacion.inicio.month > 1:
