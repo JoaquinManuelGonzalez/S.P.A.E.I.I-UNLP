@@ -78,6 +78,8 @@ def primer_formulario():
     except Exception as err:
         return jsonify({"error": f"Error al cargar los datos del alumno: {err}"}), 400
     alumno = alumno_service.crear_informacion_alumno_entrante(**alumno)
+    if not alumno:
+        return jsonify({"error": "Error al crear el alumno, el alumno ya posee un usuario en el sistema o posee una solicitud pendiente."}), 400
 
     estado_postulacion = estado_postulacion_service.get_estado_by_name("Solicitud de Postulacion")
     data_postulacion["id_estado"] = estado_postulacion.id

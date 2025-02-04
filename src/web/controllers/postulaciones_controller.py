@@ -487,7 +487,10 @@ def guardar_repostulacion(id_alumno):
         return render_template('postulaciones/repostulacion.html', form=form, id_alumno=id_alumno)
     
     alumno = alumno_service.get_alumno_by_id(id_alumno)
-   
+    puede_postularse = postulacion_service.puede_postularse(alumno.email)
+    if not puede_postularse:
+        flash('Ya tiene una Postulación vigente o una Solicitud de Postulaciuón a analizar', 'danger')
+        return render_template('postulaciones/repostulacion.html', form=form, id_alumno=id_alumno)
     alumno_service.actualizar_informacion_alumno(
         alumno,
         alumno.nombre,
