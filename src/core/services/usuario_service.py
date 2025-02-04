@@ -45,7 +45,6 @@ def crear_usuario(formulario:Usuario_Form) -> None:
     contraseña_original = formulario.contraseña.data
     hash = bcrypt.generate_password_hash(formulario.contraseña.data.encode('utf-8'))
     formulario.contraseña.data = hash.decode('utf-8')
-    print(request.form.get('posgrado'))
     es_de_posgrado = False
     es_de_grado = False
     if request.form.get('posgrado'):
