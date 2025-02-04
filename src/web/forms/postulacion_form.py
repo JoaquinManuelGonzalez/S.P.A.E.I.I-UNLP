@@ -16,7 +16,8 @@ from wtforms.validators import (
     Length, 
     Email, 
     ValidationError,
-    Optional
+    Optional,
+    InputRequired
 )
 from typing import TypedDict
 from src.web.forms.validators import file_size_limit
@@ -26,6 +27,7 @@ from src.core.models.alumno.pais import Pais
 from src.core.models.postulacion.programa import Programa
 import re
 from wtforms_sqlalchemy.fields import QuerySelectField
+from wtforms import RadioField
 
 class PostulacionFormValues(TypedDict):	
     apellido: str
@@ -90,6 +92,12 @@ class PostulacionForm(FlaskForm):
 
         if not re.match(r"^\d+$", field.data):
             raise ValidationError("El campo solo puede contener números.")
+        
+    def optional_only_numbers(self, field):
+        if field.data:
+            pattern = re.compile(r"^\d+$")
+            if not pattern.match(field.data):
+                raise ValidationError("Solo se permiten números")
 
     def validate_only_letters_and_numbers(self, field):
         """
@@ -104,39 +112,62 @@ class PostulacionForm(FlaskForm):
 
         if not re.match(r"^[A-Za-z0-9ÁÉÍÓÚáéíóúÑñ\s]+$", field.data):
             raise ValidationError("El campo solo puede contener letras y números.")
+        
+    def optional_only_letters_and_numbers(self, field):
+        if field.data:  # Si el campo tiene un valor, aplica la validación
+            pattern = re.compile(r"^[A-Za-z0-9ÁÉÍÓÚáéíóúÑñ\s]+$")
+            if not pattern.match(field.data):
+                raise ValidationError("Solo se permiten letras y números.")
+            
+    def validate_pais_emision_pasaporte(self, field):
+        # Si el usuario ingresó datos en el pasaporte, el país debe ser obligatorio
+        if self.numero_pasaporte.data or self.foto_pasaporte.data:
+            if not field.data:
+                raise ValidationError("Debe seleccionar un país de emisión del pasaporte")
+            
+    def validate_pais_emision_cedula_identidad(self, field):
+        # Si el usuario ingresó datos en la cédula de identidad, el país debe ser obligatorio
+        if self.numero_cedula_identidad.data or self.foto_cedula_identidad.data:
+            if not field.data:
+                raise ValidationError("Debe seleccionar un país de emisión de la cédula de identidad")
+            
+    def validate_consulado_visacion(self, field):
+        if not self.plan_trabajo.data:
+            if not field.data:
+                raise ValidationError("Debe ingresar el consulado de visación")
+            
+    def optional_length(self, field):
+        if field.data:
+            if len(field.data) < 2 or len(field.data) > 20:
+                raise ValidationError("El campo debe tener entre 2 y 20 caracteres")
+            
+    def validate_programa(self, field):
+            if not self.convenio.data:
+                if not field.data:
+                    raise ValidationError("Debe seleccionar un programa")
+                
+    def validate_convenio(self, field):
+            if not self.programa.data:
+                if not field.data:
+                    raise ValidationError("Debe ingresar un convenio")
+                else:
+                    if len(field.data) < 2 or len(field.data) > 50:
+                        raise ValidationError("El campo debe tener entre 2 y 50 caracteres")
+                    
+    def validate_fecha_nacimiento(self, field):
+        if field.data:  # Si hay una fecha ingresada
+            fecha_actual = datetime.today().date()  # Fecha de hoy (solo la parte de la fecha)
+            if field.data >= fecha_actual:
+                raise ValidationError("La fecha de nacimiento debe ser anterior a la fecha actual.")
 
 
-    apellido = StringField(
-        "Apellido",
-        validators=[DataRequired(), Length(min=2, max=50), validate_only_letters]
-    )
-    nombre = StringField(
-        "Nombre",
-        validators=[DataRequired(), Length(min=2, max=50), validate_only_letters]
-    )
-    email = EmailField(
-        "Email",
-        validators=[DataRequired(), Email()]
-    )
     genero = QuerySelectField(
         "Género conforme pasaporte",
         query_factory=lambda: Genero.query.all(),
         get_label="nombre_es",
         allow_blank=True,
         blank_text="Seleccione un género",
-        validators=[DataRequired()]
-    )
-    fecha_nacimiento = DateField(
-        "Fecha de nacimiento",
-        validators=[DataRequired()]
-    )
-    pais_nacimiento = QuerySelectField(
-        "País de nacimiento",
-        query_factory=lambda: Pais.query.all(),
-        get_label="nombre_es",
-        allow_blank=True,
-        blank_text="Selecciona un país",
-        validators=[DataRequired()]
+        validators=[DataRequired(message="Debe seleccionar un género")]
     )
     pais_residencia = QuerySelectField(
         "País de residencia",
@@ -144,11 +175,11 @@ class PostulacionForm(FlaskForm):
         get_label="nombre_es",
         allow_blank=True,
         blank_text="Selecciona un país",
-        validators=[DataRequired()]
+        validators=[DataRequired(message="Debe seleccionar un país de residencia")]
     )
     domicilio = StringField(
         "Domicilio del país de residencia",
-        validators=[DataRequired(), Length(min=2, max=100), validate_only_letters_and_numbers]
+        validators=[DataRequired(message="Debe ingresar su domicilio"), Length(min=2, max=100, message="El domicilio debe tener 2 letras como mínimo y 100 como máximo"), validate_only_letters_and_numbers]
     )
     nacionalidad = QuerySelectField(
         "Nacionalidad",
@@ -156,11 +187,12 @@ class PostulacionForm(FlaskForm):
         get_label="nombre_es",
         allow_blank=True,
         blank_text="Selecciona un país",
-        validators=[DataRequired()]
+        validators=[DataRequired(message="Debe seleccionar una nacionalidad")],
+        render_kw={"id": "nacionalidad"}
     )
     numero_pasaporte = StringField(
         "Número de pasaporte",
-        validators=[Length(min=2, max=20), validate_only_letters_and_numbers]
+        validators=[optional_length, optional_only_letters_and_numbers]
     )
     pais_emision_pasaporte = QuerySelectField(
         "País de emisión del pasaporte",
@@ -168,7 +200,7 @@ class PostulacionForm(FlaskForm):
         get_label="nombre_es",
         allow_blank=True,
         blank_text="Selecciona un país",
-        validators=[]
+        validators=[validate_pais_emision_pasaporte]
     )
     foto_pasaporte = FileField(
         "Foto del pasaporte",
@@ -178,7 +210,7 @@ class PostulacionForm(FlaskForm):
     )
     numero_cedula_identidad = StringField(
         "Número de cédula de identidad",
-        validators=[Length(min=2, max=20), validate_only_numbers]
+        validators=[optional_length, optional_only_numbers]
     )
     pais_emision_cedula_identidad = QuerySelectField(
         "País de emisión de la cédula de identidad",
@@ -186,7 +218,7 @@ class PostulacionForm(FlaskForm):
         get_label="nombre_es",
         allow_blank=True,
         blank_text="Selecciona un país",
-        validators=[]
+        validators=[validate_pais_emision_cedula_identidad]
     )
     foto_cedula_identidad = FileField(
         "Foto de la cédula de identidad",
@@ -200,7 +232,7 @@ class PostulacionForm(FlaskForm):
         get_label="nombre_es",
         allow_blank=True,
         blank_text="Seleccione su estado civil",
-        validators=[DataRequired()]
+        validators=[DataRequired(message="Debe seleccionar un estado civil")]
     )
     certificado_b1 = FileField(
         "Certificado B1 o superior de español",
@@ -210,33 +242,23 @@ class PostulacionForm(FlaskForm):
     )
     universidad_origen = StringField(
         "Universidad de origen",
-        validators=[DataRequired(), Length(min=2, max=100), validate_only_letters_and_numbers]
-    )
-    de_grado = BooleanField(
-        "¿Es estudiante de grado?"
-    )
-    de_posgrado = BooleanField(
-        "¿Es estudiante de posgrado?"
+        validators=[DataRequired(message="Debe ingresar su universidad de origen"), Length(min=2, max=100, message="La universidad debe tener 2 letras como mínimo y 100 como máximo"), validate_only_letters_and_numbers]
     )
     plan_trabajo = FileField(
         "Plan de trabajo",
         validators=[
             FileAllowed(["pdf"], "Solo se permiten archivos .pdf"),
-            file_size_limit(5),]
+            file_size_limit(5),
+            Optional()
+        ]
     )
     consulado_visacion = StringField(
         "Consulado de visación",
-        validators=[Length(min=2, max=100)]
-    )
-    por_convenio = BooleanField(
-        "Estudiante de grado"
-    )
-    por_programa = BooleanField(
-        "Estudiante de posgrado"
+        validators=[validate_consulado_visacion]
     )
     convenio = StringField(
         "Convenio",
-        validators=[Length(min=2, max=50)]
+        validators=[validate_convenio]
     )
     programa = QuerySelectField(
         "Programa",
@@ -244,48 +266,45 @@ class PostulacionForm(FlaskForm):
         get_label="nombre",
         allow_blank=True,
         blank_text="Selecciona un programa",
-        validators=[Length(min=2, max=50)]
+        validators=[validate_programa]
     )
     carta_recomendacion = FileField(
         "Carta de recomendación",
         validators=[
             FileAllowed(["pdf"], "Solo se permiten archivos .pdf"),
-            file_size_limit(5),]
+            file_size_limit(5),
+            DataRequired(message="Debe adjuntar una carta de recomendación")
+        ]
     )
     apellido_tutor_institucional = StringField(
         "Apellido del tutor institucional",
-        validators=[DataRequired(), Length(min=2, max=50), validate_only_letters]
+        validators=[DataRequired(message="Debe ingresar el apellido del tutor institucional"), Length(min=2, max=50, message="El apellido debe tener 2 letras como mínimo y 50 como máximo"), validate_only_letters]
     )
     nombre_tutor_institucional = StringField(
         "Nombre del tutor institucional",
-        validators=[DataRequired(), Length(min=2, max=50), validate_only_letters]
+        validators=[DataRequired(message="Debe ingresar el nombre del tutor institucional"), Length(min=2, max=50, message="El nombre debe tener 2 letras como mínimo y 50 como máximo"), validate_only_letters]
     )
     email_tutor_institucional = EmailField(
         "Email del tutor institucional",
-        validators=[DataRequired(), Email()]
+        validators=[DataRequired(message="Debe ingresar el email del tutor institucional"), Email(message="Debe ingresar un mail válido")]
     )
     apellido_tutor_academico = StringField(
         "Apellido del tutor académico",
-        validators=[DataRequired(), Length(min=2, max=50), validate_only_letters]
+        validators=[DataRequired(message="Debe ingresar el apellido del tutor académico"), Length(min=2, max=50, message="El apellido debe tener 2 letras como mínimo y 50 como máximo"), validate_only_letters]
     )
     nombre_tutor_academico = StringField(
         "Nombre del tutor académico",
-        validators=[DataRequired(), Length(min=2, max=50), validate_only_letters]
+        validators=[DataRequired(message="Debe ingresar el nombre del tutor académico"), Length(min=2, max=50, message="El nombre debe tener 2 letras como mínimo y 50 como máximo"), validate_only_letters]
     )  
     email_tutor_academico = EmailField(
         "Email del tutor académico",
-        validators=[DataRequired(), Email()]
+        validators=[DataRequired(message="Debe ingresar el email del tutor académico"), Email(message="Debe ingresar un mail válido")]
     )
     
 
     def values(self) -> PostulacionFormValues:
         return {
-            "apellido": self.apellido.data,
-            "nombre": self.nombre.data,
-            "email": self.email.data,
             "genero": self.genero.data,
-            "fecha_nacimiento": self.fecha_nacimiento.data,
-            "pais_nacimiento": self.pais_nacimiento.data,
             "pais_residencia": self.pais_residencia.data,
             "domicilio": self.domicilio.data,
             "nacionalidad": self.nacionalidad.data,
@@ -298,12 +317,8 @@ class PostulacionForm(FlaskForm):
             "estado_civil": self.estado_civil.data,
             "certificado_b1": self.certificado_b1.data,
             "universidad_origen": self.universidad_origen.data,
-            "de_grado": self.de_grado.data,
-            "de_posgrado": self.de_posgrado.data,
             "plan_trabajo": self.plan_trabajo.data,
             "consulado_visacion": self.consulado_visacion.data,
-            "por_convenio": self.por_convenio.data,
-            "por_programa": self.por_programa.data,
             "convenio": self.convenio.data,
             "programa": self.programa.data,
             "carta_recomendacion": self.carta_recomendacion.data,

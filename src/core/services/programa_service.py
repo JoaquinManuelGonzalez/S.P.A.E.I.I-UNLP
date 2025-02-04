@@ -12,3 +12,13 @@ def crear_programa(nombre):
 
 def get_programa_by_id(id_programa):
     return Programa.query.get(id_programa)
+
+def actualizar_programa(id_programa, nombre):
+    programa = get_programa_by_id(id_programa)
+    programa.nombre = nombre
+    db.session.commit()
+
+def eliminar_programa(id_programa):
+    programa = get_programa_by_id(id_programa)
+    db.session.delete(programa)
+    db.session.commit()
