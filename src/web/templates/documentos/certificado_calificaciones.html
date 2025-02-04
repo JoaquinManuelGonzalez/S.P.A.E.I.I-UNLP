@@ -4,25 +4,77 @@
     <meta charset="UTF-8">
     <title>Certificado de Calificaciones</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; }
+        body {
+            font-family: Open, sans-serif;
+            margin: 10px;
+            padding: 20px;
+            max-width: 800px;
+        }
+        .titulo {
+            text-align: center;
+            font-size: 14px;
+            font-weight: bold;
+            text-decoration: underline;
+            margin-bottom: 20px;
+        }
+        .fecha-lugar {
+            text-align: right;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        .content {
+            text-align: justify;
+            font-size: 14px;
+        }
+        .firma-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 60px;
+            width: 100%;
+        }
+        .firma, .sello {
+            text-align: center;
+            width: 45%;
+        }
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 10px;
+        }
+        p {
+            text-indent: 40px;
+        }
+        img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100px;
+            height: auto;
+        }
         h1 { text-decoration: underline; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         th, td { border: 1px solid black; padding: 10px; text-align: center; }
     </style>
 </head>
 <body>
-    <h1>CERTIFICADO DE CALIFICACIONES</h1>
-    
-    <p><strong>NOMBRES/S:</strong> {{ postulacion.informacion_alumno_entrante.nombre }}</p>
-    <p><strong>APELLIDO/S:</strong> {{ postulacion.informacion_alumno_entrante.apellido }}</p>
-    <p><strong>PAÍS:</strong> {{ postulacion.informacion_alumno_entrante.pais_de_residencia }}</p>
-    <p><strong>UNIVERSIDAD DE ORIGEN:</strong> {{ postulacion.universidad_origen }}</p>
-
-    <p>La estudiante ha obtenido las siguientes calificaciones en la Facultad de {{ facultad }} 
-    de la Universidad Nacional de La Plata, Argentina, a través del Convenio Marco de Cooperación y 
-    Colaboración suscripto entre nuestras instituciones.</p>
-
-    <table>
+    <img src="{{ url_for('static', filename='images/logo-unlp.png') }}" alt="Logo">
+    <div class="titulo">
+        CERTIFICADO DE CALIFICACIONES
+    </div>
+    <br>
+    <br>
+    <div class="content"><strong>NOMBRES/S:</strong> {{ postulacion.informacion_alumno_entrante.nombre }}</div>
+    <div class="content"><strong>APELLIDO/S:</strong> {{ postulacion.informacion_alumno_entrante.apellido }}</div>
+    <div class="content"><strong>PAÍS:</strong> {{ postulacion.informacion_alumno_entrante.pais_de_residencia.nombre_es }}</div>
+    <div class="content"><strong>UNIVERSIDAD DE ORIGEN:</strong> {{ postulacion.universidad_origen }}</div>
+    <br>
+    <br>
+    <div class="content">
+        <p>El/La estudiante ha obtenido las siguientes calificaciones en la Universidad Nacional de La Plata, Argentina, a través del Convenio Marco de Cooperación y 
+            Colaboración suscripto entre nuestras instituciones.</p>
+    </div>
+    <br>
+    <table class="content">
         <thead>
             <tr>
                 <th>ASIGNATURA</th>
@@ -33,26 +85,34 @@
         <tbody>
             {% for asignatura in postulacion.asignaturas %}
             <tr>
-                <td>{{ asignatura.nombre }}</td>
-                <td>{{ asignatura.calificacion }}</td>
-                <td>{{ asignatura.carga_horaria }}</td>
+                <td>{{ asignatura.asignatura.nombre }}</td>
+                <td>{{ asignatura.aprobado }}</td>
+                <td>{{ asignatura.asignatura.carga_horaria }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 
-    <p><strong>ESCALA DE CALIFICACIONES:</strong> Excelente: 10; Distinguido: 8, 9; 
-    Bueno: 6, 7; Aprobado: 4, 5; Desaprobado: 1, 2, 3.</p>
-
-    <p><strong>Firma:</strong> ___________________________</p>
-    <p><strong>Sello o aclaración:</strong> ___________________________</p>
-
+    <div class="content"><strong>ESCALA DE CALIFICACIONES:</strong> Excelente: 10; Distinguido: 8, 9; 
+    Bueno: 6, 7; Aprobado: 4, 5; Desaprobado: 1, 2, 3.</div>
+    <br>
+    <br>
+    <br>
+    <br>
+    <div class="firma-container">
+        <div class="firma">
+            <p>.....................................</p>
+            <p>Firma y aclaración</p>
+        </div>
+        <div class="sello">
+            <p>.....................................</p>
+            <p>Sello</p>
+        </div>
+    </div>
+    <br>
+    <br>
     <p><strong>Lugar y fecha:</strong> Universidad Nacional de La Plata {{ fecha_firma }}</p>
 
-    <p><strong> AÑO {{ postulacion.periodo_postulacion.inicio.year }}</strong></p>
-    <p>
-        <input type="checkbox" {% if {{ postulacion.periodo_postulacion.inicio.month >= 3 and postulacion.periodo_postulacion.inicio.month < 8 }} %} checked {% endif %}> Marzo - Julio
-        <input type="checkbox" {% if {{ postulacion.periodo_postulacion.inicio.month >= 8 }} %} checked {% endif %}> Agosto - Diciembre
-    </p>
+    <p><strong> {{ periodo }} </strong></p>
 </body>
 </html>

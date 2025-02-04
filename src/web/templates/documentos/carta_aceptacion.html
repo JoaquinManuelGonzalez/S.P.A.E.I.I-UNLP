@@ -6,39 +6,76 @@
     <title>Carta de Aceptación</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: Open, sans-serif;
             margin: 40px;
             padding: 20px;
-            border: 1px solid #000;
             max-width: 800px;
         }
-        .header {
+        .titulo {
+            text-align: center;
+            font-size: 14px;
+            font-weight: bold;
+            text-decoration: underline;
+            margin-bottom: 20px;
+        }
+        .fecha-lugar {
             text-align: right;
+            font-size: 14px;
+            margin-bottom: 20px;
         }
         .content {
-            margin-top: 20px;
             text-align: justify;
+            font-size: 14px;
+        }
+        .firma-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 60px;
+            width: 100%;
+        }
+        .firma, .sello {
+            text-align: center;
+            width: 45%;
         }
         .footer {
             margin-top: 40px;
             text-align: center;
+            font-size: 10px;
         }
-        .firma {
-            margin-top: 60px;
-            text-align: center;
+        p {
+            text-indent: 40px;
+        }
+        img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100px;
+            height: auto;
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <p>La Plata, {{ fecha }}</p>
+    <img src="{{ url_for('static', filename='images/logo-unlp.png') }}" alt="Logo">
+    <div class="titulo">
+        CARTA DE ACEPTACIÓN
     </div>
-
+    <br>
+    <br>
+    <div class="fecha-lugar">
+        La Plata, {{ fecha_firma }}
+    </div>
+    <br>
     <div class="content">
         <p>
-            Tengo el agrado de dirigirme a usted a los efectos de informarle que la
-            estudiante <strong>{{ nombre_alumna }}</strong>, PAS Nº <strong>{{ pasaporte }}</strong>, de la Universidad <strong>{{ universidad_origen }}</strong>, 
-            ha sido aceptada en la Facultad <strong>{{ facultad_destino }}</strong> de la Universidad Nacional de La Plata, 
+            Tengo el agrado de dirigirme a usted a los efectos de informarle que el/la
+            estudiante <strong>{{ postulacion.informacion_alumno_entrante.apellido }}, {{ postulacion.informacion_alumno_entrante.nombre }}</strong>, 
+            {% if postulacion.informacion_alumno_entrante.pasaporte %}
+                PAS Nº <strong>{{ postulacion.informacion_alumno_entrante.pasaporte.numero }}</strong>, 
+            {% else %}
+                cédula de identidad Nº <strong>{{ postulacion.informacion_alumno_entrante.cedula_de_identidad.numero }}</strong>,
+            {% endif %}
+            de la <strong>{{ postulacion.universidad_origen }}</strong>, 
+            ha sido aceptado/a en la Universidad Nacional de La Plata, 
             para realizar una estancia académica de intercambio durante el periodo comprendido entre 
             <strong>{{ periodo }}</strong>, en el marco del Convenio suscripto entre ambas instituciones.
         </p>
@@ -52,13 +89,24 @@
             de estudios a alumnos con visa de turista.
         </p>
     </div>
-
-    <div class="firma">
-        <p>.....................................................................</p>
-        <p>Firma y aclaración</p>
-        <p>Sello</p>
+    <br>
+    <br>
+    <br>
+    <div class="firma-container">
+        <div class="firma">
+            <p>.....................................</p>
+            <p>Firma y aclaración</p>
+        </div>
+        <div class="sello">
+            <p>.....................................</p>
+            <p>Sello</p>
+        </div>
     </div>
 
+    <br>
+    <br>
+    <br>
+    <br>
     <div class="footer">
         <p>
             AÑO DEL 40º ANIVERSARIO DEL RETORNO DE LA DEMOCRACIA <br>

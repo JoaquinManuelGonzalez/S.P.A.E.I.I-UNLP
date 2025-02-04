@@ -24,20 +24,26 @@ def certificado_calificaciones(postulacion_id):
     
     asignaturas = postulacion.asignaturas
 
-    if asignaturas is None or asignaturas.count() == 0:
+    if asignaturas is None or len(asignaturas) == 0:
         flash("No se han elegido materias para esta postulación.", "error")
         return redirect(previous_url)
     
     notas_cerradas = True
     for a in asignaturas:
-        if a.calificacion < 0:
+        if a.aprobado < 0:
             notas_cerradas = False
     
     if not notas_cerradas:
         flash("No se han cerrado las notas de todas las materias.", "error")
         return redirect(previous_url)
 
-    html_string = render_template("certificado.html", postulacion=postulacion, fecha_firma=datetime.now())
+    periodo = ""
+    if postulacion.periodo_postulacion.inicio.month < 7 and postulacion.periodo_postulacion.inicio.month > 1:
+        periodo = "Agosto - Diciembre " + str(postulacion.periodo_postulacion.inicio.year)
+    else:
+        periodo = "Febrero - Julio " + str(postulacion.periodo_postulacion.inicio.year + 1)
+
+    html_string = render_template("documentos/certificado_calificaciones.html", postulacion=postulacion, fecha_firma=datetime.now().strftime("%d/%m/%Y"), periodo=periodo)
     pdf_bytes = HTML(string=html_string).write_pdf()
 
     return send_file(
@@ -62,25 +68,31 @@ def carta_aceptacion(postulacion_id):
     
     asignaturas = postulacion.asignaturas
 
-    if asignaturas is None or asignaturas.count() == 0:
+    if asignaturas is None or len(asignaturas) == 0:
         flash("No se han elegido materias para esta postulación.", "error")
         return redirect(previous_url)
     
     materias_validadas = True
     for a in asignaturas:
-        if not a.validada:
+        if not a.validado:
             materias_validadas = False
     
     if not materias_validadas:
         flash("No se han validado todas las materias seleccionadas.", "error")
         return redirect(previous_url)
+    
+    periodo = ""
+    if postulacion.periodo_postulacion.inicio.month < 7 and postulacion.periodo_postulacion.inicio.month > 1:
+        periodo = "Agosto - Diciembre " + str(postulacion.periodo_postulacion.inicio.year)
+    else:
+        periodo = "Febrero - Julio " + str(postulacion.periodo_postulacion.inicio.year + 1)
 
-    html_string = render_template("certificado.html", postulacion=postulacion, fecha_firma=datetime.now())
+    html_string = render_template("documentos/carta_aceptacion.html", postulacion=postulacion, fecha_firma=datetime.now().strftime("%d/%m/%Y"), periodo=periodo)
     pdf_bytes = HTML(string=html_string).write_pdf()
 
     return send_file(
         io.BytesIO(pdf_bytes),
         mimetype="application/pdf",
         as_attachment=True,
-        download_name="certificado_calificaciones_" + postulacion.informacion_alumno_entrante.apellido + ".pdf"
+        download_name="carta_aceptacion_" + postulacion.informacion_alumno_entrante.apellido + ".pdf"
     )
