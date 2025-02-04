@@ -6,7 +6,7 @@
     <style>
         body {
             font-family: Open, sans-serif;
-            margin: 10px;
+            margin: 40px;
             padding: 20px;
             max-width: 800px;
         }
@@ -48,7 +48,7 @@
             position: absolute;
             top: 0;
             left: 0;
-            width: 100px;
+            width: 300px;
             height: auto;
         }
         h1 { text-decoration: underline; }
@@ -57,7 +57,9 @@
     </style>
 </head>
 <body>
-    <img src="{{ url_for('static', filename='images/logo-unlp.png') }}" alt="Logo">
+    <img src="{{ request.url_root }}static/images/logo_prosecretaria.png" alt="Logo">
+    <br>
+    <br>
     <div class="titulo">
         CERTIFICADO DE CALIFICACIONES
     </div>
@@ -111,8 +113,8 @@
     </div>
     <br>
     <br>
-    <p><strong>Lugar y fecha:</strong> Universidad Nacional de La Plata {{ fecha_firma }}</p>
+    <div class="content"><strong>Lugar y fecha:</strong> Universidad Nacional de La Plata {{ fecha_firma }}</div>
 
-    <p><strong> {{ periodo }} </strong></p>
+    <div class="content"><strong> {{ periodo }} </strong></div>
 </body>
 </html>

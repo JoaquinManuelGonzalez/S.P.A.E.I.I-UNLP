@@ -9,6 +9,12 @@ import io
 
 documentos_bp = Blueprint("documentos", __name__, url_prefix="/documentos")
 
+MESES = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
+
+def hoy():
+    t = datetime.now()
+    return str(t.day) + " de " + str(MESES[t.month]) + " de " + str(t.year)
+
 #-----Descargar certificad calificaciones-----
 @documentos_bp.get('/certificado_calificaciones/<int:postulacion_id>')
 
@@ -18,7 +24,7 @@ def certificado_calificaciones(postulacion_id):
 
     postulacion = postulacion_service.get_postulacion_by_id(postulacion_id)
 
-    if postulacion is None:
+    """if postulacion is None:
         flash("No existe la postulación.", "error")
         return redirect(previous_url)
     
@@ -35,7 +41,7 @@ def certificado_calificaciones(postulacion_id):
     
     if not notas_cerradas:
         flash("No se han cerrado las notas de todas las materias.", "error")
-        return redirect(previous_url)
+        return redirect(previous_url)"""
 
     periodo = ""
     if postulacion.periodo_postulacion.inicio.month < 7 and postulacion.periodo_postulacion.inicio.month > 1:
@@ -43,7 +49,7 @@ def certificado_calificaciones(postulacion_id):
     else:
         periodo = "Febrero - Julio " + str(postulacion.periodo_postulacion.inicio.year + 1)
 
-    html_string = render_template("documentos/certificado_calificaciones.html", postulacion=postulacion, fecha_firma=datetime.now().strftime("%d/%m/%Y"), periodo=periodo)
+    html_string = render_template("documentos/certificado_calificaciones.html", postulacion=postulacion, fecha_firma=hoy(), periodo=periodo)
     pdf_bytes = HTML(string=html_string).write_pdf()
 
     return send_file(
@@ -87,7 +93,7 @@ def carta_aceptacion(postulacion_id):
     else:
         periodo = "Febrero - Julio " + str(postulacion.periodo_postulacion.inicio.year + 1)
 
-    html_string = render_template("documentos/carta_aceptacion.html", postulacion=postulacion, fecha_firma=datetime.now().strftime("%d/%m/%Y"), periodo=periodo)
+    html_string = render_template("documentos/carta_aceptacion.html", postulacion=postulacion, fecha_firma=hoy(), periodo=periodo)
     pdf_bytes = HTML(string=html_string).write_pdf()
 
     return send_file(

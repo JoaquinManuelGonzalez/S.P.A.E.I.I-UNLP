@@ -49,13 +49,15 @@
             position: absolute;
             top: 0;
             left: 0;
-            width: 100px;
+            width: 300px;
             height: auto;
         }
     </style>
 </head>
 <body>
-    <img src="{{ url_for('static', filename='images/logo-unlp.png') }}" alt="Logo">
+    <img src="{{ request.url_root }}static/images/logo_prosecretaria.png" alt="Logo">
+    <br>
+    <br>
     <div class="titulo">
         CARTA DE ACEPTACIÓN
     </div>
