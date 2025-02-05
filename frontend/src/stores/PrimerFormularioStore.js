@@ -72,19 +72,12 @@ export const usePrimerFormularioStore = defineStore('primer_formulario_store', {
         es_hispanohablante: false,
         mercosur: false,
         csrf_token: "",
-        repostulacion: false,
+        periodo_activo: true,
     }),
     actions: {
         async submitForm() {
             this.loading = true;
-            console.log("este es la fecha:");
-            
             try {
-                console.log("este es el form data:");
-                console.log("holaaaaaa");
-                console.log(this.formData.alumno.fecha_de_nacimiento);
-
-                // Convertir archivos a Base64
                 const archivos = this.formData.archivo;
 
                 for (const key in archivos) {
@@ -92,10 +85,6 @@ export const usePrimerFormularioStore = defineStore('primer_formulario_store', {
                         archivos[key] = await this.convertToBase64(archivos[key]);
                     }
                 }
-                console.log(this.formData);
-                console.log("así estan los archivos");
-                console.log(this.formData.archivo);
-                console.log(this.formData.titulos);
                 const response = await axios.post('http://127.0.0.1:5000/api/postulacion/primer-formulario', this.formData, 
                     {
                         headers: {
@@ -105,14 +94,11 @@ export const usePrimerFormularioStore = defineStore('primer_formulario_store', {
                     },
                 );
                 alert("Formulario enviado con éxito");
-                this.errors.push(response.data.error);
-                console.log("este es el response:");
-                console.log(response);
             } catch (error) {
                 if(error.response){
                     this.errors = [error.response.data.error];
                     alert(error.response.data.error);
-                } else{
+                }else{
                     alert("Error al enviar el formulario");
                 }
             } finally {
@@ -131,6 +117,7 @@ export const usePrimerFormularioStore = defineStore('primer_formulario_store', {
                 this.paises = response.data.paises;
                 this.csrf_token = response.data.csrf_token;
                 this.programas = response.data.programas;
+                this.periodo_activo = response.data.periodo_activo;
                 console.log("estos son los paises");
                 console.log(this.paises[1]);
             } catch (error) {

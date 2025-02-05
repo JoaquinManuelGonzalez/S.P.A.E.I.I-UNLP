@@ -178,7 +178,8 @@
         "extras": {
             "mensaje": "You can view the Agreements held by the National University of La Plata by doing",
             "clickAqui": "click here",
-            "boton": "Apply"
+            "boton": "Apply",
+            "periodoInactivo": "The application period is inactive, please try again later"
         },
         "errors": {
             "apellido": "The last name must contain only letters. Minimum 2 and maximum 50 characters",

@@ -178,7 +178,8 @@
         "extras": {
             "mensaje": "Você pode ver os Convênios da Universidade Nacional de La Plata fazendo",
             "clickAqui": "clique aqui",
-            "boton": "Candidatar-me"
+            "boton": "Candidatar-me",
+            "periodoInactivo": "O período de inscrição está inativo, por favor tente novamente mais tarde"
         },
         "errors": {
             "apellido": "O sobrenome deve conter apenas letras. No mínimo 2 e no máximo 50 caracteres",

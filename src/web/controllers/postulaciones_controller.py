@@ -469,7 +469,7 @@ def repostulacion():
 
     alumno = alumno_service.get_alumno_by_id(id_alumno)
     form = PostulacionForm()
-
+    
     form.genero.data = alumno.genero
     form.estado_civil.data = alumno.estado_civil
     form.nacionalidad.data = alumno.pais_nacionalidad
@@ -491,6 +491,11 @@ def guardar_repostulacion(id_alumno):
     if not puede_postularse:
         flash('Ya tiene una Postulación vigente o una Solicitud de Postulaciuón a analizar', 'danger')
         return render_template('postulaciones/repostulacion.html', form=form, id_alumno=id_alumno)
+        
+    if not periodo_postulacion_service.esta_activo():
+        flash('El periodo de postulación no está activo', 'danger')
+        return redirect(url_for('postulacion.mis_postulaciones'))
+
     alumno_service.actualizar_informacion_alumno(
         alumno,
         alumno.nombre,

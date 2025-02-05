@@ -1,6 +1,11 @@
 <template>
     <section class="p-6 max-w-4xl mx-auto bg-white rounded-lg shadow-lg">
-      <h2 class="text-xl font-semibold text-center mb-4">{{ $t("formulario.titulos.titulo") }}</h2>
+      <div v-if="periodo_activo">
+        <h2 class="text-xl font-semibold text-center mb-4">{{ $t("formulario.titulos.titulo") }}</h2>
+      </div>
+      <div v-else>
+        <h2 class="text-xl font-semibold text-center mb-4">{{ $t("formulario.extras.periodoInactivo") }}</h2>
+      </div>
       
       <form @submit.prevent="submitForm">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -192,11 +197,13 @@
           </div>
         </div>
   
-        <div class="flex justify-center mt-6">
+        <div v-if="periodo_activo" class="flex justify-center mt-6">
           <button type="submit" class="bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600">{{ $t("formulario.extras.boton") }}</button>
         </div>
       </form>
+    
     </section>
+    
   </template>
 
 
@@ -208,7 +215,7 @@
   import  router from '../router';
 
   const store = usePrimerFormularioStore();
-  const { formData, errors, loading, paises, estados_civiles, programas, generos, nivelEstudio, convenioPrograma, es_hispanohablante, mercosur } = storeToRefs(store);
+  const { formData, errors, loading, paises, estados_civiles, programas, generos, nivelEstudio, convenioPrograma, es_hispanohablante, mercosur, periodo_activo } = storeToRefs(store);
   // Accedemos al idioma actual a través de i18n
   const { locale } = useI18n();
   const { t } = useI18n();
@@ -260,16 +267,12 @@
     formData.value.convenioPrograma = convenioPrograma.value;
     formData.value.mercosur = mercosur.value;
     try {
-      console.log("Entra al try");
       if(validar()){
-        console.log("arriba del submit");
         await store.submitForm();
-        console.log("abajo del submit");
         router.push("/");
       }
     } catch (error) {
       alert("Error al enviar el formulario");
-      //errors.value.forEach(error => alert(error));
     }
   };
 

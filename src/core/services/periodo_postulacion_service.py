@@ -119,3 +119,5 @@ def verificar_validez(fecha_inicio, fecha_fin):
 
             
 
+def esta_activo():
+    return periodo_actual() != None
