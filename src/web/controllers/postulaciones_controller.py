@@ -10,7 +10,6 @@ from src.core.services import asignaturas as asignaturas_service
 from src.core.database import db
 from flask import current_app as app
 from src.web.forms.asignaturas_form import AsignaturasForm
-from src.web.handlers.permisos import check
 import os
 import io
 from src.web.handlers.auth import get_rol_sesion, get_id_sesion, get_usuario_actual
@@ -484,7 +483,7 @@ def repostulacion():
 
     alumno = alumno_service.get_alumno_by_id(id_alumno)
     form = PostulacionForm()
-
+    
     form.genero.data = alumno.genero
     form.estado_civil.data = alumno.estado_civil
     form.nacionalidad.data = alumno.pais_nacionalidad
@@ -506,6 +505,11 @@ def guardar_repostulacion(id_alumno):
     if not puede_postularse:
         flash('Ya tiene una Postulación vigente o una Solicitud de Postulaciuón a analizar', 'danger')
         return render_template('postulaciones/repostulacion.html', form=form, id_alumno=id_alumno)
+        
+    if not periodo_postulacion_service.esta_activo():
+        flash('El periodo de postulación no está activo', 'danger')
+        return redirect(url_for('postulacion.mis_postulaciones'))
+
     alumno_service.actualizar_informacion_alumno(
         alumno,
         alumno.nombre,
@@ -765,14 +769,14 @@ def guardar_repostulacion(id_alumno):
     
 
 @postulacion_bp.get('/ingresar_datos_estadia/<int:id_postulacion>')
-#@check("alumno")
+@check("alumno")
 def ingresar_datos_estadia(id_postulacion):
     form = PostulacionEstadiaForm()
     postulacion = postulacion_service.get_postulacion_by_id(id_postulacion)
     return render_template('postulaciones/postulacion_estadia.html', form=form, id_postulacion=id_postulacion, consulado_dato=postulacion.consulado_visacion)
 
 @postulacion_bp.post('/guardar_datos_estadia/<int:id_postulacion>')
-#@check("alumno")
+@check("alumno")
 def guardar_datos_estadia(id_postulacion):
     form = PostulacionEstadiaForm()
     postulacion = postulacion_service.get_postulacion_by_id(id_postulacion)
@@ -873,7 +877,7 @@ def guardar_datos_estadia(id_postulacion):
     return redirect(url_for('postulacion.mis_postulaciones'))
 
 @postulacion_bp.get('/<int:postulacion_id>/seleccionar_materias')
-#@check("alumno")
+@check("alumno")
 def seleccionar_materias(postulacion_id):
 
     facultades = facultades_service.get_all_facultades()
@@ -907,7 +911,7 @@ def seleccionar_materias(postulacion_id):
     return render_template('postulaciones/elegir_materias.html', cantidad_materias=cantidad_materias, facultades=facultades, facultades_seleccionadas=facultades_seleccionadas, carreras_seleccionadas=carreras_seleccionadas, asignaturas_seleccionadas=asignaturas_seleccionadas, postulacion_id=postulacion_id, es_de_posgrado=postulacion_service.get_postulacion_by_id(postulacion_id).de_posgrado)
 
 @postulacion_bp.post('/guardar_materias/<int:postulacion_id>')
-#@check("alumno")
+@check("alumno")
 def guardar_materias(postulacion_id):
     cantidad_materias = 5  
     asignaturas_ids = []
@@ -962,13 +966,13 @@ def guardar_materias(postulacion_id):
     return redirect(url_for('postulacion.mis_postulaciones'))
 
 @postulacion_bp.get('/visado_seguro_medico/<int:id_postulacion>')
-#@check("alumno")
+@check("alumno")
 def visado_seguro_medico(id_postulacion):
     form = VisadoSeguroMedicoForm()
     return render_template('postulaciones/visado_seguro_medico_form.html', form=form, id_postulacion=id_postulacion)
 
 @postulacion_bp.post('/guardar_visado_seguro_medico/<int:id_postulacion>')
-#@check("alumno")
+@check("alumno")
 def visado_seguro_medico_post(id_postulacion):
     form = VisadoSeguroMedicoForm()
     postulacion = postulacion_service.get_postulacion_by_id(id_postulacion)
@@ -999,7 +1003,7 @@ def visado_seguro_medico_post(id_postulacion):
         archivo_visado_load = archivo_schema.load(archivo_visado)
     except Exception as err:
         flash('Error al cargar el archivo visado', 'danger')
-        return render_template('postulaciones/visado_seguro_medico.html', form=form, id_postulacion=id_postulacion)
+        return render_template('postulaciones/visado_seguro_medico_form.html', form=form, id_postulacion=id_postulacion)
     
     seguro_medico = form.seguro_medico.data
     path_seguro_medico = f"{id_postulacion}_{alumno.id}_seguroMedico_{seguro_medico.filename}"
@@ -1014,7 +1018,7 @@ def visado_seguro_medico_post(id_postulacion):
         archivo_seguro_medico_load = archivo_schema.load(archivo_seguro_medico)
     except Exception as err:
         flash('Error al cargar el archivo de seguro medico', 'danger')
-        return render_template('postulaciones/visado_seguro_medico.html', form=form, id_postulacion=id_postulacion)
+        return render_template('postulaciones/visado_seguro_medico_form.html', form=form, id_postulacion=id_postulacion)
     
     postulacion.estado = estado_postulacion_service.get_estado_by_name("Postulacion en Espera de ser Completada")
 
