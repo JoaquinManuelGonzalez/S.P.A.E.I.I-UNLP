@@ -978,15 +978,15 @@ def visado_seguro_medico_post(id_postulacion):
     postulacion = postulacion_service.get_postulacion_by_id(id_postulacion)
     if not form.validate_on_submit():
         flash('Error al cargar los datos', 'danger')
-        return render_template('postulaciones/visado_seguro_medico.html', form=form, id_postulacion=id_postulacion)
+        return render_template('postulaciones/visado_seguro_medico_form.html', form=form, id_postulacion=id_postulacion)
     
     if not form.visado.data:
         flash('El archivo de visado es obligatorio', 'danger')
-        return render_template('postulaciones/visado_seguro_medico.html', form=form, id_postulacion=id_postulacion)
+        return render_template('postulaciones/visado_seguro_medico_form.html', form=form, id_postulacion=id_postulacion)
     
     if not form.seguro_medico.data:
         flash('El archivo de seguro medico es obligatorio', 'danger')
-        return render_template('postulaciones/visado_seguro_medico.html', form=form, id_postulacion=id_postulacion)
+        return render_template('postulaciones/visado_seguro_medico_form.html', form=form, id_postulacion=id_postulacion)
     
 
     alumno = postulacion.informacion_alumno_entrante
@@ -1003,7 +1003,7 @@ def visado_seguro_medico_post(id_postulacion):
         archivo_visado_load = archivo_schema.load(archivo_visado)
     except Exception as err:
         flash('Error al cargar el archivo visado', 'danger')
-        return render_template('postulaciones/visado_seguro_medico.html', form=form, id_postulacion=id_postulacion)
+        return render_template('postulaciones/visado_seguro_medico_form.html', form=form, id_postulacion=id_postulacion)
     
     seguro_medico = form.seguro_medico.data
     path_seguro_medico = f"{id_postulacion}_{alumno.id}_seguroMedico_{seguro_medico.filename}"
@@ -1018,7 +1018,7 @@ def visado_seguro_medico_post(id_postulacion):
         archivo_seguro_medico_load = archivo_schema.load(archivo_seguro_medico)
     except Exception as err:
         flash('Error al cargar el archivo de seguro medico', 'danger')
-        return render_template('postulaciones/visado_seguro_medico.html', form=form, id_postulacion=id_postulacion)
+        return render_template('postulaciones/visado_seguro_medico_form.html', form=form, id_postulacion=id_postulacion)
     
     postulacion.estado = estado_postulacion_service.get_estado_by_name("Postulacion en Espera de ser Completada")
 
