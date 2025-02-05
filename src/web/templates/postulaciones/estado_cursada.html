@@ -43,11 +43,11 @@
 </div>
 
 <script>
-    //const estadoField = document.querySelector('#estado-2');
+
     const estadoFields = document.querySelectorAll('[name="estado"]');
 
     function toggleNotaField() {
-        //const estadoField = document.getElementById('estado_field');
+
         const selectedEstado = document.querySelector('[name="estado"]:checked');
 
         if (selectedEstado.value === "Cursada completada") {
@@ -56,24 +56,15 @@
             document.getElementById('nota_container').style.display = 'none';
         }
     }
-    /*
-    document.addEventListener('DOMContentLoaded', toggleNotaField)
-    estadoField.addEventListener('change', toggleNotaField)
-    */
+
     document.addEventListener('DOMContentLoaded', function () {
         toggleNotaField();
         
         // Add event listeners to all radio buttons
         estadoFields.forEach(function (radio) {
-            radio.addEventListener('change', toggleNotaField); // Ensure event listeners are applied to all radios
+            radio.addEventListener('change', toggleNotaField);
         });
     });
 
-    /*
-    document.addEventListener('DOMContentLoaded', function () {
-        toggleNotaField();
-        document.getElementById('estado_field').addEventListener('change', toggleNotaField());
-    });
-    */
 </script>
 {% endblock %}
