@@ -10,7 +10,6 @@ from src.core.services import asignaturas as asignaturas_service
 from src.core.database import db
 from flask import current_app as app
 from src.web.forms.asignaturas_form import AsignaturasForm
-from src.web.handlers.permisos import check
 import os
 import io
 from src.web.handlers.auth import get_rol_sesion, get_id_sesion, get_usuario_actual

@@ -4,7 +4,8 @@
         <h2 class="text-xl font-semibold text-center mb-4">{{ $t("formulario.titulos.titulo") }}</h2>
       </div>
       <div v-else>
-        <h2 class="text-xl font-semibold text-center mb-4">{{ $t("formulario.extras.periodoInactivo") }}</h2>
+        <h2 class="text-xl font-semibold text-center mb-4" style="color: red; font-size: x-large">{{ $t("formulario.extras.periodoInactivo") }}</h2>
+        <p class="font-semibold text-lg mb-2" style="text-align: center;">{{ $t("formulario.extras.mensajePeriodoInactivo") }}</p>
       </div>
       
       <form @submit.prevent="submitForm">

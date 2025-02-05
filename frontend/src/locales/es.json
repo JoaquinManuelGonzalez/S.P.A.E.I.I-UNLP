@@ -179,7 +179,8 @@
             "mensaje": "Puede ver los Convenios que posee la Universidad Nacional de La Plata haciendo",
             "clickAqui": "click aquí",
             "boton": "Postularme",
-            "periodoInactivo": "El período de postulación se encuentra inactivo, por favor intente más tarde"
+            "periodoInactivo": "El período de postulación se encuentra inactivo, por favor intente más tarde",
+            "mensajePeriodoInactivo": "Tenga en cuenta que los datos requeridos para una Postulación serán los siguientes: "
         },
         "errors": {
             "apellido": "El apellido debe contener solo letras. Como mínimo 2 y como máximo 50 caracteres",
