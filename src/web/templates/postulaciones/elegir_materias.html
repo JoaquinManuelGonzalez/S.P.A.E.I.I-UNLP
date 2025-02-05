@@ -126,11 +126,29 @@
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         const facultadElements = [...document.querySelectorAll('[id^="facultad_"]')];
+        const carreraElements = [...document.querySelectorAll('[id^="carrera_"]')];
+        const asignaturaElements = [...document.querySelectorAll('[id^="asignatura_"]')];
 
         // Función para habilitar/deshabilitar filas según las selecciones previas
         const updateRowAvailability = () => {
             facultadElements.forEach((select, index) => {
-                if (index === 0 || facultadElements[index - 1].value) {
+                if (index === 0 || (asignaturaElements[index - 1].value)) {
+                    select.disabled = false; // Habilitar fila si la anterior está completa
+                } else {
+                    select.disabled = true; // Deshabilitar fila si la anterior no está completa
+                    select.value = ""; // Limpiar selección de filas deshabilitadas
+                }
+            });
+            carreraElements.forEach((select, index) => {
+                if (index === 0 || (asignaturaElements[index - 1].value)) {
+                    select.disabled = false; // Habilitar fila si la anterior está completa
+                } else {
+                    select.disabled = true; // Deshabilitar fila si la anterior no está completa
+                    select.value = ""; // Limpiar selección de filas deshabilitadas
+                }
+            });
+            asignaturaElements.forEach((select, index) => {
+                if (index === 0 || (asignaturaElements[index - 1].value)) {
                     select.disabled = false; // Habilitar fila si la anterior está completa
                 } else {
                     select.disabled = true; // Deshabilitar fila si la anterior no está completa
