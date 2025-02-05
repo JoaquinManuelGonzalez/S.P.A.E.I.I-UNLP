@@ -72,8 +72,10 @@ def descargar_archivo(filename):
     try:
         client = app.storage.client
         bucket_name = "spaeii"
+        print(filename)
         response = client.get_object(bucket_name, filename)
 
+        print(response)
         file_data = io.BytesIO(response.read())
         response.close()
         response.release_conn()

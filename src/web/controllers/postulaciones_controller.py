@@ -19,6 +19,7 @@ import time
 from src.web.forms.postulacion_form import PostulacionForm
 from src.web.forms.postulacion_estadia_form import PostulacionEstadiaForm
 from src.web.forms.presidencia_subir_precarga_form import PresidenciaPrecarga
+from src.web.forms.presidencia_subir_archivo_base_form import PresidenciaArchivoBaseForm
 from src.web.forms.estado_cursada_form import EstadoCursadaForm
 from src.web.schemas.archivo_schema import archivo_schema
 from src.web.forms.visado_seguro_medico_form import VisadoSeguroMedicoForm
@@ -1036,4 +1037,68 @@ def visado_seguro_medico_post(id_postulacion):
 @postulacion_bp.route('/archivos_base', methods=['GET', 'POST'])
 @check("admin")
 def archivos_base():
-    #TODO
+    form = PresidenciaArchivoBaseForm()
+
+    path_base = "archivos_base-"
+
+    paths = {
+        "plantilla_psicofisico": path_base+"plantilla_psicofisico.pdf",
+        "politicas_institucionales": path_base+"politicas_institucionales.pdf",
+        "renure": path_base+"renure.pdf"
+    }
+    archivos = {
+        "plantilla_psicofisico": archivo_service.get_archivo_by_path(paths["plantilla_psicofisico"]),
+        "politicas_institucionales": archivo_service.get_archivo_by_path(paths["politicas_institucionales"]),
+        "renure": archivo_service.get_archivo_by_path(paths["renure"])
+    }
+    print(archivo_service.get_archivo_by_path(paths["plantilla_psicofisico"]))
+    titulos = {
+        "plantilla_psicofisico": "Plantilla de psicofisico",
+        "politicas_institucionales": "Politicas institucionales",
+        "renure": "RENURE"
+    }
+
+    if form.validate_on_submit():
+        #actualizar el archivo
+        if archivos[form.titulo.data]:
+            #actualizar archivo
+            archivo = form.archivo.data
+
+            archivo_actualizado = {
+                "titulo": titulos[form.titulo.data],
+                "path": paths[form.titulo.data]
+            }
+            try:
+                archivo_actualizado = archivo_schema.load(archivo_actualizado)
+            except Exception as err:
+                print(err)
+                flash('Error al cargar el archivo', 'danger')
+                return render_template('postulaciones/archivos_base.html', form = form, archivos = archivos, titulos = titulos)
+            archivo_service.crear_archivo(**archivo_actualizado)
+            archivo_service.save_file_minio(request.files['archivo'].read(), archivo_actualizado['path'])
+            flash('Archivo actualizado', 'success')
+            archivos[form.titulo.data] = archivo_service.get_archivo_by_path(paths[form.titulo.data])
+        elif form.titulo.data == "plantilla_psicofisico" or form.titulo.data == "politicas_institucionales" or form.titulo.data == "renure":
+            #crear archivo nuevo
+            archivo = form.archivo.data
+
+            nuevo_archivo = {
+                "titulo": titulos[form.titulo.data],
+                "path": paths[form.titulo.data]
+            }
+            try:
+                nuevo_archivo = archivo_schema.load(nuevo_archivo)
+            except Exception as err:
+                print(err)
+                flash('Error al cargar el archivo', 'danger')
+                return render_template('postulaciones/archivos_base.html', form = form, archivos = archivos, titulos = titulos)
+            archivo_service.crear_archivo(**nuevo_archivo)
+            archivo_service.save_file_minio(request.files['archivo'].read(), nuevo_archivo['path'])
+            flash('Archivo nuevo cargado', 'success')
+            archivos[form.titulo.data] = archivo_service.get_archivo_by_path(paths[form.titulo.data])
+        else:
+            #error al elegir que archivo a subir
+            flash('Error al subir el archivo', 'warning')
+
+    
+    return render_template('postulaciones/archivos_base.html', form = form, archivos = archivos, titulos = titulos)

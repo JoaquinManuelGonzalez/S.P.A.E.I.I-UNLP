@@ -56,9 +56,9 @@
             <a class="nav-link" href="{{ url_for('facultades.mi_facultad') }}">Facultad</a>
           </li>
           {% endif %}
-          {% if check_permiso(session, 'archivo_listar') %}
+          {% if check_permiso(session, 'admin') %}
             <li class="nav-item active">
-              <a class="nav-link" href="/facultades">Archivos Base</a>
+              <a class="nav-link" href="{{ url_for('postulacion.archivos_base') }}">Archivos Base</a>
             </li>
           {% endif %}
           {% if check_permiso(session, 'solicitud_postulacion_listar') %}

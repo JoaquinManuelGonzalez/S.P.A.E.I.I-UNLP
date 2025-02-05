@@ -1,10 +1,11 @@
 from flask_wtf import FlaskForm
-from wtforms import FileField, BooleanField, DateField, IntegerField, StringField
-from wtforms.validators import DataRequired, Length, Optional
+from wtforms import FileField, StringField, HiddenField
+from wtforms.validators import DataRequired, Length
 from flask_wtf.file import FileAllowed
 from src.web.forms.validators import file_size_limit
 
-class PresidenciaArchivoBase(FlaskForm):
+class PresidenciaArchivoBaseForm(FlaskForm):
+    titulo = HiddenField()
     archivo = FileField(
         "Subir archivo",
         validators=[

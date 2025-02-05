@@ -1,0 +1,109 @@
+{% extends "layout.html" %}
+{% block title %}Crear Asignatura{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <div class="row align-items-center">
+        <div class="col">
+            <h1 class="m-0">Archivos base de postulaciones</h1>
+        </div>
+    </div>
+    <div class="card-body">
+        <p><strong>Plantilla psicofisico:</strong> {{ archivos.plantilla_psicofisico.titulo }} 
+            {% if archivos.plantilla_psicofisico %}
+                <a href="{{ url_for('documentos.descargar_archivo_base', path=archivos.plantilla_psicofisico.path) }}" class="btn btn-primary btn-sm">Descargar</a>
+            {% endif %}
+            <button type="button" class="btn btn-primary btn-custom mx-2" data-bs-toggle="modal" data-bs-target="#archivoNuevoModal" id="botonPlantilla">
+                Subir archivo
+            </button>
+        </p>
+        <p><strong>Politicas institucionales:</strong> {{ archivos.politicas_institucionales.titulo }} 
+            {% if archivos.politicas_institucionales %}
+                <a href="{{ url_for('documentos.descargar_archivo_base', path=archivos.politicas_institucionales.path) }}" class="btn btn-primary btn-sm">Descargar</a>
+            {% endif %}
+            <button type="button" class="btn btn-primary btn-custom mx-2" data-bs-toggle="modal" data-bs-target="#archivoNuevoModal" id="botonPoliticas">
+                Subir archivo
+            </button>
+            
+        </p>
+        <p><strong>RENURE:</strong> {{ archivos.renure.titulo }} 
+            {% if archivos.renure %}
+                <a href="{{ url_for('documentos.descargar_archivo_base', path=archivos.renure.path) }}" class="btn btn-primary btn-sm">Descargar</a>
+            {% endif %}
+            <button type="button" class="btn btn-primary btn-custom mx-2" data-bs-toggle="modal" data-bs-target="#archivoNuevoModal" id="botonRenure">
+                Subir archivo
+            </button>
+        </p>
+    </div>
+    <div class="modal fade" id="archivoNuevoModal" tabindex="-1" aria-labelledby="archivoNuevoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form action="{{ url_for('postulacion.archivos_base') }}" enctype="multipart/form-data" method="POST" >
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="archivoNuevoModalLabel">Subir archivo</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            {{ form.titulo(id="titulo") }}
+                            <p id="plantilla_psicofisico_label">{{ titulos.plantilla_psicofisico }}</p>
+                            <p id="politicas_institucionales_label">{{ titulos.politicas_institucionales }}</p>
+                            <p id="renure_label">{{ titulos.renure }}</p>
+                            {{ form.archivo(class="form-control") }}
+                            {% if form.errors %}
+                                {% for error in form.archivo.errors %}
+                                    <div class="text-danger">{{ form.errors[0] }}
+                                        <span style="color: red;">{{ error }}</span>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        Por favor elija el archivo correspondiente. Éste documento será usado por los alumnos que se postulen.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Aceptar</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const botonPlantilla = document.getElementById('botonPlantilla');
+    const botonPoliticas = document.getElementById('botonPoliticas');
+    const botonRenure = document.getElementById('botonRenure');
+    const plantilla_psicofisico_label = document.getElementById('plantilla_psicofisico_label');
+    const politicas_institucionales_label = document.getElementById('politicas_institucionales_label');
+    const renure_label = document.getElementById('renure_label');
+
+    document.addEventListener('DOMContentLoaded', function () {    
+        plantilla_psicofisico_label.style.display = 'none';
+        politicas_institucionales_label.style.display = 'none';
+        renure_label.style.display = 'none';
+
+        botonPlantilla.addEventListener('click', function (){
+            plantilla_psicofisico_label.style.display = 'block';
+            politicas_institucionales_label.style.display = 'none';
+            renure_label.style.display = 'none';
+            document.getElementById('titulo').value = "plantilla_psicofisico";
+        });
+        botonPoliticas.addEventListener('click', function (){
+            plantilla_psicofisico_label.style.display = 'none';
+            politicas_institucionales_label.style.display = 'block';
+            renure_label.style.display = 'none';
+            document.getElementById('titulo').value = "politicas_institucionales";
+        });
+        botonRenure.addEventListener('click', function (){
+            plantilla_psicofisico_label.style.display = 'none';
+            politicas_institucionales_label.style.display = 'none';
+            renure_label.style.display = 'block';
+            document.getElementById('titulo').value = "renure";
+        });
+    });
+</script>
+{% endblock %}
