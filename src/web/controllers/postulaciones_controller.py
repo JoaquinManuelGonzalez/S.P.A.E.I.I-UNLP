@@ -894,7 +894,7 @@ def seleccionar_materias(postulacion_id):
         if f_id and f_id != "" and facultades_seleccionadas[i]:
             carreras_seleccionadas.append(carreras_service.get_carrera_by_id(f_id))
         else:
-            carreras_seleccionadas.append(None)
+            carreras_seleccionadas.append(None) 
 
     asignaturas_seleccionadas = []
     for i in range(0,cantidad_materias):
@@ -904,7 +904,7 @@ def seleccionar_materias(postulacion_id):
         else:
             asignaturas_seleccionadas.append(None)
 
-    return render_template('postulaciones/elegir_materias.html', cantidad_materias=cantidad_materias, facultades=facultades, facultades_seleccionadas=facultades_seleccionadas, carreras_seleccionadas=carreras_seleccionadas, asignaturas_seleccionadas=asignaturas_seleccionadas, postulacion_id=postulacion_id)
+    return render_template('postulaciones/elegir_materias.html', cantidad_materias=cantidad_materias, facultades=facultades, facultades_seleccionadas=facultades_seleccionadas, carreras_seleccionadas=carreras_seleccionadas, asignaturas_seleccionadas=asignaturas_seleccionadas, postulacion_id=postulacion_id, es_de_posgrado=postulacion_service.get_postulacion_by_id(postulacion_id).de_posgrado)
 
 @postulacion_bp.post('/guardar_materias/<int:postulacion_id>')
 #@check("alumno")
