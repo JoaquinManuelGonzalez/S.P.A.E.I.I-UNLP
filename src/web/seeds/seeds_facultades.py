@@ -71,7 +71,8 @@ def crear_asignaturas():
         asignatura = Asignatura(
             nombre = f'Asignatura{i}',
             facultad_id = facultades[i].id,
-            carreras = [carreras[i]]
+            carreras = [carreras[i]],
+            carga_horaria = 130
         )
         asignaturas.append(asignatura)
         db.session.add(asignatura)

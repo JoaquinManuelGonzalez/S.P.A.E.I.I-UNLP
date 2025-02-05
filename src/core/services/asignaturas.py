@@ -7,14 +7,15 @@ from src.core.services import carreras as carreras_service
 from src.web.forms import AsignaturaForm
 
 def crear_asignatura_web(formulario: AsignaturaForm):
-    return create_asignatura(nombre=formulario.nombre.data, facultad_id=formulario.facultad_id.data)
+    return create_asignatura(nombre=formulario.nombre.data, facultad_id=formulario.facultad_id.data, carga_horaria=formulario.carga_horaria.data)
 
-def create_asignatura(nombre: str, facultad_id: int, id_carreras = []) -> Asignatura:
+def create_asignatura(nombre: str, facultad_id: int, carga_horaria: int, id_carreras = []) -> Asignatura:
     """Crea una nueva asignatura en la base de datos.
 
     Args:
         nombre (str): El nombre de la asignatura.
         facultad_id (int): El id de la facultad en la que se dicta la asignatura.
+        carga_horaria (int): Carga horaria de la materia
         id_carreras (list): Una lista de IDs de carreras a asociar.
 
     Returns:
@@ -24,7 +25,7 @@ def create_asignatura(nombre: str, facultad_id: int, id_carreras = []) -> Asigna
         Exception: Si ocurre un error al crear la asignatura.
     """
 
-    new_asignatura = Asignatura(nombre=nombre, facultad_id=facultad_id)
+    new_asignatura = Asignatura(nombre=nombre, facultad_id=facultad_id, carga_horaria=carga_horaria)
     new_asignatura.carreras = carreras_service.list_carreras(id_carreras)
 
     try:
@@ -36,13 +37,14 @@ def create_asignatura(nombre: str, facultad_id: int, id_carreras = []) -> Asigna
         raise Exception(f"Error creating Asignatura: {e}")
     
 def editar_asignatura_web(asignatura_id: int, formulario: AsignaturaForm):
-    return edit_asignatura(asignatura_id=asignatura_id, nombre=formulario.nombre.data, facultad_id=formulario.facultad_id.data)
+    return edit_asignatura(asignatura_id=asignatura_id, nombre=formulario.nombre.data, facultad_id=formulario.facultad_id.data, carga_horaria=formulario.carga_horaria.data)
 
-def edit_asignatura(asignatura_id: int, nombre: str, facultad_id: int) -> Asignatura:
+def edit_asignatura(asignatura_id: int, nombre: str, facultad_id: int, carga_horaria: int) -> Asignatura:
 
     asignatura = get_asignatura_by_id(asignatura_id)
     asignatura.nombre = nombre
     asignatura.facultad_id = facultad_id
+    asignatura.carga_horaria = carga_horaria
 
     try:
         db.session.add(asignatura)
