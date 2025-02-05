@@ -35,6 +35,7 @@ RUN apt-get update -y
 RUN apt-get install pkg-config -y
 RUN apt-get install -y python3-dev build-essential
 RUN apt-get install -y default-libmysqlclient-dev
+RUN apt-get update
 RUN apt-get install -y weasyprint
     
 
