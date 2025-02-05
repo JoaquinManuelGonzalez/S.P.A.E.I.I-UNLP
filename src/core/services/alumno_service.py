@@ -34,7 +34,7 @@ def ordenar_alumnos(
             return query.order_by(InformacionAlumnoEntrante.email.desc())
 
 
-def get_alumnos_con_postulaciones_activas(facultad_id):
+def get_alumnos_con_postulaciones_activas(facultad_id, posgrado = None):
     # Estados que queremos excluir
     estados_excluir = [
         'Solicitud de Postulacion',
@@ -44,19 +44,35 @@ def get_alumnos_con_postulaciones_activas(facultad_id):
     ]
 
     # Subconsulta para verificar si existe una postulación válida asociada al alumno
-    subconsulta = (
-        db.session.query(Postulacion.id)
-        .join(Postulacion.asignaturas)  # Unir con PostulacionAsignatura
-        .join(PostulacionAsignatura.asignatura) # Unir con Asignatura
-        .join(Asignatura.facultad)      # Unir con Facultad
-        .join(Postulacion.estado)       # Unir con Estado
-        .filter(
-            Asignatura.facultad_id == facultad_id,   # Filtrar por facultad específica
-            Estado.nombre.notin_(estados_excluir),   # Excluir estados no deseados
-            Postulacion.id_informacion_alumno_entrante == InformacionAlumnoEntrante.id
+    if (not posgrado):
+        subconsulta = (
+            db.session.query(Postulacion.id)
+            .join(Postulacion.asignaturas)  # Unir con PostulacionAsignatura
+            .join(PostulacionAsignatura.asignatura) # Unir con Asignatura
+            .join(Asignatura.facultad)      # Unir con Facultad
+            .join(Postulacion.estado)       # Unir con Estado
+            .filter(
+                Asignatura.facultad_id == facultad_id,   # Filtrar por facultad específica
+                Estado.nombre.notin_(estados_excluir),   # Excluir estados no deseados
+                Postulacion.id_informacion_alumno_entrante == InformacionAlumnoEntrante.id
+            )
+            .exists()  # Verificar si existe una postulación que cumpla con los filtros
         )
-        .exists()  # Verificar si existe una postulación que cumpla con los filtros
-    )
+    else:
+        subconsulta = (
+            db.session.query(Postulacion.id)
+            .join(Postulacion.asignaturas)  # Unir con PostulacionAsignatura
+            .join(PostulacionAsignatura.asignatura) # Unir con Asignatura
+            .join(Asignatura.facultad)      # Unir con Facultad
+            .join(Postulacion.estado)       # Unir con Estado
+            .filter(
+                Asignatura.facultad_id == facultad_id,   # Filtrar por facultad específica
+                Estado.nombre.notin_(estados_excluir),   # Excluir estados no deseados
+                Postulacion.id_informacion_alumno_entrante == InformacionAlumnoEntrante.id,
+                Postulacion.de_posgrado == posgrado
+            )
+            .exists()  # Verificar si existe una postulación que cumpla con los filtros
+        )
 
     # Devuelve la consulta para que pueda ser extendida
     return db.session.query(InformacionAlumnoEntrante).filter(subconsulta)
@@ -70,11 +86,12 @@ def filtrar_alumnos(
         ordenado_por,
         orden,
         por_pagina,
-        facultad
+        facultad,
+        posgrado = None
 ):
     
     if facultad:
-        query = get_alumnos_con_postulaciones_activas(facultad)
+        query = get_alumnos_con_postulaciones_activas(facultad, posgrado)
     else:
         query = InformacionAlumnoEntrante.query
 

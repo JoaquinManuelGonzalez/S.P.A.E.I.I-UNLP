@@ -145,7 +145,6 @@
         <li class="nav-item" role="presentation">
             <a class="nav-link" id="tutores-tab" data-bs-toggle="tab" href="#tutores" role="tab" aria-controls="tutores" aria-selected="false">Datos de Tutores</a>
         </li>
-        {% if rol != "punto_focal" %}
         <li class="nav-item" role="presentation">
             {% if ( (postulacion.estado.nombre == "Postulacion en Espera de Aceptacion") or (postulacion.estado.nombre == "Postulacion en Espera de ser Completada") ) %}
             <a class="nav-link bg-warning" id="archivos-tab" data-bs-toggle="tab" href="#archivos" role="tab" aria-controls="archivos" aria-selected="false">Datos de Archivos</a>
@@ -153,7 +152,6 @@
             <a class="nav-link" id="archivos-tab" data-bs-toggle="tab" href="#archivos" role="tab" aria-controls="archivos" aria-selected="false">Datos de Archivos</a>
             {% endif %}
         </li>
-        {% endif %}
         <li class="nav-item" role="presentation">
             <a class="nav-link" id="asignaturas-tab" data-bs-toggle="tab" href="#asignaturas" role="tab" aria-controls="asignaturas" aria-selected="false">Datos de Materias</a>
         </li>
@@ -257,6 +255,7 @@
                 <h5 class="mb-0">Datos de Archivos</h5>
             </div>
             <div class="card-body">
+                {% if rol != "punto_focal" %}
                 <p><strong>Pasaporte:</strong> {{ archivos.pasaporte.titulo }} 
                     {% if archivos.pasaporte.path != "sin filename" %}
                         <a href="{{ url_for('postulacion.descargar_archivo', filename=archivos.pasaporte.path) }}" class="btn btn-primary btn-sm">Descargar</a>
@@ -277,11 +276,13 @@
                         <a href="{{ url_for('postulacion.descargar_archivo', filename=archivos.certificado_b1.path) }}" class="btn btn-primary btn-sm">Descargar</a>
                     {% endif %}
                 </p>
+                {% endif %}
                 <p><strong>Plan de trabajo:</strong> {{ archivos.plan_trabajo.titulo }} 
                     {% if archivos.plan_trabajo.path != "sin filename" %}
                         <a href="{{ url_for('postulacion.descargar_archivo', filename=archivos.plan_trabajo.path) }}" class="btn btn-primary btn-sm">Descargar</a>
                     {% endif %}
                 </p>
+                {% if rol != "punto_focal" %}
                 <p><strong>Psicofísico:</strong> {{ archivos.psicofisico.titulo }} 
                     {% if archivos.psicofisico.path != "sin filename" %}
                         <a href="{{ url_for('postulacion.descargar_archivo', filename=archivos.psicofisico.path) }}" class="btn btn-primary btn-sm">Descargar</a>
@@ -307,6 +308,7 @@
                         <a href="{{ url_for('postulacion.descargar_archivo', filename=archivos.seguro_medico.path) }}" class="btn btn-primary btn-sm">Descargar</a>
                     {% endif %}
                 </p>
+                {% endif %}
           </div>
         </div>
         <div>
