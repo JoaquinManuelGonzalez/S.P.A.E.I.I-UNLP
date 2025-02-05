@@ -974,15 +974,15 @@ def visado_seguro_medico_post(id_postulacion):
     postulacion = postulacion_service.get_postulacion_by_id(id_postulacion)
     if not form.validate_on_submit():
         flash('Error al cargar los datos', 'danger')
-        return render_template('postulaciones/visado_seguro_medico.html', form=form, id_postulacion=id_postulacion)
+        return render_template('postulaciones/visado_seguro_medico_form.html', form=form, id_postulacion=id_postulacion)
     
     if not form.visado.data:
         flash('El archivo de visado es obligatorio', 'danger')
-        return render_template('postulaciones/visado_seguro_medico.html', form=form, id_postulacion=id_postulacion)
+        return render_template('postulaciones/visado_seguro_medico_form.html', form=form, id_postulacion=id_postulacion)
     
     if not form.seguro_medico.data:
         flash('El archivo de seguro medico es obligatorio', 'danger')
-        return render_template('postulaciones/visado_seguro_medico.html', form=form, id_postulacion=id_postulacion)
+        return render_template('postulaciones/visado_seguro_medico_form.html', form=form, id_postulacion=id_postulacion)
     
 
     alumno = postulacion.informacion_alumno_entrante
