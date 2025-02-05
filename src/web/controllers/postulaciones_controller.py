@@ -1032,3 +1032,8 @@ def visado_seguro_medico_post(id_postulacion):
 
     flash('Datos guardados exitosamente', 'success')
     return redirect(url_for('postulacion.mis_postulaciones'))
+
+@postulacion_bp.route('/archivos_base', methods=['GET', 'POST'])
+@check("admin")
+def archivos_base():
+    #TODO
