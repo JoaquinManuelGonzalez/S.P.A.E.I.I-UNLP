@@ -884,14 +884,6 @@ def seleccionar_materias(postulacion_id):
 
     cantidad_materias = 5
 
-    asignaturas_seleccionadas = []
-    for i in range(0,cantidad_materias):
-        f_id = request.args.get(f"asignatura_{i}", None)
-        if f_id and f_id != "":
-            asignaturas_seleccionadas.append(asignaturas_service.get_asignatura_by_id(f_id))
-        else:
-            asignaturas_seleccionadas.append(None)
-
     facultades_seleccionadas = []
     for i in range(0,cantidad_materias):
         f_id = request.args.get(f"facultad_{i}", None)
@@ -903,12 +895,20 @@ def seleccionar_materias(postulacion_id):
     carreras_seleccionadas = []
     for i in range(0,cantidad_materias):
         f_id = request.args.get(f"carrera_{i}", None)
-        if f_id and f_id != "":
+        if f_id and f_id != "" and facultades_seleccionadas[i]:
             carreras_seleccionadas.append(carreras_service.get_carrera_by_id(f_id))
         else:
-            carreras_seleccionadas.append(None)
+            carreras_seleccionadas.append(None) 
 
-    return render_template('postulaciones/elegir_materias.html', cantidad_materias=cantidad_materias, facultades=facultades, facultades_seleccionadas=facultades_seleccionadas, carreras_seleccionadas=carreras_seleccionadas, asignaturas_seleccionadas=asignaturas_seleccionadas, postulacion_id=postulacion_id)
+    asignaturas_seleccionadas = []
+    for i in range(0,cantidad_materias):
+        f_id = request.args.get(f"asignatura_{i}", None)
+        if f_id and f_id != "" and carreras_seleccionadas[i]:
+            asignaturas_seleccionadas.append(asignaturas_service.get_asignatura_by_id(f_id))
+        else:
+            asignaturas_seleccionadas.append(None)
+
+    return render_template('postulaciones/elegir_materias.html', cantidad_materias=cantidad_materias, facultades=facultades, facultades_seleccionadas=facultades_seleccionadas, carreras_seleccionadas=carreras_seleccionadas, asignaturas_seleccionadas=asignaturas_seleccionadas, postulacion_id=postulacion_id, es_de_posgrado=postulacion_service.get_postulacion_by_id(postulacion_id).de_posgrado)
 
 @postulacion_bp.post('/guardar_materias/<int:postulacion_id>')
 @check("alumno")

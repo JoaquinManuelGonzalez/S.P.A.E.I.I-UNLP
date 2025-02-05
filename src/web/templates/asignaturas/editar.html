@@ -32,6 +32,13 @@
                 {% endif %}
             </div>
 
+            <div class="mb-3">
+                {{ formulario.carga_horaria.label }}{{ formulario.carga_horaria(class="form-select") }}
+                {% if formulario.carga_horaria.errors %}
+                    <div class="text-danger">{{ formulario.carga_horaria.errors[0] }}</div>
+                {% endif %}
+            </div>
+
             <a href="{{ url_for("asignaturas.visualizar", asignatura_id = asignatura.id) }}" class="btn btn-secondary me-2">Cancelar</a>
             <button type="submit" class="btn btn-primary my-3">Confirmar cambios</button>
         </div>

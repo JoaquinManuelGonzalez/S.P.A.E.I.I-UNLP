@@ -44,7 +44,7 @@ def get_alumnos_con_postulaciones_activas(facultad_id, posgrado = None):
     ]
 
     # Subconsulta para verificar si existe una postulación válida asociada al alumno
-    if (not posgrado):
+    if (posgrado == None):
         subconsulta = (
             db.session.query(Postulacion.id)
             .join(Postulacion.asignaturas)  # Unir con PostulacionAsignatura
@@ -89,7 +89,6 @@ def filtrar_alumnos(
         facultad,
         posgrado = None
 ):
-    
     if facultad:
         query = get_alumnos_con_postulaciones_activas(facultad, posgrado)
     else:

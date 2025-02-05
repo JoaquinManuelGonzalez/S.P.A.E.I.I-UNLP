@@ -1,5 +1,5 @@
-from wtforms import StringField, SelectField, HiddenField
-from wtforms.validators import DataRequired, Length, ValidationError
+from wtforms import StringField, SelectField, HiddenField, IntegerField
+from wtforms.validators import DataRequired, Length, ValidationError, NumberRange
 from flask_wtf import FlaskForm
 import re
 
@@ -8,6 +8,7 @@ class AsignaturaForm(FlaskForm):
     id = HiddenField()
     nombre = StringField('Nombre', validators=[DataRequired(), Length(min=2, max=100)])
     facultad_id = SelectField('Facultad en la que se dicta', choices=[], validators=[DataRequired()])
+    carga_horaria = IntegerField('Carga horaria (Horas totales)', validators=[DataRequired(), NumberRange(min=1, message="Debe ser un número mayor a 0")])
     
 
     def validate_nombre(self, field):
