@@ -39,9 +39,13 @@ def listar_alumnos():
     """
 
     facultad = None
+    posgrado = None
     if get_rol_sesion(session) == "punto_focal":
         usuario = usuario_service.buscar_usuario(get_id_sesion(session))
         facultad = usuario.facultad_id
+        if usuario.grado != usuario.posgrado:
+            posgrado = usuario.posgrado
+            
 
     nombre = request.args.get("nombre")
     apellido = request.args.get("apellido")
@@ -52,7 +56,7 @@ def listar_alumnos():
     por_pagina = 25
 
     alumnos = alumno_service.filtrar_alumnos(
-        nombre, apellido, email, pagina, ordenado_por, orden, por_pagina, facultad
+        nombre, apellido, email, pagina, ordenado_por, orden, por_pagina, facultad, posgrado = posgrado
     )
 
     return render_template("alumnos/listar-alumnos.html", alumnos=alumnos)

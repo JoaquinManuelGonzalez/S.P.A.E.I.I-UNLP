@@ -62,11 +62,11 @@
                             </td>
                             <td class="text-end align-middle">
                                 <div class="btn-group">
-                                    <a href="{{ url_for("carreras.visualizar", carrera_id = carrera.id) }}" class="btn btn-primary" data-bs-toggle="tooltip"
+                                    <a href="{{ url_for('carreras.visualizar', carrera_id = carrera.id) }}" class="btn btn-primary" data-bs-toggle="tooltip"
                                        data-bs-title="Ver"><i class="bi bi-eye-fill"></i></a>
                                 </div>
                                 {% if check_permiso(session, 'carreras_editar') %}
-                                    <a href="{{ url_for("carreras.editar", carrera_id = carrera.id) }}" class="btn btn-warning" data-bs-toggle="tooltip"
+                                    <a href="{{ url_for('carreras.editar', carrera_id = carrera.id) }}" class="btn btn-warning" data-bs-toggle="tooltip"
                                     data-bs-title="Editar"><i class="bi bi-pencil-fill"></i></a>
                                 {% endif %}
                                 {% if check_permiso(session, 'carreras_eliminar') %}
@@ -144,11 +144,11 @@
                             <td class="text-center align-middle">{{ asignatura.facultad.acronimo }}</td>
                             <td class="text-end align-middle">
                                 <div class="btn-group">
-                                    <a href="{{ url_for("asignaturas.visualizar", asignatura_id = asignatura.id) }}" class="btn btn-primary" data-bs-toggle="tooltip"
+                                    <a href="{{ url_for('asignaturas.visualizar', asignatura_id = asignatura.id) }}" class="btn btn-primary" data-bs-toggle="tooltip"
                                        data-bs-title="Ver"><i class="bi bi-eye-fill"></i></a>
                                 </div>
                                 {% if check_permiso(session, 'asignaturas_editar') %}
-                                    <a href="{{ url_for("asignaturas.editar", asignatura_id = asignatura.id) }}" class="btn btn-warning" data-bs-toggle="tooltip"
+                                    <a href="{{ url_for('asignaturas.editar', asignatura_id = asignatura.id) }}" class="btn btn-warning" data-bs-toggle="tooltip"
                                         data-bs-title="Editar"><i class="bi bi-pencil-fill"></i>
                                     </a>
                                 {% endif %}
@@ -171,7 +171,7 @@
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary"
                                                         data-bs-dismiss="modal">Cancelar</button>
-                                                    <form method="POST" action="{{ url_for("asignaturas.eliminar", asignatura_id = asignatura.id, facultad_id=facultad.id) }}">
+                                                    <form method="POST" action="{{ url_for('asignaturas.eliminar', asignatura_id = asignatura.id, facultad_id=facultad.id) }}">
                                                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                                         <button type="submit" class="btn btn-danger">Eliminar</button>
                                                     </form>

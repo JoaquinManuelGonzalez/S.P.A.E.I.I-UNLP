@@ -1,10 +1,11 @@
-from flask import Blueprint, flash, redirect, request, render_template, url_for
+from flask import Blueprint, flash, redirect, request, render_template, url_for, session
 from src.core.services import facultades as facultades_service
 from src.core.services import carreras as carreras_service
 from src.core.services import asignaturas as asignaturas_service
 from src.core.services import usuario_service as usuarios_service
 from src.web.forms.facultad_form import FacultadForm
 from src.web.handlers.permisos import check
+from src.web.handlers.auth import get_usuario_actual
 
 
 facultades_bp = Blueprint("facultades", __name__, url_prefix="/facultades")
@@ -28,7 +29,7 @@ def listar():
 
 #-----Visualizar-----
 @facultades_bp.get('/<int:facultad_id>')
-@check("facultades_listar")
+@check("facultades_detalle")
 def visualizar(facultad_id):
     """Detalle de la facultad con id facultad_id.
 
@@ -65,6 +66,12 @@ def visualizar(facultad_id):
                            carreras=carreras, nombre_carrera=nombre_carrera, tipo_carrera_id=tipo_carrera_id, tipos_carrera=tipos_carrera,
                            asignaturas=asignaturas, nombre_asignatura=nombre_asignatura, pagina_asignatura=pagina_asignatura,
                            puntos_focales=puntos_focales)
+
+@facultades_bp.route("/mifacultad", methods=['GET'])
+@check("punto_focal")
+def mi_facultad():
+    return redirect(url_for("facultades.visualizar", facultad_id = get_usuario_actual(session).facultad_id))
+
 
 # -----Crear Facultad-----
 @facultades_bp.route("/crear", methods=['GET', 'POST'])
