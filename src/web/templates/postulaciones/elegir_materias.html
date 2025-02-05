@@ -35,11 +35,22 @@
                             <label for="carrera_{{ i }}" class="form-label">Buscar por carrera a la que corresponde:</label>
                             <select class="form-select" id="carrera_{{ i }}" name="carrera_{{ i }}">
                                 <option value="">Seleccione una carrera</option>
+                                {% if es_de_posgrado %}
+                                    {% if facultades_seleccionadas[i] %}
+                                        {% for carrera in facultades_seleccionadas[i].carreras %}
+                                            <option {{ (carreras_seleccionadas[i] and (carreras_seleccionadas[i].id == carrera.id)) and "selected" or "" }}
+                                            value="{{ carrera.id }}">{{ carrera.nombre }}</option>
+                                        {% endfor %}
+                                    {% endif %}
+                                {% else %}
                                 {% if facultades_seleccionadas[i] %}
-                                    {% for carrera in facultades_seleccionadas[i].carreras %}
-                                        <option {{ (carreras_seleccionadas[i] and (carreras_seleccionadas[i].id == carrera.id)) and "selected" or "" }}
-                                                value="{{ carrera.id }}">{{ carrera.nombre }}</option>
-                                    {% endfor %}
+                                        {% for carrera in facultades_seleccionadas[i].carreras %}
+                                            {% if carrera.tipo_carrera.nombre == "Grado" %}
+                                                <option {{ (carreras_seleccionadas[i] and (carreras_seleccionadas[i].id == carrera.id)) and "selected" or "" }}
+                                                        value="{{ carrera.id }}">{{ carrera.nombre }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endif %}
                                 {% endif %}
                             </select>
                         </div>
