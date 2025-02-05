@@ -16,6 +16,7 @@ class Asignatura(db.Model):
     facultad = db.relationship("Facultad")
     carreras = db.relationship("Carrera", secondary=asignaturas_carreras, back_populates="asignaturas")
     postulaciones = db.relationship('PostulacionAsignatura', back_populates='asignatura', passive_deletes=True)
+    carga_horaria = db.Column(db.Integer, nullable=False)
 
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
