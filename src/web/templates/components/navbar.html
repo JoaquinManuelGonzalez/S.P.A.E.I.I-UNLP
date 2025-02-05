@@ -81,6 +81,11 @@
               </li>
             {% endif %}
           {% endif %}
+          {% if check_permiso(session, 'admin') %}
+            <li class="nav-item active">
+              <a class="nav-link" href="{{ url_for('programa.listar_programas')}}">Programas</a>
+            </li>
+          {% endif %}
         {% endif %}
         <li class="nav-item toggle-hidden" style="display: none;">
           <a class="dropdown-item text-success" href="{{ url_for('usuarios.ver_detalle_usuario', id_usuario=get_id_sesion(session)) }}">
