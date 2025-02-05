@@ -176,6 +176,12 @@ def postulaciones_pendientes_focal(
             (PostulacionAsignatura.asignatura.has(Asignatura.facultad_id == punto_focal.facultad_id)),
             ~(PostulacionAsignatura.validado))
         ))
+    query = query.filter(
+        or_(
+            Postulacion.de_posgrado == punto_focal.posgrado, #Si la postulacion es de posgrado y el punto focal tambien
+            ~Postulacion.de_posgrado == punto_focal.grado #Si la postulacion es de grado y el punto focal tambien
+        )
+    )
 
     if nombre:
         query = query.filter(Postulacion.informacion_alumno_entrante.has(InformacionAlumnoEntrante.nombre.ilike(f"%{nombre}%")))
@@ -270,3 +276,11 @@ def puede_postularse(email):
             return False
     else:
         return True
+
+def postulacion_corresponde_a_punto_focal(postulacion, user_punto_focal):
+    #si la postulacion es de posgrado y el punto focal tambien, O si la postulacion es de grado y el punto focal tambien
+    if ( (postulacion.de_posgrado == user_punto_focal.posgrado) or (not postulacion.de_posgrado == user_punto_focal.grado) ):
+        for postulacion_asignatura in postulacion.asignaturas:
+            if postulacion_asignatura.asignatura.facultad_id == user_punto_focal.facultad_id:
+                return True #si existe al menos una asignatura que le corresponda al punto focal
+    return False

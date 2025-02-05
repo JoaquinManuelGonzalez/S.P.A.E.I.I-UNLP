@@ -106,20 +106,27 @@ def ver_postulacion(id_postulacion):
         else:
             tutor_academico = tutor
 
-    archivos = {
-        "pasaporte": archivo_service.get_archivo_by_postulacion_and_tipo("pasaporte", alumno.id),
-        "cedula_de_identidad": archivo_service.get_archivo_by_postulacion_and_tipo("cedula", alumno.id),
-        "carta_recomendacion": archivo_service.get_archivo_by_postulacion_and_tipo("cartaRecomendacion", alumno.id, id_postulacion),
-        "plan_trabajo": archivo_service.get_archivo_by_postulacion_and_tipo("planDeTrabajo", alumno.id, id_postulacion),
-        "certificado_b1": archivo_service.get_archivo_by_postulacion_and_tipo("certificadoB1", alumno.id),
-        "psicofisico": archivo_service.get_archivo_by_postulacion_and_tipo("psicofisico", alumno.id, id_postulacion),
-        "politicas_institucionales": archivo_service.get_archivo_by_postulacion_and_tipo("politicasI", alumno.id, id_postulacion),
-        "certificado_discapacidad": archivo_service.get_archivo_by_postulacion_and_tipo("certificadoDiscapacidad", alumno.id, id_postulacion),
-        "visado": archivo_service.get_archivo_by_postulacion_and_tipo("visado", alumno.id, id_postulacion),
-        "seguro_medico": archivo_service.get_archivo_by_postulacion_and_tipo("seguroMedico", alumno.id, id_postulacion)
-    }
-    #archivo_service.get_archivos_by_postulacion(postulacion.id)
     rol = get_rol_sesion(session)
+    archivos = {}
+    if rol != "punto_focal":
+        archivos = {
+            "pasaporte": archivo_service.get_archivo_by_postulacion_and_tipo("pasaporte", alumno.id),
+            "cedula_de_identidad": archivo_service.get_archivo_by_postulacion_and_tipo("cedula", alumno.id),
+            "carta_recomendacion": archivo_service.get_archivo_by_postulacion_and_tipo("cartaRecomendacion", alumno.id, id_postulacion),
+            "plan_trabajo": archivo_service.get_archivo_by_postulacion_and_tipo("planDeTrabajo", alumno.id, id_postulacion),
+            "certificado_b1": archivo_service.get_archivo_by_postulacion_and_tipo("certificadoB1", alumno.id),
+            "psicofisico": archivo_service.get_archivo_by_postulacion_and_tipo("psicofisico", alumno.id, id_postulacion),
+            "politicas_institucionales": archivo_service.get_archivo_by_postulacion_and_tipo("politicasI", alumno.id, id_postulacion),
+            "certificado_discapacidad": archivo_service.get_archivo_by_postulacion_and_tipo("certificadoDiscapacidad", alumno.id, id_postulacion),
+            "visado": archivo_service.get_archivo_by_postulacion_and_tipo("visado", alumno.id, id_postulacion),
+            "seguro_medico": archivo_service.get_archivo_by_postulacion_and_tipo("seguroMedico", alumno.id, id_postulacion)
+        }
+    elif rol == "punto_focal":
+        archivos = {
+            "plan_trabajo": archivo_service.get_archivo_by_postulacion_and_tipo("planDeTrabajo", alumno.id, id_postulacion)
+        }
+    #archivo_service.get_archivos_by_postulacion(postulacion.id)
+    
 
     if ( (rol == "presidencia_jefe" or "presidencia_gestor") and (postulacion.estado.nombre == "Postulacion en Espera de Aceptacion") ):
         form = PresidenciaPrecarga()
@@ -133,13 +140,16 @@ def ver_postulacion(id_postulacion):
 
     usuario_actual = get_usuario_actual(session)
     if (rol == "punto_focal"):
-        asignaturas_relevantes = postulacion_service.get_asignaturas_de_facultad(postulacion.id, usuario_actual.facultad_id )
-        if not asignaturas_relevantes:
-            abort(403)
-        if any((not asignatura.validado) and (asignatura.asignatura.facultad_id == usuario_actual.facultad_id) for asignatura in postulacion.asignaturas):
-            require_punto_focal = True
+        if postulacion_service.postulacion_corresponde_a_punto_focal(postulacion, usuario_actual):
+            asignaturas_relevantes = postulacion_service.get_asignaturas_de_facultad(postulacion.id, usuario_actual.facultad_id )
+            if not asignaturas_relevantes:
+                print("what the fuck")
+            if any((not asignatura.validado) and (asignatura.asignatura.facultad_id == usuario_actual.facultad_id) for asignatura in postulacion.asignaturas):
+                require_punto_focal = True
+            else:
+                require_punto_focal = False
         else:
-            require_punto_focal = False
+            abort(403)
     else:
         asignaturas_relevantes = None
         require_punto_focal = False
@@ -273,6 +283,8 @@ def aceptar_asignaturas(id_postulacion):
     postulacion = postulacion_service.get_postulacion_by_id(id_postulacion)
     alumno = alumno_service.get_alumno_by_id(postulacion.id_informacion_alumno_entrante)
     punto_focal = usuario_service.buscar_usuario(get_id_sesion(session)) #current user
+    if (not postulacion_service.postulacion_corresponde_a_punto_focal(postulacion, punto_focal)):
+        abort(403)
     postulacion_service.validar_asignaturas_de_postulacion(postulacion, punto_focal.facultad_id)
     flash('Asignaturas aceptadas', 'success')
     return redirect(url_for('postulacion.acciones_pendientes_focal'))
@@ -282,6 +294,9 @@ def aceptar_asignaturas(id_postulacion):
 @check("punto_focal")
 def rechazar_asignaturas(id_postulacion):
     postulacion = postulacion_service.get_postulacion_by_id(id_postulacion)
+    punto_focal = usuario_service.buscar_usuario(get_id_sesion(session)) #current user
+    if (not postulacion_service.postulacion_corresponde_a_punto_focal(postulacion, punto_focal)):
+        abort(403)
     alumno = alumno_service.get_alumno_by_id(postulacion.id_informacion_alumno_entrante)
     motivo = request.form.get('reject_reason')
     if not motivo:

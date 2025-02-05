@@ -53,10 +53,12 @@ def check_permiso(session, permiso):
                 return False
         elif "postulaciones" in request.path.split('/'):
             if ("punto_focal" in permisos):
-                print("vpy a retornar true")
                 return True
             if (id_buscado != usuario_sesion.id_alumno):
                 return False
+        elif ( (permiso.endswith('detalle')) and ("facultades" in request.path.split('/')) and ("punto_focal" in permisos) ):
+            if id_buscado == usuario_sesion.facultad_id:
+                return True
     
     return permiso in permisos
 

@@ -83,6 +83,8 @@ def enlazar_puntos_focales(usuarios):
     for i in range(len(puntos_focales)):
         if i < len(facultades):
             puntos_focales[i].facultad_id = facultades[i].id
+    puntos_focales[0].grado = True
+    puntos_focales[1].posgrado = True
     db.session.commit()
 
 def crear_estados():
