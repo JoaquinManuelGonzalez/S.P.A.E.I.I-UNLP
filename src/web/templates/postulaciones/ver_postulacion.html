@@ -309,7 +309,13 @@
                     {% endif %}
                 </p>
                 {% endif %}
-          </div>
+            {% if rol != "punto_focal" and postulacion_en_paso5(postulacion) %}
+                <a href="{{ url_for('postulacion.archivos_alumno', id_postulacion=postulacion.id) }}" type="button" class="btn btn-primary btn-custom mx-2">
+                    Descargar archivos provistos por la Universidad de La Plata
+                </a>
+            {% endif %}
+            </div>
+            
         </div>
         <div>
             {% if ( (postulacion.estado.nombre == "Postulacion en Espera de Aceptacion") or (postulacion.estado.nombre == "Postulacion en Espera de ser Completada") ) %}

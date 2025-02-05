@@ -59,7 +59,7 @@ def crear_carreras():
         carrera = Carrera(
             nombre = f'Carrera{i}',
             facultad_id = facultades[i].id,
-            tipo_carrera_id = 2
+            tipo_carrera_id = 1
         )
         carreras.append(carrera)
         db.session.add(carrera)

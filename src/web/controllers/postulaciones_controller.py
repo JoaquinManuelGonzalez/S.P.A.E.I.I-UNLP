@@ -21,7 +21,6 @@ from src.web.forms.postulacion_estadia_form import PostulacionEstadiaForm
 from src.web.forms.presidencia_subir_precarga_form import PresidenciaPrecarga
 from src.web.forms.presidencia_subir_archivo_base_form import PresidenciaArchivoBaseForm
 from src.web.forms.estado_cursada_form import EstadoCursadaForm
-from src.web.schemas.archivo_schema import archivo_schema
 from src.web.forms.visado_seguro_medico_form import VisadoSeguroMedicoForm
 from src.web.schemas.postulacion_schema import postulacion_schema
 from src.web.schemas.archivo_schema import archivo_schema
@@ -120,7 +119,8 @@ def ver_postulacion(id_postulacion):
             "politicas_institucionales": archivo_service.get_archivo_by_postulacion_and_tipo("politicasI", alumno.id, id_postulacion),
             "certificado_discapacidad": archivo_service.get_archivo_by_postulacion_and_tipo("certificadoDiscapacidad", alumno.id, id_postulacion),
             "visado": archivo_service.get_archivo_by_postulacion_and_tipo("visado", alumno.id, id_postulacion),
-            "seguro_medico": archivo_service.get_archivo_by_postulacion_and_tipo("seguroMedico", alumno.id, id_postulacion)
+            "seguro_medico": archivo_service.get_archivo_by_postulacion_and_tipo("seguroMedico", alumno.id, id_postulacion),
+            "precarga": archivo_service.get_archivo_by_postulacion_and_tipo("precarga", alumno.id, id_postulacion),
         }
     elif rol == "punto_focal":
         archivos = {
@@ -145,6 +145,7 @@ def ver_postulacion(id_postulacion):
             asignaturas_relevantes = postulacion_service.get_asignaturas_de_facultad(postulacion.id, usuario_actual.facultad_id )
             if not asignaturas_relevantes:
                 print("what the fuck")
+                abort(403)
             if any((not asignatura.validado) and (asignatura.asignatura.facultad_id == usuario_actual.facultad_id) for asignatura in postulacion.asignaturas):
                 require_punto_focal = True
             else:
@@ -203,7 +204,7 @@ def aceptar_solicitud(id_postulacion):
         print(f"El archivo precarga se sube así: {precarga.filename}")
         path_precarga = f"{id_postulacion}_{alumno.id}_precarga_{precarga.filename}"
         archivo_precarga = {
-            "titulo": "Precarga electronica",
+            "titulo": "Precarga_electronica",
             "path": path_precarga,
             "id_postulacion": id_postulacion,
             "id_informacion_alumno_entrante": alumno.id
@@ -1102,3 +1103,32 @@ def archivos_base():
 
     
     return render_template('postulaciones/archivos_base.html', form = form, archivos = archivos, titulos = titulos)
+
+
+@postulacion_bp.get('/archivos_postulacion/<int:id_postulacion>')
+@check("postulaciones_detalle")
+def archivos_alumno(id_postulacion):
+    if (get_rol_sesion(session) == "punto_focal"):
+        abort(403)
+
+    postulacion = postulacion_service.get_postulacion_by_id(id_postulacion)
+
+    if (not postulacion_service.postulacion_en_paso5(postulacion)):
+        abort(403)
+    
+    archivos = [
+        "carta_de_aceptacion",
+        "politicas_institucionales",
+        "plantilla_psicofisico",
+    ]
+    path_precarga = None
+    if (postulacion_service.postulacion_en_paso6(postulacion)):
+        archivos.append("renure")
+        archivos.append("precarga")
+        alumno = alumno_service.get_alumno_by_id(postulacion.id_informacion_alumno_entrante)
+        path_precarga = archivo_service.get_archivo_by_postulacion_and_tipo("precarga", alumno.id, id_postulacion).path
+    
+    if postulacion.estado.nombre == "Postulacion Finalizada":
+        archivos.append("calificaciones")
+    
+    return render_template('postulaciones/archivos_alumno.html', archivos = archivos, postulacion_id = postulacion.id, path_precarga = path_precarga)

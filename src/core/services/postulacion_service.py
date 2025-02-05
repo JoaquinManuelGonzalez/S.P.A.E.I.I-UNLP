@@ -284,3 +284,23 @@ def postulacion_corresponde_a_punto_focal(postulacion, user_punto_focal):
             if postulacion_asignatura.asignatura.facultad_id == user_punto_focal.facultad_id:
                 return True #si existe al menos una asignatura que le corresponda al punto focal
     return False
+
+def postulacion_en_paso5(postulacion):
+    estados_validos = [
+        "Postulacion Validada por Facultad",
+        "Postulacion Aceptada",
+        "Postulacion Completada",
+        "Postulacion Finalizada",
+        "Postulacion en Espera de Aceptacion",
+        "Postulacion en Espera de ser Completada"
+    ]
+    return (postulacion.estado.nombre in estados_validos)
+
+def postulacion_en_paso6(postulacion): #carta_de_aceptacion
+    estados_validos = [
+        "Postulacion Aceptada",
+        "Postulacion Completada",
+        "Postulacion Finalizada",
+        "Postulacion en Espera de ser Completada"
+    ]
+    return (postulacion.estado.nombre in estados_validos)

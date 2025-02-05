@@ -104,7 +104,6 @@ def carta_aceptacion(postulacion_id):
         download_name="carta_aceptacion_" + postulacion.informacion_alumno_entrante.apellido + ".pdf"
     )
 
-@check("admin")
 @documentos_bp.get('/archivo_base/<path>')
 def descargar_archivo_base(path):
     return archivo_service.descargar_archivo(path)
