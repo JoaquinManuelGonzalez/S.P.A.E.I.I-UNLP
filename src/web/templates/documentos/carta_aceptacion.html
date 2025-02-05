@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carta de Aceptación</title>
+    <style>
+        body {
+            font-family: Open, sans-serif;
+            margin: 40px;
+            padding: 20px;
+            max-width: 800px;
+        }
+        .titulo {
+            text-align: center;
+            font-size: 14px;
+            font-weight: bold;
+            text-decoration: underline;
+            margin-bottom: 20px;
+        }
+        .fecha-lugar {
+            text-align: right;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        .content {
+            text-align: justify;
+            font-size: 14px;
+        }
+        .firma-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 60px;
+            width: 100%;
+        }
+        .firma, .sello {
+            text-align: center;
+            width: 45%;
+        }
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 10px;
+        }
+        p {
+            text-indent: 40px;
+        }
+        img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 300px;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <img src="{{ request.url_root }}static/images/logo_prosecretaria.png" alt="Logo">
+    <br>
+    <br>
+    <div class="titulo">
+        CARTA DE ACEPTACIÓN
+    </div>
+    <br>
+    <br>
+    <div class="fecha-lugar">
+        La Plata, {{ fecha_firma }}
+    </div>
+    <br>
+    <div class="content">
+        <p>
+            Tengo el agrado de dirigirme a usted a los efectos de informarle que el/la
+            estudiante <strong>{{ postulacion.informacion_alumno_entrante.apellido }}, {{ postulacion.informacion_alumno_entrante.nombre }}</strong>, 
+            {% if postulacion.informacion_alumno_entrante.pasaporte %}
+                PAS Nº <strong>{{ postulacion.informacion_alumno_entrante.pasaporte.numero }}</strong>, 
+            {% else %}
+                cédula de identidad Nº <strong>{{ postulacion.informacion_alumno_entrante.cedula_de_identidad.numero }}</strong>,
+            {% endif %}
+            de la <strong>{{ postulacion.universidad_origen }}</strong>, 
+            ha sido aceptado/a en la Universidad Nacional de La Plata, 
+            para realizar una estancia académica de intercambio durante el periodo comprendido entre 
+            <strong>{{ periodo }}</strong>, en el marco del Convenio suscripto entre ambas instituciones.
+        </p>
+        <p>
+            Los gastos de manutención, traslado, seguro de salud, vida y repatriación
+            durante su estadía en nuestra institución serán responsabilidad de la interesada. 
+            Asimismo, deberá acreditar nivel de Español B1 ó mayor.
+        </p>
+        <p>
+            Por último, se deja constancia que esta Casa de Altos Estudios no expide certificaciones
+            de estudios a alumnos con visa de turista.
+        </p>
+    </div>
+    <br>
+    <br>
+    <br>
+    <div class="firma-container">
+        <div class="firma">
+            <p>.....................................</p>
+            <p>Firma y aclaración</p>
+        </div>
+        <div class="sello">
+            <p>.....................................</p>
+            <p>Sello</p>
+        </div>
+    </div>
+
+    <br>
+    <br>
+    <br>
+    <br>
+    <div class="footer">
+        <p>
+            AÑO DEL 40º ANIVERSARIO DEL RETORNO DE LA DEMOCRACIA <br>
+            AÑO GONZALEANO - CENTENARIO DEL FALLECIMIENTO DEL FUNDADOR DE LA UNLP, JOAQUÍN V GONZÁLEZ
+        </p>
+        <p>
+            Edificio de Presidencia | Avenida 7 nº 776 | C.P.1900 | La Plata | Buenos Aires | República Argentina <br>
+            Tel (54-0221)6447055 | alumnos.internacionales@presi.unlp.edu.ar | www.unlp.edu.ar
+        </p>
+    </div>
+</body>
+</html>
