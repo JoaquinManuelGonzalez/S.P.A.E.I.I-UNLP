@@ -13,71 +13,71 @@
         </div>
     </div>
     <form action="{{ url_for('postulacion.guardar_materias', postulacion_id=postulacion_id) }}" enctype="multipart/form-data" method="POST" class="container-fluid">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    
-        <div class="container my-5">
-            {% for i in range(0, cantidad_materias) %}
-                <div class="row border gx-3 gy-2">  <!-- Espaciado mejorado -->
-                    
-                    <!-- Columna para facultad -->
-                    <div class="col-12 col-md-4 mb-3 p-2">  
-                        <label for="facultad_{{ i }}" class="form-label">Buscar por facultad:</label>
-                        <select class="form-select" id="facultad_{{ i }}" name="facultad_{{ i }}">
-                            <option value="">Seleccione una facultad</option>
-                            {% for facultad in facultades %}
-                                <option {{ (facultades_seleccionadas[i] and (facultades_seleccionadas[i].id == facultad.id)) and "selected" or "" }}
-                                        value="{{ facultad.id }}">{{ facultad.nombre }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-    
-                    <!-- Columna para carrera -->
-                    <div class="col-12 col-md-4 mb-3 p-2">  
-                        <label for="carrera_{{ i }}" class="form-label">Buscar por carrera:</label>
-                        <select class="form-select" id="carrera_{{ i }}" name="carrera_{{ i }}">
-                            <option value="">Seleccione una carrera</option>
-                            {% if es_de_posgrado %}
-                                {% if facultades_seleccionadas[i] %}
-                                    {% for carrera in facultades_seleccionadas[i].carreras %}
-                                        <option {{ (carreras_seleccionadas[i] and (carreras_seleccionadas[i].id == carrera.id)) and "selected" or "" }}
-                                        value="{{ carrera.id }}">{{ carrera.nombre }}</option>
-                                    {% endfor %}
-                                {% endif %}
-                            {% else %}
-                                {% if facultades_seleccionadas[i] %}
-                                    {% for carrera in facultades_seleccionadas[i].carreras %}
-                                        {% if carrera.tipo_carrera.nombre == "Grado" %}
-                                            <option {{ (carreras_seleccionadas[i] and (carreras_seleccionadas[i].id == carrera.id)) and "selected" or "" }}
-                                                    value="{{ carrera.id }}">{{ carrera.nombre }}</option>
-                                        {% endif %}
-                                    {% endfor %}
-                                {% endif %}
-                            {% endif %}
-                        </select>
-                    </div>
-    
-                    <!-- Columna para asignatura -->
-                    <div class="col-12 col-md-4 mb-3 p-2">  
-                        <label for="asignatura_{{ i }}" class="form-label">Asignatura:</label>
-                        <select class="form-select" id="asignatura_{{ i }}" name="asignatura_{{ i }}">
-                            <option value="">Seleccione una asignatura</option>
-                            {% if carreras_seleccionadas[i] %}
-                                {% for asignatura in carreras_seleccionadas[i].asignaturas %}
-                                    <option {{ (asignaturas_seleccionadas[i] and (asignaturas_seleccionadas[i].id == asignatura.id)) and "selected" or "" }}
-                                            value="{{ asignatura.id }}">{{ asignatura.nombre }}</option>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <div class="container my-5">
+        {% for i in range(0, cantidad_materias) %}
+            <div class="row border gx-3 gy-2">  <!-- Espaciado mejorado -->
+                
+                <!-- Columna para facultad -->
+                <div class="col-12 col-md-4 mb-3 p-2">  
+                    <label for="facultad_{{ i }}" class="form-label">Buscar por facultad:</label>
+                    <select class="form-select" id="facultad_{{ i }}" name="facultad_{{ i }}">
+                        <option value="">Seleccione una facultad</option>
+                        {% for facultad in facultades %}
+                            <option {{ (facultades_seleccionadas[i] and (facultades_seleccionadas[i].id == facultad.id)) and "selected" or "" }}
+                                    value="{{ facultad.id }}">{{ facultad.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Columna para carrera -->
+                <div class="col-12 col-md-4 mb-3 p-2">  
+                    <label for="carrera_{{ i }}" class="form-label">Buscar por carrera:</label>
+                    <select class="form-select" id="carrera_{{ i }}" name="carrera_{{ i }}">
+                        <option value="">Seleccione una carrera</option>
+                        {% if es_de_posgrado %}
+                            {% if facultades_seleccionadas[i] %}
+                                {% for carrera in facultades_seleccionadas[i].carreras %}
+                                    <option {{ (carreras_seleccionadas[i] and (carreras_seleccionadas[i].id == carrera.id)) and "selected" or "" }}
+                                    value="{{ carrera.id }}">{{ carrera.nombre }}</option>
                                 {% endfor %}
                             {% endif %}
-                        </select>
-                    </div>
+                        {% else %}
+                            {% if facultades_seleccionadas[i] %}
+                                {% for carrera in facultades_seleccionadas[i].carreras %}
+                                    {% if carrera.tipo_carrera.nombre == "Grado" %}
+                                        <option {{ (carreras_seleccionadas[i] and (carreras_seleccionadas[i].id == carrera.id)) and "selected" or "" }}
+                                                value="{{ carrera.id }}">{{ carrera.nombre }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        {% endif %}
+                    </select>
                 </div>
-            {% endfor %}
-        </div>
-    
-        <!-- Botón de envío centrado -->
-        <div class="d-flex justify-content-center my-4">
-            <button type="submit" class="btn btn-primary">Enviar</button>
-        </div>
-    </form> 
+
+                <!-- Columna para asignatura -->
+                <div class="col-12 col-md-4 mb-3 p-2">  
+                    <label for="asignatura_{{ i }}" class="form-label">Asignatura:</label>
+                    <select class="form-select" id="asignatura_{{ i }}" name="asignatura_{{ i }}">
+                        <option value="">Seleccione una asignatura</option>
+                        {% if carreras_seleccionadas[i] %}
+                            {% for asignatura in carreras_seleccionadas[i].asignaturas %}
+                                <option {{ (asignaturas_seleccionadas[i] and (asignaturas_seleccionadas[i].id == asignatura.id)) and "selected" or "" }}
+                                        value="{{ asignatura.id }}">{{ asignatura.nombre }}</option>
+                            {% endfor %}
+                        {% endif %}
+                    </select>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Botón de envío centrado -->
+    <div class="d-flex justify-content-center my-4">
+        <button type="submit" class="btn btn-primary">Enviar</button>
+    </div>
+</form> 
 </div>
 
 <script>
