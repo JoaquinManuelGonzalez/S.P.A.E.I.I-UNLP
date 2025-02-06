@@ -231,12 +231,13 @@ def aceptar_solicitud(id_postulacion):
         destino = alumno.email
         email_service.send_email(titulo, cuerpo, [destino])
         flash('Archivos aprobados', 'success')
-        if all(asignatura.estado == "Cursada completada" for asignatura in Postulacion.asignaturas):
+        if all(asignatura.estado == "Cursada completada" for asignatura in postulacion.asignaturas):
             emails = usuario_service.get_email_admin_presidencia()
             titulo = "Todas las cursadas finalizadas para alumno "+alumno.nombre+" "+alumno.apellido
             cuerpo = "Todas las cursadas del alumno "+alumno.nombre+" "+alumno.apellido+" han sido calificadas y su postulacion ha sido finalizada."
             emails.append(alumno.email)
             email_service.send_email(titulo, cuerpo, emails)
+            flash('Postulación completada con éxito', 'success')
     return redirect(url_for('postulacion.acciones_pendientes_presidencia'))
     
 
@@ -940,7 +941,8 @@ def guardar_materias(postulacion_id):
 
         if asignatura_id and asignatura_id.strip() and facultad_id and facultad_id.strip():
             asignaturas_ids.append(int(asignatura_id))  # Convertir a entero si es necesario
-            facultades_ids.add(int(facultad_id))
+            asignatura = asignaturas_service.get_asignatura_by_id(asignatura_id)
+            facultades_ids.add(asignatura.facultad_id)
 
     if len(asignaturas_ids) > 5:
         flash('No puede seleccionar más de 5 asignaturas', 'danger')
