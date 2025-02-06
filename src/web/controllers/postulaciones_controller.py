@@ -232,14 +232,12 @@ def aceptar_solicitud(id_postulacion):
         destino = alumno.email
         email_service.send_email(titulo, cuerpo, [destino])
         flash('Archivos aprobados', 'success')
-    elif postulacion.estado.nombre == "Postulacion Esperando Validacion por Facultad":
-        punto_focal = usuario_service.buscar_usuario(get_id_sesion(session)) #current user
-        postulacion_asignaturas = postulacion.asignaturas
-        for postulacion_asignatura in postulacion_asignaturas:
-            if (postulacion_asignatura.asignatura.facultad_id == punto_focal.facultad_id): #TODO: AND asignatura.postgrado == punto_focal.postgrado
-                postulacion_asignatura.aceptado = True
-        db.session.commit()
-        flash('Asignaturas aceptadas', 'success')
+        if all(asignatura.estado == "Cursada completada" for asignatura in Postulacion.asignaturas):
+            emails = usuario_service.get_email_admin_presidencia()
+            titulo = "Todas las cursadas finalizadas para alumno "+alumno.nombre+" "+alumno.apellido
+            cuerpo = "Todas las cursadas del alumno "+alumno.nombre+" "+alumno.apellido+" han sido calificadas y su postulacion ha sido finalizada."
+            emails.append(alumno.email)
+            email_service.send_email(titulo, cuerpo, emails)
     return redirect(url_for('postulacion.acciones_pendientes_presidencia'))
     
 
@@ -306,11 +304,12 @@ def rechazar_asignaturas(id_postulacion):
         return redirect(url_for('postulacion.ver_postulacion', id_postulacion=postulacion.id))
     else:
         postulacion_service.rechazar_asignaturas_de_postulacion(postulacion)
-        titulo = "Asignaturas rechazadas"
+        emails = usuario_service.get_email_admin_presidencia()
         facultad = facultades_service.get_facultad_by_id(get_usuario_actual(session).facultad_id).nombre #Éste rechazo solo lo hace un Punto Focal.
+        titulo = "Asignaturas rechazadas para alumno "+alumno.nombre+" "+alumno.apellido
         cuerpo = f"Alguna o algunas de las asignaturas a las que se ha postulado han sido rechazadas por el Punto Focal de la siguiente facultad: {facultad} Por favor intente devuelta. El motivo de rechazo es: {motivo}"
-        destino = alumno.email
-        email_service.send_email(titulo, cuerpo, [destino])
+        emails.append(alumno.email)
+        email_service.send_email(titulo, cuerpo, emails)
         flash('Solicitud de postulacion rechazada', 'danger')
         return redirect(url_for('postulacion.acciones_pendientes_focal'))
 
@@ -413,6 +412,19 @@ def estado_cursada_post(id_postulacion, id_asignatura):
     else:
         postulacion_asignatura.aprobado = -1
     db.session.commit()
+
+    for postulacionAsignatura in postulacion.asignaturas:
+        if postulacionAsignatura.estado != "Cursada completada":
+            return redirect(url_for('postulacion.ver_postulacion', id_postulacion=id_postulacion))
+    
+    #si llega a ésta linea de codigo, todas las cursadas están completadas
+    if postulacion.estado.nombre == "Postulacion Completada":
+        postulacion_service.actualizar_estado_postulacion(postulacion, "Postulacion Finalizada")
+        alumno = alumno_service.get_alumno_by_id(postulacion.id_informacion_alumno_entrante)
+        titulo = "Todas las cursadas finalizadas"
+        cuerpo = f"Se han subido las notas de todas las cursadas de su postulacion!"
+        destino = alumno.email
+        email_service.send_email(titulo, cuerpo, [destino])
 
 
     return redirect(url_for('postulacion.ver_postulacion', id_postulacion=id_postulacion))
