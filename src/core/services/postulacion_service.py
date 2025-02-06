@@ -244,10 +244,11 @@ def validar_asignaturas_de_postulacion(postulacion, facultad_id):
             return
     
     actualizar_estado_postulacion(postulacion, "Postulacion Validada por Facultad")
-    titulo = "Todas las asignaturas aceptadas."
+    emails = usuario_service.get_email_admin_presidencia()
+    titulo = "Todas las asignaturas aceptadas alumno "+alumno.nombre+" "+alumno.apellido
     cuerpo = f"Se han aceptado todas las asignaturas a las que se ha postulado."
-    destino = alumno_service.get_alumno_by_id(postulacion.id_informacion_alumno_entrante).email
-    email_service.send_email(titulo, cuerpo, [destino])
+    emails.append(alumno.email)
+    email_service.send_email(titulo, cuerpo, emails)
     return
 
 def rechazar_asignaturas_de_postulacion(postulacion):
@@ -284,3 +285,23 @@ def postulacion_corresponde_a_punto_focal(postulacion, user_punto_focal):
             if postulacion_asignatura.asignatura.facultad_id == user_punto_focal.facultad_id:
                 return True #si existe al menos una asignatura que le corresponda al punto focal
     return False
+
+def postulacion_en_paso5(postulacion):
+    estados_validos = [
+        "Postulacion Validada por Facultad",
+        "Postulacion Aceptada",
+        "Postulacion Completada",
+        "Postulacion Finalizada",
+        "Postulacion en Espera de Aceptacion",
+        "Postulacion en Espera de ser Completada"
+    ]
+    return (postulacion.estado.nombre in estados_validos)
+
+def postulacion_en_paso6(postulacion): #carta_de_aceptacion
+    estados_validos = [
+        "Postulacion Aceptada",
+        "Postulacion Completada",
+        "Postulacion Finalizada",
+        "Postulacion en Espera de ser Completada"
+    ]
+    return (postulacion.estado.nombre in estados_validos)

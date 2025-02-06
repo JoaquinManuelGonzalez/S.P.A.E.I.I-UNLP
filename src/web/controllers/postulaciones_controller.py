@@ -18,8 +18,8 @@ import time
 from src.web.forms.postulacion_form import PostulacionForm
 from src.web.forms.postulacion_estadia_form import PostulacionEstadiaForm
 from src.web.forms.presidencia_subir_precarga_form import PresidenciaPrecarga
+from src.web.forms.presidencia_subir_archivo_base_form import PresidenciaArchivoBaseForm
 from src.web.forms.estado_cursada_form import EstadoCursadaForm
-from src.web.schemas.archivo_schema import archivo_schema
 from src.web.forms.visado_seguro_medico_form import VisadoSeguroMedicoForm
 from src.web.schemas.postulacion_schema import postulacion_schema
 from src.web.schemas.archivo_schema import archivo_schema
@@ -118,7 +118,8 @@ def ver_postulacion(id_postulacion):
             "politicas_institucionales": archivo_service.get_archivo_by_postulacion_and_tipo("politicasI", alumno.id, id_postulacion),
             "certificado_discapacidad": archivo_service.get_archivo_by_postulacion_and_tipo("certificadoDiscapacidad", alumno.id, id_postulacion),
             "visado": archivo_service.get_archivo_by_postulacion_and_tipo("visado", alumno.id, id_postulacion),
-            "seguro_medico": archivo_service.get_archivo_by_postulacion_and_tipo("seguroMedico", alumno.id, id_postulacion)
+            "seguro_medico": archivo_service.get_archivo_by_postulacion_and_tipo("seguroMedico", alumno.id, id_postulacion),
+            "precarga": archivo_service.get_archivo_by_postulacion_and_tipo("precarga", alumno.id, id_postulacion),
         }
     elif rol == "punto_focal":
         archivos = {
@@ -143,6 +144,7 @@ def ver_postulacion(id_postulacion):
             asignaturas_relevantes = postulacion_service.get_asignaturas_de_facultad(postulacion.id, usuario_actual.facultad_id )
             if not asignaturas_relevantes:
                 print("what the fuck")
+                abort(403)
             if any((not asignatura.validado) and (asignatura.asignatura.facultad_id == usuario_actual.facultad_id) for asignatura in postulacion.asignaturas):
                 require_punto_focal = True
             else:
@@ -201,7 +203,7 @@ def aceptar_solicitud(id_postulacion):
         print(f"El archivo precarga se sube así: {precarga.filename}")
         path_precarga = f"{id_postulacion}_{alumno.id}_precarga_{precarga.filename}"
         archivo_precarga = {
-            "titulo": "Precarga electronica",
+            "titulo": "Precarga_electronica",
             "path": path_precarga,
             "id_postulacion": id_postulacion,
             "id_informacion_alumno_entrante": alumno.id
@@ -229,14 +231,12 @@ def aceptar_solicitud(id_postulacion):
         destino = alumno.email
         email_service.send_email(titulo, cuerpo, [destino])
         flash('Archivos aprobados', 'success')
-    elif postulacion.estado.nombre == "Postulacion Esperando Validacion por Facultad":
-        punto_focal = usuario_service.buscar_usuario(get_id_sesion(session)) #current user
-        postulacion_asignaturas = postulacion.asignaturas
-        for postulacion_asignatura in postulacion_asignaturas:
-            if (postulacion_asignatura.asignatura.facultad_id == punto_focal.facultad_id): #TODO: AND asignatura.postgrado == punto_focal.postgrado
-                postulacion_asignatura.aceptado = True
-        db.session.commit()
-        flash('Asignaturas aceptadas', 'success')
+        if all(asignatura.estado == "Cursada completada" for asignatura in Postulacion.asignaturas):
+            emails = usuario_service.get_email_admin_presidencia()
+            titulo = "Todas las cursadas finalizadas para alumno "+alumno.nombre+" "+alumno.apellido
+            cuerpo = "Todas las cursadas del alumno "+alumno.nombre+" "+alumno.apellido+" han sido calificadas y su postulacion ha sido finalizada."
+            emails.append(alumno.email)
+            email_service.send_email(titulo, cuerpo, emails)
     return redirect(url_for('postulacion.acciones_pendientes_presidencia'))
     
 
@@ -303,11 +303,12 @@ def rechazar_asignaturas(id_postulacion):
         return redirect(url_for('postulacion.ver_postulacion', id_postulacion=postulacion.id))
     else:
         postulacion_service.rechazar_asignaturas_de_postulacion(postulacion)
-        titulo = "Asignaturas rechazadas"
+        emails = usuario_service.get_email_admin_presidencia()
         facultad = facultades_service.get_facultad_by_id(get_usuario_actual(session).facultad_id).nombre #Éste rechazo solo lo hace un Punto Focal.
+        titulo = "Asignaturas rechazadas para alumno "+alumno.nombre+" "+alumno.apellido
         cuerpo = f"Alguna o algunas de las asignaturas a las que se ha postulado han sido rechazadas por el Punto Focal de la siguiente facultad: {facultad} Por favor intente devuelta. El motivo de rechazo es: {motivo}"
-        destino = alumno.email
-        email_service.send_email(titulo, cuerpo, [destino])
+        emails.append(alumno.email)
+        email_service.send_email(titulo, cuerpo, emails)
         flash('Solicitud de postulacion rechazada', 'danger')
         return redirect(url_for('postulacion.acciones_pendientes_focal'))
 
@@ -410,6 +411,19 @@ def estado_cursada_post(id_postulacion, id_asignatura):
     else:
         postulacion_asignatura.aprobado = -1
     db.session.commit()
+
+    for postulacionAsignatura in postulacion.asignaturas:
+        if postulacionAsignatura.estado != "Cursada completada":
+            return redirect(url_for('postulacion.ver_postulacion', id_postulacion=id_postulacion))
+    
+    #si llega a ésta linea de codigo, todas las cursadas están completadas
+    if postulacion.estado.nombre == "Postulacion Completada":
+        postulacion_service.actualizar_estado_postulacion(postulacion, "Postulacion Finalizada")
+        alumno = alumno_service.get_alumno_by_id(postulacion.id_informacion_alumno_entrante)
+        titulo = "Todas las cursadas finalizadas"
+        cuerpo = f"Se han subido las notas de todas las cursadas de su postulacion!"
+        destino = alumno.email
+        email_service.send_email(titulo, cuerpo, [destino])
 
 
     return redirect(url_for('postulacion.ver_postulacion', id_postulacion=id_postulacion))
@@ -1036,3 +1050,101 @@ def visado_seguro_medico_post(id_postulacion):
 
     flash('Datos guardados exitosamente', 'success')
     return redirect(url_for('postulacion.mis_postulaciones'))
+
+@postulacion_bp.route('/archivos_base', methods=['GET', 'POST'])
+@check("admin")
+def archivos_base():
+    form = PresidenciaArchivoBaseForm()
+
+    path_base = "archivos_base-"
+
+    paths = {
+        "plantilla_psicofisico": path_base+"plantilla_psicofisico.pdf",
+        "politicas_institucionales": path_base+"politicas_institucionales.pdf",
+        "renure": path_base+"renure.pdf"
+    }
+    archivos = {
+        "plantilla_psicofisico": archivo_service.get_archivo_by_path(paths["plantilla_psicofisico"]),
+        "politicas_institucionales": archivo_service.get_archivo_by_path(paths["politicas_institucionales"]),
+        "renure": archivo_service.get_archivo_by_path(paths["renure"])
+    }
+    print(archivo_service.get_archivo_by_path(paths["plantilla_psicofisico"]))
+    titulos = {
+        "plantilla_psicofisico": "Plantilla de psicofisico",
+        "politicas_institucionales": "Politicas institucionales",
+        "renure": "RENURE"
+    }
+
+    if form.validate_on_submit():
+        #actualizar el archivo
+        if archivos[form.titulo.data]:
+            #actualizar archivo
+            archivo = form.archivo.data
+
+            archivo_actualizado = {
+                "titulo": titulos[form.titulo.data],
+                "path": paths[form.titulo.data]
+            }
+            try:
+                archivo_actualizado = archivo_schema.load(archivo_actualizado)
+            except Exception as err:
+                print(err)
+                flash('Error al cargar el archivo', 'danger')
+                return render_template('postulaciones/archivos_base.html', form = form, archivos = archivos, titulos = titulos)
+            archivo_service.crear_archivo(**archivo_actualizado)
+            archivo_service.save_file_minio(request.files['archivo'].read(), archivo_actualizado['path'])
+            flash('Archivo actualizado', 'success')
+            archivos[form.titulo.data] = archivo_service.get_archivo_by_path(paths[form.titulo.data])
+        elif form.titulo.data == "plantilla_psicofisico" or form.titulo.data == "politicas_institucionales" or form.titulo.data == "renure":
+            #crear archivo nuevo
+            archivo = form.archivo.data
+
+            nuevo_archivo = {
+                "titulo": titulos[form.titulo.data],
+                "path": paths[form.titulo.data]
+            }
+            try:
+                nuevo_archivo = archivo_schema.load(nuevo_archivo)
+            except Exception as err:
+                print(err)
+                flash('Error al cargar el archivo', 'danger')
+                return render_template('postulaciones/archivos_base.html', form = form, archivos = archivos, titulos = titulos)
+            archivo_service.crear_archivo(**nuevo_archivo)
+            archivo_service.save_file_minio(request.files['archivo'].read(), nuevo_archivo['path'])
+            flash('Archivo nuevo cargado', 'success')
+            archivos[form.titulo.data] = archivo_service.get_archivo_by_path(paths[form.titulo.data])
+        else:
+            #error al elegir que archivo a subir
+            flash('Error al subir el archivo', 'warning')
+
+    
+    return render_template('postulaciones/archivos_base.html', form = form, archivos = archivos, titulos = titulos)
+
+
+@postulacion_bp.get('/archivos_postulacion/<int:id_postulacion>')
+@check("postulaciones_detalle")
+def archivos_alumno(id_postulacion):
+    if (get_rol_sesion(session) == "punto_focal"):
+        abort(403)
+
+    postulacion = postulacion_service.get_postulacion_by_id(id_postulacion)
+
+    if (not postulacion_service.postulacion_en_paso5(postulacion)):
+        abort(403)
+    
+    archivos = [
+        "carta_de_aceptacion",
+        "politicas_institucionales",
+        "plantilla_psicofisico",
+    ]
+    path_precarga = None
+    if (postulacion_service.postulacion_en_paso6(postulacion)):
+        archivos.append("renure")
+        archivos.append("precarga")
+        alumno = alumno_service.get_alumno_by_id(postulacion.id_informacion_alumno_entrante)
+        path_precarga = archivo_service.get_archivo_by_postulacion_and_tipo("precarga", alumno.id, id_postulacion).path
+    
+    if postulacion.estado.nombre == "Postulacion Finalizada":
+        archivos.append("calificaciones")
+    
+    return render_template('postulaciones/archivos_alumno.html', archivos = archivos, postulacion_id = postulacion.id, path_precarga = path_precarga)

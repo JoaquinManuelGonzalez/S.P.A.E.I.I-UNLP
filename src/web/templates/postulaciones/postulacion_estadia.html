@@ -23,6 +23,7 @@
                     </div>
                 {% endfor %}
             {% endif %}
+            <a href="{{ url_for('documentos.descargar_archivo_base', path='archivos_base-plantilla_psicofisico.pdf') }}" class="btn btn-primary btn-sm">Descargar para firmar</a>    
         </div>
         <div class="mb-3">
             {{ form.politicas_institucionales.label }}{{ form.politicas_institucionales(class="form-control") }}
@@ -33,6 +34,7 @@
                     </div>
                 {% endfor %}
             {% endif %}
+            <a href="{{ url_for('documentos.descargar_archivo_base', path='archivos_base-politicas_institucionales.pdf') }}" class="btn btn-primary btn-sm">Descargar para firmar</a>
         </div>
         <div class="mb-3">
             {{ form.discapacidad.label}}{{ form.discapacidad(id="discapacidad", class="form-radio") }}

@@ -2,6 +2,7 @@ from datetime import datetime
 from flask import Blueprint, flash, redirect, request, render_template, url_for, send_file
 from src.core.services import asignaturas as asignaturas_service
 from src.core.services import postulacion_service
+from src.core.services import archivo_service
 from src.web.handlers.permisos import check
 from weasyprint import HTML
 import io
@@ -102,3 +103,7 @@ def carta_aceptacion(postulacion_id):
         as_attachment=True,
         download_name="carta_aceptacion_" + postulacion.informacion_alumno_entrante.apellido + ".pdf"
     )
+
+@documentos_bp.get('/archivo_base/<path>')
+def descargar_archivo_base(path):
+    return archivo_service.descargar_archivo(path)
