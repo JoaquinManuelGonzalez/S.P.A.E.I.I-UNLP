@@ -6,7 +6,7 @@ from src.core.models.usuario import Usuario
 from src.core.models.asignatura import Asignatura
 from src.core.models.postulacion.tutor import Tutor
 from src.core.models.postulacion import PostulacionAsignatura
-from src.core.services import alumno_service, email_service
+from src.core.services import alumno_service, email_service, usuario_service
 from sqlalchemy import or_, and_, desc
 
 def crear_postulacion(**data):
@@ -244,7 +244,9 @@ def validar_asignaturas_de_postulacion(postulacion, facultad_id):
             return
     
     actualizar_estado_postulacion(postulacion, "Postulacion Validada por Facultad")
-    emails = usuario_service.get_email_admin_presidencia()
+    emails = []
+    emails.append(usuario_service.get_email_admin_presidencia())
+    alumno = alumno_service.get_alumno_by_id(postulacion.id_informacion_alumno_entrante)
     titulo = "Todas las asignaturas aceptadas alumno "+alumno.nombre+" "+alumno.apellido
     cuerpo = f"Se han aceptado todas las asignaturas a las que se ha postulado."
     emails.append(alumno.email)
