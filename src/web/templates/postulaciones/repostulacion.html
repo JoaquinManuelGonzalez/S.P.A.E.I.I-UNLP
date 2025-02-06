@@ -435,8 +435,20 @@
 
                 if (paises_mercosur.includes(parseInt(selectedValue))) { // Convertimos el valor a número
                     cedulaContainer.style.display = 'block';
+                    cedulaNumero.setAttribute('required', 'true');
+                    cedulaPais.setAttribute('required', 'true');
+                    cedulaArchivo.setAttribute('required', 'true');
+                    pasaporteNumero.removeAttribute('required');
+                    pasaportePais.removeAttribute('required');
+                    pasaporteArchivo.removeAttribute('required');
                 } else {
                     cedulaContainer.style.display = 'none';
+                    cedulaNumero.removeAttribute('required');
+                    cedulaPais.removeAttribute('required');
+                    cedulaArchivo.removeAttribute('required');
+                    pasaporteNumero.setAttribute('required', 'true');
+                    pasaportePais.setAttribute('required', 'true');
+                    pasaporteArchivo.setAttribute('required', 'true');
                 }
                 if (selectedOption.value) {
                     const esHispanohablante = selectedOption.getAttribute('data-hispanohablante') === 'true';
@@ -448,32 +460,11 @@
                 }
             }
 
-            function cedulaEsRequerida(){
-                if(cedulaNumero.value !== "" || cedulaPais.value !== "" || cedulaArchivo.value !== ""){
-                    cedulaNumero.setAttribute('required', 'true');
-                    cedulaPais.setAttribute('required', 'true');
-                    cedulaArchivo.setAttribute('required', 'true');
-                    pasaporteNumero.removeAttribute('required');
-                    pasaportePais.removeAttribute('required');
-                    pasaporteArchivo.removeAttribute('required');
-                } else {
-                    cedulaNumero.removeAttribute('required');
-                    cedulaPais.removeAttribute('required');
-                    cedulaArchivo.removeAttribute('required');
-                    pasaporteNumero.setAttribute('required', 'true');
-                    pasaportePais.setAttribute('required', 'true');
-                    pasaporteArchivo.setAttribute('required', 'true');
-                }
-            }
-    
             // Ejecutamos la función cuando la página carga (por datos precargados)
             verificarMercosur();
     
             // También ejecutamos la función cuando el usuario cambia el select
             paisSelect.addEventListener('change', verificarMercosur);
-            cedulaNumero.addEventListener('change', cedulaEsRequerida);
-            cedulaPais.addEventListener('change', cedulaEsRequerida);
-            cedulaArchivo.addEventListener('change', cedulaEsRequerida);
         });
     </script>
     
