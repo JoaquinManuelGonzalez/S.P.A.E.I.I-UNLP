@@ -32,12 +32,13 @@ def primer_formulario():
     """
     Primer formulario de postulación.
     """
+    #return jsonify({"error": "Hola"}), 400
     data = request.get_json()
     if not data:
         return jsonify({"error": "No se encontraron datos en el request"}), 400
     
     periodo = periodo_postulacion_service.periodo_actual().id
-    if not periodo:
+    if periodo is None:
         return jsonify({"error": "No hay un periodo de postulación activo"}), 400
     data_postulacion = data["postulacion"]
     data_alumno = data["alumno"]
@@ -78,7 +79,7 @@ def primer_formulario():
         return jsonify({"error": f"Error al cargar los datos del alumno: {err}"}), 400
     alumno = alumno_service.crear_informacion_alumno_entrante(**alumno)
     if not alumno:
-        return jsonify({"error": "Error al crear el alumno, el alumno ya posee un usuario en el sistema o posee una solicitud pendiente."}), 400
+        return jsonify({"error": "Error al crear el alumno. El alumno ya posee un usuario en el sistema o posee una solicitud pendiente."}), 400
 
     estado_postulacion = estado_postulacion_service.get_estado_by_name("Solicitud de Postulacion")
     data_postulacion["id_estado"] = estado_postulacion.id
@@ -308,6 +309,7 @@ def primer_formulario_get():
         "estados_civiles": data_estados_civiles,
         "csrf_token": token,
         "programas": data_programas,
+        "periodo_activo": periodo_postulacion_service.esta_activo(),
     }
 
     return jsonify(data_response), 200

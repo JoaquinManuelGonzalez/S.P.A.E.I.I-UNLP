@@ -1,6 +1,7 @@
 from flask import abort, session, request
 from functools import wraps
 from src.core.services.usuario_service import buscar_usuario_email, buscar_permisos_usuario, buscar_usuario
+from src.core.services import postulacion_service
 
 
 def check(permiso):
@@ -36,7 +37,6 @@ def check_permiso(session, permiso):
     if id_usuario_sesion is None:
         return False
     permisos = [permiso.permiso.nombre for permiso in buscar_permisos_usuario(usuario_sesion)]
-  
     #si se busca ver detalle o edicion, se verifica que sea el mismo usuario
     if permiso.endswith('detalle') or permiso.endswith('editar'):
         id_buscado = int(request.path.split('/')[-1])
@@ -44,7 +44,7 @@ def check_permiso(session, permiso):
             return True
         elif ("punto_focal" in permisos) and (id_buscado == id_usuario_sesion):
             return True
-        
+
         if "alumno" in request.path:
             if (id_buscado != usuario_sesion.id_alumno):
                 return False
@@ -54,12 +54,17 @@ def check_permiso(session, permiso):
         elif "postulaciones" in request.path.split('/'):
             if ("punto_focal" in permisos):
                 return True
-            if (id_buscado != usuario_sesion.id_alumno):
+            postulacion = postulacion_service.get_postulacion_by_id(id_buscado)
+            if (postulacion.id_informacion_alumno_entrante != usuario_sesion.id_alumno):
                 return False
         elif ( (permiso.endswith('detalle')) and ("facultades" in request.path.split('/')) and ("punto_focal" in permisos) ):
             if id_buscado == usuario_sesion.facultad_id:
                 return True
-    
+    elif permiso == "postulaciones_listar":
+        if "alumno" in permisos or "punto_focal" in permisos:
+            return False
+
+
     return permiso in permisos
 
 def get_id_sesion(session):

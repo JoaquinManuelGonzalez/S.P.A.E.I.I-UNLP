@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+{% block title %}Descargar archivos para alumno{% endblock %}
+{% block head %}
+    {{ super() }}
+{% endblock %}
+{% block content %}
+<div class="container mt-5 card shadow-sm border-0">
+    <div class="row align-items-center">
+        <div class="col">
+            <h1 class="m-0">Descargar archivos</h1>
+        </div>
+    </div>
+    <div class="card-body">
+        {% if 'carta_de_aceptacion' in archivos %}
+        <p><strong>Carta de aceptacion:</strong>
+            <a href="{{ url_for('documentos.carta_aceptacion', postulacion_id = postulacion_id) }}" class="btn btn-primary btn-sm">Descargar</a>
+        </p>
+        {% endif %}
+        {% if 'politicas_institucionales' in archivos %}
+        <p><strong>Politicas institucionales:</strong>
+            <a href="{{ url_for('documentos.descargar_archivo_base', path='archivos_base-politicas_institucionales.pdf') }}" class="btn btn-primary btn-sm">Descargar</a>
+        </p>
+        {% endif %}
+        {% if 'plantilla_psicofisico' in archivos %}
+        <p><strong>Plantilla de psicofisico:</strong>
+            <a href="{{ url_for('documentos.descargar_archivo_base', path='archivos_base-plantilla_psicofisico.pdf') }}" class="btn btn-primary btn-sm">Descargar</a>
+        </p>
+        {% endif %}
+        {% if 'renure' in archivos %}
+        <p><strong>RENURE:</strong>
+            <a href="{{ url_for('documentos.descargar_archivo_base', path='archivos_base-renure.pdf') }}" class="btn btn-primary btn-sm">Descargar</a>
+        </p>
+        {% endif %}
+        {% if 'precarga' in archivos %}
+        <p><strong>Precarga electronica:</strong>
+            <a href="{{ url_for('postulacion.descargar_archivo', filename=path_precarga) }}" class="btn btn-primary btn-sm">Descargar</a>
+        </p>
+        {% endif %}
+        {% if 'calificaciones' in archivos %}
+        <p><strong>Certificado de calificaciones:</strong>
+            <a href="{{ url_for('documentos.certificado_calificaciones', postulacion_id = postulacion_id) }}" class="btn btn-primary btn-sm">Descargar</a>
+        </p>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

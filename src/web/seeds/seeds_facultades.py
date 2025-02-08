@@ -17,14 +17,14 @@ import re
 
 ## Seeds de Facultades, Carreras, Materias, enlazar puntos focales y postulaciones
 def seeds_facultades(usuarios):
-    crear_facultades()
-    crear_carreras()
-    crear_asignaturas()
-    enlazar_puntos_focales(usuarios)
+    # crear_facultades()
+    # crear_carreras()
+    # crear_asignaturas()
+    # enlazar_puntos_focales(usuarios)
     crear_estados()
-    crear_programas()
+    # crear_programas()
     crear_periodos_de_inscripcion()
-    crear_postulaciones(usuarios)
+    # crear_postulaciones(usuarios)
 
 facultades = []
 carreras = []
@@ -59,7 +59,7 @@ def crear_carreras():
         carrera = Carrera(
             nombre = f'Carrera{i}',
             facultad_id = facultades[i].id,
-            tipo_carrera_id = 2
+            tipo_carrera_id = 1
         )
         carreras.append(carrera)
         db.session.add(carrera)

@@ -73,10 +73,7 @@ def crear_usuario_solicitud_aprobada(nombre, apellido, email, id_alumno):
     id_rol_alumno = buscar_id_rol('alumno').id
     contraseña = generar_contraseña()
     contraseña_encriptada = encriptar_contraseña(contraseña)
-    if usuario and usuario.estado.value == "eliminado":
-        usuario.estado = EstadoUsuario.ACTIVO
-        usuario.contraseña = contraseña_encriptada
-    else:
+    if usuario is None:
         usuario = Usuario(
             nombre=nombre,
             apellido=apellido,
@@ -85,10 +82,19 @@ def crear_usuario_solicitud_aprobada(nombre, apellido, email, id_alumno):
             id_rol=id_rol_alumno,
             id_alumno=id_alumno,
         )
-    db.session.add(usuario)
-    db.session.commit()
-    mensaje = f'Usted tiene un nuevo usuario registrado en SPAEII. Sus credenciales de ingreso son: usuario: {email}, contraseña: {contraseña} , recuerde cambiarla en su próximo inicio de sesión'
-    email_service.send_email('Nuevo usuario registrado en SPAEII', mensaje, [email])
+        db.session.add(usuario)
+        db.session.commit()
+        mensaje = f'Usted tiene un nuevo usuario registrado en SPAEII. Sus credenciales de ingreso son: usuario: {email}, contraseña: {contraseña} , recuerde cambiarla en su próximo inicio de sesión'
+        email_service.send_email('Nuevo usuario registrado en SPAEII', mensaje, [email])
+    else:
+        if usuario.estado.value == "eliminado":
+            usuario.estado = EstadoUsuario.ACTIVO
+            usuario.contraseña = contraseña_encriptada
+            mensaje = f'Usted tiene un nuevo usuario registrado en SPAEII. Sus credenciales de ingreso son: usuario: {email}, contraseña: {contraseña} , recuerde cambiarla en su próximo inicio de sesión'
+            email_service.send_email('Nuevo usuario registrado en SPAEII', mensaje, [email])
+        else:
+            mensaje = f'Se ha aprobado su nueva solicitud de repostulación en SPAEII'
+            email_service.send_email('Solicitud de repostulación aprobada', mensaje, [email])
 
     
 def generar_contraseña(longitud=12):

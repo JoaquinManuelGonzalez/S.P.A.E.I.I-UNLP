@@ -19,9 +19,11 @@
     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
       {% if is_authenticated(session) %}
         {% if check_permiso(session, 'alumno') %}
+          {% if esta_activo() and puede_postularse((buscar_usuario(session["user_id"])).email) %}
           <li class="nav-item active">
             <a class="nav-link" href=" {{ url_for('postulacion.repostulacion') }} ">Repostulación</a> <!-- TODO: deberia mostrarse solo si no tiene una postulacion activa-->
           </li>
+          {% endif %}
           {% if (obtener_postulacion_actual_de_alumno((buscar_usuario(session["user_id"])).id_alumno).estado.nombre == "Postulacion Iniciada") %} <!-- temporal. Deberia haber una forma de mostrar las asignaturas que elegiste si estas esperando validacion de facultad-->
             <li class="nav-item active">
               <a class="nav-link" href="{{ url_for('postulacion.seleccionar_materias', postulacion_id=obtener_postulacion_actual_de_alumno(buscar_usuario(session['user_id']).id_alumno).id) }}">Elección de Asignaturas</a>
@@ -56,9 +58,9 @@
             <a class="nav-link" href="{{ url_for('facultades.mi_facultad') }}">Facultad</a>
           </li>
           {% endif %}
-          {% if check_permiso(session, 'archivo_listar') %}
+          {% if check_permiso(session, 'admin') %}
             <li class="nav-item active">
-              <a class="nav-link" href="/facultades">Archivos Base</a>
+              <a class="nav-link" href="{{ url_for('postulacion.archivos_base') }}">Archivos Base</a>
             </li>
           {% endif %}
           {% if check_permiso(session, 'solicitud_postulacion_listar') %}
@@ -87,6 +89,7 @@
             </li>
           {% endif %}
         {% endif %}
+
         <li class="nav-item toggle-hidden" style="display: none;">
           <a class="dropdown-item text-success" href="{{ url_for('usuarios.ver_detalle_usuario', id_usuario=get_id_sesion(session)) }}">
             Ver perfil
