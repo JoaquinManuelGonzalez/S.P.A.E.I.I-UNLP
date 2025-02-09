@@ -262,7 +262,7 @@ class PostulacionForm(FlaskForm):
     )
     programa = QuerySelectField(
         "Programa",
-        query_factory=lambda: Programa.query.all(),
+        query_factory=lambda: Programa.query.filter_by(habilitado=True).all(),
         get_label="nombre",
         allow_blank=True,
         blank_text="Selecciona un programa",

@@ -16,6 +16,7 @@
             <thead class="table-light">
                 <tr>
                     <th>Nombre</th>
+                    <th>Estado</th>
                     <th>Fecha de carga</th>
                     <th>Acciones</th>
                 </tr>
@@ -29,8 +30,14 @@
                 {% for programa in programas %}
                 <tr class="border-b border-gray-200 py-2">
                     <td>{{ programa.nombre }}</td>
+                    <td>{{ "Habilitado" if programa.habilitado else "Deshabilitado" }}</td>
                     <td>{{ programa.creacion.strftime("%d-%m-%Y") }}</td>
                     <td>
+                        {% if programa.habilitado %}
+                            <a href="{{ url_for('programa.cambiar_estado', id=programa.id) }}" class="btn btn-warning btn-sm">Deshabilitar</a>
+                        {% else %}
+                            <a href="{{ url_for('programa.cambiar_estado', id=programa.id) }}" class="btn btn-success btn-sm">Habilitar</a>
+                        {% endif %}
                         <a href="{{ url_for('programa.editar_programa', id=programa.id) }}" class="btn btn-primary btn-sm">Editar</a>
                         <!-- Botón para rechazar -->
                         <button type="button" class="btn btn-danger btn-sm" data-id="{{ programa.id }}" data-bs-toggle="modal" data-bs-target="#rejectModal-{{ programa.id }}">

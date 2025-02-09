@@ -25,6 +25,18 @@
                 {% endif %}
             </div>
 
+            <div class="mb-3 form-check">
+                {{ form.habilitado.label(class="form-check-label") }}
+                {{ form.habilitado(class="form-check-input") }}
+                {% if form.errors %}
+                    {% for error in form.habilitado.errors %}
+                        <div class="text-danger">{{ form.errors[0] }}
+                            <span style="color: red;">{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
             <button type="submit" class="btn btn-primary my-3">Actualizar</button>
         </div>
     </form>
