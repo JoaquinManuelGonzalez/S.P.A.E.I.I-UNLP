@@ -5,13 +5,16 @@ from src.core.database import db
 def seed_programa():
     programas = [
         {
-            'nombre': 'Programa 1'
+            'nombre': 'Programa 1',
+            'habilitado': True
         },
         {
-            'nombre': 'Programa 2'
+            'nombre': 'Programa 2',
+            'habilitado': True
         },
         {
-            'nombre': 'Programa 3'
+            'nombre': 'Programa 3',
+            'habilitado': True
         }
     ]
 
