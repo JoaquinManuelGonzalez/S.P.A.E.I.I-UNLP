@@ -9,10 +9,10 @@
 {% block content %}
     {% if get_rol_sesion(session) == "alumno" %}
         <div class="container py-5">
-            <h1 class="display-4 mb-4 text-center">Portal para Alumnos Entrantes</h1>
+            <h1 class="display-4 mb-4 text-center">Portal para Estudiantes Entrantes</h1>
             <hr class="mb-4">
             <p class="lead text-muted">
-                Bienvenido al portal oficial para alumnos internacionales que desean aprender y progresar en nuestra universidad. 
+                Bienvenido al portal oficial para Estudiantes internacionales que desean aprender y progresar en nuestra universidad. 
                 En este portal podrás gestionar diversas actividades importantes como:
             </p>
         
@@ -65,7 +65,7 @@
                     En La Universidad Nacional de La Plata siempre serás bienvenido
                 </p>
                 <img src="{{ url_for('static', filename='images/unlp-2.jpg') }}" 
-                     alt="Alumnos Internacionales" 
+                     alt="Estudiantes Internacionales" 
                      class="img-fluid rounded shadow-lg mt-4" 
                      style="max-width: 90%; border: 3px solid #dee2e6; border-radius: 15px;">
             </div>
@@ -77,7 +77,7 @@
             <h1 class="display-4 mb-4 text-center">Portal de Administración</h1>
             <hr class="mb-4">
             <p class="lead text-muted">
-                Bienvenido al portal oficial de Administración. Aquí podrás gestionar y supervisar diversas actividades relacionadas con el funcionamiento académico y administrativo de las postulaciones de Alumnos Entrantes en nuestra universidad.
+                Bienvenido al portal oficial de Administración. Aquí podrás gestionar y supervisar diversas actividades relacionadas con el funcionamiento académico y administrativo de las postulaciones de Estudiantes Entrantes en nuestra universidad.
             </p>
             
             <!-- Cards para actividades administrativas -->
@@ -86,11 +86,11 @@
                     <div class="card shadow-lg border-light h-100">
                         <img src="{{ url_for('static', filename='images/postulacion-image.png') }}" 
                              class="card-img-top" 
-                             alt="Gestión de Alumnos Entrantes">
+                             alt="Gestión de Estudiantes Entrantes">
                         <div class="card-body">
-                            <h5 class="card-title">Gestión de Alumnos Entrantes</h5>
+                            <h5 class="card-title">Gestión de Estudiantes Entrantes</h5>
                             <p class="card-text">
-                                Administra la información de los Alumnos Entrantes, revisa solicitudes y realiza un seguimiento de los procesos académicos.
+                                Administra la información de los Estudiantes Entrantes, revisa solicitudes y realiza un seguimiento de los procesos académicos.
                             </p>
                         </div>
                     </div>
@@ -116,7 +116,7 @@
                         <div class="card-body">
                             <h5 class="card-title">Gestión de Documentos</h5>
                             <p class="card-text">
-                                Organiza y consulta documentos relacionados con los procesos de postulación de Alumnos Entrantes.
+                                Organiza y consulta documentos relacionados con los procesos de postulación de Estudiantes Entrantes.
                             </p>
                         </div>
                     </div>
