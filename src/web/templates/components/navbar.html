@@ -42,7 +42,7 @@
             </li>
           {% endif %}
           <li class="nav-item active">
-            <a class="nav-link" href="{{ url_for('alumnos_bp.listar_alumnos') }}">Alumnos Entrantes</a>
+            <a class="nav-link" href="{{ url_for('alumnos_bp.listar_alumnos') }}">Estudiantes Entrantes</a>
           </li>
           {% if check_permiso(session, 'usuarios_listar') %}
             <li class="nav-item active">

@@ -6,6 +6,7 @@ class Programa(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(50), nullable=False)
+    habilitado = db.Column(db.Boolean, default=True)
     
     creacion = db.Column(db.DateTime, default=datetime.now)
     actualizacion = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)

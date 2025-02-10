@@ -95,7 +95,6 @@ def crear_usuario_solicitud_aprobada(nombre, apellido, email, id_alumno):
         else:
             mensaje = f'Se ha aprobado su nueva solicitud de repostulación en SPAEII'
             email_service.send_email('Solicitud de repostulación aprobada', mensaje, [email])
-        
 
     
 def generar_contraseña(longitud=12):

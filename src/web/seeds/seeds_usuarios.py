@@ -216,6 +216,7 @@ def crear_usuarios():
     )
     usuarios.append(usuario)
     
+    """
     for i in range(2):
         usuario = Usuario(
             nombre = f'Punto_Focal{i}',
@@ -235,6 +236,7 @@ def crear_usuarios():
             id_rol= roles[3].id,
         )
         usuarios.append(usuario)
+    """
         
     for i in range (len(usuarios)):
         db.session.add(usuarios[i])

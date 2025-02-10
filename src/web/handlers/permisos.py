@@ -44,7 +44,7 @@ def check_permiso(session, permiso):
             return True
         elif ("punto_focal" in permisos) and (id_buscado == id_usuario_sesion):
             return True
-        
+
         if "alumno" in request.path:
             if (id_buscado != usuario_sesion.id_alumno):
                 return False
@@ -63,8 +63,8 @@ def check_permiso(session, permiso):
     elif permiso == "postulaciones_listar":
         if "alumno" in permisos or "punto_focal" in permisos:
             return False
-        
-    
+
+
     return permiso in permisos
 
 def get_id_sesion(session):

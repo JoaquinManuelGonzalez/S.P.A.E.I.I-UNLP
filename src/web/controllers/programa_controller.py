@@ -19,10 +19,11 @@ def guardar_programa():
     form = ProgramaForm()
     if form.validate_on_submit():
         nombre = form.nombre.data
+        habilitado = form.habilitado.data
         if not nombre:
             flash('El nombre es requerido', 'danger')
             return redirect(url_for('programa.crear_programa'))
-        programa_service.crear_programa(nombre)
+        programa_service.crear_programa(nombre, habilitado)
         return redirect(url_for('programa.listar_programas'))
     flash('Error al guardar el programa', 'danger')
     return render_template('programas/crear_programa.html', form=form)
@@ -46,10 +47,11 @@ def actualizar_programa(id):
     form = ProgramaForm()
     if form.validate_on_submit():
         nombre = form.nombre.data
+        habilitado = form.habilitado.data
         if not nombre:
             flash('El nombre es requerido', 'danger')
             return redirect(url_for('programa.editar_programa', id=id))
-        programa_service.actualizar_programa(id, nombre)
+        programa_service.actualizar_programa(id, nombre, habilitado)
         return redirect(url_for('programa.listar_programas'))
     flash('Error al actualizar el programa', 'danger')
     return redirect(url_for('programa.editar_programa', id=id))
@@ -58,6 +60,15 @@ def actualizar_programa(id):
 @check('admin')
 def eliminar_programa(id):
     programa_service.eliminar_programa(id)
+    return redirect(url_for('programa.listar_programas'))
+
+@bp.get('/cambiar_estado_programa/<int:id>')
+@check('admin')
+def cambiar_estado(id):
+    programa = programa_service.get_programa_by_id(id)
+    programa.habilitado = not programa.habilitado
+    programa_service.actualizar_programa(programa.id, programa.nombre, programa.habilitado)
+    flash('Estado actualizado correctamente', 'success')
     return redirect(url_for('programa.listar_programas'))
 
     

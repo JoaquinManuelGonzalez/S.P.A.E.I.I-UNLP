@@ -181,7 +181,7 @@
 {% block content %}
 <div class="container py-5">
     {% if check_permiso(session, 'admin') or check_permiso(session, 'punto_focal') %}
-        <h1 class="display-4 mb-4 text-center text-dark">Detalle del Alumno Entrante</h1>
+        <h1 class="display-4 mb-4 text-center text-dark">Detalle del Estudiante Entrante</h1>
     {% else %}
         <h1 class="display-4 mb-4 text-center text-dark">Información Personal</h1>
     {% endif %}
@@ -412,7 +412,7 @@
         {% if check_permiso(session, 'alumno') %}
             <a href="{{ url_for('alumnos_bp.solicitar_edicion', id_alumno=alumno.id) }}" class="btn btn-primary btn-custom mx-2">Solicitar Edición de Datos</a>
         {% elif check_permiso(session, 'admin') %}
-            <a href="{{ url_for('alumnos_bp.editar_alumno', id_alumno=alumno.id) }}" class="btn btn-primary btn-custom mx-2">Editar Alumno</a>
+            <a href="{{ url_for('alumnos_bp.editar_alumno', id_alumno=alumno.id) }}" class="btn btn-primary btn-custom mx-2">Editar Estudiante</a>
         {% endif %}
     </div>
 </div>

@@ -168,7 +168,7 @@
 {% block content %}
 
   <div class="container mt-5">
-    <h1 class="display-4 mb-4 text-center text-dark">Editar Información del Alumno</h1>
+    <h1 class="display-4 mb-4 text-center text-dark">Editar Información del Estudiante</h1>
     <form method="POST" action="{{ url_for('alumnos_bp.actualizar_alumno', id_alumno=alumno.id) }}" enctype="multipart/form-data">
       {{ form.hidden_tag() }}
 

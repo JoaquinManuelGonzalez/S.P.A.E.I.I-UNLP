@@ -296,7 +296,7 @@ def primer_formulario_get():
     paises = paises_service.listar_paises()
     generos = genero_service.listar_generos()
     estados_civiles = estado_civil_service.listar_estados_civiles()
-    programas = programa_service.listar_programas()
+    programas = programa_service.listar_programas_habilitados()
     data_paises = paises_schema.dump(paises)
     data_generos = generos_schema.dump(generos)
     data_estados_civiles = estados_civiles_schema.dump(estados_civiles)
