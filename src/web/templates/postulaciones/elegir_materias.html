@@ -64,7 +64,7 @@
                         {% if carreras_seleccionadas[i] %}
                             {% for asignatura in carreras_seleccionadas[i].asignaturas %}
                                 <option {{ (asignaturas_seleccionadas[i] and (asignaturas_seleccionadas[i].id == asignatura.id)) and "selected" or "" }}
-                                        value="{{ asignatura.id }}">{{ asignatura.nombre }}</option>
+                                        value="{{ asignatura.id }}">{{ asignatura.nombre }} ({{ asignatura.facultad.acronimo }})</option>
                             {% endfor %}
                         {% endif %}
                     </select>
