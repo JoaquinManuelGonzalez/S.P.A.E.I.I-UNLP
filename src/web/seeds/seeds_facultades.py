@@ -89,66 +89,72 @@ def enlazar_puntos_focales(usuarios):
     db.session.commit()
 
 def crear_estados():
-    estados.append(Estado(
+    estados.append(Estado( #1
         nombre='Solicitud de Postulacion',
         requiere_accion_presidencia = True,
         requiere_accion_focal = False
     ))
-    estados.append(Estado(
+    estados.append(Estado( #2
         nombre='Solicitud Rechazada',
         requiere_accion_presidencia = False,
         requiere_accion_focal = False
     ))
-    estados.append(Estado(
+    estados.append(Estado( #3
         nombre='Postulacion Iniciada',
         requiere_accion_presidencia = False,
         requiere_accion_focal = False
     ))
-    estados.append(Estado(
-        nombre='Postulacion en Proceso',
-        requiere_accion_presidencia = False,
-        requiere_accion_focal = False
-    ))
-    estados.append(Estado(
+    estados.append(Estado( #4
         nombre='Postulacion Esperando Validacion por Facultad',
         requiere_accion_presidencia = False,
         requiere_accion_focal = True
     ))
-    estados.append(Estado(
+    estados.append(Estado( #5
+        nombre='Postulacion Esperando Carta de Aceptacion', #una vez validada por facultad, Presidencia debe validar y subir carta de aceptacion firmada
+        requiere_accion_presidencia = True,
+        require_accion_focal = False
+    ))
+    estados.append(Estado( #6
         nombre='Postulacion Validada por Facultad',
         requiere_accion_presidencia = False,
         requiere_accion_focal = False
     ))
-    estados.append(Estado(
-        nombre='Postulacion Aceptada',
-        requiere_accion_presidencia = False,
-        requiere_accion_focal = False
-    ))
-    estados.append(Estado(
-        nombre='Postulacion Completada',
-        requiere_accion_presidencia = False,
-        requiere_accion_focal = False
-    ))
-    estados.append(Estado(
-        nombre='Postulacion Finalizada',
-        requiere_accion_presidencia = False,
-        requiere_accion_focal = False
-    ))
-    estados.append(Estado(
-        nombre='Postulacion Cancelada o Interrumpida', #estado para cuando no se llegó al estado 'Aceptada' antes de que comience un nuevo periodo de inscripcion
-        requiere_accion_presidencia = False,
-        requiere_accion_focal = False
-    ))
-    estados.append(Estado(
+    estados.append(Estado( #7
         nombre='Postulacion en Espera de Aceptacion', #estado de la postulacion al finalizar el paso 5 del diagrama de flujo
         requiere_accion_presidencia = True,
         requiere_accion_focal = False
     ))
-    estados.append(Estado(
+    estados.append(Estado( #8
+        nombre='Postulacion Aceptada',
+        requiere_accion_presidencia = False,
+        requiere_accion_focal = False
+    ))
+    estados.append(Estado( #9
         nombre='Postulacion en Espera de ser Completada', #estado de la postulacion al finalizar el paso 7 del diagrama de flujo
         requiere_accion_presidencia = True,
         requiere_accion_focal = False
     ))
+    estados.append(Estado( #10
+        nombre='Postulacion Completada',
+        requiere_accion_presidencia = False,
+        requiere_accion_focal = False
+    ))
+    estados.append(Estado( #11
+        nombre='Postulacion Esperando Certificado de Calificaciones Firmado',
+        require_accion_presidencia = True,
+        require_accion_focal = False
+    ))
+    estados.append(Estado( #12
+        nombre='Postulacion Finalizada',
+        requiere_accion_presidencia = False,
+        requiere_accion_focal = False
+    ))
+    estados.append(Estado( #13
+        nombre='Postulacion Cancelada o Interrumpida', #estado para cuando no se llegó al estado 'Aceptada' antes de que comience un nuevo periodo de inscripcion
+        requiere_accion_presidencia = False,
+        requiere_accion_focal = False
+    ))
+    
 
     for i in range (len(estados)):
         db.session.add(estados[i])
@@ -205,7 +211,7 @@ def crear_postulaciones(usuarios):
             universidad_origen="Universidad de Ejemplo",
             consulado_visacion="Consulado X",
             convenio=None,
-            estado=estados[3],
+            estado=estados[2],
             informacion_alumno_entrante= alumno,
             programa=programas[i],
             periodo_postulacion = periodos_inscripcion[1]

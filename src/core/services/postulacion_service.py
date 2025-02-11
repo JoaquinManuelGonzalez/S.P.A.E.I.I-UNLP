@@ -256,7 +256,7 @@ def validar_asignaturas_de_postulacion(postulacion, facultad_id):
 def rechazar_asignaturas_de_postulacion(postulacion):
     db.session.query(PostulacionAsignatura).filter_by(postulacion_id=postulacion.id).delete(synchronize_session=False)
     db.session.commit()
-    actualizar_estado_postulacion(postulacion, "Postulacion en Proceso")
+    actualizar_estado_postulacion(postulacion, "Postulacion Iniciada")
     return
 
 def get_asignaturas_de_facultad(postulacion_id, facultad_id):

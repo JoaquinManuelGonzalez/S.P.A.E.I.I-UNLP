@@ -264,11 +264,6 @@ def rechazar_solicitud(id_postulacion):
             postulacion_service.actualizar_estado_postulacion(postulacion, "Postulacion Aceptada")
             titulo = "Archivos nuevos rechazados"
             cuerpo = f"Alguno de los archivos subidos en el ultimo paso fue rechazado. Por favor intente devuelta. El motivo de rechazo es: {motivo}"
-        elif postulacion.estado.nombre == "Postulacion Esperando Validacion por Facultad":
-            postulacion_service.actualizar_estado_postulacion(postulacion, "Postulacion en Proceso")
-            titulo = "Asignaturas rechazadas"
-            facultad = get_facultad_by_id(get_usuario_actual().facultad_id).nombre #Éste rechazo solo lo hace un Punto Focal.
-            cuerpo = f"Alguna o algunas de las asignaturas a las que se ha postulado han sido rechazadas por el Punto Focal de la siguiente facultad: {facultad} Por favor intente devuelta. El motivo de rechazo es: {motivo}"
         else:
             print("error en postulacion.rechazar_solicitud: Estado no cubierto")
         destino = alumno.email
