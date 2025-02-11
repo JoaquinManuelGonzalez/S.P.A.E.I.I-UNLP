@@ -846,21 +846,6 @@ def guardar_datos_estadia(id_postulacion):
         flash('Error al cargar el archivo de politicas institucionales', 'danger')
         return render_template('postulaciones/postulacion_estadia.html', form=form, id_postulacion=id_postulacion, consulado_dato=postulacion.consulado_visacion)
     
-    alumno.discapacidad = form.discapacidad.data
-    if form.discapacidad.data == True and form.certificado_discapacidad.data:
-        certificado_discapacidad = form.certificado_discapacidad.data
-        path_certificado_discapacidad = f"{id_postulacion}_{alumno.id}_certificadoDiscapacidad_{certificado_discapacidad.filename}"
-        archivo_certificado_discapacidad = {
-            "titulo": "Certificado de discapacidad",
-            "path": path_certificado_discapacidad,
-            "id_postulacion": id_postulacion,
-            "id_informacion_alumno_entrante": alumno.id
-        }
-        try:
-            archivo_certificado_discapacidad = archivo_schema.load(archivo_certificado_discapacidad)
-        except Exception as err:
-            flash('Error al cargar el archivo de certificado de discapacidad', 'danger')
-            return render_template('postulaciones/postulacion_estadia.html', form=form, id_postulacion=id_postulacion, consulado_dato=postulacion.consulado_visacion)
 
     postulacion.fecha_ingreso = form.fecha_ingreso.data
     postulacion.duracion_estadia = form.duracion_estadia.data
@@ -877,11 +862,7 @@ def guardar_datos_estadia(id_postulacion):
     file_politicas = archivo_service.crear_archivo(**archivo_politicas)
     file_politicas.postulacion = postulacion
 
-    if form.discapacidad.data == True and form.certificado_discapacidad.data:
-        file_certificado = archivo_service.crear_archivo(**archivo_certificado_discapacidad)
-        file_certificado.postulacion = postulacion
-        archivo_service.save_file_minio(request.files['certificado_discapacidad'].read(), archivo_certificado_discapacidad['path'])
-    
+   
     archivo_service.save_file_minio(request.files['psicofisico'].read(), archivo_psicofisico['path'])
     archivo_service.save_file_minio(request.files['politicas_institucionales'].read(), archivo_politicas['path'])
 

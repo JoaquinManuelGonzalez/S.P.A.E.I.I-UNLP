@@ -37,26 +37,6 @@
             <a href="{{ url_for('documentos.descargar_archivo_base', path='archivos_base-politicas_institucionales.pdf') }}" class="btn btn-primary btn-sm">Descargar para firmar</a>
         </div>
         <div class="mb-3">
-            {{ form.discapacidad.label}}{{ form.discapacidad(id="discapacidad", class="form-radio") }}
-            {% if form.errors %}
-                {% for error in form.discapacidad.errors %}
-                    <div class="text-danger">{{ form.errors[0] }}
-                        <span style="color: red;">{{ error }}</span>
-                    </div>
-                {% endfor %}
-            {% endif %}
-        </div>
-        <div class="mb-3" id="certificado-container" style="display: none;">
-            {{ form.certificado_discapacidad.label }}{{ form.certificado_discapacidad(id="certificado_discapacidad", class="form-control") }}
-            {% if form.errors %}
-                {% for error in form.certificado_discapacidad.errors %}
-                    <div class="text-danger">{{ form.errors[0] }}
-                        <span style="color: red;">{{ error }}</span>
-                    </div>
-                {% endfor %}
-            {% endif %}
-        </div>
-        <div class="mb-3">
             {{ form.fecha_ingreso.label }}{{ form.fecha_ingreso(class="form-control") }}
             {% if form.errors %}
                 {% for error in form.fecha_ingreso.errors %}
@@ -93,20 +73,6 @@
 </form>
 </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const discapacidadCheckbox = document.getElementById('discapacidad');
-        const certificadoContainer = document.getElementById('certificado-container');
-
-        discapacidadCheckbox.addEventListener('change', function () {
-            if (discapacidadCheckbox.checked) {
-                certificadoContainer.style.display = 'block';
-            } else {
-                certificadoContainer.style.display = 'none';
-            }
-        });
-    });
-</script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const duracionEstadia = document.getElementById('duracion_estadia');
