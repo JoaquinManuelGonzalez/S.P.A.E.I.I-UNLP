@@ -150,7 +150,7 @@
               <label for="convenioUniversitario" class="ml-1 text-sm font-normal text-gray-700"> {{ $t('formulario.placeholders.convenio') }}</label>
               <input v-model="convenioPrograma" id="programa" name="convenioPrograma" type="radio" class="ml-4" required value="programa">
               <label for="programa" class="ml-1 text-sm font-normal text-gray-700">{{ $t('formulario.placeholders.programa') }}</label>
-              <p class="mt-1 text-xs font-normal text-gray-700">{{ $t('formulario.extras.mensaje') }} <a href="https://conveniosunlp.presi.unlp.edu.ar/convenios" class="text-blue-500">{{ $t('formulario.extras.clickAqui') }}</a></p>
+              <p class="mt-1 text-xs font-normal text-gray-700">{{ $t('formulario.extras.mensaje') }} <a href="https://conveniosunlp.presi.unlp.edu.ar/convenios" class="text-blue-500" target="_blank">{{ $t('formulario.extras.clickAqui') }}</a></p>
             </div>
             <div v-if="convenioPrograma === 'convenio'" class="mb-4">
               <label for="convenio" class="block text-sm font-medium text-gray-700">{{ $t("formulario.campos.convenioUniversitario") }}</label>
