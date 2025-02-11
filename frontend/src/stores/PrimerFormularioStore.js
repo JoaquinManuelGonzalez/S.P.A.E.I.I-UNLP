@@ -10,7 +10,7 @@ export const usePrimerFormularioStore = defineStore('primer_formulario_store', {
                 email: "",
                 domicilio_pais_de_residencia: "",
                 fecha_de_nacimiento: "",
-                
+                discapacitado: false,
                 id_genero: "",
                 id_estado_civil: "",
                 id_pais_de_nacimiento: "",
@@ -50,6 +50,7 @@ export const usePrimerFormularioStore = defineStore('primer_formulario_store', {
                 carta_recomendacion: null,
                 cedula_de_identidad: null,
                 pasaporte: null,
+                certificadoDiscapacidad: null,
             },
             titulos:{
                 titulo_certificado_b1: "",
@@ -57,6 +58,7 @@ export const usePrimerFormularioStore = defineStore('primer_formulario_store', {
                 titulo_carta_recomendacion: "",
                 titulo_cedula_de_identidad: "",
                 titulo_pasaporte: "",
+                titulo_certificado_discapacidad: "",
             },
             convenioPrograma: "",
             mercosur: false,
