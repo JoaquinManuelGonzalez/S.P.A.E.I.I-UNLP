@@ -166,6 +166,20 @@
                     {% endfor %}
                 {% endif %}
             </div>
+            <div class="mb-3">
+                <input class="form-check-input" type="checkbox" id="discapacidad" value="true" name="discapacidad" onclick="toggleCertificadoDiscapacidad()">
+                <label class="form-check-label" for="discapacidad">¿Posee alguna discapacidad?</label>
+            </div>
+            <div class="mb-3" id="certificadoDiscapacidad" style="display: none;">
+                {{ form.certificado_discapacidad.label }}{{ form.certificado_discapacidad(class="form-control") }}
+                {% if form.errors %}
+                    {% for error in form.certificado_discapacidad.errors %}
+                        <div class="text-danger">{{ form.errors[0] }}
+                            <span style="color: red;">{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
             </div>
     
             <!-- Datos Académicos -->
@@ -465,6 +479,21 @@
             paisSelect.addEventListener('change', verificarMercosur);
         });
     </script>
-    
+    <script>
+        function toggleCertificadoDiscapacidad() {
+            // Obtener el checkbox
+            var checkbox = document.getElementById('discapacidad');
+            
+            // Obtener el contenedor del campo de certificado
+            var certificadoDiscapacidad = document.getElementById('certificadoDiscapacidad');
+            
+            // Mostrar u ocultar el campo de certificado según el estado del checkbox
+            if (checkbox.checked) {
+                certificadoDiscapacidad.style.display = 'block';  // Mostrar
+            } else {
+                certificadoDiscapacidad.style.display = 'none';  // Ocultar
+            }
+        }
+    </script>
 
 {% endblock %}   

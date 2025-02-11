@@ -771,6 +771,25 @@ def guardar_repostulacion(id_alumno):
     carta_recomendacion.informacion_alumno_entrante = alumno
     carta_recomendacion.postulacion = postulacion
 
+    discapacidad = request.form.get('discapacidad')
+    if discapacidad:
+        alumno.discapacitado = True
+        if form.certificado_discapacidad.data:
+            filename = f"{postulacion.id}_{alumno.id}_certificadoDiscapacidad_{form.certificado_discapacidad.data.filename}"
+            archivo_service.save_file_minio(form.certificado_discapacidad.data.read(), filename)
+            titulo_certificado_discapacidad = {
+                "titulo": form.certificado_discapacidad.data.filename,
+                "path": filename
+            }
+            try:
+                certificado_discapacidad = archivo_schema.load(titulo_certificado_discapacidad)
+            except Exception as err:
+                flash('Error al cargar los datos del certificado de discapacidad', 'danger')
+                return render_template('postulaciones/repostulacion.html', form=form, id_alumno=id_alumno)
+            certificado_discapacidad = archivo_service.crear_archivo(**certificado_discapacidad)
+            certificado_discapacidad.informacion_alumno_entrante = alumno
+            certificado_discapacidad.postulacion = postulacion
+
     postulacion.tutores.append(tutor_institucional)
     postulacion.tutores.append(tutor_academico)
     db.session.commit()
