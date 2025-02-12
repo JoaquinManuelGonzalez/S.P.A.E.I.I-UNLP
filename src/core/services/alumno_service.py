@@ -9,7 +9,7 @@ from src.core.models.postulacion.estado import Estado
 from src.core.models.postulacion.postulacion import Postulacion
 from src.core.models.postulacion.postulacion_asignatura import PostulacionAsignatura
 from src.core.database import db
-from src.core.services import usuario_service, postulacion_service, genero_service, paises_service, estado_civil_service
+from src.core.services import usuario_service, postulacion_service, genero_service, paises_service, estado_civil_service, archivo_service
 
 
 def ordenar_alumnos(
@@ -206,3 +206,51 @@ def asignar_pasaporte_alumno(alumno, id_pasaporte):
 def asignar_cedula_alumno(alumno, id_cedula_de_identidad):
     alumno.id_cedula_de_identidad = id_cedula_de_identidad
     db.session.commit()
+
+
+def actualizar_certificado_discapacidad(archivo_nuevo, filename, archivo_viejo):
+    archivo_viejo.titulo = archivo_nuevo.filename
+    archivo_viejo.path = filename
+
+    archivo_service.save_file_minio(archivo_nuevo.read(), filename)
+
+    db.session.commit()
+
+    return archivo_viejo
+
+
+def crear_certificado_discapacidad(alumno, archivo, filename):
+    nuevo_archivo = archivo_service.crear_archivo(
+        titulo=archivo.filename,
+        path=filename
+    )
+    alumno.archivos.append(nuevo_archivo)
+    db.session.commit()
+
+    archivo_service.save_file_minio(archivo.read(), filename)
+
+    return nuevo_archivo
+
+
+def actualizar_certificado_espanol(archivo_nuevo, filename, archivo_viejo):
+    archivo_viejo.titulo = archivo_nuevo.filename
+    archivo_viejo.path = filename
+
+    archivo_service.save_file_minio(archivo_nuevo.read(), filename)
+
+    db.session.commit()
+
+    return archivo_viejo
+
+
+def crear_certificado_espanol(alumno, archivo, filename):
+    nuevo_archivo = archivo_service.crear_archivo(
+        titulo=archivo.filename,
+        path=filename
+    )
+    alumno.archivos.append(nuevo_archivo)
+    db.session.commit()
+
+    archivo_service.save_file_minio(archivo.read(), filename)
+
+    return nuevo_archivo
