@@ -566,9 +566,44 @@ def actualizar_alumno(id_alumno):
                     "danger",
                 )
                 return render_template(
-                    "alumnos/editar_alumno.html", form=form, alumno=alumno
+                            "alumnos/editar_alumno.html",
+                            form=form,
+                            alumno=alumno,
+                            form_pasaporte=form_pasaporte,
+                            form_cedula=form_cedula,
+                            archivos=archivos_originales,
                 )
+        
+        if archivos_nuevos["certificado_discapacidad"]:
+            if not discapacitado:
+                flash(
+                    "No se puede adjuntar un Certificado de Discapacidad si el Alumno no está marcado como discapacitado.",
+                    "danger",
+                )
+                return render_template(
+                            "alumnos/editar_alumno.html",
+                            form=form,
+                            alumno=alumno,
+                            form_pasaporte=form_pasaporte,
+                            form_cedula=form_cedula,
+                            archivos=archivos_originales,
+                )
+            else:
+                filename = f"{alumno.id}_certificadoDiscapacidad_{archivos_nuevos['certificado_discapacidad'].filename}"
+                if archivos_originales["Certificado de Discapacidad"] != "No posee información asociada.":
+                    certificado_viejo = archivo_service.obtener_archivo_por_palabra_clave((alumno.archivos), "certificadoDiscapacidad")
+                    alumno_service.actualizar_certificado_discapacidad(archivos_nuevos["certificado_discapacidad"], filename, certificado_viejo)
+                else:
+                    alumno_service.crear_certificado_discapacidad(alumno, archivos_nuevos["certificado_discapacidad"], filename)
 
+        if archivos_nuevos["certificado_espanol"]:
+            filename = f"{alumno.id}_certificadoB1_{archivos_nuevos['certificado_espanol'].filename}"
+            if archivos_originales["Certificado B1"] != "No posee información asociada.":
+                certificado_viejo = archivo_service.obtener_archivo_por_palabra_clave((alumno.archivos), "certificadoB1")
+                alumno_service.actualizar_certificado_espanol(archivos_nuevos["certificado_espanol"], filename, certificado_viejo)
+            else:
+                alumno_service.crear_certificado_espanol(alumno, archivos_nuevos["certificado_espanol"], filename)
+        
         alumno = alumno_service.actualizar_informacion_alumno(
             alumno,
             nombre,
