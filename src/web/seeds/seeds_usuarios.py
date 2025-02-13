@@ -13,6 +13,7 @@ def seeds_usuarios():
     establecer_permisos_roles()
     
     usuarios = crear_usuarios()
+    print("Seed de usuarios ejecutado correctamente")
     return usuarios
 
    
