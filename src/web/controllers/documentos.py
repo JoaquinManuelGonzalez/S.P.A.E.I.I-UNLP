@@ -14,7 +14,26 @@ MESES = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto
 
 def hoy():
     t = datetime.now()
-    return str(t.day) + " de " + str(MESES[t.month]) + " de " + str(t.year)
+    return str(t.day) + " de " + str(MESES[t.month - 1]) + " de " + str(t.year)
+
+def listar_facultades(asignaturas):
+    """Genera un string con los nombres de facultades únicas, separadas por ',' y la última con 'y'.
+    
+    Args:
+        asignaturas (list): Lista de objetos Asignatura con un atributo 'facultad' que tiene un 'nombre'.
+    
+    Returns:
+        str: String con las facultades listadas correctamente.
+    """
+    facultades = sorted({asignatura.facultad.nombre for asignatura in asignaturas if asignatura.facultad})
+    
+    if not facultades:
+        return ""
+
+    if len(facultades) == 1:
+        return "la " + facultades[0]
+
+    return "la " + ", ".join(facultades[:-1]) + " y la " + facultades[-1]
 
 #-----Descargar certificad calificaciones-----
 @documentos_bp.get('/certificado_calificaciones/<int:postulacion_id>')
@@ -37,7 +56,7 @@ def certificado_calificaciones(postulacion_id):
     
     notas_cerradas = True
     for a in asignaturas:
-        if a.aprobado < 0:
+        if a.aprobado < 0 and a.estado != "Cursada abandonada":
             notas_cerradas = False
     
     if not notas_cerradas:
@@ -94,7 +113,9 @@ def carta_aceptacion(postulacion_id):
     else:
         periodo = "Febrero - Julio " + str(postulacion.periodo_postulacion.inicio.year + 1)
 
-    html_string = render_template("documentos/carta_aceptacion.html", postulacion=postulacion, fecha_firma=hoy(), periodo=periodo)
+    facultades = listar_facultades([x.asignatura for x in postulacion.asignaturas])
+
+    html_string = render_template("documentos/carta_aceptacion.html", postulacion=postulacion, fecha_firma=hoy(), periodo=periodo, facultades=facultades)
     pdf_bytes = HTML(string=html_string).write_pdf()
 
     return send_file(
