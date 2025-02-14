@@ -428,40 +428,38 @@
             const paisSelect = document.getElementById('nacionalidad');  
             const cedulaContainer = document.getElementById('cedula-container');
             const certificadoB1 = document.getElementById('certificado');
+
+            // Datos del pasaporte
             const pasaporteNumero = document.getElementById('pasaporte_numero');
             const pasaportePais = document.getElementById('pasaporte_pais');
             const pasaporteArchivo = document.getElementById('pasaporte_archivo');
+
+            // Datos de la cédula
             const cedulaNumero = document.getElementById('cedula_numero');
             const cedulaPais = document.getElementById('cedula_pais');
             const cedulaArchivo = document.getElementById('cedula_archivo');
-    
-            // Lista de IDs de países del Mercosur (deben coincidir con los IDs en la BD)
-            const paises_mercosur = [42 /*Perú*/, 62 /*Colombia*/, 90 /*Paraguay*/, 125 /*Argentina*/, 150 /*Surinam*/, 166 /*Guyana*/, 169 /*Uruguay*/, 202 /*Bolivia*/, 203 /*Chile*/, 210 /*Ecuador*/, 223 /*Brasil*/, 228 /*Venezuela*/]
-    
+
+            // Lista de países del Mercosur (IDs)
+            const paises_mercosur = [42, 62, 90, 125, 150, 166, 169, 202, 203, 210, 223, 228];
+
             function verificarMercosur() {
-                const selectedValue = paisSelect.value; // Obtiene el ID del país seleccionado
+                const selectedValue = parseInt(paisSelect.value);
                 const selectedOption = paisSelect.options[paisSelect.selectedIndex];
 
-                pasaporteNumero.setAttribute('required', 'true');
-                pasaportePais.setAttribute('required', 'true');
-                pasaporteArchivo.setAttribute('required', 'true');
-                if (paises_mercosur.includes(parseInt(selectedValue))) { // Convertimos el valor a número
+                if (paises_mercosur.includes(selectedValue)) {
+                    // Si es del Mercosur, mostrar el campo de cédula y hacerla opcional
                     cedulaContainer.style.display = 'block';
-                    cedulaNumero.setAttribute('required', 'true');
-                    cedulaPais.setAttribute('required', 'true');
-                    cedulaArchivo.setAttribute('required', 'true');
-                    pasaporteNumero.removeAttribute('required');
-                    pasaportePais.removeAttribute('required');
-                    pasaporteArchivo.removeAttribute('required');
+                    hacerOpcional(cedulaNumero, cedulaPais, cedulaArchivo);
+                    hacerObligatorio(pasaporteNumero, pasaportePais, pasaporteArchivo);
                 } else {
+                    // Si NO es del Mercosur, ocultar el campo de cédula y hacer obligatorio el pasaporte
                     cedulaContainer.style.display = 'none';
-                    cedulaNumero.removeAttribute('required');
-                    cedulaPais.removeAttribute('required');
-                    cedulaArchivo.removeAttribute('required');
-                    pasaporteNumero.setAttribute('required', 'true');
-                    pasaportePais.setAttribute('required', 'true');
-                    pasaporteArchivo.setAttribute('required', 'true');
+                    limpiarCampos(cedulaNumero, cedulaPais, cedulaArchivo);
+                    hacerOpcional(cedulaNumero, cedulaPais, cedulaArchivo);
+                    hacerObligatorio(pasaporteNumero, pasaportePais, pasaporteArchivo);
                 }
+
+                // Verificar idioma
                 if (selectedOption.value) {
                     const esHispanohablante = selectedOption.getAttribute('data-hispanohablante') === 'true';
                     if (!esHispanohablante) {
@@ -472,11 +470,48 @@
                 }
             }
 
-            // Ejecutamos la función cuando la página carga (por datos precargados)
+            function validarOpcionalidad() {
+                if (cedulaNumero.value || cedulaPais.value || cedulaArchivo.files.length > 0) {
+                    hacerObligatorio(cedulaNumero, cedulaPais, cedulaArchivo);
+                    hacerOpcional(pasaporteNumero, pasaportePais, pasaporteArchivo);
+                } else {
+                    hacerObligatorio(pasaporteNumero, pasaportePais, pasaporteArchivo);
+                    hacerOpcional(cedulaNumero, cedulaPais, cedulaArchivo);
+                }
+            }
+
+            function hacerObligatorio(campo1, campo2, campo3) {
+                campo1.setAttribute('required', 'true');
+                campo2.setAttribute('required', 'true');
+                campo2.setAttribute('required', 'true');
+            }
+
+            function hacerOpcional(campo1, campo2, campo3) {
+                campo1.removeAttribute('required');
+                campo2.removeAttribute('required');
+                campo2.removeAttribute('required');
+            }
+
+            function limpiarCampos(...campos) {
+                campos.forEach(campo => {
+                    if (campo.type === "file") {
+                        campo.value = ""; // Limpiar archivo
+                    } else {
+                        campo.value = ""; // Limpiar texto
+                    }
+                });
+            }
+
+            // Ejecutar al cargar la página
             verificarMercosur();
-    
-            // También ejecutamos la función cuando el usuario cambia el select
+
+            // Ejecutar cuando se cambia el país
             paisSelect.addEventListener('change', verificarMercosur);
+
+            // Ejecutar cuando el usuario ingresa datos en la cédula
+            cedulaNumero.addEventListener('input', validarOpcionalidad);
+            cedulaPais.addEventListener('input', validarOpcionalidad);
+            cedulaArchivo.addEventListener('change', validarOpcionalidad);
         });
     </script>
     <script>
