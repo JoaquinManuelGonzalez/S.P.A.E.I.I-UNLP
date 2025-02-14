@@ -22,14 +22,6 @@ class PostulacionEstadiaForm(FlaskForm):
             FileAllowed(["pdf"], "Solo se permiten archivos .pdf"),
             DataRequired()]
     )
-    discapacidad = BooleanField(
-        "¿Posee alguna discapacidad?"
-    )
-    certificado_discapacidad = FileField(
-        "Certificado de discapacidad",
-        validators=[
-            FileAllowed(["pdf"], "Solo se permiten archivos .pdf")]
-    )
     fecha_ingreso = DateField(
         "Fecha de ingreso al país",
         validators=[DataRequired()]

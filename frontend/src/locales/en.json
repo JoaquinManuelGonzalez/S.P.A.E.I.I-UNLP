@@ -139,7 +139,9 @@
             "emailTutorInstitucional": "Institutional Tutor's Email",
             "apellidoTutorAcademico": "Academic Tutor's Last Name",
             "nombreTutorAcademico": "Academic Tutor's First Name",
-            "emailTutorAcademico": "Academic Tutor's Email"
+            "emailTutorAcademico": "Academic Tutor's Email",
+            "checkDiscapacidad": "Do you have any disability?",
+            "certificadoDiscapacidad": "Disability certificate"
         },
         "placeholders": {
             "apellido": "Enter your last name",

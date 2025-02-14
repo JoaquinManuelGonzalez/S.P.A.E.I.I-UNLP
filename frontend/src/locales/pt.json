@@ -139,7 +139,9 @@
             "emailTutorInstitucional": "Email do Tutor Institucional",
             "apellidoTutorAcademico": "Sobrenome do Tutor Acadêmico",
             "nombreTutorAcademico": "Nome do Tutor Acadêmico",
-            "emailTutorAcademico": "Email do Tutor Acadêmico"
+            "emailTutorAcademico": "Email do Tutor Acadêmico",
+            "checkDiscapacidad": "Você possui alguma deficiência?",
+            "certificadoDiscapacidad": "Certificado de deficiência"
         },
         "placeholders": {
             "apellido": "Insira seu sobrenome",
