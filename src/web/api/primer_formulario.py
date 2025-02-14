@@ -201,7 +201,7 @@ def primer_formulario():
             if not data_titulos["titulo_certificado_discapacidad"]:
                 return jsonify({"error": "No se encontraron datos del título del certificado de discapacidad"}), 400
             
-            path_certificado_discapacidad = f"{postulacion.id}_{alumno.id}_certificadoDiscapacidad_{data_titulos['titulo_certificado_discapacidad']}"
+            path_certificado_discapacidad = f"{alumno.id}_certificadoDiscapacidad_{data_titulos['titulo_certificado_discapacidad']}"
             archivo_service.save_file_minio(archivo_certificado_discapacidad, path_certificado_discapacidad)
             titulo_certificado_discapacidad = {
                 "titulo": data_titulos["titulo_certificado_discapacidad"],
