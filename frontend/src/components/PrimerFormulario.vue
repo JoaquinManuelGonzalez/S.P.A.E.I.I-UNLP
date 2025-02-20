@@ -120,6 +120,14 @@
               <label for="certificadoB1" class="block text-sm font-medium text-gray-700">{{ $t("formulario.campos.certificadoB1") }}</label>
               <input v-on:change="onFileChange($event, 'certificadoB1')" ref="formData.archivo.certificado_b1" id="certificadoB1" type="file" class="mt-1 p-2 border border-gray-300 rounded-md w-full" :required="!es_hispanohablante">
             </div>
+            <div class="mb-4">
+              <input v-model="formData.alumno.discapacitado" id="checkDiscapacidad" type="checkbox" value="true">
+              <label for="checkDiscapacidad" class="text-sm font-medium text-gray-700 ml-1">{{ $t("formulario.campos.checkDiscapacidad") }}</label>
+            </div>
+            <div v-if="formData.alumno.discapacitado" class="mb-4">
+              <label for="certificadoDiscapacidad" class="block text-sm font-medium text-gray-700">{{ $t("formulario.campos.certificadoDiscapacidad") }}</label>
+              <input v-on:change="onFileChange($event, 'certificadoDiscapacidad')" ref="formData.value.archivo.certificadoDiscapacidad" id="certificadoDiscapacidad" type="file" class="mt-1 p-2 border border-gray-300 rounded-md w-full">
+            </div>
           </div>
   
           <!-- Datos Académicos -->
@@ -150,7 +158,7 @@
               <label for="convenioUniversitario" class="ml-1 text-sm font-normal text-gray-700"> {{ $t('formulario.placeholders.convenio') }}</label>
               <input v-model="convenioPrograma" id="programa" name="convenioPrograma" type="radio" class="ml-4" required value="programa">
               <label for="programa" class="ml-1 text-sm font-normal text-gray-700">{{ $t('formulario.placeholders.programa') }}</label>
-              <p class="mt-1 text-xs font-normal text-gray-700">{{ $t('formulario.extras.mensaje') }} <a href="https://conveniosunlp.presi.unlp.edu.ar/convenios" class="text-blue-500">{{ $t('formulario.extras.clickAqui') }}</a></p>
+              <p class="mt-1 text-xs font-normal text-gray-700">{{ $t('formulario.extras.mensaje') }} <a href="https://conveniosunlp.presi.unlp.edu.ar/convenios" class="text-blue-500" target="_blank">{{ $t('formulario.extras.clickAqui') }}</a></p>
             </div>
             <div v-if="convenioPrograma === 'convenio'" class="mb-4">
               <label for="convenio" class="block text-sm font-medium text-gray-700">{{ $t("formulario.campos.convenioUniversitario") }}</label>
@@ -280,8 +288,6 @@
   // Manejo de cambio de archivo
   const onFileChange = (event, key) => {
     const file = event.target.files[0];
-    console.log(file);
-    console.log(file.name);
     switch(key){
       case 'fotoPasaporte':
         formData.value.archivo.pasaporte = file;
@@ -302,6 +308,10 @@
       case 'cartaRecomendacion':
         formData.value.archivo.carta_recomendacion = file;
         formData.value.titulos.titulo_carta_recomendacion = file.name;
+        break;
+      case 'certificadoDiscapacidad':
+        formData.value.archivo.certificadoDiscapacidad = file;
+        formData.value.titulos.titulo_certificado_discapacidad = file.name;
         break;
     }
   };

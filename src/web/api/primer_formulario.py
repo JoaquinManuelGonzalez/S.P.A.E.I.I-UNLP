@@ -72,7 +72,6 @@ def primer_formulario():
 
 
     
-    data_alumno["discapacitado"] = False
     try:
         alumno = informacion_alumno_entrante_schema.load(data_alumno)
     except Exception as err:
@@ -196,7 +195,25 @@ def primer_formulario():
         carta_recomendacion = archivo_service.crear_archivo(**carta_recomendacion)
         
     
-    
+    if alumno.discapacitado:
+        if data_archivos["certificadoDiscapacidad"]:
+            archivo_certificado_discapacidad = base64.b64decode(data_archivos["certificadoDiscapacidad"])
+            if not data_titulos["titulo_certificado_discapacidad"]:
+                return jsonify({"error": "No se encontraron datos del título del certificado de discapacidad"}), 400
+            
+            path_certificado_discapacidad = f"{alumno.id}_certificadoDiscapacidad_{data_titulos['titulo_certificado_discapacidad']}"
+            archivo_service.save_file_minio(archivo_certificado_discapacidad, path_certificado_discapacidad)
+            titulo_certificado_discapacidad = {
+                "titulo": data_titulos["titulo_certificado_discapacidad"],
+                "path": path_certificado_discapacidad
+            }
+            try:
+                certificado_discapacidad = archivo_schema.load(titulo_certificado_discapacidad)
+            except Exception as err:
+                return jsonify({"error": f"Error al cargar los datos del certificado de discapacidad: {err}"}), 400
+            certificado_discapacidad = archivo_service.crear_archivo(**certificado_discapacidad)
+            certificado_discapacidad.informacion_alumno_entrante = alumno
+            certificado_discapacidad.postulacion = postulacion
 
 
     if postulacion.de_posgrado:

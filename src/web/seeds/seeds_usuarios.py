@@ -13,6 +13,7 @@ def seeds_usuarios():
     establecer_permisos_roles()
     
     usuarios = crear_usuarios()
+    print("Seed de usuarios ejecutado correctamente")
     return usuarios
 
    
@@ -146,6 +147,7 @@ def crear_permisos():
     permisos_punto_focal.append(permiso_7)
     permisos_punto_focal.append(permiso_9)
     permisos_punto_focal.append(permiso_10)
+    permisos_punto_focal.append(permiso_18)
     permisos_punto_focal.append(permiso_21)
     permisos_punto_focal.append(permiso_24)
     permisos_punto_focal.append(permiso_26)

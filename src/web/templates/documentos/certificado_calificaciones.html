@@ -79,6 +79,7 @@
     <table class="content">
         <thead>
             <tr>
+                <th>FACULTAD</th>
                 <th>ASIGNATURA</th>
                 <th>CALIFICACIÓN</th>
                 <th>CARGA HORARIA</th>
@@ -87,8 +88,9 @@
         <tbody>
             {% for asignatura in postulacion.asignaturas %}
             <tr>
+                <td>{{ asignatura.asignatura.facultad.nombre }}</td>
                 <td>{{ asignatura.asignatura.nombre }}</td>
-                <td>{{ asignatura.aprobado }}</td>
+                <td>{{ asignatura.estado == "Cursada abandonada" and "Abandonada" or asignatura.aprobado}}</td>
                 <td>{{ asignatura.asignatura.carga_horaria }}</td>
             </tr>
             {% endfor %}

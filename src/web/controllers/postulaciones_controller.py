@@ -116,7 +116,7 @@ def ver_postulacion(id_postulacion):
             "certificado_b1": archivo_service.get_archivo_by_postulacion_and_tipo("certificadoB1", alumno.id),
             "psicofisico": archivo_service.get_archivo_by_postulacion_and_tipo("psicofisico", alumno.id, id_postulacion),
             "politicas_institucionales": archivo_service.get_archivo_by_postulacion_and_tipo("politicasI", alumno.id, id_postulacion),
-            "certificado_discapacidad": archivo_service.get_archivo_by_postulacion_and_tipo("certificadoDiscapacidad", alumno.id, id_postulacion),
+            "certificado_discapacidad": archivo_service.get_archivo_by_postulacion_and_tipo("certificadoDiscapacidad", alumno.id),
             "visado": archivo_service.get_archivo_by_postulacion_and_tipo("visado", alumno.id, id_postulacion),
             "seguro_medico": archivo_service.get_archivo_by_postulacion_and_tipo("seguroMedico", alumno.id, id_postulacion),
             "precarga": archivo_service.get_archivo_by_postulacion_and_tipo("precarga", alumno.id, id_postulacion),
@@ -545,7 +545,7 @@ def guardar_repostulacion(id_alumno):
         "id_periodo_postulacion": periodo.id,
     }
    
-    if form.consulado_visacion.data is not None:
+    if form.consulado_visacion.data:
         data_postulacion["consulado_visacion"] = form.consulado_visacion.data 
     convenio_programa = request.form.get('convenioPrograma')
     if convenio_programa == "programa":
@@ -577,60 +577,25 @@ def guardar_repostulacion(id_alumno):
         if form.numero_pasaporte.data:
             path = f"{alumno.id}_pasaporte_{form.foto_pasaporte.data.filename}"
             archivo_service.save_file_minio(form.foto_pasaporte.data.read(), path)
-            archivo_pasaporte = {
-                "titulo": form.foto_pasaporte.data.filename,
-                "path": path,
-            }
-            try:
-                archivo_pasaporte = archivo_schema.load(archivo_pasaporte)
-            except Exception as err:
-                flash('Error al cargar los datos del pasaporte', 'danger')
-                return render_template('postulaciones/repostulacion.html', form=form, id_alumno=id_alumno)
-            pasaporte_archivo = archivo_service.crear_archivo(**archivo_pasaporte)
-            data_pasaporte = {
-                "numero": form.numero_pasaporte.data,
-                "id_pais": form.pais_emision_pasaporte.data.id,
-                "id_archivo": pasaporte_archivo.id
-            }
-            try:
-                pasaporte = pasaporte_schema.load(data_pasaporte)
-            except Exception as err:
-                flash('Error al guardar los datos del pasaporte', 'danger')
-                return render_template('postulaciones/repostulacion.html', form=form, id_alumno=id_alumno)
-            pasaporte = pasaporte_service.crear_pasaporte(**pasaporte)
-            pasaporte_archivo.pasaporte = pasaporte
-            pasaporte_archivo.informacion_alumno_entrante = alumno
-            pasaporte_archivo.postulacion = postulacion
-            alumno.id_pasaporte = pasaporte.id
+            pasaporte = alumno.pasaporte
+            archivo_pasaporte = archivo_service.obtener_archivo_por_id(pasaporte.id_archivo)
+            archivo_pasaporte.titulo = form.foto_pasaporte.data.filename
+            archivo_pasaporte.path = path
+            pasaporte.numero = form.numero_pasaporte.data
+            pasaporte.id_pais = form.pais_emision_pasaporte.data.id
+            archivo_pasaporte.postulacion = postulacion
+            
 
         if form.numero_cedula_identidad.data:
             path = f"{alumno.id}_cedula_{form.foto_cedula_identidad.data.filename}"
             archivo_service.save_file_minio(form.foto_cedula_identidad.data.read(), path)
-            archivo_cedula = {
-                "titulo": form.foto_cedula_identidad.data.filename,
-                "path": path,
-            }
-            try:
-                archivo_cedula = archivo_schema.load(archivo_cedula)
-            except Exception as err:
-                flash('Error al cargar los datos de la cedula de identidad', 'danger')
-                return render_template('postulaciones/repostulacion.html', form=form, id_alumno=id_alumno)
-            cedula_archivo = archivo_service.crear_archivo(**archivo_cedula)
-            data_cedula = {
-                "numero": form.numero_cedula_identidad.data,
-                "id_pais": form.pais_emision_cedula_identidad.data.id,
-                "id_archivo": cedula_archivo.id
-            }
-            try:
-                cedula = cedula_de_identidad_schema.load(data_cedula)
-            except Exception as err:
-                flash('Error al guardar los datos de la cedula de identidad', 'danger')
-                return render_template('postulaciones/repostulacion.html', form=form, id_alumno=id_alumno)
-            cedula = cedula_de_identidad_service.crear_cedula_de_identidad(**cedula)
-            cedula_archivo.cedula_identidad = cedula
-            cedula_archivo.informacion_alumno_entrante = alumno
-            cedula_archivo.postulacion = postulacion
-            alumno.id_cedula_de_identidad = cedula.id
+            cedula = alumno.cedula_de_identidad
+            archivo_cedula = archivo_service.obtener_archivo_por_id(cedula.id_archivo)
+            archivo_cedula.titulo = form.foto_cedula_identidad.data.filename
+            archivo_cedula.path = path
+            cedula.numero = form.numero_cedula_identidad.data
+            cedula.id_pais = form.pais_emision_cedula_identidad.data.id
+            archivo_cedula.postulacion = postulacion
     else:
         if not form.numero_pasaporte.data:
             flash('Es obligatorio ingresar datos del pasaporte', 'danger')
@@ -638,31 +603,13 @@ def guardar_repostulacion(id_alumno):
         if form.numero_pasaporte.data:
             path = f"{alumno.id}_pasaporte_{form.foto_pasaporte.data.filename}"
             archivo_service.save_file_minio(form.foto_pasaporte.data.read(), path)
-            archivo_pasaporte = {
-                "titulo": form.foto_pasaporte.data.filename,
-                "path": path,
-            }
-            try:
-                archivo_pasaporte = archivo_schema.load(archivo_pasaporte)
-            except Exception as err:
-                flash('Error al cargar los datos del pasaporte', 'danger')
-                return render_template('postulaciones/repostulacion.html', form=form, id_alumno=id_alumno)
-            pasaporte_archivo = archivo_service.crear_archivo(**archivo_pasaporte)
-            data_pasaporte = {
-                "numero": form.numero_pasaporte.data,
-                "id_pais": form.pais_emision_pasaporte.data.id,
-                "id_archivo": pasaporte_archivo.id
-            }
-            try:
-                pasaporte = pasaporte_schema.load(data_pasaporte)
-            except Exception as err:
-                flash('Error al guardar los datos del pasaporte', 'danger')
-                return render_template('postulaciones/repostulacion.html', form=form, id_alumno=id_alumno)
-            pasaporte = pasaporte_service.crear_pasaporte(**pasaporte)
-            pasaporte_archivo.pasaporte = pasaporte
-            pasaporte_archivo.informacion_alumno_entrante = alumno
-            pasaporte_archivo.postulacion = postulacion
-            alumno.id_pasaporte = pasaporte.id
+            pasaporte = alumno.pasaporte
+            archivo_pasaporte = archivo_service.obtener_archivo_por_id(pasaporte.id_archivo)
+            archivo_pasaporte.titulo = form.foto_pasaporte.data.filename
+            archivo_pasaporte.path = path
+            pasaporte.numero = form.numero_pasaporte.data
+            pasaporte.id_pais = form.pais_emision_pasaporte.data.id
+            archivo_pasaporte.postulacion = postulacion
 
     if not form.carta_recomendacion.data:
         flash('El archivo de carta de recomendacion es obligatorio', 'danger')
@@ -706,18 +653,10 @@ def guardar_repostulacion(id_alumno):
         if form.certificado_b1.data:
             filename = f"{alumno.id}_certificadoB1_{form.certificado_b1.data.filename}"
             archivo_service.save_file_minio(form.certificado_b1.data.read(), filename)
-            titulo_certificado_b1 = {
-                "titulo": form.certificado_b1.data.filename,
-                "path": filename
-            }
-            try:
-                certificado_b1 = archivo_schema.load(titulo_certificado_b1)
-            except Exception as err:
-                flash('Error al cargar los datos del certificado B1', 'danger')
-                return render_template('postulaciones/repostulacion.html', form=form, id_alumno=id_alumno)
-            certificado_b1 = archivo_service.crear_archivo(**certificado_b1)
-            certificado_b1.informacion_alumno_entrante = alumno
-            certificado_b1.postulacion = postulacion
+            archivo_certificado_b1 = archivo_service.get_archivo_by_postulacion_and_tipo("certificadoB1", alumno.id)
+            archivo_certificado_b1.titulo = form.certificado_b1.data.filename
+            archivo_certificado_b1.path = filename
+            archivo_certificado_b1.postulacion = postulacion
     else:
         if not form.certificado_b1.data:
             flash('El archivo del certificado B1 es obligatorio', 'danger')
@@ -725,18 +664,10 @@ def guardar_repostulacion(id_alumno):
         else:
             filename = f"{alumno.id}_certificadoB1_{form.certificado_b1.data.filename}"
             archivo_service.save_file_minio(form.certificado_b1.data.read(), filename)
-            titulo_certificado_b1 = {
-                "titulo": form.certificado_b1.data.filename,
-                "path": filename
-            }
-            try:
-                certificado_b1 = archivo_schema.load(titulo_certificado_b1)
-            except Exception as err:
-                flash('Error al cargar los datos del certificado B1', 'danger')
-                return render_template('postulaciones/repostulacion.html', form=form, id_alumno=id_alumno)
-            certificado_b1 = archivo_service.crear_archivo(**certificado_b1)
-            certificado_b1.informacion_alumno_entrante = alumno
-            certificado_b1.postulacion = postulacion
+            archivo_certificado_b1 = archivo_service.get_archivo_by_postulacion_and_tipo("certificadoB1", alumno.id)
+            archivo_certificado_b1.titulo = form.certificado_b1.data.filename
+            archivo_certificado_b1.path = filename
+            archivo_certificado_b1.postulacion = postulacion
 
     data_tutor_institucional = {
         "nombre": form.nombre_tutor_institucional.data,
@@ -765,6 +696,17 @@ def guardar_repostulacion(id_alumno):
 
     carta_recomendacion.informacion_alumno_entrante = alumno
     carta_recomendacion.postulacion = postulacion
+
+    discapacidad = request.form.get('discapacidad')
+    if discapacidad:
+        alumno.discapacitado = True
+        if form.certificado_discapacidad.data:
+            filename = f"{alumno.id}_certificadoDiscapacidad_{form.certificado_discapacidad.data.filename}"
+            archivo_service.save_file_minio(form.certificado_discapacidad.data.read(), filename)
+            archivo_db_discapacidad = archivo_service.get_archivo_by_postulacion_and_tipo("certificadoDiscapacidad", alumno.id)
+            archivo_db_discapacidad.path = filename
+            archivo_db_discapacidad.titulo = form.certificado_discapacidad.data.filename
+            archivo_db_discapacidad.postulacion = postulacion
 
     postulacion.tutores.append(tutor_institucional)
     postulacion.tutores.append(tutor_academico)
@@ -841,21 +783,6 @@ def guardar_datos_estadia(id_postulacion):
         flash('Error al cargar el archivo de politicas institucionales', 'danger')
         return render_template('postulaciones/postulacion_estadia.html', form=form, id_postulacion=id_postulacion, consulado_dato=postulacion.consulado_visacion)
     
-    alumno.discapacidad = form.discapacidad.data
-    if form.discapacidad.data == True and form.certificado_discapacidad.data:
-        certificado_discapacidad = form.certificado_discapacidad.data
-        path_certificado_discapacidad = f"{id_postulacion}_{alumno.id}_certificadoDiscapacidad_{certificado_discapacidad.filename}"
-        archivo_certificado_discapacidad = {
-            "titulo": "Certificado de discapacidad",
-            "path": path_certificado_discapacidad,
-            "id_postulacion": id_postulacion,
-            "id_informacion_alumno_entrante": alumno.id
-        }
-        try:
-            archivo_certificado_discapacidad = archivo_schema.load(archivo_certificado_discapacidad)
-        except Exception as err:
-            flash('Error al cargar el archivo de certificado de discapacidad', 'danger')
-            return render_template('postulaciones/postulacion_estadia.html', form=form, id_postulacion=id_postulacion, consulado_dato=postulacion.consulado_visacion)
 
     postulacion.fecha_ingreso = form.fecha_ingreso.data
     postulacion.duracion_estadia = form.duracion_estadia.data
@@ -872,16 +799,12 @@ def guardar_datos_estadia(id_postulacion):
     file_politicas = archivo_service.crear_archivo(**archivo_politicas)
     file_politicas.postulacion = postulacion
 
-    if form.discapacidad.data == True and form.certificado_discapacidad.data:
-        file_certificado = archivo_service.crear_archivo(**archivo_certificado_discapacidad)
-        file_certificado.postulacion = postulacion
-        archivo_service.save_file_minio(request.files['certificado_discapacidad'].read(), archivo_certificado_discapacidad['path'])
-    
+   
     archivo_service.save_file_minio(request.files['psicofisico'].read(), archivo_psicofisico['path'])
     archivo_service.save_file_minio(request.files['politicas_institucionales'].read(), archivo_politicas['path'])
 
     emails = usuario_service.get_email_admin_presidencia()
-    email_service.send_email("Se subieron los archivos psicofíisico y políticas institucionales", f"Se han subido los archivos psicofísico y políticas institucionales por parte del alumno {alumno.nombre} {alumno.apellido}", emails)
+    email_service.send_email("Se subieron los archivos psicofísico y políticas institucionales", f"Se han subido los archivos psicofísico y políticas institucionales por parte del alumno {alumno.nombre} {alumno.apellido}", emails)
 
     flash('Datos guardados exitosamente', 'success')
     return redirect(url_for('postulacion.mis_postulaciones'))

@@ -47,6 +47,7 @@ class PostulacionFormValues(TypedDict):
     pais_emision_cedula_identidad: str
     estado_civil: str
     certificado_b1: str
+    certificado_discapacidad: str
     universidad_origen: str
     de_grado: bool
     de_posgrado: bool
@@ -240,6 +241,12 @@ class PostulacionForm(FlaskForm):
             FileAllowed(["pdf"], "Solo se permiten archivos .pdf"),
             file_size_limit(5), Optional()]
     )
+    certificado_discapacidad = FileField(
+        "Certificado de discapacidad",
+        validators=[
+            FileAllowed(["pdf"], "Solo se permiten archivos .pdf"),
+            file_size_limit(5), Optional()]
+    )
     universidad_origen = StringField(
         "Universidad de origen",
         validators=[DataRequired(message="Debe ingresar su universidad de origen"), Length(min=2, max=100, message="La universidad debe tener 2 letras como mínimo y 100 como máximo"), validate_only_letters_and_numbers]
@@ -316,6 +323,7 @@ class PostulacionForm(FlaskForm):
             "foto_cedula_identidad": self.foto_cedula_identidad.data,
             "estado_civil": self.estado_civil.data,
             "certificado_b1": self.certificado_b1.data,
+            "certificado_discapacidad": self.certificado_discapacidad.data,
             "universidad_origen": self.universidad_origen.data,
             "plan_trabajo": self.plan_trabajo.data,
             "consulado_visacion": self.consulado_visacion.data,

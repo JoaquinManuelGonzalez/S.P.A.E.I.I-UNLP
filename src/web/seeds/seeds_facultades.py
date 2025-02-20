@@ -33,16 +33,6 @@ estados = []
 programas = []
 periodos_inscripcion = []
 
-def crear_programas():
-    for i in range(2):
-        programa = Programa(
-            nombre = f'Programa{i}',
-        )
-        programas.append(programa)
-        db.session.add(programa)
-    
-    db.session.commit()
-
 def crear_facultades():
     for i in range(2):
         facultad = Facultad(

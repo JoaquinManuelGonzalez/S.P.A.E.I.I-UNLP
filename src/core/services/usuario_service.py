@@ -51,6 +51,8 @@ def crear_usuario(formulario:Usuario_Form) -> None:
         es_de_posgrado = True
     if request.form.get('grado'):
         es_de_grado = True
+    if not formulario.facultad_id.data:
+        formulario.facultad_id.data = None
     usuario = Usuario(
         nombre=formulario.nombre.data,
         apellido=formulario.apellido.data,
