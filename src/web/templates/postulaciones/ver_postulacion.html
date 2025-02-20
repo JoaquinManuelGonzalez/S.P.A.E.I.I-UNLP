@@ -153,7 +153,11 @@
             {% endif %}
         </li>
         <li class="nav-item" role="presentation">
-            <a class="nav-link" id="asignaturas-tab" data-bs-toggle="tab" href="#asignaturas" role="tab" aria-controls="asignaturas" aria-selected="false">Datos de Materias</a>
+            {% if ( (postulacion.estado.nombre == "Postulacion Esperando Carta de Aceptacion") or (postulacion.estado.nombre == "Postulacion Esperando Certificado Calificaciones") ) %}
+            <a class="nav-link bg-warning" id="asignaturas-tab" data-bs-toggle="tab" href="#asignaturas" role="tab" aria-controls="asignaturas" aria-selected="false">Datos de Materias</a>
+            {% else %}
+                <a class="nav-link" id="asignaturas-tab" data-bs-toggle="tab" href="#asignaturas" role="tab" aria-controls="asignaturas" aria-selected="false">Datos de Materias</a>
+            {% endif %}
         </li>
     </ul>
 
@@ -394,17 +398,37 @@
             </div>
             <div>
                 {% if require_punto_focal %}
-                        <!-- Botones de acción -->
-                        <div class="d-flex justify-content-center mt-4">
-                            <!-- Botón para aceptar -->
-                            <button type="button" class="btn btn-primary btn-custom mx-2" data-bs-toggle="modal" data-bs-target="#acceptAsignaturasModal">
-                                Aceptar postulacion a asignaturas
-                            </button>
-                            <!-- Botón para rechazar -->
-                            <button type="button" class="btn btn-danger btn-custom mx-2" data-bs-toggle="modal" data-bs-target="#rejectAsignaturasModal">
-                                Rechazar postulacion a asignaturas
-                            </button>
-                        </div>
+                    <!-- Botones de acción -->
+                    <div class="d-flex justify-content-center mt-4">
+                        <!-- Botón para aceptar -->
+                        <button type="button" class="btn btn-primary btn-custom mx-2" data-bs-toggle="modal" data-bs-target="#acceptAsignaturasModal">
+                            Aceptar postulacion a asignaturas
+                        </button>
+                        <!-- Botón para rechazar -->
+                        <button type="button" class="btn btn-danger btn-custom mx-2" data-bs-toggle="modal" data-bs-target="#rejectAsignaturasModal">
+                            Rechazar postulacion a asignaturas
+                        </button>
+                    </div>
+                {% elif ( (check_permiso(session, "solicitud_postulacion_aceptar")) and (postulacion.estado.nombre == "Postulacion Esperando Carta de Aceptacion") ) %}
+                    <!-- Botones de acción -->
+                    <div class="d-flex justify-content-center mt-4">
+                        <!-- Botón para aceptar -->
+                        <button type="button" class="btn btn-primary btn-custom mx-2" data-bs-toggle="modal" data-bs-target="#acceptModal">
+                            Validar materias y subir carta de aceptacion
+                        </button>
+                        <!-- Botón para rechazar -->
+                        <button type="button" class="btn btn-danger btn-custom mx-2" data-bs-toggle="modal" data-bs-target="#rejectModal">
+                            Rechazar materias
+                        </button>
+                    </div>
+                {% elif ( (check_permiso(session, "solicitud_postulacion_aceptar")) and (postulacion.estado.nombre == "Postulacion Esperando Certificado Calificaciones") ) %}
+                    <!-- Botones de acción -->
+                    <div class="d-flex justify-content-center mt-4">
+                        <!-- Botón para aceptar -->
+                        <button type="button" class="btn btn-primary btn-custom mx-2" data-bs-toggle="modal" data-bs-target="#acceptModal">
+                            Subir certificado de notas firmado
+                        </button>
+                    </div>
                 {% endif %}
             </div>
         </div>
@@ -433,36 +457,69 @@
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <div class="modal-header">
                         {% if postulacion.estado.nombre == "Solicitud de Postulacion" %}
-                        <h5 class="modal-title" id="acceptModalLabel">Aceptar Solicitud de Postulación</h5>
+                            <h5 class="modal-title" id="acceptModalLabel">Aceptar Solicitud de Postulación</h5>
                         {% elif ( (postulacion.estado.nombre == "Postulacion en Espera de Aceptacion") or (postulacion.estado.nombre == "Postulacion en Espera de ser Completada") ) %}
-                        <h5 class="modal-title" id="acceptModalLabel">Aceptar archivos nuevos</h5>
+                            <h5 class="modal-title" id="acceptModalLabel">Aceptar archivos nuevos</h5>
+                        {% elif (postulacion.estado.nombre == "Postulacion Esperando Carta de Aceptacion") %}
+                            <h5 class="modal-title" id="acceptModalLabel">Validar  materias</h5>
+                        {% elif ( postulacion.estado.nombre == "Postulacion Esperando Certificado Calificaciones" ) %}
+                            <h5 class="modal-title" id="acceptModalLabel">Subir Certificado de Calificaciones</h5>
                         {% else %}
-                        <h5 class="modal-title" id="acceptModalLabel">Error, estado no cubierto</h5>
+                            <h5 class="modal-title" id="acceptModalLabel">Error, estado no cubierto</h5>
                         {% endif %}
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         {% if postulacion.estado.nombre == "Solicitud de Postulacion" %}
-                        ¿Estás seguro de que deseas aceptar esta solicitud de postulación? <br>
-                        Esta acción no se podrá deshacer, se creará un nuevo usuario en el sistema correspondiente al alumno entrante y se le notificará vía mail.
+                            ¿Estás seguro de que deseas aceptar esta solicitud de postulación? <br>
+                            Esta acción no se podrá deshacer, se creará un nuevo usuario en el sistema correspondiente al alumno entrante y se le notificará vía mail.
                         {% elif postulacion.estado.nombre == "Postulacion en Espera de Aceptacion" %}
-                        <div class="mb-3">
-                            {{ form.precarga.label }}{{ form.precarga(class="form-control") }}
-                            {% if form.errors %}
-                                {% for error in form.precarga.errors %}
-                                    <div class="text-danger">{{ form.errors[0] }}
-                                        <span style="color: red;">{{ error }}</span>
-                                    </div>
-                                {% endfor %}
-                            {% endif %}
-                        </div>
-                        ¿Estás seguro de que deseas aceptar los archivos subidos por el alumno? <br>
-                        Archivos a verificar: Psicofisico firmado, Politicas institucionales firmadas.
+                            <div class="mb-3">
+                                {{ form.precarga.label }}{{ form.precarga(class="form-control") }}
+                                {% if form.errors %}
+                                    {% for error in form.precarga.errors %}
+                                        <div class="text-danger">{{ form.errors[0] }}
+                                            <span style="color: red;">{{ error }}</span>
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                            ¿Estás seguro de que deseas aceptar los archivos subidos por el alumno? <br>
+                            Archivos a verificar: Psicofisico firmado, Politicas institucionales firmadas.
                         {% elif postulacion.estado.nombre == "Postulacion en Espera de ser Completada" %}
-                        ¿Estás seguro de que deseas aceptar los archivos subidos por el alumno? <br>
-                        Archivos a verificar: Visado, seguro medico.
+                            ¿Estás seguro de que deseas aceptar los archivos subidos por el alumno? <br>
+                            Archivos a verificar: Visado, seguro medico.
+                        {% elif ( (postulacion.estado.nombre == "Postulacion Esperando Carta de Aceptacion") ) %}
+                            <div class="mb-3">
+                                Subir carta de aceptacion {{ form.precarga(class="form-control") }}
+                                {% if form.errors %}
+                                    {% for error in form.precarga.errors %}
+                                        <div class="text-danger">{{ form.errors[0] }}
+                                            <span style="color: red;">{{ error }}</span>
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        ¿Estás seguro de que deseas aceptar las asignaturas elegidas por el alumno? <br>
+                        <p>
+                            <a href="{{ url_for('documentos.carta_aceptacion', postulacion_id = postulacion_id) }}" class="btn btn-primary btn-sm">Descargar carta para firmar</a>
+                        </p>
+                        {% elif ( (postulacion.estado.nombre == "Postulacion Esperando Certificado Calificaciones") ) %}
+                            <div class="mb-3">
+                                Subir certificado de califiaciones {{ form.precarga(class="form-control") }}
+                                {% if form.errors %}
+                                    {% for error in form.precarga.errors %}
+                                        <div class="text-danger">{{ form.errors[0] }}
+                                            <span style="color: red;">{{ error }}</span>
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        <p>
+                            <a href="{{ url_for('documentos.certificado_calificaciones', postulacion_id = postulacion_id) }}" class="btn btn-primary btn-sm">Descargar certificado para firmar</a>
+                        </p>
                         {% else %}
-                        Error, estado no cubierto
+                            Error, estado no cubierto
                         {% endif %}
                     </div>
                     <div class="modal-footer">

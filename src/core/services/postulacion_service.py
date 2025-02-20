@@ -243,13 +243,13 @@ def validar_asignaturas_de_postulacion(postulacion, facultad_id):
         if (not postulacion_asignatura.validado):
             return
     
-    actualizar_estado_postulacion(postulacion, "Postulacion Validada por Facultad")
+    actualizar_estado_postulacion(postulacion, "Postulacion Esperando Carta de Aceptacion")
     emails = []
     emails.append(usuario_service.get_email_admin_presidencia())
     alumno = alumno_service.get_alumno_by_id(postulacion.id_informacion_alumno_entrante)
     titulo = "Todas las asignaturas aceptadas alumno "+alumno.nombre+" "+alumno.apellido
     cuerpo = f"Se han aceptado todas las asignaturas a las que se ha postulado."
-    emails.append(alumno.email)
+    #emails.append(alumno.email)
     email_service.send_email(titulo, cuerpo, emails)
     return
 
