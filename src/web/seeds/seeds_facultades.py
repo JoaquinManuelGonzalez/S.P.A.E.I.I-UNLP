@@ -102,7 +102,7 @@ def crear_estados():
     estados.append(Estado( #5
         nombre='Postulacion Esperando Carta de Aceptacion', #una vez validada por facultad, Presidencia debe validar y subir carta de aceptacion firmada
         requiere_accion_presidencia = True,
-        require_accion_focal = False
+        requiere_accion_focal = False
     ))
     estados.append(Estado( #6
         nombre='Postulacion Validada por Facultad',
@@ -130,9 +130,9 @@ def crear_estados():
         requiere_accion_focal = False
     ))
     estados.append(Estado( #11
-        nombre='Postulacion Esperando Certificado de Calificaciones Firmado',
-        require_accion_presidencia = True,
-        require_accion_focal = False
+        nombre='Postulacion Esperando Certificado Calificaciones',
+        requiere_accion_presidencia = True,
+        requiere_accion_focal = False
     ))
     estados.append(Estado( #12
         nombre='Postulacion Finalizada',
