@@ -194,6 +194,20 @@
                             <p><strong>País de emisión de cédula de identidad:</strong> No posee información asociada.</p>
                         {% endif %}
                         <p><strong>Estado civil:</strong> {{ estado_civil.nombre_es }}</p>
+                        <p><strong>Fecha de Ingreso al País:</strong> 
+                            {% if postulacion.fecha_ingreso %}
+                                {{ postulacion.fecha_ingreso.strftime("%d-%m-%Y") }}
+                            {% else %}
+                                No posee información asociada.
+                            {% endif %}
+                        </p>
+                        <p><strong>Duración de la Estadía en Meses:</strong> 
+                            {% if postulacion.duracion_estadia %}
+                                {{ postulacion.duracion_estadia }}
+                            {% else %}
+                                No posee información asociada.
+                            {% endif %}
+                        </p>
                     {% endif %}
                     {% if alumno.discapacitado %}
                         <p><strong>¿Tiene alguna discapacidad?: </strong>Sí</p>
