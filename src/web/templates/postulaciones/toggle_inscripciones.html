@@ -51,14 +51,16 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                         aria-label="Close"></button>
                 </div>
-                <form method="POST" action="{{ url_for("postulacion.periodo_postulacion_toggle") }}">
+                <form method="POST" action="{{ url_for('postulacion.periodo_postulacion_toggle') }}">
                 <div class="modal-body">
                   {% if periodo_actual() %}
                     ¿Estás seguro que deseas deshabilitar
                     el periodo actual de postulaciones?
                   {% else %}
                     ¿Estás seguro que deseas habilitar
-                    un nuevo periodo de postulaciones?
+                    un nuevo periodo de postulaciones?<br>
+
+                    <b>ADVERTENCIA: Habilitar un nuevo periodo de postulaciones cancelará cualquier proceso de postulación que no haya terminado.</b>
                     <!--<input type="date" name="fecha_desde" class="form-control mt-2" >-->
                   {% endif %}
                 </div>
@@ -75,7 +77,7 @@
                     </form>                 
                 </div>
             </div>
-        </div>
+      </div>
     </div>
     </div>
     <div class="table-responsive shadow-sm">
@@ -98,7 +100,13 @@
                 <tr class="border-b border-gray-200 py-2">
                     <td>{{ periodo.inicio.strftime("%d-%m-%Y") }}</td>
                     {% if periodo.fin %}
-                    <td>{{ periodo.fin.strftime("%d-%m-%Y") }}</td>
+                      {% if periodo.id == periodos.items[0].id %}
+                        <td>{{ periodo.fin.strftime("%d-%m-%Y") }} <button type="button" class="btn btn-warning" data-bs-title="Rehabilitar" data-bs-toggle="modal" data-bs-target="#confirmReEnable">
+                          Rehabilitar
+                        </button></td>
+                      {% else %}
+                        <td>{{ periodo.fin.strftime("%d-%m-%Y") }}</td>
+                      {% endif %}
                     {% else %}
                     <td>En curso</td>
                     {% endif %}
@@ -116,6 +124,31 @@
                 {% endfor %}
             </tbody>
         </table>
+        <div class="modal fade" id="confirmReEnable" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel">Confirmar elección</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal"
+                          aria-label="Close"></button>
+                  </div>
+                  <form method="POST" action="{{ url_for('postulacion.periodo_postulacion_rehabilitar') }}">
+                  <div class="modal-body">
+                      ¿Estás seguro que deseas rehabilitar
+                      el último periodo de postulaciones?<br>
+  
+                      <b>Ésto solo debería hacerse si deshabilitar el periodo fue un error.</b>
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary"
+                          data-bs-dismiss="modal">Cancelar</button>
+                      
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn btn-success">Rehabilitar</button>
+                      </form>                 
+                  </div>
+              </div>
+        </div>
     </div>
 </div>
 

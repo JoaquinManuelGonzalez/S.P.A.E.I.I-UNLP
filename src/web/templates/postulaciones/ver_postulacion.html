@@ -384,7 +384,7 @@
                                         <td> {{ asignatura.aprobado }} </td>
                                     {% endif %}
                                     <td> {{ asignatura.estado }} </td>
-                                    {% if (rol == "punto_focal") and (asignatura.asignatura.facultad_id == usuario_actual.facultad_id) and (postulacion.estado.nombre != "Postulacion Esperando Validacion por Facultad") and (asignatura.validado) %}
+                                    {% if (rol == "punto_focal") and (asignatura.asignatura.facultad_id == usuario_actual.facultad_id) and ( (postulacion.estado.nombre != "Postulacion Esperando Validacion por Facultad") and (postulacion.estado.nombre != "Postulacion Esperando Carta de Aceptacion") ) and (asignatura.validado) %}
                                         <td> <a href="{{ url_for('postulacion.estado_cursada', id_postulacion = asignatura.postulacion_id, id_asignatura = asignatura.asignatura_id) }}" class="btn btn-secondary btn-sm"> Calificar o cambiar estado</a></td>
                                     {% else %}
                                         <td></td>
