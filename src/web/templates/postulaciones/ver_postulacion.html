@@ -378,7 +378,7 @@
                             <tbody>
                                 {% for asignatura in asignaturas %}
                                     {% if (rol == "punto_focal") and (asignatura.asignatura.facultad_id == usuario_actual.facultad_id) %}
-                                        <tr class="table-active">
+                                        <tr class="table-primary">
                                     {% else %}
                                         <tr>
                                     {% endif %}
