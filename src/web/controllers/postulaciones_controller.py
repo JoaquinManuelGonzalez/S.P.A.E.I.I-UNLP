@@ -128,7 +128,7 @@ def ver_postulacion(id_postulacion):
     #archivo_service.get_archivos_by_postulacion(postulacion.id)
     
 
-    if ( (rol == "presidencia_jefe" or "presidencia_gestor") and (postulacion.estado.nombre == "Postulacion en Espera de Aceptacion") ):
+    if ( (rol == "presidencia_jefe" or "presidencia_gestor") and (( postulacion.estado.nombre == "Postulacion en Espera de Aceptacion") or ( postulacion.estado.nombre == "Postulacion Esperando Carta de Aceptacion") or ( postulacion.estado.nombre == "Postulacion Esperando Certificado Calificaciones") ) ):
         form = PresidenciaPrecarga()
     else:
         form = None
@@ -485,8 +485,8 @@ def estado_cursada_post(id_postulacion, id_asignatura):
     if postulacion.estado.nombre == "Postulacion Completada":
         postulacion_service.actualizar_estado_postulacion(postulacion, "Postulacion Esperando Certificado Calificaciones")
 
-        emails = []
-        emails.append(usuario_service.get_email_admin_presidencia())
+
+        emails = usuario_service.get_email_admin_presidencia()
         alumno = alumno_service.get_alumno_by_id(postulacion.id_informacion_alumno_entrante)
         titulo = "Todas las cursadas finalizadas para "+alumno.nombre+" "+alumno.apellido
         cuerpo = f"Se han finalizado todas las cursadas a las que se ha postulado el alumno "+alumno.nombre+" "+alumno.apellido+"."
@@ -1127,7 +1127,7 @@ def archivos_alumno(id_postulacion):
 
     paths = {}
 
-    path["carta_de_aceptacion"] = archivo_service.get_archivo_by_postulacion_and_tipo("carta-aceptacion", alumno.id, id_postulacion).path
+    paths["carta_de_aceptacion"] = archivo_service.get_archivo_by_postulacion_and_tipo("carta-aceptacion", alumno.id, id_postulacion).path
 
     archivos = [
         "carta_de_aceptacion",
@@ -1141,10 +1141,10 @@ def archivos_alumno(id_postulacion):
         archivos.append("renure")
         archivos.append("precarga")
         
-        path["precarga"] = archivo_service.get_archivo_by_postulacion_and_tipo("precarga", alumno.id, id_postulacion).path
+        paths["precarga"] = archivo_service.get_archivo_by_postulacion_and_tipo("precarga", alumno.id, id_postulacion).path
     
     if postulacion.estado.nombre == "Postulacion Finalizada":
         archivos.append("calificaciones")
-        path["certificado_calificaciones"] = archivo_service.get_archivo_by_postulacion_and_tipo("certificado-calificaciones", alumno.id, id_postulacion).path
+        paths["certificado_calificaciones"] = archivo_service.get_archivo_by_postulacion_and_tipo("certificado-calificaciones", alumno.id, id_postulacion).path
     
-    return render_template('postulaciones/archivos_alumno.html', archivos = archivos, postulacion_id = postulacion.id, path = path)
+    return render_template('postulaciones/archivos_alumno.html', archivos = archivos, postulacion_id = postulacion.id, path = paths)

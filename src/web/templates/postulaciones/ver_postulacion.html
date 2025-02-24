@@ -502,7 +502,7 @@
                             </div>
                         ¿Estás seguro de que deseas aceptar las asignaturas elegidas por el alumno? <br>
                         <p>
-                            <a href="{{ url_for('documentos.carta_aceptacion', postulacion_id = postulacion_id) }}" class="btn btn-primary btn-sm">Descargar carta para firmar</a>
+                            <a href="{{ url_for('documentos.carta_aceptacion', postulacion_id = postulacion.id) }}" class="btn btn-primary btn-sm">Descargar carta para firmar</a>
                         </p>
                         {% elif ( (postulacion.estado.nombre == "Postulacion Esperando Certificado Calificaciones") ) %}
                             <div class="mb-3">
@@ -516,7 +516,7 @@
                                 {% endif %}
                             </div>
                         <p>
-                            <a href="{{ url_for('documentos.certificado_calificaciones', postulacion_id = postulacion_id) }}" class="btn btn-primary btn-sm">Descargar certificado para firmar</a>
+                            <a href="{{ url_for('documentos.certificado_calificaciones', postulacion_id = postulacion.id) }}" class="btn btn-primary btn-sm">Descargar certificado para firmar</a>
                         </p>
                         {% else %}
                             Error, estado no cubierto
