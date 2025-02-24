@@ -293,16 +293,18 @@ def postulacion_en_paso5(postulacion):
         "Postulacion Validada por Facultad",
         "Postulacion Aceptada",
         "Postulacion Completada",
+        "Postulacion Esperando Certificado Calificaciones",
         "Postulacion Finalizada",
         "Postulacion en Espera de Aceptacion",
         "Postulacion en Espera de ser Completada"
     ]
     return (postulacion.estado.nombre in estados_validos)
 
-def postulacion_en_paso6(postulacion): #carta_de_aceptacion
+def postulacion_en_paso6(postulacion):
     estados_validos = [
         "Postulacion Aceptada",
         "Postulacion Completada",
+        "Postulacion Esperando Certificado Calificaciones",
         "Postulacion Finalizada",
         "Postulacion en Espera de ser Completada"
     ]

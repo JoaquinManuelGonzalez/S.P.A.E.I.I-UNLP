@@ -44,7 +44,7 @@ def deshabilitar_periodo_postulacion(): #Deshabilita el periodo de postulacion a
 
 def cancelar_postulaciones_pendientes():
     postulaciones = db.session.query(Postulacion).filter(
-        or_(
+        and_(
             ~Postulacion.estado.has(Estado.nombre.ilike(f"%Postulacion Aceptada%")),
             ~Postulacion.estado.has(Estado.nombre.ilike(f"%Postulacion Completada%")),
             ~Postulacion.estado.has(Estado.nombre.ilike(f"%Postulacion Finalizada%")),

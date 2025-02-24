@@ -231,13 +231,82 @@ def aceptar_solicitud(id_postulacion):
         destino = alumno.email
         email_service.send_email(titulo, cuerpo, [destino])
         flash('Archivos aprobados', 'success')
-        if all(asignatura.estado == "Cursada completada" for asignatura in postulacion.asignaturas):
+        if all(asignatura.estado != "Cursando" for asignatura in postulacion.asignaturas): #Si todas las materias estan abandonadas o finalizadas
             emails = usuario_service.get_email_admin_presidencia()
             titulo = "Todas las cursadas finalizadas para alumno "+alumno.nombre+" "+alumno.apellido
             cuerpo = "Todas las cursadas del alumno "+alumno.nombre+" "+alumno.apellido+" han sido calificadas y su postulacion ha sido finalizada."
             emails.append(alumno.email)
             email_service.send_email(titulo, cuerpo, emails)
             flash('Postulación completada con éxito', 'success')
+    elif postulacion.estado.nombre == "Postulacion Esperando Carta de Aceptacion":
+        #subir carta de aceptacion, pasar a estado correcto, enviar mail
+        form = PresidenciaPrecarga()
+        if not form.validate_on_submit():
+            flash('Error al cargar el archivo', 'danger')
+            return redirect(url_for('postulacion.ver_postulacion', id_postulacion=id_postulacion))
+        if not form.precarga.data:
+            flash('Falta subir la carta de aceptacion antes de validar las asignaturas del estudiante.', 'danger')
+            return redirect(url_for('postulacion.ver_postulacion', id_postulacion=id_postulacion))
+        precarga = form.precarga.data #carta de aceptacion
+        print(f"El archivo carta de aceptacion se sube así: {precarga.filename}")
+        path_precarga = f"{id_postulacion}_{alumno.id}_carta-aceptacion_{precarga.filename}"
+        archivo_precarga = { #archivo carta de aceptacion
+            "titulo": "Carta_de_Aceptacion",
+            "path": path_precarga,
+            "id_postulacion": id_postulacion,
+            "id_informacion_alumno_entrante": alumno.id
+        }
+
+        try:
+            archivo_precarga = archivo_schema.load(archivo_precarga)
+        except Exception as err:
+            print(err)
+            flash('Error al cargar el archivo carta de aceptacion', 'danger')
+            return redirect(url_for('postulacion.ver_postulacion', id_postulacion=id_postulacion))
+        archivo_service.crear_archivo(**archivo_precarga)
+        archivo_service.save_file_minio(request.files['precarga'].read(), archivo_precarga['path'])
+
+        postulacion_service.actualizar_estado_postulacion(postulacion, "Postulacion Validada por Facultad")
+        titulo = "Asignaturas validadas"
+        cuerpo = f"Se ha aceptado las asignaturas a las que se ha postulado. Puede descargar su Carta de Aceptacion y proseguir con la postulación."
+        destino = alumno.email
+        email_service.send_email(titulo, cuerpo, [destino])
+        flash('Carta de Aceptacion cargada', 'success')
+    elif postulacion.estado.nombre == "Postulacion Esperando Certificado Calificaciones":
+        #subir certificado de calificaciones, pasar a estado
+        form = PresidenciaPrecarga()
+        if not form.validate_on_submit():
+            flash('Error al cargar el archivo', 'danger')
+            return redirect(url_for('postulacion.ver_postulacion', id_postulacion=id_postulacion))
+        if not form.precarga.data:
+            flash('Falta subir el certificado de calificaciones antes de finalizar la postulacion.', 'danger')
+            return redirect(url_for('postulacion.ver_postulacion', id_postulacion=id_postulacion))
+        precarga = form.precarga.data #certificado de calificacions
+        print(f"El archivo certificado de calificaciones se sube así: {precarga.filename}")
+        path_precarga = f"{id_postulacion}_{alumno.id}_certificado-calificaciones_{precarga.filename}"
+        archivo_precarga = { #archivo certificado de calificacions
+            "titulo": "Certificado_Calificaciones",
+            "path": path_precarga,
+            "id_postulacion": id_postulacion,
+            "id_informacion_alumno_entrante": alumno.id
+        }
+
+        try:
+            archivo_precarga = archivo_schema.load(archivo_precarga)
+        except Exception as err:
+            print(err)
+            flash('Error al cargar el archivo certificado de calificaciones', 'danger')
+            return redirect(url_for('postulacion.ver_postulacion', id_postulacion=id_postulacion))
+        archivo_service.crear_archivo(**archivo_precarga)
+        archivo_service.save_file_minio(request.files['precarga'].read(), archivo_precarga['path'])
+
+        postulacion_service.actualizar_estado_postulacion(postulacion, "Postulacion Finalizada")
+        titulo = "Postulacion finalizada"
+        cuerpo = f"Se ha subido el certificado de calificaciones de su postulacion."
+        destino = alumno.email
+        email_service.send_email(titulo, cuerpo, [destino])
+        flash('Certificado de Calificaciones cargado', 'success')
+
     return redirect(url_for('postulacion.acciones_pendientes_presidencia'))
     
 
@@ -409,18 +478,20 @@ def estado_cursada_post(id_postulacion, id_asignatura):
     db.session.commit()
 
     for postulacionAsignatura in postulacion.asignaturas:
-        if postulacionAsignatura.estado != "Cursada completada":
+        if postulacionAsignatura.estado == "Cursando": #Si no está abandonada o finalizada
             return redirect(url_for('postulacion.ver_postulacion', id_postulacion=id_postulacion))
     
     #si llega a ésta linea de codigo, todas las cursadas están completadas
     if postulacion.estado.nombre == "Postulacion Completada":
-        postulacion_service.actualizar_estado_postulacion(postulacion, "Postulacion Finalizada")
-        alumno = alumno_service.get_alumno_by_id(postulacion.id_informacion_alumno_entrante)
-        titulo = "Todas las cursadas finalizadas"
-        cuerpo = f"Se han subido las notas de todas las cursadas de su postulacion!"
-        destino = alumno.email
-        email_service.send_email(titulo, cuerpo, [destino])
+        postulacion_service.actualizar_estado_postulacion(postulacion, "Postulacion Esperando Certificado Calificaciones")
 
+        emails = []
+        emails.append(usuario_service.get_email_admin_presidencia())
+        alumno = alumno_service.get_alumno_by_id(postulacion.id_informacion_alumno_entrante)
+        titulo = "Todas las cursadas finalizadas para "+alumno.nombre+" "+alumno.apellido
+        cuerpo = f"Se han finalizado todas las cursadas a las que se ha postulado el alumno "+alumno.nombre+" "+alumno.apellido+"."
+        #emails.append(alumno.email)
+        email_service.send_email(titulo, cuerpo, emails)
 
     return redirect(url_for('postulacion.ver_postulacion', id_postulacion=id_postulacion))
 
@@ -1052,19 +1123,28 @@ def archivos_alumno(id_postulacion):
     if (not postulacion_service.postulacion_en_paso5(postulacion)):
         abort(403)
     
+    alumno = alumno_service.get_alumno_by_id(postulacion.id_informacion_alumno_entrante)
+
+    paths = {}
+
+    path["carta_de_aceptacion"] = archivo_service.get_archivo_by_postulacion_and_tipo("carta-aceptacion", alumno.id, id_postulacion).path
+
     archivos = [
         "carta_de_aceptacion",
         "politicas_institucionales",
         "plantilla_psicofisico",
     ]
-    path_precarga = None
+
+
+    
     if (postulacion_service.postulacion_en_paso6(postulacion)):
         archivos.append("renure")
         archivos.append("precarga")
-        alumno = alumno_service.get_alumno_by_id(postulacion.id_informacion_alumno_entrante)
-        path_precarga = archivo_service.get_archivo_by_postulacion_and_tipo("precarga", alumno.id, id_postulacion).path
+        
+        path["precarga"] = archivo_service.get_archivo_by_postulacion_and_tipo("precarga", alumno.id, id_postulacion).path
     
     if postulacion.estado.nombre == "Postulacion Finalizada":
         archivos.append("calificaciones")
+        path["certificado_calificaciones"] = archivo_service.get_archivo_by_postulacion_and_tipo("certificado-calificaciones", alumno.id, id_postulacion).path
     
-    return render_template('postulaciones/archivos_alumno.html', archivos = archivos, postulacion_id = postulacion.id, path_precarga = path_precarga)
+    return render_template('postulaciones/archivos_alumno.html', archivos = archivos, postulacion_id = postulacion.id, path = path)
