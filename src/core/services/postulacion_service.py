@@ -243,20 +243,19 @@ def validar_asignaturas_de_postulacion(postulacion, facultad_id):
         if (not postulacion_asignatura.validado):
             return
     
-    actualizar_estado_postulacion(postulacion, "Postulacion Validada por Facultad")
-    emails = []
-    emails.append(usuario_service.get_email_admin_presidencia())
+    actualizar_estado_postulacion(postulacion, "Postulacion Esperando Carta de Aceptacion")
+    emails = usuario_service.get_email_admin_presidencia()
     alumno = alumno_service.get_alumno_by_id(postulacion.id_informacion_alumno_entrante)
     titulo = "Todas las asignaturas aceptadas alumno "+alumno.nombre+" "+alumno.apellido
-    cuerpo = f"Se han aceptado todas las asignaturas a las que se ha postulado."
-    emails.append(alumno.email)
+    cuerpo = f"Se han aceptado todas las asignaturas a las que se ha postulado. Por favor validar las asignaturas y subir carta de aceptacion."
+    #emails.append(alumno.email)
     email_service.send_email(titulo, cuerpo, emails)
     return
 
 def rechazar_asignaturas_de_postulacion(postulacion):
     db.session.query(PostulacionAsignatura).filter_by(postulacion_id=postulacion.id).delete(synchronize_session=False)
     db.session.commit()
-    actualizar_estado_postulacion(postulacion, "Postulacion en Proceso")
+    actualizar_estado_postulacion(postulacion, "Postulacion Iniciada")
     return
 
 def get_asignaturas_de_facultad(postulacion_id, facultad_id):
@@ -293,16 +292,18 @@ def postulacion_en_paso5(postulacion):
         "Postulacion Validada por Facultad",
         "Postulacion Aceptada",
         "Postulacion Completada",
+        "Postulacion Esperando Certificado Calificaciones",
         "Postulacion Finalizada",
         "Postulacion en Espera de Aceptacion",
         "Postulacion en Espera de ser Completada"
     ]
     return (postulacion.estado.nombre in estados_validos)
 
-def postulacion_en_paso6(postulacion): #carta_de_aceptacion
+def postulacion_en_paso6(postulacion):
     estados_validos = [
         "Postulacion Aceptada",
         "Postulacion Completada",
+        "Postulacion Esperando Certificado Calificaciones",
         "Postulacion Finalizada",
         "Postulacion en Espera de ser Completada"
     ]

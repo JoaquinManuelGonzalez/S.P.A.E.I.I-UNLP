@@ -13,7 +13,7 @@
     <div class="card-body">
         {% if 'carta_de_aceptacion' in archivos %}
         <p><strong>Carta de aceptacion:</strong>
-            <a href="{{ url_for('documentos.carta_aceptacion', postulacion_id = postulacion_id) }}" class="btn btn-primary btn-sm">Descargar</a>
+            <a href="{{ url_for('postulacion.descargar_archivo', filename=path['carta_de_aceptacion']) }}" class="btn btn-primary btn-sm">Descargar</a>
         </p>
         {% endif %}
         {% if 'politicas_institucionales' in archivos %}
@@ -33,12 +33,12 @@
         {% endif %}
         {% if 'precarga' in archivos %}
         <p><strong>Precarga electronica:</strong>
-            <a href="{{ url_for('postulacion.descargar_archivo', filename=path_precarga) }}" class="btn btn-primary btn-sm">Descargar</a>
+            <a href="{{ url_for('postulacion.descargar_archivo', filename=path['precarga']) }}" class="btn btn-primary btn-sm">Descargar</a>
         </p>
         {% endif %}
         {% if 'calificaciones' in archivos %}
         <p><strong>Certificado de calificaciones:</strong>
-            <a href="{{ url_for('documentos.certificado_calificaciones', postulacion_id = postulacion_id) }}" class="btn btn-primary btn-sm">Descargar</a>
+            <a href="{{ url_for('postulacion.descargar_archivo', filename=path['certificado_calificaciones']) }}" class="btn btn-primary btn-sm">Descargar</a>
         </p>
         {% endif %}
     </div>
