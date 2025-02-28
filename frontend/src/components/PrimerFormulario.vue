@@ -232,15 +232,11 @@
   // Computed properties para filtrar las opciones según el idioma actual
   const filteredPaises = computed(() => {
     const currentLocale = locale.value; // El idioma actual
-    //console.log(paises.value);
-    console.log(currentLocale);
     const countries = paises.value.map(pais => ({
       id: pais.id,
       name: pais[`nombre_${currentLocale}`], // Usamos el nombre en el idioma actual
       hispanohablante: pais.hispanohablante
     }));
-    console.log("el pais con id 1 es")
-    console.log(paises.value);
     return countries;
   });
 
@@ -267,8 +263,6 @@
 
   // Enviar el formulario
   const submitForm = async () => {
-    console.log(formData);
-    console.log(nivelEstudio);
     //await store.submitForm();
     if(nivelEstudio.value === 'posgrado'){
       formData.value.postulacion.de_posgrado = true;
@@ -458,7 +452,6 @@
       alert(errors["fecha_de_nacimiento"]);
       return false;
     }
-    console.log(errors);
     return errors.value.length === 0;
     
   }

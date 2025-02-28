@@ -143,7 +143,6 @@ def ver_postulacion(id_postulacion):
         if postulacion_service.postulacion_corresponde_a_punto_focal(postulacion, usuario_actual):
             asignaturas_relevantes = postulacion_service.get_asignaturas_de_facultad(postulacion.id, usuario_actual.facultad_id )
             if not asignaturas_relevantes:
-                print("what the fuck")
                 abort(403)
             if any((not asignatura.validado) and (asignatura.asignatura.facultad_id == usuario_actual.facultad_id) for asignatura in postulacion.asignaturas):
                 require_punto_focal = True
@@ -200,7 +199,6 @@ def aceptar_solicitud(id_postulacion):
             flash('Falta subir la precarga electronica antes de aprobar al alumno.', 'danger')
             return redirect(url_for('postulacion.ver_postulacion', id_postulacion=id_postulacion))
         precarga = form.precarga.data
-        print(f"El archivo precarga se sube así: {precarga.filename}")
         path_precarga = f"{id_postulacion}_{alumno.id}_precarga_{precarga.filename}"
         archivo_precarga = {
             "titulo": "Precarga_electronica",
@@ -212,7 +210,6 @@ def aceptar_solicitud(id_postulacion):
         try:
             archivo_precarga = archivo_schema.load(archivo_precarga)
         except Exception as err:
-            print(err)
             flash('Error al cargar el archivo precarga', 'danger')
             return redirect(url_for('postulacion.ver_postulacion', id_postulacion=id_postulacion))
         archivo_service.crear_archivo(**archivo_precarga)
@@ -993,7 +990,6 @@ def archivos_base():
         "politicas_institucionales": archivo_service.get_archivo_by_path(paths["politicas_institucionales"]),
         "renure": archivo_service.get_archivo_by_path(paths["renure"])
     }
-    print(archivo_service.get_archivo_by_path(paths["plantilla_psicofisico"]))
     titulos = {
         "plantilla_psicofisico": "Plantilla de psicofisico",
         "politicas_institucionales": "Politicas institucionales",
@@ -1013,7 +1009,6 @@ def archivos_base():
             try:
                 archivo_actualizado = archivo_schema.load(archivo_actualizado)
             except Exception as err:
-                print(err)
                 flash('Error al cargar el archivo', 'danger')
                 return render_template('postulaciones/archivos_base.html', form = form, archivos = archivos, titulos = titulos)
             archivo_service.crear_archivo(**archivo_actualizado)
@@ -1031,7 +1026,6 @@ def archivos_base():
             try:
                 nuevo_archivo = archivo_schema.load(nuevo_archivo)
             except Exception as err:
-                print(err)
                 flash('Error al cargar el archivo', 'danger')
                 return render_template('postulaciones/archivos_base.html', form = form, archivos = archivos, titulos = titulos)
             archivo_service.crear_archivo(**nuevo_archivo)

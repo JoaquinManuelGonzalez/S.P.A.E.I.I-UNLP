@@ -23,7 +23,6 @@ def save_file_minio(file, filename):
         # Convertir el archivo de bytes a un objeto BytesIO (simulando un archivo en memoria)
         file_data = io.BytesIO(file)
         size = len(file)  # Obtener el tamaño del archivo desde los bytes
-        print(f"file_dara: {file_data}")
         # Subir el archivo a Minio
         client.put_object(
             "spaeii",  # Nombre del bucket
@@ -72,10 +71,7 @@ def descargar_archivo(filename):
     try:
         client = app.storage.client
         bucket_name = "spaeii"
-        print(filename)
         response = client.get_object(bucket_name, filename)
-
-        print(response)
         file_data = io.BytesIO(response.read())
         response.close()
         response.release_conn()

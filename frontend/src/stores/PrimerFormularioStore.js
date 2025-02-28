@@ -120,8 +120,6 @@ export const usePrimerFormularioStore = defineStore('primer_formulario_store', {
                 this.csrf_token = response.data.csrf_token;
                 this.programas = response.data.programas;
                 this.periodo_activo = response.data.periodo_activo;
-                console.log("estos son los paises");
-                console.log(this.paises[1]);
             } catch (error) {
                 this.errors = error.response.data;
             } finally {
