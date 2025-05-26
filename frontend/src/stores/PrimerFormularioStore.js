@@ -111,8 +111,7 @@ export const usePrimerFormularioStore = defineStore('primer_formulario_store', {
         async getData(){
             this.loading = true;
             try {
-                const response = await axios.get('http://127.0.0.1:5000/api/postulacion/primer-formulario-data',
-                );
+                const response = await axios.get('http://127.0.0.1:5000/api/postulacion/primer-formulario-data');
                 this.errors = null;
                 this.estados_civiles = response.data.estados_civiles;
                 this.generos = response.data.generos;
