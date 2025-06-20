@@ -14,12 +14,6 @@ services:
       - MINIO_BUCKET=$MINIO_BUCKET
       - MAIL_USERNAME=ingsoftaplicadag5@gmail.com
       - MAIL_PASSWORD=gpho lqxf muzd hkyw
-    develop:
-      watch:
-        - action: sync
-          path: ./src
-          target: /app/src
-
     ports:
       - "5000:5000"     # Map container port to host (adjust based on your app's needs)
     depends_on:
@@ -34,13 +28,8 @@ services:
       context: ./frontend  # Path to Vue app
       dockerfile: Dockerfile  # Separate Dockerfile for Vue
     container_name: spaeii_vue
-    develop:
-      watch:
-        - action: sync
-          path: ./frontend
-          target: /vue
     ports:
-      - "5173:5173"  # Vue dev server port
+      - "8080:80"  # Vue dev server port
     environment:
       - NODE_ENV=$ENVIRONMENT  # Adjust as needed
     networks:
@@ -62,30 +51,6 @@ services:
     ports:
       - "2306:3306"    # Map MySQL port
     
-
-  # PhpMyAdmin for Database Management
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    container_name: spaeii_phpmyadmin
-    networks:
-      - db-network
-    links:
-      - db:db
-    environment:
-      PMA_HOST: db        # Container name of the MySQL service
-      PMA_PORT: 3306       # MySQL port
-      PMA_USER: 'admin'       # Username to access MySQL
-      PMA_PASSWORD: $DB_PASSWORD  # Password to access MySQL
-      #PMA_USER: 'root'       # Username to access MySQL
-      #PMA_PASSWORD: $ROOT_PASSWORD  # Password to access MySQL
-      MYSQL_ROOT_PASSWORD: $ROOT_PASSWORD  # Root password for MySQL
-      #PMA_ARBITRARY: 1
-    ports:
-      - "8000:80"          # Access PhpMyAdmin on localhost:8080
-    depends_on:
-      - db
-    
-
   # MinIO for S3-Compatible Object Storage
   minio:
     image: minio/minio
