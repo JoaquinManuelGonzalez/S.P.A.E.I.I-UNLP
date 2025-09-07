@@ -1,5 +1,7 @@
+version: "3.9"
+
 services:
-  # Python Application
+  # Python Application (Flask + Gunicorn)
   app:
     build:
       context: .
@@ -14,67 +16,72 @@ services:
       - MINIO_BUCKET=$MINIO_BUCKET
       - MAIL_USERNAME=ingsoftaplicadag5@gmail.com
       - MAIL_PASSWORD=gpho lqxf muzd hkyw
-    ports:
-      - "5000:5000"     # Map container port to host (adjust based on your app's needs)
     depends_on:
       - db
       - minio
     networks:
       - db-network
+    ports:
+      - "5000:5000"   # expuesto en la VM
+    restart: unless-stopped
 
-  # Vue Frontend
+  # Vue Frontend + Nginx
   frontend:
     build:
-      context: ./frontend  # Path to Vue app
-      dockerfile: Dockerfile  # Separate Dockerfile for Vue
+      context: ./frontend
+      dockerfile: Dockerfile
     container_name: spaeii_vue
     ports:
-      - "8080:80"  # Vue dev server port
+      - "8080:80"     # Vue accesible en IP_VM:8080
     environment:
-      - NODE_ENV=$ENVIRONMENT  # Adjust as needed
+      - NODE_ENV=$ENVIRONMENT
     networks:
       - db-network
+    depends_on:
+      - app
+    restart: unless-stopped
 
-  # MySQL Database
+  # MySQL Database (interno)
   db:
-    image: mysql:8.0
+    image: mysql:5.7
     container_name: spaeii_mysql_db
     networks:
       - db-network
     volumes:
       - db-data:/var/lib/mysql
     environment:
-      MYSQL_ROOT_PASSWORD: $ROOT_PASSWORD  # Root password for MySQL
-      MYSQL_DATABASE: 'SPAEIIDatabase'     # Name of the default database
-      MYSQL_USER: 'admin'             # Username
-      MYSQL_PASSWORD: $DB_PASSWORD       # Password
-    ports:
-      - "2306:3306"    # Map MySQL port
-    
-  # MinIO for S3-Compatible Object Storage
+      MYSQL_ROOT_PASSWORD: $ROOT_PASSWORD
+      MYSQL_DATABASE: 'SPAEIIDatabase'
+      MYSQL_USER: 'admin'
+      MYSQL_PASSWORD: $DB_PASSWORD
+    restart: unless-stopped
+    # no expone puertos al host
+
+  # MinIO (interno, salvo que quieras la consola)
   minio:
-    image: minio/minio
+    image: quay.io/minio/minio:RELEASE.2023-05-18T00-05-36Z
     container_name: spaeii_minio
     networks:
       - db-network
     environment:
-      MINIO_ROOT_USER: 'admin'         # MinIO access key
-      MINIO_ROOT_PASSWORD: $MINIO_PASSWORD     # MinIO secret key
+      MINIO_ROOT_USER: 'admin'
+      MINIO_ROOT_PASSWORD: $MINIO_PASSWORD
     command: server --console-address ":9001" /data
     ports:
       - "9000:9000"     # MinIO port for S3 API access
       - "9001:9001"     # MinIO console port
     volumes:
       - minio-data:/data
+    # no expone puertos al host
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 30s
       timeout: 20s
       retries: 3
-    
+    restart: unless-stopped
 
 networks:
-    db-network:
+  db-network:
 
 volumes:
   minio-data:

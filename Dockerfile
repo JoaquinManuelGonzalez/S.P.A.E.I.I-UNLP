@@ -31,12 +31,15 @@ RUN adduser \
     appuser
 
 
-RUN apt-get update -y
-RUN apt-get install pkg-config -y
-RUN apt-get install -y python3-dev build-essential
-RUN apt-get install -y default-libmysqlclient-dev
-RUN apt-get update
-RUN apt-get install -y weasyprint
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    pkg-config \
+    python3-dev \
+    build-essential \
+    default-libmysqlclient-dev \
+    curl \
+    weasyprint \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
     
 
 # Download dependencies as a separate step to take advantage of Docker's caching.
@@ -59,7 +62,8 @@ USER appuser
 COPY . .
 
 # Expose the port that the application listens on.
-EXPOSE 8081
+EXPOSE 5000
 
 # Run the application.
-CMD [ "flask", "run" ,"--host=0.0.0.0","--debug"]
+#CMD [ "flask", "run" ,"--host=0.0.0.0","--debug"]
+CMD ["gunicorn", "-w", "3", "-b", "0.0.0.0:5000", "app:app"]

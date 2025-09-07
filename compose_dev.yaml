@@ -48,7 +48,7 @@ services:
 
   # MySQL Database
   db:
-    image: mysql:8.0
+    image: mysql:5.7
     container_name: spaeii_mysql_db
     networks:
       - db-network
@@ -65,7 +65,7 @@ services:
 
   # PhpMyAdmin for Database Management
   phpmyadmin:
-    image: phpmyadmin/phpmyadmin
+    image: phpmyadmin/phpmyadmin:5.2
     container_name: spaeii_phpmyadmin
     networks:
       - db-network
@@ -88,7 +88,7 @@ services:
 
   # MinIO for S3-Compatible Object Storage
   minio:
-    image: minio/minio
+    image: quay.io/minio/minio:RELEASE.2023-05-18T00-05-36Z
     container_name: spaeii_minio
     networks:
       - db-network
